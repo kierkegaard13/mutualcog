@@ -1,0 +1,46 @@
+{% extends 'info.twig' %}
+
+{% block header %}
+<nav class="navbar">
+	<div class="navbar-header">
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mutual_navbar">
+		<span class="sr-only">Toggle navigation</span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+		</button>
+		<a class="navbar-brand" href="{{site}}">Home</a>
+	</div>
+	<div class="collapse navbar-collapse" id="mutual_navbar">
+		<ul class="nav navbar-nav">
+			<li class="active"><a href="{{site}}/soon">Coming Soon</a></li>
+			<li class="active"><a href="{{site}}/feedback">Feedback</a></li>
+			{% for tag in tags %}
+				<li class="active"><a href="{{site}}/tags/tag/{{tag}}">{{tag}}</a></li>
+			{% endfor %}
+		</ul>
+	</div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<form method="post" action="{{site}}/feedback/newfeedback" class="mutual_form" id="feedback_form">
+<fieldset>
+	<legend>Give us your feedback</legend>
+	<div id="type_group" class="form-group">
+		<select class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Please select a feedback type" data-trigger="focus" data-container="body" id="Type" name="type">
+			<option value="">Select the Category of Feedback: </option>
+			<option value="chat">Chat System </option>
+			<option value="profile">Profiles </option>
+			<option value="groups">Groups </option>
+			<option value="design">Site Design </option>
+			<option value="other">Other </option>
+		</select>
+	</div>
+	<div id="text_group" class="form-group">
+		<textarea class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Please enter feedback longer than 20 characters" data-trigger="focus" data-container="body" id="Text" name="text" rows="5" style="resize:none;"></textarea>
+	</div>
+	<button class="btn btn-primary" type="Submit" style="width:100%;">Submit Feedback</button>
+</fieldset>
+</form>
+{% endblock %}

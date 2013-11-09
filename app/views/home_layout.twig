@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Mutual Cognizance</title>
+        <link rel="stylesheet" href="{{base}}/app/libraries/css/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="{{base}}/app/libraries/css/home_style.min.css" />
+        {% block styles %}{% endblock %}
+	<script src='//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js'></script>
+	<script src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.1.0/moment.min.js'></script>
+</head>
+<body>
+{% block header %}{% endblock %}
+<div id="body">
+<div class="wrapper">
+<div class="row">
+        <div class="col-sm-7 col-md-8 col-lg-9">
+                <div style="position:relative;">
+                        <div class="big_content_box">
+                                <div class="content_left" id="main_cont_l"></div>
+                                <div class="content main_content" id="main_cont">
+                                        {% block content %}{% endblock %}
+					<div style="position:absolute;bottom:10px;font-size:16px;margin-left:50%;">
+						<span style="margin-left:-104px;"><a href="{{site}}/privacy">Privacy Policy</a></span> |
+						<span><a href="{{site}}/terms">Terms of Use</a></span>
+					</div>
+                                </div>
+                        </div>
+                </div>
+        </div>
+        <div class="col-sm-5 col-md-4 col-lg-3">
+                <div style="position:relative;">
+                        <div class="small_content_box">
+                                <div class="content_right grad1"></div>
+                                <div class="content side_content box1" id="welcome_user">
+					{% block welcome %}{% endblock %}
+                                </div>
+                        </div>
+                        <div class="small_content_box">
+                                <div class="content_right grad2"></div>
+                                <div class="content side_content box2" id="create_cont">
+                                        {% block create %}{% endblock %}
+                                </div>
+                        </div>
+                </div>
+        </div>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+	document.writeln("<script type='text/javascript' src='{{base}}/app/libraries/css/dist/js/bootstrap.min.js'><" + "/script>");
+	document.writeln("<script type='text/javascript' src='{{base}}/app/libraries/js/common.min.js'><" + "/script>");
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-24332662-1']);
+	  _gaq.push(['_trackPageview']);
+	  (function() {
+	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

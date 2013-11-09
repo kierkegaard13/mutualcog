@@ -1,0 +1,89 @@
+{% extends 'info.twig' %}
+
+{% block header %}
+<nav class="navbar">
+	<div class="navbar-header">
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mutual_navbar">
+		<span class="sr-only">Toggle navigation</span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+		</button>
+		<a class="navbar-brand" href="{{site}}">Home</a>
+	</div>
+	<div class="collapse navbar-collapse" id="mutual_navbar">
+		<ul class="nav navbar-nav">
+			<li class="active"><a href="{{site}}/soon">Coming Soon</a></li>
+			<li class="active"><a href="{{site}}/feedback">Feedback</a></li>
+			{% for tag in tags %}
+				<li class="active"><a href="{{site}}/tags/tag/{{tag}}">{{tag}}</a></li>
+			{% endfor %}
+		</ul>
+	</div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<h1 style="margin-top:0px;">{{user.name}}</h2>
+<div>Posts: {{user.posts | length}}</div>
+<div>Comments: {{user.messages | length}}</div>
+<div>Level: {{user.level}}</div>
+<div>Cognizance: {{user.cognizance}}/{{100 + 20*user.level}}
+<div class="progress progress-striped active">
+	<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{user.cognizance}}" aria-valuemin="0" aria-valuemax="{{100 + 20*user.level}}" style="width:{{user.cognizance}}%;">
+		<span class="sr-only">Only {{user.cognizance}}% Complete</span>
+	</div>
+</div>
+<h4>Posts</h4>
+<div class="frame" style="height:300px;">
+	<div id="chat_list">
+		{% for post in user.posts %}
+			<div class="chat_title" style="box-shadow: 2px 0px 2px #ccc;">
+				<div class="row">
+					<div style="position:relative;float:left;padding-left:15px;vertical-align:middle;width:3em;">
+						{% if post.id in upvoted %}
+							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{post.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+						{% else %}
+							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{post.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+						{% endif %}
+						<div style="margin-top:-5px;margin-bottom:-8px;text-align:center;" id="votes_{{post.id}}">{{post.upvotes}}</div>
+						{% if post.id in downvoted %}
+							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{post.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+						{% else %}
+							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{post.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+						{% endif %}
+					</div>
+					<div class="col-lg-11">
+						<a href="{{site}}/chat/{{post.type}}/{{post.id}}" style="color:blue;">{{post.title}}</a>
+						<div class="chat_info">Created by <b>{{user.name}}</b>, 
+							<span class="chat_time" id="{{post.inception}}"></span>
+							with Tags:
+							{% for tag in post.tags %}
+								<span class="chat_tags"><a href="{{site}}/tags/tag/{{tag.name}}">#{{tag.name}}</a> </span>
+							{% endfor %}
+							and <b>{{post.messages | length }} comments</b>
+						</div>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+</div>
+<h4>Comments</h4>
+<div class="frame" id="chat_messages" style="height:300px;background-color:#bbb;position:relative;">
+	<div id="chat_display" style="position:absolute;top:10px;left:10px;right:10px;">
+		{% for message in user.messages %}
+			<div class='chat_mssg' id="{{message.id}}">
+				<div>
+				<b class='mssg_op' id="{{message.author}}"> {{message.author}}(<span class='response_count' id="{{message.id}}">{{message.responses}}</span>)</b> : {{message.message}}</div><div class='time' id="{{message.inception}}">
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{base}}/app/libraries/js/profile.min.js"></script>
+{% endblock %}

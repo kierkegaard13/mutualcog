@@ -65,7 +65,7 @@ return array(
 	|
 	*/
 
-	'key' => 'YourSecretKey!!!',
+	'key' => 'amamaNykpRwDspFnEEDFcrUtWJSJ5Sh4',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -113,7 +113,7 @@ return array(
 		'Illuminate\Validation\ValidationServiceProvider',
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
-
+		'TwigBridge\TwigServiceProvider',
 	),
 
 	/*

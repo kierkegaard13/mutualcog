@@ -3,20 +3,10 @@
 use Illuminate\Auth\UserInterface;
 use Illuminate\Auth\Reminders\RemindableInterface;
 
-class User extends Eloquent implements UserInterface, RemindableInterface {
+class User extends EloquentBridge implements UserInterface, RemindableInterface 
+{
+	protected $table = "users";
 
-	/**
-	 * The database table used by the model.
-	 *
-	 * @var string
-	 */
-	protected $table = 'users';
-
-	/**
-	 * The attributes excluded from the model's JSON form.
-	 *
-	 * @var array
-	 */
 	protected $hidden = array('password');
 
 	/**
@@ -48,5 +38,24 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	{
 		return $this->email;
 	}
+	
+	public function getNameAttribute($value){
+		return ucfirst($value);
+	}
 
+	public function serial(){
+		return $this->hasOne('Serials','user_id');
+	}
+
+	public function messages(){
+		return $this->hasMany('Messages','member_id');
+	}
+
+	public function posts(){
+		return $this->hasMany('Chats','admin_id');
+	}
+
+	public function interactions(){
+		return $this->belongsToMany('User','interactions','interaction_id','user_id');
+	}
 }

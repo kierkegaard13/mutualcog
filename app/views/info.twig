@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Mutual Cognizance</title>
+        <link rel="stylesheet" href="{{base}}/app/libraries/css/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="{{base}}/app/libraries/css/info_style.min.css" />
+        {% block styles %}{% endblock %}
+	<script src='//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js'></script>
+	<script src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.1.0/moment.min.js'></script>
+</head>
+<body>
+{% block header %}
+{% endblock %}
+<div class="container">
+<div class="row">
+	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="background-color:white;margin-top:60px;margin-bottom:20px;padding-bottom:10px;padding-top:10px;">
+		{% block content %}{% endblock %}
+	</div>
+</div>
+</div>
+<script type="text/javascript">
+	document.writeln("<script type='text/javascript' src='{{base}}/app/libraries/css/dist/js/bootstrap.min.js'><" + "/script>");
+	document.writeln("<script type='text/javascript' src='{{base}}/app/libraries/js/info.js'><" + "/script>");
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-24332662-1']);
+	  _gaq.push(['_trackPageview']);
+	  (function() {
+	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

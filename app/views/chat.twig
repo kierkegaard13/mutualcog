@@ -1,0 +1,105 @@
+{% extends 'chat_layout.twig' %}
+
+{% block header %}
+<nav class="navbar">
+	<div class="navbar-header">
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mutual_navbar">
+		<span class="sr-only">Toggle navigation</span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+		</button>
+		<a class="navbar-brand" href="{{site}}">Home</a>
+	</div>
+	<div class="collapse navbar-collapse" id="mutual_navbar">
+		<ul class="nav navbar-nav">
+			<li class="active"><a href="{{site}}/soon">Coming Soon</a></li>
+			<li class="active"><a href="{{site}}/feedback">Feedback</a></li>
+			{% for tag in tag_headers %}
+				<li class="active"><a href="{{site}}/tags/tag/{{tag}}">{{tag}}</a></li>
+			{% endfor %}
+		</ul>
+	</div>
+</nav>
+{% endblock %}
+
+{% block welcome %}
+<div style="display:none;" id="logged_in">{{logged_in}}</div>
+<div style="margin-bottom:10px;">Welcome, {% if not user %}<span id="serial_tracker">{{serial}}</span>{% else %}<span id="serial_tracker" style="display:none;">{{serial}}</span><span id="user_tracker">{{user.name}}</span>{% endif %}</div>
+{% if not logged_in %}
+<form method="post" action="{{site}}/profile/newuser" class="mutual_form" id="login_form">
+<fieldset>
+	<div id="user_group" class="form-group">
+		<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Username must be longer than 2 characters but less than 15" data-trigger="focus" data-container="body" type="text" name="username" id="username" placeholder="Enter your actual or preferred username">
+	</div>
+	<div id="pass1_group" class="form-group">
+		<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Password must be longer than 6 characters but less than 30" data-trigger="focus" data-container="body" type="password" name="pass" id="pass" placeholder="Enter your password">
+	</div>
+	<div id="pass2_group" class="form-group">
+		<input class="form-control" data-toggle="popover" data-original-title="Passwords don't match" data-container="body" data-placement="left" data-trigger="focus" type="password" name="pass2" id="pass2" placeholder="Enter password again to register">
+	</div>
+	<button class="btn btn-primary" type="Submit" style="width:100%;">Login/Register</button>
+</fieldset>
+</form>
+{% else %}
+<div class="last_login" id="{{user.last_login}}"></div>
+<div>Cognizance: {{user.cognizance}}/{{100 + 20*user.level }} (Level: {{user.level}})</div>
+<div class="progress progress-striped active">
+	<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{user.cognizance}}" aria-valuemin="0" aria-valuemax="{{100 + 20*user.level}}" style="width:{{user.cognizance}}%;">
+		<span class="sr-only">Only {{user.cognizance}}% Complete</span>
+	</div>
+</div>
+<a class="btn btn-success btn_btm_l" href="{{site}}/p/{{user.name}}">My Profile</a>
+<a class="btn btn-primary btn_btm_r" href="{{site}}/profile/logout">Logout</a>
+{% endif %}
+{% endblock %}
+
+{% block details %}
+<div class="chat_id" id="{{chat.id}}">{{chat.title}}</div>
+<div style="color:#777;font-size:12px;"><b>Created by </b> <span id="chat_admin">{{chat.admin}}</span>, 
+	<span class="chat_time" id="{{chat.inception}}"></span>
+	with Tags:
+	{% for tag in chat.tags %}
+		<span class="chat_tags"><a href="{{site}}/tags/tag/{{tag.name}}">#{{tag.name}}</a> </span>
+	{% endfor %}
+</div>
+{% endblock %}
+
+{% block members %}
+<div class="frame" style="height:550px;">
+	<div class="chat_title">
+		<div><b>Chat Admin</b></div>
+		<div id="display_admin">
+		
+		</div>
+	</div>
+	<div class="chat_title">
+		<div><b>Chat Moderators</b></div>
+		<div id="display_mods">
+		
+		</div>
+	</div>
+	<div class="chat_title">
+		<div><b>Chat Members</b></div>
+		<div id="display_members">
+		
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div style="height:76%;position:relative;width:100%;overflow:auto;">
+	<div class="frame chat_l" id="chat_messages">
+		<div class="go_back"><span class="glyphicon glyphicon-arrow-left" style="margin-top:0px;"></span></div>
+		<div id="chat_display"></div>
+	</div>
+	<div class="frame chat_r" id="chat_responses">
+		<div id="response_display"></div>
+	</div>
+</div>
+
+<textarea class="global" id="message" style="height:23%;">
+Press enter to send a message to all
+</textarea>
+{% endblock %}
