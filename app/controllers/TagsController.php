@@ -28,7 +28,7 @@ class TagsController extends BaseController {
 	}
 
 	public function getSimilarTag(){
-		$input = Input::get('tag');
+		$input = htmlspecialchars(Input::get('tag'));
 		$tag_arr = array();
 		$tag = new Tags();
 		$tag = $tag->where('name','LIKE','%' . $input . '%')->take(5)->get();

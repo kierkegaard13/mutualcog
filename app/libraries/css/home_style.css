@@ -31,6 +31,24 @@ body{
 	  margin-top:60px;
 	  margin-left:0px;
 	}
+	.tag_search {
+	  margin-bottom:0px;
+	  margin-top:4px;
+	  padding-right:22px;	
+	  position:absolute;
+	  right:0px;
+	  top:0px;
+	  z-index:10;
+	}
+	#tag_dropdown {
+	  box-shadow:0 0 10px -2px #9ecaed;
+	  border-color:#9acaed;
+	  width:196px;
+	  margin-top:-3px;
+	  border-top:none;
+	  border-top-right-radius:0px;
+	  border-top-left-radius:0px; 
+	}
 	.navbar {
 	  position:fixed;
 	  box-shadow: 0px 2px 5px #0f131a;
@@ -43,15 +61,23 @@ body{
 	  background-color: #021b44;
 	  min-height:40px;
 	  height:40px;
-	  overflow:hidden;
 	}
 	.navbar-brand {
 	  padding-top:10px;
 	  padding-bottom:10px;
 	}
 	.navbar-collapse.collapse {
-	  overflow:hidden !important;
+	  margin-left:78px;
 	  padding-left:0px;
+	  padding-right:0px;
+	}
+	.navbar-nav.nav {
+	  position:absolute;
+	  left:0px;
+	  top:0px;
+	  overflow:hidden !important;
+	  padding-right:233px;
+	  height:40px;
 	}
 	.content_right {
           background-image: -webkit-gradient(linear, left, right, from(#F2F2F2), to(transparent)); /* Saf4+, Chrome */
@@ -99,6 +125,19 @@ body{
 	  margin-top:60px;
 	  margin-left:0px;
 	}
+	.tag_search {
+	  margin-left:-20px !important;
+	  margin-right:0px !important;	
+	}
+	#tag_dropdown {
+	  box-shadow:0 0 10px -2px #9ecaed;
+	  border-color:#9acaed;
+	  width:100%;
+	  margin-top:-3px;
+	  border-top:none;
+	  border-top-right-radius:0px;
+	  border-top-left-radius:0px; 
+	}
 	.navbar {
 	  box-shadow: 0px 2px 5px #0f131a;
 	  top:0;
@@ -121,16 +160,23 @@ body{
 	.navbar-header:hover {
   	  background-color: #032865;
 	  cursor:pointer;
+	  padding-left:10px !important;
 	}
 	.navbar-header:hover .navbar-brand { 
+	  padding-left:10px !important;
   	  background-color: #032865;
 	}
 	.navbar-collapse {
+	  padding-right:0px;
 	  max-height:600px;
 	}
 	.navbar-collapse.in {
 	  overflow-y:hidden !important;
+	  overflow-x:hidden !important;
 	}
+}
+.tag_input {
+  height:30px;
 }
 .navbar-toggle {
   background-color:#0f131a;
@@ -160,6 +206,8 @@ body{
 .navbar-nav>li>a {
   padding-top:10px;
   padding-bottom:10px;
+  padding-right:10px !important;
+  padding-left:10px !important;
 }
 .vote_box {
   position:relative;

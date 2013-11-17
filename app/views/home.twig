@@ -11,7 +11,14 @@
 		</button>
 		<a class="navbar-brand" href="{{site}}">Home</a>
 	</div>
-	<div class="collapse navbar-collapse" id="mutual_navbar">
+	<div class="collapse navbar-collapse" id="mutual_navbar" style="position:relative;">
+		<form class="navbar-form tag_search" role="search">
+			<div class="form-group dropdown">
+				<input class="form-control tag_input" id="search_input" type="text" placeholder="Search Tags" autocomplete="off">
+				<ul class="dropdown-menu" id="tag_dropdown" role="menu" aria-labelledby="search_input">
+				</ul>
+			</div>
+		</form>
 		<ul class="nav navbar-nav">
 			<li class="active"><a href="{{site}}/soon">Coming Soon</a></li>
 			<li class="active"><a href="{{site}}/feedback">Feedback</a></li>
