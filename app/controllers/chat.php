@@ -22,8 +22,19 @@ class Chat extends BaseController {
         }
 
 	public function getAdmin(){
-		$chat = Chats::find(htmlspecialchars(Input::get('id')));
+		$chat = Chats::find(Input::get('id'));
 		return $chat->admin;
+	}
+
+	public function postDetails(){
+		$chat = Chats::find(Input::get('id'));
+		if($chat){
+			$details = htmlentities(Input::get('details'));
+			$chat->details = $details;
+			$chat->save();
+			return $chat->details;	
+		}	
+		return false;
 	}
 
 	public function postNewchat(){
@@ -51,8 +62,8 @@ class Chat extends BaseController {
 			if(strlen(Input::get('title')) < 3 || strlen(Input::get('title')) > 180 || Input::get('type') == ""){
 				return Redirect::to(Session::get('curr_page'));
 			}
-			$chat->title = htmlspecialchars(Input::get('title'));
-			$chat->type = htmlspecialchars(Input::get('type'));
+			$chat->title = htmlentities(Input::get('title'));
+			$chat->type = htmlentities(Input::get('type'));
 			if(Auth::check()){
 				$chat->admin = Auth::user()->name;
 				$chat->admin_id = Auth::user()->id;
@@ -72,7 +83,7 @@ class Chat extends BaseController {
 				if(strlen($tag) > 2 && strlen($tag) < 20){
 					$t = new Tags();
 					$tag = str_replace('#','',$tag);
-					$tag = htmlspecialchars($tag);
+					$tag = htmlentities($tag);
 					if($tag){
 						$t->name = $tag;
 						if($t->findAll()){

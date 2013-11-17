@@ -3,7 +3,7 @@
 class Profile extends BaseController {
 
 	public function getCheckuser(){
-		$username = htmlspecialchars(Input::get('username'));
+		$username = htmlentities(Input::get('username'));
 		$user = new User();
 		$user->name = ucfirst($username);
 		if($user->findAll()){
@@ -14,7 +14,7 @@ class Profile extends BaseController {
 	}
 
 	public function getCheckalpha(){
-		$username = htmlspecialchars(Input::get('username'));
+		$username = htmlentities(Input::get('username'));
 		if(preg_match('/[a-zA-Z]/',$username)){
 			return 1;
 		}else{
@@ -23,8 +23,8 @@ class Profile extends BaseController {
 	}
 
 	public function getCheckcredentials(){
-		$username = ucfirst(htmlspecialchars(Input::get('username')));
-		$pass = htmlspecialchars(Input::get('pass'));
+		$username = ucfirst(htmlentities(Input::get('username')));
+		$pass = htmlentities(Input::get('pass'));
 		$user = new User();
 		$user->name = $username;
 		if($user->findAll()){
@@ -42,9 +42,9 @@ class Profile extends BaseController {
 	}
 
 	public function postNewuser(){
-		$username = htmlspecialchars(Input::get('username'));
-		$pass = htmlspecialchars(Input::get('pass'));
-		$pass2 = htmlspecialchars(Input::get('pass2'));
+		$username = htmlentities(Input::get('username'));
+		$pass = htmlentities(Input::get('pass'));
+		$pass2 = htmlentities(Input::get('pass2'));
 		if($username && $pass && $pass2){
 			$user = new User();
 			if(preg_match('/[a-zA-z]/',$username)){

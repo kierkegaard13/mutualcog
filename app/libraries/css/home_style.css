@@ -209,6 +209,12 @@ body{
   padding-right:10px !important;
   padding-left:10px !important;
 }
+.top_5 {
+  margin-top:5px;
+}
+.top_10 {
+  margin-top:10px;
+}
 .vote_box {
   position:relative;
   float:left;

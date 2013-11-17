@@ -1,4 +1,6 @@
 var curr_request;
+var focused = 1;
+var title_blinking = 0;
         
 var socket = io.connect('http://localhost:3000/');
 
@@ -163,6 +165,36 @@ $('#search_input').on('keyup',function(e){
 			$('#tag_dropdown').html('');
 		}
 	}
+});
+
+$('button#add_details').click(function(){
+	$(this).css('display','none');
+	$('#curr_details').css('display','none');
+	$('div#edit_details').css('display','');
+});
+
+$('button#save_details').click(function(){
+	$('div#edit_details').css('display','none');
+	$.ajax({
+		type:'POST',
+		data: {details:$('#detail_text').val(),id:$('.chat_id').attr('id')},
+		url:'//mutualcog.com/chat/details',
+		success:function(hresp){
+			$('#curr_details').html(hresp);
+			$('#curr_details').css('display','');
+			$('button#add_details').css('display','');
+		},
+		error:function(){
+		}
+	});
+});
+
+$(window).on('blur',function(){
+	focused = 0;
+});
+
+$(window).on('focus',function(){
+	focused = 1;
 });
 
 updateChatTimes = function(){
@@ -336,6 +368,24 @@ blinkRedv2 = function(message){
 		}
 	},1000);
 }
+
+notifyMessage = function(){
+	title_blinking = 1;
+	setTimeout(function(){
+		if(focused){
+			$('title').html('Mutual Cognizance');
+			title_blinking = 0;
+		}else{
+			if($('title').html() == 'Mutual Cognizance (1)'){
+				$('title').html('New Message');
+			}else{
+				$('title').html('Mutual Cognizance (1)');
+			}
+			notifyMessage();
+		}
+	},800);
+}
+
 socket.on('connect',function() {
 	socket.emit('room',$('.chat_id').attr('id'));
 	if($('#logged_in').text() == 1){
@@ -394,6 +444,9 @@ socket.on('openChat',function(chat_info){
 	},function(){
 		$(this).css('color','black');
 	});
+	if(!focused && !title_blinking){
+		notifyMessage();
+	}
 	if(chat_info.clicked != "-1"){
 		$('#' + chat_info.clicked + '.chat_mssg').css('background-color','#eee');
 		$('#message').attr('class',chat_info.clicked);
@@ -427,6 +480,9 @@ socket.on('openResponses',function(responses){
 	});
 	$('.chat_resp').on('click',getNestedResponse);
 	$('.chat_link').click(function(e){e.stopPropagation();});
+	if(!focused && !title_blinking){
+		notifyMessage();
+	}
 	if(!stop_scroll){
 		$('#chat_responses').off('scroll',scroll_mod);
 		$('#chat_responses').scrollTop($('#response_display').height());
@@ -450,10 +506,12 @@ socket.on('disconnect',function() {
 // Sends a message to the server via sockets
 function sendMessageToServer(message) {
 	socket.emit('message_sent',message);
+	$('#chat_display').append("<div class='chat_mssg'><div><span class='glyphicon glyphicon-remove mssg_icon'></span><b class='mssg_op' id='" + user_tracker + "' style='color:" + color_arr[serial_tracker % 7] + ";'> " + user_tracker + "(<span class='response_count'>0</span>)</b> : " + message.message + "</div><div class='time'>a few seconds ago</div></div>");
 }
 
 function sendResponseToServer(response) {
 	socket.emit('response_sent',response);
+	$('#response_display').append("<div class='chat_resp'><div><span class='glyphicon glyphicon-remove mssg_icon'></span><b class='mssg_op' id='" + user_tracker + "' style='color:" + color_arr[serial_tracker % 7] + ";'> " + user_tracker + "(<span class='response_count'>0</span>)</b> : " + response.message + "</div><div class='time'>a few seconds ago</div></div>");
 }
 
 $('#message').click(function(){
