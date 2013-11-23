@@ -101,16 +101,9 @@ body{
 	.chat_l {
 	  height:100% !important;
 	  float:left;
-	  width:49.6%;
+	  width:100%;
 	  background-color:#bbb;
 	  position:relative; 
-	}
-	.chat_r {
-	  height:100% !important;
-	  float:right;
-	  width:49.6%;
-	  background-color:#bbb;
-	  position:relative;
 	}
 }
 @media screen and (max-width:767px){
@@ -148,13 +141,6 @@ body{
 	  width:100%;
 	  background-color:#bbb;
 	  position:relative; 
-	}
-	.chat_r {
-	  height:100% !important;
-	  float:right;
-	  background-color:#bbb;
-	  position:relative;
-	  display:none;
 	}
 	.navbar-header:hover {
   	  background-color: #032865;
@@ -209,6 +195,9 @@ body{
 }
 .top_10 {
   margin-top:10px;
+}
+.pad_l_20 {
+  padding-left:20px;
 }
 .box_r_1 {
   height:260px !important;
@@ -292,12 +281,6 @@ body{
   font-size:12px;
 }
 #chat_display {
-  position:absolute;
-  top:10px;
-  left:10px;
-  right:10px; 
-}
-#response_display {
   position:absolute;
   top:10px;
   left:10px;

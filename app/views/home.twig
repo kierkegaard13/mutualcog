@@ -21,7 +21,6 @@
 		</form>
 		<ul class="nav navbar-nav">
 			<li class="active"><a href="{{site}}/soon">Coming Soon</a></li>
-			<li class="active"><a href="{{site}}/feedback">Feedback</a></li>
 			{% for tag in tags %}
 				<li class="active"><a href="{{site}}/tags/tag/{{tag}}">{{tag}}</a></li>
 			{% endfor %}
@@ -67,14 +66,8 @@
 	<div id="title_group" class="form-group">
 		<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Title must be longer than 2 characters but less than 180" data-trigger="focus" data-container="body" type="text" name="title" id="Title" placeholder="What's this chat about?">
 	</div>
-	<div id="type_group" class="form-group">
-		<select class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Please select a chat type" data-trigger="focus" data-container="body" id="Type" name="type">
-			<option value="">Select the Type of Chat: </option>
-			<option value="open">Open Chat </option>
-			<!--<option value="private">Private Chat (custom pick chat members) </option>
-			<option value="ama">AMA Chat </option>
-			-->
-		</select>
+	<div id="link_group" class="form-group">
+		<input class="form-control" type="text" name="link" id="Link" placeholder="Add a link (optional)">
 	</div>
 	<div id="tags_group" class="form-group">
 		<input class="form-control" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Tags" data-container="body" data-placement="bottom" type="text" name="tags" id="Tags" placeholder="Use spaces to separate tags (max: 5)" autocomplete="off">

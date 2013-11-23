@@ -67,7 +67,6 @@ Route::group(array('before' => 'assignSerial'), function(){
 		Route::controller('soon','soon');
 		Route::controller('privacy','privacy');
 		Route::controller('terms','terms');
-		Route::controller('feedback','FeedbackController');
 		Route::controller('tags','TagsController');
 		Route::controller('chat','chat');
 		Route::controller('scripts','scripts');

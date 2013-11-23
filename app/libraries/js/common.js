@@ -2,8 +2,8 @@ var selected_tag = -1;
 
 updateChatTimes = function(){
 	$.each($('.chat_time'),function(index,value){
-			$(this).text(moment.utc($(this).attr('id')).fromNow());
-			});
+		$(this).text(moment.utc($(this).attr('id')).fromNow());
+	});
 	if($('.last_login').length){
 		$('.last_login').html('<b>Last login: </b>' + moment.utc($('.last_login').attr('id')).fromNow());
 	}
@@ -91,7 +91,6 @@ $('#login_form').submit(function(){
 $('#home_form').submit(function(){
 	var submit = 1;
 	var title = $('#Title').val();
-	var type = $('#Type').val();
 	var tags = $('#Tags').val();
 	$('.form_error').hide();
 	$('.form-group').attr('class','form-group');
@@ -100,11 +99,6 @@ $('#home_form').submit(function(){
 		$('#title_group').attr('class','form-group has-error');
 		submit = 0;
 	}
-	if(type == ""){
-		$('#Type').tooltip('show');
-		$('#type_group').attr('class','form-group has-error');
-		submit = 0;
-	}	
 	if(tags.split(' ')[0] == "" || tags.split(' ').length > 5){
 		$('#Tags').attr('data-original-title','Must have at least 1 tag but less than 6');
 		$('#Tags').tooltip({placement:'left',trigger:'focus'});
@@ -131,11 +125,6 @@ $('#home_form').submit(function(){
 		return false;
 	}
 });
-
-window.onload = function(){
-	$('#content_right').height($('#content').height());
-	$('#content_left').height($('#content').height());
-}
 
 $('.big_upvote').click(function(e){
 	e.stopPropagation();

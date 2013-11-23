@@ -59,11 +59,11 @@ class Chat extends BaseController {
 		}
 		if($validated){
 			$chat = new Chats();
-			if(strlen(Input::get('title')) < 3 || strlen(Input::get('title')) > 180 || Input::get('type') == ""){
+			if(strlen(Input::get('title')) < 3 || strlen(Input::get('title')) > 180){
 				return Redirect::to(Session::get('curr_page'));
 			}
 			$chat->title = htmlentities(Input::get('title'));
-			$chat->type = htmlentities(Input::get('type'));
+			$chat->type = 'open';
 			if(Auth::check()){
 				$chat->admin = Auth::user()->name;
 				$chat->admin_id = Auth::user()->id;
@@ -101,6 +101,7 @@ class Chat extends BaseController {
 					}
 				}
 			}
+			return Redirect::to(action('chat@getOpen',$chat->id));
 		}
 		return Redirect::to(Session::get('curr_page'));
 	}

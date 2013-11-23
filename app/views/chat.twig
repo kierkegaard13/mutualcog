@@ -21,7 +21,6 @@
 		</form>
 		<ul class="nav navbar-nav">
 			<li class="active"><a href="{{site}}/soon">Coming Soon</a></li>
-			<li class="active"><a href="{{site}}/feedback">Feedback</a></li>
 			{% for tag in tag_headers %}
 				<li class="active"><a href="{{site}}/tags/tag/{{tag}}">{{tag}}</a></li>
 			{% endfor %}
@@ -110,11 +109,7 @@
 {% block content %}
 <div style="height:76%;position:relative;width:100%;overflow:auto;">
 	<div class="frame chat_l" id="chat_messages">
-		<div class="go_back"><span class="glyphicon glyphicon-arrow-left" style="margin-top:0px;"></span></div>
 		<div id="chat_display"></div>
-	</div>
-	<div class="frame chat_r" id="chat_responses">
-		<div id="response_display"></div>
 	</div>
 </div>
 
