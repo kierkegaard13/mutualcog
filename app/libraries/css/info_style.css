@@ -12,10 +12,13 @@ body{
 	  top:0px;
 	  z-index:10;
 	}
+	.tag_input {
+	  width:200px;
+	}
 	#tag_dropdown {
 	  box-shadow:0 0 10px -2px #9ecaed;
 	  border-color:#9acaed;
-	  width:196px;
+	  width:200px;
 	  margin-top:-3px;
 	  border-top:none;
 	  border-top-right-radius:0px;

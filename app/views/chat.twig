@@ -69,10 +69,10 @@
 		<span class="chat_tags"><a href="{{site}}/tags/tag/{{tag.name}}">#{{tag.name}}</a> </span>
 	{% endfor %}
 </div>
-{% if user.name == chat.admin %}
 <div class="top_5" id="curr_details">
 {{chat.details}}
 </div>
+{% if user.name == chat.admin %}
 <button class="btn btn-primary top_5" id="add_details">Edit Details</button>
 <div class="top_5" id="edit_details" style="display:none;">
 	<textarea rows="6" id="detail_text">

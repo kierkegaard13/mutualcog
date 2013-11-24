@@ -31,6 +31,9 @@ body{
 	  margin-top:60px;
 	  margin-left:0px;
 	}
+	.tag_input {
+	  width:200px;
+	}
 	.tag_search {
 	  margin-bottom:0px;
 	  margin-top:4px;
@@ -43,7 +46,7 @@ body{
 	#tag_dropdown {
 	  box-shadow:0 0 10px -2px #9ecaed;
 	  border-color:#9acaed;
-	  width:196px;
+	  width:200px;
 	  margin-top:-3px;
 	  border-top:none;
 	  border-top-right-radius:0px;

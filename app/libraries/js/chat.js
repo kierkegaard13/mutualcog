@@ -2,6 +2,7 @@ var curr_request;
 var focused = 1;
 var title_blinking = 0;
 var clicked_on = -1;
+var mssg_clicked = -1;
         
 var socket = io.connect('http://localhost:3000/');
 
@@ -239,7 +240,9 @@ $(document).ready(function(){
 	$('#chat_messages').click(function(){
 		$('#message').attr('class','global');
 		$('.chat_mssg').css('background-color','');
-		$('#response_display').html('');
+		$('.chat_resp').css('background-color','');
+		$('#mssg_cont_' + mssg_clicked).children('.responses_to_' + mssg_clicked).remove();
+		clicked_on = -1;
 		socket.emit('leave_last_room');
 		if($('#message').text() != ""){
 			$('#message').text("Press enter to send a message to all");
@@ -268,19 +271,44 @@ deleteIt = function(e){
 
 getResponse = function(e){
 	e.stopPropagation();
-	clicked_on = $(this).attr('id');
-	socket.emit('show_responses',$(this).attr('id'));
-	$('.chat_mssg').css('background-color','');
-	$(this).css('background-color','#eee');
-	$('#message').attr('class',$(this).attr('id'));
-	if($('#message').text() != ""){
-		$('#message').text("Press enter to respond to " + $(this).children().eq(0).children('.mssg_op').attr('id') + "\'s message");
+	if($(this).attr('class') == 'chat_mssg'){
+		mssg_clicked = $(this).attr('id');
+	}
+	if(clicked_on != $(this).attr('id')){
+		clicked_on = $(this).attr('id');
+		socket.emit('show_responses',$(this).attr('id'));
+		$('.chat_mssg').css('background-color','');
+		$('.chat_resp').css('background-color','');
+		$(this).css('background-color','#eee');
+		$('#message').attr('class',$(this).attr('id'));
+		if($('#message').text() != ""){
+			$('#message').text("Press enter to respond to " + $(this).children().eq(0).children('.mssg_op').attr('id') + "\'s message");
+		}else{
+			$('#message').val("Press enter to respond to " + $(this).children().eq(0).children('.mssg_op').attr('id') + "\'s message");
+			$('#message').on('click',function(){
+				$(this).val("");
+				$(this).off('click');
+			});
+		}
 	}else{
-		$('#message').val("Press enter to respond to " + $(this).children().eq(0).children('.mssg_op').attr('id') + "\'s message");
-		$('#message').on('click',function(){
-			$(this).val("");
-			$(this).off('click');
-		});
+		if($('#mssg_cont_' + clicked_on).children('.responses_to_' + clicked_on).length){
+			$('#mssg_cont_' + clicked_on).children('.responses_to_' + clicked_on).remove();
+		}else{
+			socket.emit('show_responses',$(this).attr('id'));
+			$('.chat_mssg').css('background-color','');
+			$('.chat_resp').css('background-color','');
+			$(this).css('background-color','#eee');
+			$('#message').attr('class',$(this).attr('id'));
+			if($('#message').text() != ""){
+				$('#message').text("Press enter to respond to " + $(this).children().eq(0).children('.mssg_op').attr('id') + "\'s message");
+			}else{
+				$('#message').val("Press enter to respond to " + $(this).children().eq(0).children('.mssg_op').attr('id') + "\'s message");
+				$('#message').on('click',function(){
+					$(this).val("");
+					$(this).off('click');
+				});
+			}
+		}
 	}
 };
 
@@ -442,12 +470,13 @@ socket.on('openResponses',function(responses){
 	$.each(responses,function(index,value){
 		responseto = value.responseto;
 		if((serial_tracker == value.author || $('#chat_admin').text() == serial_tracker || user_tracker == value.author || $('#chat_admin').text() == user_tracker)  && value.message != '<i>This message has been deleted</i>'){
-			var tmp = "<div class='responses pad_l_20' id='mssg_cont_" + value.id + "'><div class='chat_resp' id='" + value.id + "'><div><span id='" + value.id + "' class='glyphicon glyphicon-remove resp_icon'></span><b class='mssg_op' id='" + value.author + "' style='color:" + color_arr[value.serial % 7] + ";'> " + value.author + "(<span class='response_count' id='" + value.id + "'>" + value.responses + "</span>)</b> : " + value.message + "</div><div class='time' id='" + value.inception + "'>" + moment.utc(value.inception).fromNow() + "</div></div></div>";
+			var tmp = "<div class='responses_to_" + value.responseto + " pad_l_20' id='mssg_cont_" + value.id + "'><div class='chat_resp' id='" + value.id + "'><div><span id='" + value.id + "' class='glyphicon glyphicon-remove resp_icon'></span><b class='mssg_op' id='" + value.author + "' style='color:" + color_arr[value.serial % 7] + ";'> " + value.author + "(<span class='response_count' id='" + value.id + "'>" + value.responses + "</span>)</b> : " + value.message + "</div><div class='time' id='" + value.inception + "'>" + moment.utc(value.inception).fromNow() + "</div></div></div>";
 		}else{
-			var tmp = "<div class='responses pad_l_20' id='mssg_cont_" + value.id + "'><div class='chat_resp' id='" + value.id + "'><div><b class='mssg_op' id='" + value.author + "' style='color:" + color_arr[value.serial % 7] + ";'> " + value.author + "(<span class='response_count' id='" + value.id + "'>" + value.responses + "</span>)</b> : " + value.message + "</div><div class='time' id='" + value.inception + "'>" + moment.utc(value.inception).fromNow() + "</div></div></div>"	
+			var tmp = "<div class='responses_to_" + value.responseto + " pad_l_20' id='mssg_cont_" + value.id + "'><div class='chat_resp' id='" + value.id + "'><div><b class='mssg_op' id='" + value.author + "' style='color:" + color_arr[value.serial % 7] + ";'> " + value.author + "(<span class='response_count' id='" + value.id + "'>" + value.responses + "</span>)</b> : " + value.message + "</div><div class='time' id='" + value.inception + "'>" + moment.utc(value.inception).fromNow() + "</div></div></div>"	
 		}
 		messages.push(tmp);
 	});
+	$('#mssg_cont_' + responseto).children('.responses_to_' + responseto).remove();
 	$('#mssg_cont_' + responseto).append(messages.join(''));
 	$('.resp_icon').on('click',deleteIt);
 	$('.resp_icon').hover(function(){
@@ -455,6 +484,7 @@ socket.on('openResponses',function(responses){
 	},function(){
 		$(this).css('color','black');
 	});
+	$('.chat_resp').off('click');
 	$('.chat_resp').on('click',getResponse);
 	$('.chat_link').click(function(e){e.stopPropagation();});
 	if(!focused && !title_blinking){
@@ -493,9 +523,9 @@ function sendMessageToServer(message) {
 function sendResponseToServer(response,clicked_on) {
 	socket.emit('response_sent',response);
 	if($('#logged_in').text() == 1){
-		$('#mssg_cont_' + clicked_on).append("<div class='chat_resp'><div><span class='glyphicon glyphicon-remove mssg_icon'></span><b class='mssg_op' id='" + user_tracker + "' style='color:" + color_arr[serial_tracker % 7] + ";'> " + user_tracker + "(<span class='response_count'>0</span>)</b> : " + response.message + "</div><div class='time'>a few seconds ago</div></div>");
+		$('#mssg_cont_' + clicked_on).append("<div class='responses_to_" + clicked_on + " pad_l_20'><div class='chat_resp'><div><span class='glyphicon glyphicon-remove mssg_icon'></span><b class='mssg_op' id='" + user_tracker + "' style='color:" + color_arr[serial_tracker % 7] + ";'> " + user_tracker + "(<span class='response_count'>0</span>)</b> : " + response.message + "</div><div class='time'>a few seconds ago</div></div></div>");
 	}else{
-		$('#mssg_cont_' + clicked_on).append("<div class='chat_resp'><div><span class='glyphicon glyphicon-remove mssg_icon'></span><b class='mssg_op' id='" + serial_tracker + "' style='color:" + color_arr[serial_tracker % 7] + ";'> " + serial_tracker + "(<span class='response_count'>0</span>)</b> : " + response.message + "</div><div class='time'>a few seconds ago</div></div>");
+		$('#mssg_cont_' + clicked_on).append("<div class='responses_to_" + clicked_on + " pad_l_20'><div class='chat_resp'><div><span class='glyphicon glyphicon-remove mssg_icon'></span><b class='mssg_op' id='" + serial_tracker + "' style='color:" + color_arr[serial_tracker % 7] + ";'> " + serial_tracker + "(<span class='response_count'>0</span>)</b> : " + response.message + "</div><div class='time'>a few seconds ago</div></div></div>");
 	}
 }
 
