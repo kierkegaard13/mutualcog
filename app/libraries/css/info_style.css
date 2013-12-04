@@ -102,6 +102,13 @@ body{
 	  overflow-y:hidden !important;
 	}
 }
+#main {
+  background-color:white;
+  margin-top:60px;
+  margin-bottom:20px;
+  padding-bottom:10px;
+  padding-top:10px; 
+}
 .tag_input {
   height:30px;
 }
