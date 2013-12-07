@@ -218,6 +218,14 @@ body{
   padding-right:10px !important;
   padding-left:10px !important;
 }
+.link_thumbnail {
+  margin-right:10px;
+  width:80px;
+}
+.chat_title {
+  padding-left:53px;
+  margin-top:-5px;
+}
 .top_5 {
   margin-top:5px;
 }
@@ -229,7 +237,7 @@ body{
   float:left;
   padding-left:15px;
   width:3em;
-  margin-top:5px;
+  margin-top:0px;
   margin-bottom:-5px;
 }
 .box1 {
@@ -266,7 +274,7 @@ body{
   margin-right:550px;
   margin-left:1%;
 }
-.chat_title {
+.chat_title_box {
   padding:20px;
   border-bottom:1px solid #ddd; 
   box-shadow: 2px 0px 2px #ccc; 
@@ -275,7 +283,7 @@ body{
   color:#777;
   font-size:12px; 
 }
-.chat_title:hover {
+.chat_title_box:hover {
   background-color: #eee;
 }
 .btn_btm_r {
@@ -374,7 +382,6 @@ body{
   padding: 10px;
   position:relative;
   white-space:pre-line;
-  word-break:break-all;
 }
 textarea {
   resize:none;

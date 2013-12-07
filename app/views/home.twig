@@ -81,7 +81,7 @@
 <div class="frame" style="height:1536px;white-space:normal;">
 	<div id="chat_list">
 		{% for chat in chats %} 
-			<div class="chat_title">
+			<div class="chat_title_box">
 				<div class="row">
 					<div class="vote_box">
 						{% if chat.id in upvoted %}
@@ -96,7 +96,12 @@
 							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
 						{% endif %}
 					</div>
-					<div class="col-lg-11">
+					{% if chat.image %}
+						<a class="pull-left link_thumbnail" href="{{chat.link}}">
+							<img src="{{chat.image}}" width="80" height="80">
+						</a>
+					{% endif %}
+					<div class="chat_title">
 						<a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:blue;">{{chat.title}}</a>
 						<div class="chat_info">Created by <b>{{chat.admin}}</b>, 
 							<span class="chat_time" id="{{chat.inception}}"></span>

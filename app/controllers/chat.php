@@ -57,12 +57,33 @@ class Chat extends BaseController {
 				$validated = 1;
 			}
 		}
-		if($validated){
+		//if($validated){
 			$chat = new Chats();
 			if(strlen(Input::get('title')) < 3 || strlen(Input::get('title')) > 180){
 				return Redirect::to(Session::get('curr_page'));
 			}
 			$chat->title = htmlentities(Input::get('title'));
+			if(htmlentities(Input::get('link'))){
+				$link = htmlentities(Input::get('link'));
+				if((strpos($link,'http://') == 'false') && (strpos($link,'https://') == 'false')){
+					$link = 'http://' . $link;
+				}
+				function get($a,$b,$c)
+				{
+					 // Gets a string between 2 strings
+					 $y = explode($b,$a);
+					 $x = explode($c,$y[1]);
+					 return $x[0];
+				}
+				$image = get(file_get_contents($link), "<img src=", " ");
+				$image = str_replace('"','',$image);
+				$site_name = str_replace('http://','',$link);
+				$site_name = explode('/',$site_name);
+				$site_name = $site_name[0];
+				$chat->link = $link;
+				$chat->image = $image;
+				$chat->site_name = $site_name;
+			}
 			$chat->type = 'open';
 			if(Auth::check()){
 				$chat->admin = Auth::user()->name;
@@ -102,7 +123,7 @@ class Chat extends BaseController {
 				}
 			}
 			return Redirect::to(action('chat@getOpen',$chat->id));
-		}
+		//}
 		return Redirect::to(Session::get('curr_page'));
 	}
 
