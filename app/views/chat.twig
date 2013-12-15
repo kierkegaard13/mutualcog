@@ -33,30 +33,30 @@
 <div style="display:none;" id="logged_in">{{logged_in}}</div>
 <div style="margin-bottom:10px;">Welcome, {% if not user %}<span id="serial_tracker">{{serial}}</span>{% else %}<span id="serial_tracker" style="display:none;">{{serial}}</span><span id="user_tracker">{{user.name}}</span>{% endif %}</div>
 {% if not logged_in %}
-<form method="post" action="{{site}}/profile/newuser" class="mutual_form" id="login_form">
-<fieldset>
-	<div id="user_group" class="form-group">
-		<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Username must be longer than 2 characters but less than 15" data-trigger="focus" data-container="body" type="text" name="username" id="username" placeholder="Enter your actual or preferred username">
-	</div>
-	<div id="pass1_group" class="form-group">
-		<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Password must be longer than 6 characters but less than 30" data-trigger="focus" data-container="body" type="password" name="pass" id="pass" placeholder="Enter your password">
-	</div>
-	<div id="pass2_group" class="form-group">
-		<input class="form-control" data-toggle="popover" data-original-title="Passwords don't match" data-container="body" data-placement="left" data-trigger="focus" type="password" name="pass2" id="pass2" placeholder="Enter password again to register">
-	</div>
-	<button class="btn btn-primary" type="Submit" style="width:100%;">Login/Register</button>
-</fieldset>
-</form>
+	<form method="post" action="{{site}}/profile/newuser" class="mutual_form" id="login_form">
+	<fieldset>
+		<div id="user_group" class="form-group">
+			<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Username must be longer than 2 characters but less than 15" data-trigger="focus" data-container="body" type="text" name="username" id="username" placeholder="Enter your actual or preferred username">
+		</div>
+		<div id="pass1_group" class="form-group">
+			<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Password must be longer than 6 characters but less than 30" data-trigger="focus" data-container="body" type="password" name="pass" id="pass" placeholder="Enter your password">
+		</div>
+		<div id="pass2_group" class="form-group">
+			<input class="form-control" data-toggle="popover" data-original-title="Passwords don't match" data-container="body" data-placement="left" data-trigger="focus" type="password" name="pass2" id="pass2" placeholder="Enter password again to register">
+		</div>
+		<button class="btn btn-primary" type="Submit" style="width:100%;">Login/Register</button>
+	</fieldset>
+	</form>
 {% else %}
-<div class="last_login" id="{{user.last_login}}"></div>
-<div>Cognizance: {{user.cognizance}}/{{100 + 20*user.level }} (Level: {{user.level}})</div>
-<div class="progress progress-striped active">
-	<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{user.cognizance}}" aria-valuemin="0" aria-valuemax="{{100 + 20*user.level}}" style="width:{{user.cognizance}}%;">
-		<span class="sr-only">Only {{user.cognizance}}% Complete</span>
+	<div class="last_login" id="{{user.last_login}}"></div>
+	<div>Cognizance: {{user.cognizance}}/{{100 + 20*user.level }} (Level: {{user.level}})</div>
+	<div class="progress progress-striped active">
+		<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{user.cognizance}}" aria-valuemin="0" aria-valuemax="{{100 + 20*user.level}}" style="width:{{user.cognizance}}%;">
+			<span class="sr-only">Only {{user.cognizance}}% Complete</span>
+		</div>
 	</div>
-</div>
-<a class="btn btn-success btn_btm_l" href="{{site}}/p/{{user.name}}">My Profile</a>
-<a class="btn btn-primary btn_btm_r" href="{{site}}/profile/logout">Logout</a>
+	<a class="btn btn-success btn_btm_l" href="{{site}}/p/{{user.name}}">My Profile</a>
+	<a class="btn btn-primary btn_btm_r" href="{{site}}/profile/logout">Logout</a>
 {% endif %}
 {% endblock %}
 
@@ -72,14 +72,14 @@
 <div class="top_5" id="curr_details">
 {{chat.details}}
 </div>
-{% if user.name == chat.admin %}
-<button class="btn btn-primary top_5" id="add_details">Edit Details</button>
-<div class="top_5" id="edit_details" style="display:none;">
-	<textarea rows="6" id="detail_text">
-		{{chat.details}}
-	</textarea>
-	<button class="btn btn-success top_10" id="save_details">Save Details</button>
-</div>
+{% if user.name == chat.admin or serial == chat.admin %}
+	<button class="btn btn-primary top_5" id="add_details">Edit Details</button>
+	<div class="top_5" id="edit_details" style="display:none;">
+		<textarea rows="6" id="detail_text">
+			{{chat.details}}
+		</textarea>
+		<button class="btn btn-success top_10" id="save_details">Save Details</button>
+	</div>
 {% endif %}
 {% endblock %}
 
@@ -114,6 +114,6 @@
 </div>
 
 <textarea class="global" id="message" style="height:23%;">
-Press enter to send a message to all
+Press enter to send a message to all (Learn more about markdown under the home dropdown menu)
 </textarea>
 {% endblock %}

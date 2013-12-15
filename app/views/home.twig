@@ -72,6 +72,7 @@
 	<div id="tags_group" class="form-group">
 		<input class="form-control" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Tags" data-container="body" data-placement="bottom" type="text" name="tags" id="Tags" placeholder="Use spaces to separate tags (max: 5)" autocomplete="off">
 	</div>
+	<input type="hidden" id="java_key" name="java_key" value="0">
 	<button class="btn btn-primary" type="Submit" style="width:100%;">Create</button>
 </fieldset>
 </form>
@@ -98,7 +99,7 @@
 					</div>
 					{% if chat.image %}
 						<a class="pull-left link_thumbnail" href="{{chat.link}}">
-							<img src="{{chat.image}}" width="80" height="80">
+							<img src="{{chat.image}}" alt="Image Error" width="80" height="80">
 						</a>
 					{% endif %}
 					<div class="chat_title">

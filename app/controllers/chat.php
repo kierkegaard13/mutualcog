@@ -29,10 +29,12 @@ class Chat extends BaseController {
 	public function postDetails(){
 		$chat = Chats::find(Input::get('id'));
 		if($chat){
-			$details = htmlentities(Input::get('details'));
-			$chat->details = $details;
-			$chat->save();
-			return $chat->details;	
+			if(Session::get('unique_serial') == $chat->admin || Auth::user()->name == $chat->admin){
+				$details = htmlentities(Input::get('details'));
+				$chat->details = $details;
+				$chat->save();
+				return $chat->details;	
+			}
 		}	
 		return false;
 	}
@@ -57,7 +59,10 @@ class Chat extends BaseController {
 				$validated = 1;
 			}
 		}
-		//if($validated){
+		if(htmlentities(Input::get('js_key')) != 'js_enabled'){
+			$validated = 0;
+		}
+		if($validated){
 			$chat = new Chats();
 			if(strlen(Input::get('title')) < 3 || strlen(Input::get('title')) > 180){
 				return Redirect::to(Session::get('curr_page'));
@@ -123,7 +128,7 @@ class Chat extends BaseController {
 				}
 			}
 			return Redirect::to(action('chat@getOpen',$chat->id));
-		//}
+		}
 		return Redirect::to(Session::get('curr_page'));
 	}
 

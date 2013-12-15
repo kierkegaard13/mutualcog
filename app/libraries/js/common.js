@@ -88,40 +88,69 @@ $('#login_form').submit(function(){
 	} 
 });
 
+function cookiesEnabled() {
+	var cookieEnabled = navigator.cookieEnabled;
+
+	if (cookieEnabled === false) {
+		return false;
+	}
+
+	if (!document.cookie && (cookieEnabled === null || /*@cc_on!@*/false))
+	{
+		document.cookie = "testcookie=1";
+
+		if (!document.cookie) {
+			return false;
+		} else {
+			document.cookie = "testcookie=; expires=" + new Date(0).toUTCString();
+		}
+	}
+
+	return true;
+}
+
 $('#home_form').submit(function(){
-	var submit = 1;
-	var title = $('#Title').val();
-	var tags = $('#Tags').val();
-	$('.form_error').hide();
-	$('.form-group').attr('class','form-group');
-	if(title.length < 3 || title.length > 180){
+	if(cookiesEnabled()){
+		var submit = 1;
+		var title = $('#Title').val();
+		var tags = $('#Tags').val();
+		$('.form_error').hide();
+		$('.form-group').attr('class','form-group');
+		if(title.length < 3 || title.length > 180){
+			$('#Title').attr('data-original-title','Title must be longer than 2 characters but less than 180');
+			$('#Title').tooltip('show');
+			$('#title_group').attr('class','form-group has-error');
+			submit = 0;
+		}
+		if(tags.split(' ')[0] == "" || tags.split(' ').length > 5){
+			$('#tags_group').attr('class','form-group has-error');		
+			$('#Tags').attr('data-original-title','Must have at least 1 tag but less than 6');
+			$('#Tags').tooltip({placement:'left',trigger:'focus'});
+			$('#Tags').tooltip('show');
+			submit = 0;
+		}else{
+			tags = tags.split(' ');
+			$.each(tags,function(index,value){
+				value = value.substr(1);
+				if((value.length < 3 || value.length > 19) && value.length != 0){
+					$('#tags_group').attr('class','form-group has-error');
+					$('#Tags').attr('data-original-title','Tags must be longer than 2 characters but less than 20');
+					$('#Tags').tooltip({placement:'left',trigger:'focus'});
+					$('#Tags').tooltip('show');
+					submit = 0;
+					return false;
+				}
+			});
+		}
+		if(submit){
+			$('#home_form').append('<input type="hidden" name="js_key" val="js_enabled" id="js_key">');
+			return true;
+		}else{
+			return false;
+		}
+	}else{
+		$('#Title').attr('data-original-title','You must enable cookies to post chats');
 		$('#Title').tooltip('show');
-		$('#title_group').attr('class','form-group has-error');
-		submit = 0;
-	}
-	if(tags.split(' ')[0] == "" || tags.split(' ').length > 5){
-		$('#Tags').attr('data-original-title','Must have at least 1 tag but less than 6');
-		$('#Tags').tooltip({placement:'left',trigger:'focus'});
-		$('#Tags').tooltip('show');
-		$('#tags_group').attr('class','form-group has-error');		
-		submit = 0;
-	}else{
-		tags = tags.split(' ');
-		$.each(tags,function(index,value){
-			value = value.substr(1);
-			if((value.length < 3 || value.length > 19) && value.length != 0){
-				$('#tags_group').attr('class','form-group has-error');
-				$('#Tags').attr('data-original-title','Tags must be longer than 2 characters but less than 20');
-				$('#Tags').tooltip({placement:'left',trigger:'focus'});
-				$('#Tags').tooltip('show');
-				submit = 0;
-				return false;
-			}
-		});
-	}
-	if(submit){
-		return true;
-	}else{
 		return false;
 	}
 });

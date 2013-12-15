@@ -11,15 +11,14 @@
 
 namespace Predis\Replication;
 
-use \PHPUnit_Framework_TestCase as StandardTestCase;
-
+use PredisTestCase;
 use Predis\Command\CommandInterface;
 use Predis\Profile\ServerProfile;
 
 /**
  *
  */
-class ReplicationStrategyTest extends StandardTestCase
+class ReplicationStrategyTest extends PredisTestCase
 {
     /**
      * @group disconnected
@@ -276,6 +275,7 @@ class ReplicationStrategyTest extends StandardTestCase
             'PTTL'                  => 'write',
             'SORT'                  => 'variable',
             'KEYS'                  => 'read',
+            'SCAN'                  => 'read',
             'RANDOMKEY'             => 'read',
 
             /* commands operating on string values */
@@ -321,8 +321,9 @@ class ReplicationStrategyTest extends StandardTestCase
             'SCARD'                 => 'read',
             'SISMEMBER'             => 'read',
             'SMEMBERS'              => 'read',
-            'SPOP'                  => 'write',
+            'SSCAN'                 => 'read',
             'SRANDMEMBER'           => 'read',
+            'SPOP'                  => 'write',
             'SREM'                  => 'write',
             'SINTER'                => 'read',
             'SUNION'                => 'read',
@@ -343,6 +344,7 @@ class ReplicationStrategyTest extends StandardTestCase
             'ZREVRANGEBYSCORE'      => 'read',
             'ZREVRANK'              => 'read',
             'ZSCORE'                => 'read',
+            'ZSCAN'                 => 'read',
 
             /* commands operating on hashes */
             'HDEL'                  => 'write',
@@ -357,6 +359,7 @@ class ReplicationStrategyTest extends StandardTestCase
             'HSET'                  => 'write',
             'HSETNX'                => 'write',
             'HVALS'                 => 'read',
+            'HSCAN'                 => 'read',
 
             /* scripting */
             'EVAL'                  => 'write',
