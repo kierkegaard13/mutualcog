@@ -41,54 +41,54 @@ var prospect = io.on('connection', function(client) {
 			if(err)console.log(err);
 			client.admin = rows[0].admin;
 			client.is_admin = 0;
-			if(info.new_member == client.admin || info.serial == client.admin){
-				client.is_admin = 1;
-			}
 			if(info.logged_in == 1){
 				client.serial = sanitize(info.serial).xss();
-				conn.where({name:client.user}).get('users',function(err,rows){
+				client.serial_id = sanitize(info.serial_id).xss();
+				client.user_id = sanitize(info.user_id).xss();
+				if((client.user == client.admin || client.serial == client.admin) && (client.user_id == rows[0].admin_id || client.serial_id == rows[0].admin_id)){  //added in case a user logs in after creating a chat
+					client.is_admin = 1;
+				}
+				client.memb_id = client.user_id;
+				conn.where({member_id:client.memb_id,chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
 					if(err)console.log(err);
-					client.memb_id = rows[0].id;
-					conn.where({member_id:client.memb_id,chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
-						if(err)console.log(err);
-						if(rows.length == 0){
-							conn.insert('members_to_chats',{member_id:client.memb_id,chat_id:client.chat_id,is_mod:"0",is_admin:client.is_admin,user:client.user},function(err,info){
-								if(err)console.log(err);
-								conn.where({chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
-									if(err)console.log(err);
-									io.sockets.in(client.room).emit('displayMembers',rows);
-								});
-							});
-						}else{
+					if(rows.length == 0){
+						conn.insert('members_to_chats',{member_id:client.memb_id,chat_id:client.chat_id,is_mod:"0",is_admin:client.is_admin,user:client.user},function(err,info){
+							if(err)console.log(err);
 							conn.where({chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
 								if(err)console.log(err);
 								io.sockets.in(client.room).emit('displayMembers',rows);
 							});
-						}
-					});
+						});
+					}else{
+						conn.where({chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
+							if(err)console.log(err);
+							io.sockets.in(client.room).emit('displayMembers',rows);
+						});
+					}
 				});
 			}else{
-				client.serial = sanitize(client.user).xss();
-				conn.where({serial_id:client.user}).get('serials',function(err,rows){
+				client.serial = client.user;
+				client.serial_id = sanitize(info.serial_id).xss();
+				if(client.user == client.admin && client.serial_id == rows[0].admin_id){  //added in case a user logs in after creating a chat
+					client.is_admin = 1;
+				}
+				client.memb_id = client.serial_id;
+				conn.where({member_id:client.memb_id,chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
 					if(err)console.log(err);
-					client.memb_id = rows[0].id;
-					conn.where({member_id:client.memb_id,chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
-						if(err)console.log(err);
-						if(rows.length == 0){
-							conn.insert('members_to_chats',{member_id:client.memb_id,chat_id:client.chat_id,is_mod:"0",is_admin:client.is_admin,user:client.user},function(err,info){
-								if(err)console.log(err);
-								conn.where({chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
-									if(err)console.log(err);
-									io.sockets.in(client.room).emit('displayMembers',rows);
-								});
-							});
-						}else{
+					if(rows.length == 0){
+						conn.insert('members_to_chats',{member_id:client.memb_id,chat_id:client.chat_id,is_mod:"0",is_admin:client.is_admin,user:client.user},function(err,info){
+							if(err)console.log(err);
 							conn.where({chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
 								if(err)console.log(err);
 								io.sockets.in(client.room).emit('displayMembers',rows);
 							});
-						}
-					});
+						});
+					}else{
+						conn.where({chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
+							if(err)console.log(err);
+							io.sockets.in(client.room).emit('displayMembers',rows);
+						});
+					}
 				});
 			}
 		});

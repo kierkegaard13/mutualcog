@@ -21,6 +21,7 @@ class BaseController extends Controller {
 		View::share('base',$this->base_url);
 		View::share('site',$this->site_url);
 		View::share('serial',Session::get('unique_serial'));
+		View::share('serial_id',Session::get('serial_id'));
 	}
 
 	protected function setupLayout()

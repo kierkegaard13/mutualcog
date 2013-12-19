@@ -3,8 +3,9 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width,height=device-height, initial-scale=1.0">
         <title>Mutual Cognizance</title>
+	<link rel="icon" href="{{base}}/GavinWeb.ico" type="image/x-icon">
         <link rel="stylesheet" href="{{base}}/app/libraries/css/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" href="{{base}}/app/libraries/css/chat_style.min.css" />
         {% block styles %}{% endblock %}
@@ -19,31 +20,36 @@
 <div id="body">
 <div class="wrapper">
 <div class="row">
-        <div class="col-lg-2" id="members_box">
+	<div class="chat_content col-sm-7 col-md-8 col-lg-9" id="main">
                 <div style="position:relative;">
-                        <div class="small_content_box">
-                                <div class="content_left grad_l" id="side_cont_l"></div>
-                                <div class="content side_content box_l side_content_l" id="side_cont">
-					{% block members %}{% endblock %}
-                                </div>
+                        <div class="big_content_box">
+				<div class="content_left grad_l"></div>
+				<div class="content_right grad_l"></div>
+				<div class="content main_content" id="main_cont">
+					{% block content %}{% endblock %}
+				</div>
                         </div>
                 </div>
-        </div>
-	<div class="chat_content col-sm-7 col-md-8 col-lg-7" id="main">
-		<div class="content main_content" id="main_cont">
-			{% block content %}{% endblock %}
-		</div>
 	</div>
 	<div class="col-sm-5 col-md-4 col-lg-3" id="side">
                 <div style="position:relative;">
                         <div class="small_content_box">
-                                <div class="content_right grad_r_1" id="side_cont_r"></div>
+                                <div class="content_right grad_r_0"></div>
+                                <div class="content_left grad_r_0"></div>
+                                <div class="content box_r_0 side_content_r" id="side_cont">
+					{% block tools %}{% endblock %}
+                                </div>
+                        </div>
+                        <div class="small_content_box">
+                                <div class="content_right grad_r_1"></div>
+                                <div class="content_left grad_r_1"></div>
                                 <div class="content box_r_1 side_content_r" id="side_cont">
 					{% block welcome %}{% endblock %}
                                 </div>
                         </div>
                         <div class="small_content_box">
-                                <div class="content_right grad_r_2" id="side_cont_r"></div>
+                                <div class="content_right grad_r_2"></div>
+                                <div class="content_left grad_r_2"></div>
                                 <div class="content box_r_2 side_content_r" id="side_cont">
                                         {% block details %}{% endblock %}
                                 </div>

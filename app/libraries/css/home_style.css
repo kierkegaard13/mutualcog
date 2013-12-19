@@ -26,8 +26,8 @@ body{
 @media screen and (min-width:768px){
 	.wrapper {
 	  width:100%;
-	  padding-left:20px;
-	  padding-right:20px;
+	  padding-left:10px;
+	  padding-right:15px;
 	  margin-top:60px;
 	  margin-left:0px;
 	}
@@ -67,6 +67,7 @@ body{
 	}
 	.navbar-brand {
 	  padding-top:10px;
+	  padding-right:10px;
 	  padding-bottom:10px;
 	}
 	.navbar-collapse.collapse {
@@ -89,7 +90,7 @@ body{
           background-image:     -ms-linear-gradient(left, #F2F2F2, transparent); /* IE10 */
           background-image:      -o-linear-gradient(left, #F2F2F2, transparent); /* Opera 11.10+ */
           position:absolute;
-          width:40px;
+          width:10px;
           right:0px;
           top:0px;
           z-index:2;
@@ -101,8 +102,7 @@ body{
           background-image:     -ms-linear-gradient(right, #F2F2F2, transparent); /* IE10 */
           background-image:      -o-linear-gradient(right, #F2F2F2, transparent); /* Opera 11.10+ */
           position:absolute;
-	  height:1600px;
-          width:40px;
+          width:10px;
           left:0px;
           top:0px;
           z-index:2;
@@ -113,13 +113,24 @@ body{
 	.grad2 {
 	  height:280px;
 	}
+	.grad3 {
+	  height:3000px;
+	}
 	.main_content {
-	  height:1600px !important;
-	  margin-left:40px !important;
+	  height:3000px !important;
+	  margin-left:10px !important;
+	  margin-right:10px !important;
 	  margin-bottom:20px !important;
 	}
 	.side_content {
-	  margin-right:40px !important;
+	  margin-right:10px !important;
+	  margin-left:10px !important;
+	}
+	#main {
+	  padding-right:10px !important;
+	}
+	#side {
+	  padding-left:5px !important;
 	}
 }
 @media screen and (max-width:767px){
@@ -163,16 +174,18 @@ body{
 	  margin-top:0px;
 	}
 	.main_content {
-	  height:1600px !important;
+	  height:3000px !important;
 	  margin-bottom:20px !important;
+	}
+	.navbar-header {
+	  transition:background-color .8s;
+	  -webkit-transition:background-color .8s;
 	}
 	.navbar-header:hover {
   	  background-color: #032865;
 	  cursor:pointer;
-	  padding-left:10px !important;
 	}
 	.navbar-header:hover .navbar-brand { 
-	  padding-left:10px !important;
   	  background-color: #032865;
 	}
 	.navbar-collapse {
@@ -183,6 +196,42 @@ body{
 	  overflow-y:hidden !important;
 	  overflow-x:hidden !important;
 	}
+}
+.btn-primary {
+  background-color:#075de9;
+  transition:background-color .5s;
+  -webkit-transition:background-color .5s;
+}
+.btn-primary:hover {
+  background-color:#0549b7;
+}
+.btn-success {
+  transition:background-color .5s;
+  -webkit-transition:background-color .5s;
+}
+.page_links {
+  position:absolute;
+  bottom:5px;
+  right:10px;
+}
+.page_links>ul {
+  margin-bottom:0px;
+}
+.number_box {
+  color:gray;
+  float:left;
+  padding-left:5px;
+  margin-top:8px;
+}
+.policy {
+  position:absolute;
+  bottom:10px;
+  font-size:16px;
+  margin-left:50%; 
+}
+.site_name {
+  font-size:14px;
+  color:gray;
 }
 .tag_input {
   height:30px;
@@ -199,18 +248,22 @@ body{
 .navbar-brand {
   color:#fff;
   background-color: #021b44;
+  transition:background-color .8s;
+  -webkit-transition:background-color .8s;
 }
 .navbar-brand:hover {
   color:#fff;
-  background-color: #032865;
+  background-color: #043586;
 }
 .navbar .nav>li>a {
   color:#fff;
   background-color: #021b44;
+  transition:background-color .8s;
+  -webkit-transition:background-color .8s;
 }
 .navbar .nav>li>a:hover {
   color:#fff;
-  background-color: #032865;
+  background-color: #043586;
 }
 .navbar-nav>li>a {
   padding-top:10px;
@@ -235,7 +288,6 @@ body{
 .vote_box {
   position:relative;
   float:left;
-  padding-left:15px;
   width:3em;
   margin-top:0px;
   margin-bottom:-5px;
@@ -278,6 +330,8 @@ body{
   padding:20px;
   border-bottom:1px solid #ddd; 
   box-shadow: 2px 0px 2px #ccc; 
+  transition:background-color .8s;
+  -webkit-transition:background-color .8s;
 }
 .chat_info {
   color:#777;
@@ -310,6 +364,8 @@ body{
   display:block;
   text-align:center;
   width:auto !important;
+  transition:color .5s;
+  -webkit-transition:color .5s;
 }
 .big_upvote:hover {
   color:#57bf4b;
@@ -322,6 +378,8 @@ body{
   text-align:center;
   margin-left:-2px;
   width:auto !important;
+  transition:color .5s;
+  -webkit-transition:color .5s;
 }
 .big_downvote:hover {
   color:red;
@@ -356,23 +414,9 @@ body{
   vertical-align:top;
   width:220px;
 }
-.frame ::-webkit-scrollbar-track
-{
-  background-color: transparent;
-}
-.frame ::-webkit-scrollbar
-{
-  width: 8px;
-  height:8px;
-}
-.frame ::-webkit-scrollbar-thumb
-{
-  background-color: #333;
-  border-radius:10px;
-  opacity:.5;
-}
 .frame {
   overflow:auto;
+  border-radius:5px;
   border-color: rgb(238,238,238);
   border-style: inset;
   border-width: 2px;

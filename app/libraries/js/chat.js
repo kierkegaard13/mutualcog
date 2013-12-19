@@ -9,9 +9,12 @@ var socket = io.connect('http://localhost:3000/');
 var stop_scroll = 0;
 
 var color_arr = new Array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#000');
+var mems = new Array();
 
+var serial_id = $('#serial_id').text();
 var serial_tracker = $('#serial_tracker').text();
 
+var user_id = $('#user_id').text();
 var user_tracker = $('#user_tracker').text();
 
 $('#login_form').submit(function(){
@@ -211,32 +214,10 @@ updateTimes = function(){
 	});
 }
 
-removeSmallElements = function(){
-	if($(this).width() < 1200){
-		$('#members_box').css('display','none');
-		$(this).off('resize');
-		$(this).on('resize',addSmallElements);
-	}
-}
-
-addSmallElements = function(){
-	if($(this).width() >= 1200){
-		$('#members_box').css('display','');
-		$(this).off('resize');
-		$(this).on('resize',removeSmallElements);
-	}
-}
-
 $(document).ready(function(){
 	updateChatTimes();
 	setInterval(updateTimes,60000);
 	setInterval(updateChatTimes,60000);
-	if($(window).width() < 1200){
-		$('#members_box').css('display','none');
-		$(window).on('resize',addSmallElements);
-	}else{
-		$(window).on('resize',removeSmallElements);
-	}
 	$('#chat_messages').click(function(){
 		$('#message').attr('class','global');
 		$('.chat_mssg').css('background-color','');
@@ -420,9 +401,9 @@ notifyMessage = function(){
 socket.on('connect',function() {
 	socket.emit('room',$('.chat_id').attr('id'));
 	if($('#logged_in').text() == 1){
-		socket.emit('add_member',{new_member:user_tracker,serial:serial_tracker,logged_in:1});
+		socket.emit('add_member',{new_member:user_tracker,user_id:user_id,serial_id:serial_id,serial:serial_tracker,logged_in:1});
 	}else{
-		socket.emit('add_member',{new_member:serial_tracker,logged_in:0});
+		socket.emit('add_member',{new_member:serial_tracker,serial_id,serial_id,logged_in:0});
 	}
 });
 
@@ -445,14 +426,13 @@ socket.on('updateResponseCount',function(info){
 });
 
 socket.on('displayMembers',function(info){
-	var mems = new Array();
+	mems = new Array();
 	$.each(info,function(index,member){
 		if(member.is_admin){
 			$('#display_admin').html(member.user);
 		}
 		mems.push("<div>" + member.user + "</div>");
 	});
-	$('#display_members').html(mems.join(''));
 });
 
 socket.on('openChat',function(chat_info){

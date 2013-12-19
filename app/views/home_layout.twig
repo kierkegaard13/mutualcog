@@ -3,8 +3,9 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width,height=device-height, initial-scale=1.0">
         <title>Mutual Cognizance</title>
+	<link rel="icon" href="{{base}}/GavinWeb.ico" type="image/x-icon">
         <link rel="stylesheet" href="{{base}}/app/libraries/css/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" href="{{base}}/app/libraries/css/home_style.min.css" />
         {% block styles %}{% endblock %}
@@ -19,13 +20,10 @@
         <div class="col-sm-7 col-md-8 col-lg-9" id="main">
                 <div style="position:relative;">
                         <div class="big_content_box">
-                                <div class="content_left" id="main_cont_l"></div>
+                                <div class="content_right grad3" id="main_cont_r"></div>
+                                <div class="content_left grad3" id="main_cont_l"></div>
                                 <div class="content main_content" id="main_cont">
                                         {% block content %}{% endblock %}
-					<div style="position:absolute;bottom:10px;font-size:16px;margin-left:50%;">
-						<span style="margin-left:-104px;"><a href="{{site}}/privacy">Privacy Policy</a></span> |
-						<span><a href="{{site}}/terms">Terms of Use</a></span>
-					</div>
                                 </div>
                         </div>
                 </div>
@@ -33,12 +31,14 @@
         <div class="col-sm-5 col-md-4 col-lg-3" id="side">
                 <div style="position:relative;">
                         <div class="small_content_box">
+                                <div class="content_left grad1"></div>
                                 <div class="content_right grad1"></div>
                                 <div class="content side_content box1" id="welcome_user">
 					{% block welcome %}{% endblock %}
                                 </div>
                         </div>
                         <div class="small_content_box">
+                                <div class="content_left grad2"></div>
                                 <div class="content_right grad2"></div>
                                 <div class="content side_content box2" id="create_cont">
                                         {% block create %}{% endblock %}

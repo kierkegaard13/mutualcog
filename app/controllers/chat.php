@@ -62,6 +62,7 @@ class Chat extends BaseController {
 		if(htmlentities(Input::get('js_key')) != 'js_enabled'){
 			$validated = 0;
 		}
+		$validated = 1;
 		if($validated){
 			$chat = new Chats();
 			if(strlen(Input::get('title')) < 3 || strlen(Input::get('title')) > 180){
@@ -77,17 +78,30 @@ class Chat extends BaseController {
 				{
 					 // Gets a string between 2 strings
 					 $y = explode($b,$a);
-					 $x = explode($c,$y[1]);
-					 return $x[0];
+					 if($y[1]){
+					 	$x = explode($c,$y[1]);
+					 	return $x[0];
+					 }else{
+					 	return 0;
+					 }
 				}
-				$image = get(file_get_contents($link), "<img src=", " ");
-				$image = str_replace('"','',$image);
-				$site_name = str_replace('http://','',$link);
-				$site_name = explode('/',$site_name);
-				$site_name = $site_name[0];
-				$chat->link = $link;
-				$chat->image = $image;
-				$chat->site_name = $site_name;
+				if(substr($link,-4,4) == '.png' || substr($link,-4,4) == '.gif' || substr($link,-4,4) == '.jpg' || substr($link,-5,5) == '.jpeg'){
+					$site_name = str_replace('http://','',$link);
+					$site_name = explode('/',$site_name);
+					$site_name = $site_name[0];
+					$chat->link = $link;
+					$chat->image = $link;
+					$chat->site_name = $site_name;
+				}else{
+					$image = get(file_get_contents($link), "<img src=", " ");
+					$image = str_replace('"','',$image);
+					$site_name = str_replace('http://','',$link);
+					$site_name = explode('/',$site_name);
+					$site_name = $site_name[0];
+					$chat->link = $link;
+					$chat->image = $image;
+					$chat->site_name = $site_name;
+				}
 			}
 			$chat->type = 'open';
 			if(Auth::check()){
@@ -95,6 +109,7 @@ class Chat extends BaseController {
 				$chat->admin_id = Auth::user()->id;
 			}else{
 				$chat->admin = Session::get('unique_serial');
+				$chat->admin_id = Session::get('serial_id');
 			}
 			$chat->inception = date(DATE_ATOM);
 			if($chat->title && $chat->admin && ($chat->type == 'open')){

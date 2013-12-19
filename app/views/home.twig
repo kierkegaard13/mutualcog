@@ -20,9 +20,9 @@
 			</div>
 		</form>
 		<ul class="nav navbar-nav">
-			<li class="active"><a href="{{site}}/soon">Coming Soon</a></li>
+			<li><a href="{{site}}/soon">Coming Soon</a></li>
 			{% for tag in tags %}
-				<li class="active"><a href="{{site}}/tags/tag/{{tag}}">{{tag}}</a></li>
+				<li><a href="{{site}}/tags/tag/{{tag}}">{{tag}}</a></li>
 			{% endfor %}
 		</ul>
 	</div>
@@ -72,18 +72,17 @@
 	<div id="tags_group" class="form-group">
 		<input class="form-control" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Tags" data-container="body" data-placement="bottom" type="text" name="tags" id="Tags" placeholder="Use spaces to separate tags (max: 5)" autocomplete="off">
 	</div>
-	<input type="hidden" id="java_key" name="java_key" value="0">
 	<button class="btn btn-primary" type="Submit" style="width:100%;">Create</button>
 </fieldset>
 </form>
 {% endblock %}
 
 {% block content %}
-<div class="frame" style="height:1536px;white-space:normal;">
 	<div id="chat_list">
 		{% for chat in chats %} 
 			<div class="chat_title_box">
 				<div class="row">
+					<div class="number_box"> {{loop.index}}. </div>
 					<div class="vote_box">
 						{% if chat.id in upvoted %}
 							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
@@ -103,20 +102,34 @@
 						</a>
 					{% endif %}
 					<div class="chat_title">
-						<a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:blue;">{{chat.title}}</a>
-						<div class="chat_info">Created by <b>{{chat.admin}}</b>, 
+						{% if chat.link %}
+							<a href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+						{% else %}
+							<a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
+						{% endif %}
+						{% if chat.admin_id != -1 %}
+							<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><b>{{chat.admin}}</b></a>, 
+						{% else %}
+							<div class="chat_info">Created by <b>{{chat.admin}}</b>, 
+						{% endif %}
 							<span class="chat_time" id="{{chat.inception}}"></span>
 							with Tags:
 							{% for tag in chat.tags %}
-								<span class="chat_tags"><a href="{{site}}/tags/tag/{{tag.name}}">#{{tag.name}}</a> </span>
+								<span class="chat_tags"><a href="{{site}}/tags/tag/{{tag.name}}" style="color:#075de9;">#{{tag.name}}</a> </span>
 							{% endfor %}
-							and <b>{{chat.messages | length }} comments</b>
+							and <a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:gray;"><b>{{chat.messages | length }} comments</b></a>
 						</div>
 					</div>
 				</div>
 			</div>
 		{% endfor %}
 	</div>
-</div>
+	<div class="page_links">
+		{{chats.links|raw}}
+	</div>
+	<div class="policy">
+		<span style="margin-left:-104px;"><a href="{{site}}/privacy">Privacy Policy</a></span> |
+		<span><a href="{{site}}/terms">Terms of Use</a></span>
+	</div>
 {% endblock %}
 

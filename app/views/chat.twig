@@ -20,9 +20,9 @@
 			</div>
 		</form>
 		<ul class="nav navbar-nav">
-			<li class="active"><a href="{{site}}/soon">Coming Soon</a></li>
+			<li><a href="{{site}}/soon">Coming Soon</a></li>
 			{% for tag in tag_headers %}
-				<li class="active"><a href="{{site}}/tags/tag/{{tag}}">{{tag}}</a></li>
+				<li><a href="{{site}}/tags/tag/{{tag}}">{{tag}}</a></li>
 			{% endfor %}
 		</ul>
 	</div>
@@ -31,7 +31,17 @@
 
 {% block welcome %}
 <div style="display:none;" id="logged_in">{{logged_in}}</div>
-<div style="margin-bottom:10px;">Welcome, {% if not user %}<span id="serial_tracker">{{serial}}</span>{% else %}<span id="serial_tracker" style="display:none;">{{serial}}</span><span id="user_tracker">{{user.name}}</span>{% endif %}</div>
+<div style="margin-bottom:10px;">Welcome, 
+{% if not user %}
+	<div id="serial_id" style="display:none;">{{serial_id}}</div>
+	<span id="serial_tracker">{{serial}}</span>
+{% else %}
+	<div id="serial_id" style="display:none;">{{serial_id}}</div>
+	<div id="serial_tracker" style="display:none;">{{serial}}</div>
+	<div id="user_id" style="display:none;">{{user.id}}</div>
+	<span id="user_tracker">{{user.name}}</span>
+	{% endif %}
+</div>
 {% if not logged_in %}
 	<form method="post" action="{{site}}/profile/newuser" class="mutual_form" id="login_form">
 	<fieldset>

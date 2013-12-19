@@ -18,7 +18,7 @@ class Home extends BaseController {
 	public function getIndex()
 	{
 		$view = View::make('home');
-		$chats = Chats::select('*',DB::raw('(case when (upvotes - downvotes > 0) then log(upvotes - downvotes) + timestampdiff(minute,"2013-1-1 12:00:00",chats.inception)/45000 when (upvotes - downvotes = 0) then log(1) + timestampdiff(minute,"2013-1-1 12:00:00",chats.inception)/45000 else log(1/abs(upvotes - downvotes)) + timestampdiff(minute,"2013-1-1 12:00:00",chats.inception)/45000 end) AS score'))->orderBy(DB::raw('score'),'desc')->get();
+		$chats = Chats::select('*',DB::raw('(case when (upvotes - downvotes > 0) then log(upvotes - downvotes) + timestampdiff(minute,"2013-1-1 12:00:00",chats.inception)/45000 when (upvotes - downvotes = 0) then log(1) + timestampdiff(minute,"2013-1-1 12:00:00",chats.inception)/45000 else log(1/abs(upvotes - downvotes)) + timestampdiff(minute,"2013-1-1 12:00:00",chats.inception)/45000 end) AS score'))->orderBy(DB::raw('score'),'desc')->paginate(25);
 		$tags = Tags::take(20)->orderBy('popularity','desc')->get();
 		$upvoted = array();
 		$downvoted = array();

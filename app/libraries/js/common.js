@@ -143,7 +143,7 @@ $('#home_form').submit(function(){
 			});
 		}
 		if(submit){
-			$('#home_form').append('<input type="hidden" name="js_key" val="js_enabled" id="js_key">');
+			$('#home_form').append('<input type="hidden" name="js_key" value="js_enabled" id="js_key">');
 			return true;
 		}else{
 			return false;
