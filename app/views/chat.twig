@@ -29,6 +29,21 @@
 </nav>
 {% endblock %}
 
+{% block tools %}
+<div id="user_toolbox">
+	<span class="glyphicon glyphicon-list" id="show_members" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Show chat members"></span>
+	<span class="glyphicon glyphicon-stop" id="stop_scroll" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Stop scrollbar"></span>
+	<!--<span class="glyphicon glyphicon-list" id="show_members" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Show chat members"></span>-->
+	{% if user.name == chat.admin or serial == chat.admin %}
+	<span class="glyphicon glyphicon-pause pause" id="pause_chat" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Pause chat"></span>
+	<span class="glyphicon glyphicon-tower" id="mod_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Grant holy moderation powers"></span>
+	<span class="glyphicon glyphicon-warning-sign" id="warn_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Warn user"></span>
+	<span class="glyphicon glyphicon-remove" id="kick_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Kick user"></span>
+	{% endif %}
+</div>
+<div id="members_box"><div id="members_list"></div></div>
+{% endblock %}
+
 {% block welcome %}
 <div style="display:none;" id="logged_in">{{logged_in}}</div>
 <div style="margin-bottom:10px;">Welcome, 

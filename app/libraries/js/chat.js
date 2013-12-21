@@ -107,6 +107,8 @@ $('#search_input').on('focus',function(e){
 
 $(window).on('click',function(e){
 	$('#tag_dropdown').hide();
+	$('#members_box').hide('blind');
+	$('#show_members').removeClass('highlighted_dark');
 });
 
 var selected_term = -1;
@@ -233,6 +235,55 @@ $(document).ready(function(){
 				$(this).val("");
 				$(this).off('click');
 			});
+		}
+	});
+	var showing = 0;
+	var hovering = 0;
+	$('#show_members').tooltip();
+	$('#stop_scroll').tooltip();
+	$('#pause_chat').tooltip();
+	$('#mod_user').tooltip();
+	$('#warn_user').tooltip();
+	$('#kick_user').tooltip();
+	$('#show_members').click(function(e){
+		if(hovering == 0){
+			$('#members_box').toggle('blind');
+		}
+		if($(this).hasClass('highlighted_dark')){
+			showing = 0;
+			$(this).attr('data-original-title','Show chat members');
+			$(this).removeClass('highlighted_dark');
+		}else{
+			showing = 1;
+			$(this).attr('data-original-title','Hide chat members');
+			$(this).addClass('highlighted_dark');
+		}
+		return false;
+	});
+	$('#show_members').hover(function(){
+		if(showing == 0){
+			$('#members_box').show('blind');
+			hovering = 1;
+		}
+	},function(){
+		if(showing == 0){
+			$('#members_box').hide('blind');
+			hovering = 0;
+		}
+	});
+	$('#pause_chat').click(function(){
+		if($(this).hasClass('pause')){
+			$(this).removeClass('pause');
+			$(this).removeClass('glyphicon-pause');
+			$(this).addClass('glyphicon-play');	
+			$(this).addClass('play');
+			$(this).attr('data-original-title','Play chat');
+		}else{
+			$(this).removeClass('play');
+			$(this).removeClass('glyphicon-play');	
+			$(this).addClass('glyphicon-pause');
+			$(this).addClass('pause');
+			$(this).attr('data-original-title','Pause chat');
 		}
 	});
 });
@@ -403,7 +454,7 @@ socket.on('connect',function() {
 	if($('#logged_in').text() == 1){
 		socket.emit('add_member',{new_member:user_tracker,user_id:user_id,serial_id:serial_id,serial:serial_tracker,logged_in:1});
 	}else{
-		socket.emit('add_member',{new_member:serial_tracker,serial_id,serial_id,logged_in:0});
+		socket.emit('add_member',{new_member:serial_tracker,serial_id:serial_id,logged_in:0});
 	}
 });
 
@@ -429,16 +480,18 @@ socket.on('displayMembers',function(info){
 	mems = new Array();
 	$.each(info,function(index,member){
 		if(member.is_admin){
-			$('#display_admin').html(member.user);
+			mems.push("<div style='color:white;'>" + member.user + "</div>");
+		}else{
+			mems.push("<div style='color:white;'>" + member.user + "</div>");
 		}
-		mems.push("<div>" + member.user + "</div>");
 	});
+	$('#members_list').html(mems.join(''));
 });
 
 socket.on('openChat',function(chat_info){
 	var chat_log = chat_info.rows;
 	var messages = new Array();
-	if($('#mssg_cont_' + clicked_on).parent('.resp_cont').length){
+	if($('#mssg_cont_' + clicked_on).parent('.resp_cont').length){  //gets responses that user is looking at
 		var tmp_clicked = clicked_on;
 		clicked_on = $('#mssg_cont_' + clicked_on).parents('.resp_cont').last().attr('id').replace('resp_cont_','');
 		var responses = $('#mssg_cont_' + clicked_on).children('#resp_cont_' + clicked_on);

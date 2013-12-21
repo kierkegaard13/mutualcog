@@ -273,11 +273,13 @@ body{
 }
 .link_thumbnail {
   margin-right:10px;
+  margin-left:10px;
+  margin-top:-1px;
   width:80px;
 }
 .chat_title {
-  padding-left:53px;
-  margin-top:-5px;
+  padding-left:85px;
+  margin-top:-6px;
 }
 .top_5 {
   margin-top:5px;

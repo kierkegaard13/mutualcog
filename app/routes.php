@@ -13,7 +13,7 @@
 
 function getUniqueSerialNumber($serial_number=null){
 	if(!$serial_number){
-		$serial_number = mt_rand(0,16777215);
+		$serial_number = mt_rand(2,16777215);
 		return getUniqueSerialNumber($serial_number);
 	}
 	$serial = new Serials();

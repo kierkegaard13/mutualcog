@@ -107,7 +107,7 @@
 						{% else %}
 							<a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
 						{% endif %}
-						{% if chat.admin_id != -1 %}
+						{% if chat.admin % 16777259 == 0 %}
 							<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><b>{{chat.admin}}</b></a>, 
 						{% else %}
 							<div class="chat_info">Created by <b>{{chat.admin}}</b>, 
