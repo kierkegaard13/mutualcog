@@ -3,6 +3,7 @@ var focused = 1;
 var title_blinking = 0;
 var clicked_on = -1;
 var mssg_clicked = -1;
+var live = 1;
         
 var socket = io.connect('http://localhost:3000/');
 
@@ -272,13 +273,15 @@ $(document).ready(function(){
 		}
 	});
 	$('#pause_chat').click(function(){
-		if($(this).hasClass('pause')){
+		if($(this).hasClass('pause')){  //if chat is not paused
+			socket.emit('pause_all');
 			$(this).removeClass('pause');
 			$(this).removeClass('glyphicon-pause');
 			$(this).addClass('glyphicon-play');	
 			$(this).addClass('play');
 			$(this).attr('data-original-title','Play chat');
-		}else{
+		}else{  //if chat is already paused
+			socket.emit('play_all');
 			$(this).removeClass('play');
 			$(this).removeClass('glyphicon-play');	
 			$(this).addClass('glyphicon-pause');
@@ -318,15 +321,19 @@ getResponse = function(e){
 	if($(this).attr('class') == 'chat_mssg'){
 		mssg_clicked = $(this).attr('id');  //same as clicked_on far as I can tell. Only used on window event
 	}
-	if(clicked_on != $(this).attr('id')){
-		if(clicked_on != -1){
+	if(clicked_on != $(this).attr('id')){  //if you clicked on a different message or response
+		if(clicked_on != -1){  //if your previous click wasn't on the body
 			var old_level = $('#mssg_cont_' + clicked_on).attr('class').split(" ")[1].replace('level_','');
 			var new_level = $(this).parent().attr('class').split(" ")[1].replace('level_','');
 			if(parseInt(new_level) == 0){  //if new message clicked on is top level, remove old messages responses
-				$('.level_' + (parseInt(new_level) + 1)).remove();
+				if($('#mssg_cont_' + clicked_on).attr('class').split(" ")[2].replace('parent_','') == $(this).attr('id')){
+					$('.level_' + (parseInt(new_level) + 2)).remove();
+				}else{
+					$('.level_' + (parseInt(new_level) + 1)).remove();
+				}
 			}else{
-				if($(this).parents('.resp_cont').first().attr('id').replace('resp_cont_','') != clicked_on){
-					if($('#mssg_cont_' + clicked_on).parents('.level_' + new_level).first().attr('id') == $(this).parent().attr('id')){
+				if($(this).parents('.resp_cont').first().attr('id').replace('resp_cont_','') != clicked_on){ //if previous click wasn't the parent
+					if($('#mssg_cont_' + clicked_on).parents('.level_' + new_level).first().attr('id') == $(this).parent().attr('id')){  
 						$('.level_' + (parseInt(new_level) + 2)).remove();
 					}else{
 						$('.level_' + (parseInt(new_level) + 1)).remove();
@@ -349,10 +356,10 @@ getResponse = function(e){
 				$(this).off('click');
 			});
 		}
-	}else{
-		if($('#mssg_cont_' + clicked_on).children('#resp_cont_' + clicked_on).length){
+	}else{  //if you clicked on the same message
+		if($('#mssg_cont_' + clicked_on).children('#resp_cont_' + clicked_on).length){  //either remove the responses
 			$('#mssg_cont_' + clicked_on).children('#resp_cont_' + clicked_on).remove();
-		}else{
+		}else{  //or show them again
 			socket.emit('show_responses',$(this).attr('id'));
 			$('.chat_mssg').css('background-color','');
 			$('.chat_resp').css('background-color','');
@@ -488,20 +495,48 @@ socket.on('displayMembers',function(info){
 	$('#members_list').html(mems.join(''));
 });
 
+socket.on('pause',function(security){
+	live = 0;	
+	socket.emit('pause',{hash:security.hash});
+});
+
+socket.on('play',function(security){
+	live = 1;
+	socket.emit('play',{hash:security.hash});
+});
+
 socket.on('openChat',function(chat_info){
 	var chat_log = chat_info.rows;
 	var messages = new Array();
+	console.log(chat_info);
+	if(chat_info.hasOwnProperty('live')){
+		console.log('hi');
+		if(chat_info.live == '1'){
+			console.log('hello');
+			if(!$('#pause_chat').hasClass('pause')){
+				$('#pause_chat').removeClass('play');
+				$('#pause_chat').removeClass('glyphicon-play');	
+				$('#pause_chat').addClass('glyphicon-pause');
+				$('#pause_chat').addClass('pause');
+				$('#pause_chat').attr('data-original-title','Pause chat');
+			}
+		}else{
+			live = 0;
+			if($('#pause_chat').hasClass('pause')){
+				$('#pause_chat').removeClass('pause');
+				$('#pause_chat').removeClass('glyphicon-pause');
+				$('#pause_chat').addClass('glyphicon-play');	
+				$('#pause_chat').addClass('play');
+				$('#pause_chat').attr('data-original-title','Play chat');
+			}
+		}
+	}
 	if($('#mssg_cont_' + clicked_on).parent('.resp_cont').length){  //gets responses that user is looking at
 		var tmp_clicked = clicked_on;
 		clicked_on = $('#mssg_cont_' + clicked_on).parents('.resp_cont').last().attr('id').replace('resp_cont_','');
 		var responses = $('#mssg_cont_' + clicked_on).children('#resp_cont_' + clicked_on);
 	}else{
 		var responses = $('#mssg_cont_' + clicked_on).children('#resp_cont_' + clicked_on);
-	}
-	if(chat_log.length > 0){
-		if(chat_log[0].responseto == -1){
-			$('#chat_messages').off('mouseenter mouseleave');
-		}
 	}
 	$.each(chat_log,function(index,value){
 		if((serial_tracker == value.author || $('#chat_admin').text() == serial_tracker || user_tracker == value.author || $('#chat_admin').text() == user_tracker) && value.message != '<i>This message has been deleted</i>'){
@@ -526,6 +561,7 @@ socket.on('openChat',function(chat_info){
 		$('#message').attr('class',chat_info.clicked);
 	}
 	$('.chat_mssg').on('click',getResponse);
+	$('.chat_resp').on('click',getResponse);
 	$('.chat_link').click(function(e){e.stopPropagation();});
 	if(!stop_scroll){
 		$('#chat_messages').off('scroll',scroll_mod);
@@ -596,25 +632,27 @@ $('#message').click(function(){
 });
 
 $('#message').keypress(function(e){
-	if(e.which == 13){
-		if($('#message').val() != ""){
-			if($('#message').attr('class') == 'global'){
-				sendMessageToServer({message:$('#message').val()});
-			}else{
-				var responseto = $('#message').attr('class');
-				var level = parseInt($('#mssg_cont_' + responseto).attr('class').split(" ")[1].replace('level_','')) + 1;
-				console.log(level);
-				if($('#mssg_cont_' + responseto).attr('class').split(" ")[2].replace('parent_','') == -1){
-					var resp_parent = responseto;
+	if(live){
+		if(e.which == 13){
+			if($('#message').val() != ""){
+				if($('#message').attr('class') == 'global'){
+					sendMessageToServer({message:$('#message').val()});
 				}else{
-					var resp_parent = $('#mssg_cont_' + responseto).parents('.mssg_cont').last().attr('id').replace('mssg_cont_','');
+					var responseto = $('#message').attr('class');
+					var level = parseInt($('#mssg_cont_' + responseto).attr('class').split(" ")[1].replace('level_','')) + 1;
+					console.log(level);
+					if($('#mssg_cont_' + responseto).attr('class').split(" ")[2].replace('parent_','') == -1){
+						var resp_parent = responseto;
+					}else{
+						var resp_parent = $('#mssg_cont_' + responseto).parents('.mssg_cont').last().attr('id').replace('mssg_cont_','');
+					}
+					sendResponseToServer({message:$('#message').val(),responseto:responseto,level:level,parent:resp_parent},clicked_on);	
 				}
-				sendResponseToServer({message:$('#message').val(),responseto:responseto,level:level,parent:resp_parent},clicked_on);	
+				$('#message').val("");
 			}
-			$('#message').val("");
+			return false;
 		}
-		return false;
+		return true;
 	}
-	return true;
 });
 

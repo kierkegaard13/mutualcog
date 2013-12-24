@@ -37,7 +37,7 @@ body{
 	.tag_search {
 	  margin-bottom:0px;
 	  margin-top:4px;
-	  padding-right:22px;	
+	  padding-right:17px;	
 	  position:absolute;
 	  right:0px;
 	  top:0px;
@@ -71,7 +71,7 @@ body{
 	  padding-bottom:10px;
 	}
 	.navbar-collapse.collapse {
-	  margin-left:78px;
+	  margin-left:73px;
 	  padding-left:0px;
 	  padding-right:0px;
 	}
@@ -178,8 +178,8 @@ body{
 	  margin-bottom:20px !important;
 	}
 	.navbar-header {
-	  transition:background-color .8s;
-	  -webkit-transition:background-color .8s;
+	  transition:background-color .5s;
+	  -webkit-transition:background-color .5s;
 	}
 	.navbar-header:hover {
   	  background-color: #032865;
@@ -248,8 +248,8 @@ body{
 .navbar-brand {
   color:#fff;
   background-color: #021b44;
-  transition:background-color .8s;
-  -webkit-transition:background-color .8s;
+  transition:background-color .5s;
+  -webkit-transition:background-color .5s;
 }
 .navbar-brand:hover {
   color:#fff;
@@ -258,8 +258,8 @@ body{
 .navbar .nav>li>a {
   color:#fff;
   background-color: #021b44;
-  transition:background-color .8s;
-  -webkit-transition:background-color .8s;
+  transition:background-color .5s;
+  -webkit-transition:background-color .5s;
 }
 .navbar .nav>li>a:hover {
   color:#fff;
