@@ -385,6 +385,19 @@ body{
   cursor:pointer;
   color:#3FE81F;
 }
+.chat_paused {
+  background-color:black;
+  width:200px;
+  opacity:.9;
+  position:absolute;
+  top:0px;
+  left:50%;
+  margin-left:-100px;
+  color:white;
+  border-radius:10px;
+  text-align:center; 
+  display:none;
+}
 #mod_user {
   margin-left:20px;
   transition:color .5s;

@@ -4,6 +4,7 @@ var title_blinking = 0;
 var clicked_on = -1;
 var mssg_clicked = -1;
 var live = 1;
+var chat_id = $('.chat_id').attr('id');
         
 var socket = io.connect('http://localhost:3000/');
 
@@ -11,6 +12,8 @@ var stop_scroll = 0;
 
 var color_arr = new Array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#000');
 var mems = new Array();
+var mods = new Array();
+var admin = new Array();
 
 var serial_id = $('#serial_id').text();
 var serial_tracker = $('#serial_tracker').text();
@@ -219,6 +222,7 @@ updateTimes = function(){
 
 $(document).ready(function(){
 	updateChatTimes();
+	updateTimes();
 	setInterval(updateTimes,60000);
 	setInterval(updateChatTimes,60000);
 	$('#chat_messages').click(function(){
@@ -287,6 +291,28 @@ $(document).ready(function(){
 			$(this).addClass('glyphicon-pause');
 			$(this).addClass('pause');
 			$(this).attr('data-original-title','Pause chat');
+		}
+	});
+	$('#mod_user').click(function(){
+		var user = $('#mssg_cont_' + clicked_on).find('.mssg_op').attr('id');
+		console.log(user);
+		if(user == user_tracker || clicked_on == -1){
+			return false;
+		}else{
+			$.ajax({
+				type:'GET',
+				url:'//mutualcog.com/chat/checkmod',
+				data:{user:user,chat_id:chat_id},
+				success:function(hresp){
+					if(hresp == 0){
+						socket.emit('make_mod',{user:user,chat_id:chat_id});
+					}else{
+						socket.emit('remove_mod',{user:user,chat_id:chat_id});
+					}
+				},
+				error:function(){
+				}
+			});
 		}
 	});
 });
@@ -485,9 +511,15 @@ socket.on('updateResponseCount',function(info){
 
 socket.on('displayMembers',function(info){
 	mems = new Array();
+	mods = new Array();
+	admin = new Array();
 	$.each(info,function(index,member){
 		if(member.is_admin){
-			mems.push("<div style='color:white;'>" + member.user + "</div>");
+			admin.push(member.user);
+			mems.push("<div style='color:white;'><span class='glyphicon glyphicon-star' style='margin-right:5px;'></span>" + member.user + "</div>");
+		}else if(member.is_mod){
+			mods.push(member.user);
+			mems.push("<div style='color:white;'><span class='glyphicon glyphicon-tower' style='margin-right:5px;'></span>" + member.user + "</div>");
 		}else{
 			mems.push("<div style='color:white;'>" + member.user + "</div>");
 		}
@@ -497,40 +529,60 @@ socket.on('displayMembers',function(info){
 
 socket.on('pause',function(security){
 	live = 0;	
+	$('#chat_display').append('<div class="chat_paused" id="paused_message">Chat has been paused</div>');
+	$('#paused_message').show('fade','slow');
 	socket.emit('pause',{hash:security.hash});
 });
 
 socket.on('play',function(security){
 	live = 1;
+	$('#paused_message').hide('fade','show',function(){
+		$('#paused_message').remove();
+	});
 	socket.emit('play',{hash:security.hash});
+});
+
+socket.on('check_live',function(live){
+	if(live == '1'){
+		$('#paused_message').hide('fade','show',function(){
+			$('#paused_message').remove();
+		});
+		if(!$('#pause_chat').hasClass('pause')){
+			$('#pause_chat').removeClass('play');
+			$('#pause_chat').removeClass('glyphicon-play');	
+			$('#pause_chat').addClass('glyphicon-pause');
+			$('#pause_chat').addClass('pause');
+			$('#pause_chat').attr('data-original-title','Pause chat');
+		}
+	}else{
+		live = 0;
+		$('#chat_display').append('<div class="chat_paused" id="paused_message">Chat has been paused</div>');
+		$('#paused_message').show('fade','show');
+		if($('#pause_chat').hasClass('pause')){
+			$('#pause_chat').removeClass('pause');
+			$('#pause_chat').removeClass('glyphicon-pause');
+			$('#pause_chat').addClass('glyphicon-play');	
+			$('#pause_chat').addClass('play');
+			$('#pause_chat').attr('data-original-title','Play chat');
+		}
+	}
+	$('.mssg_icon').tooltip();
+	$('.mssg_icon').on('click',deleteIt);
+	$('.chat_mssg').on('click',getResponse);
+	$('.chat_resp').on('click',getResponse);
+	$('.chat_link').click(function(e){e.stopPropagation();});
+	if(!stop_scroll){
+		$('#chat_messages').off('scroll',scroll_mod);
+		$('#chat_messages').scrollTop($('#chat_display').height());
+		window.setTimeout(function(){
+			$('#chat_messages').on('scroll',scroll_mod);
+		},100);
+	}
 });
 
 socket.on('openChat',function(chat_info){
 	var chat_log = chat_info.rows;
 	var messages = new Array();
-	console.log(chat_info);
-	if(chat_info.hasOwnProperty('live')){
-		console.log('hi');
-		if(chat_info.live == '1'){
-			console.log('hello');
-			if(!$('#pause_chat').hasClass('pause')){
-				$('#pause_chat').removeClass('play');
-				$('#pause_chat').removeClass('glyphicon-play');	
-				$('#pause_chat').addClass('glyphicon-pause');
-				$('#pause_chat').addClass('pause');
-				$('#pause_chat').attr('data-original-title','Pause chat');
-			}
-		}else{
-			live = 0;
-			if($('#pause_chat').hasClass('pause')){
-				$('#pause_chat').removeClass('pause');
-				$('#pause_chat').removeClass('glyphicon-pause');
-				$('#pause_chat').addClass('glyphicon-play');	
-				$('#pause_chat').addClass('play');
-				$('#pause_chat').attr('data-original-title','Play chat');
-			}
-		}
-	}
 	if($('#mssg_cont_' + clicked_on).parent('.resp_cont').length){  //gets responses that user is looking at
 		var tmp_clicked = clicked_on;
 		clicked_on = $('#mssg_cont_' + clicked_on).parents('.resp_cont').last().attr('id').replace('resp_cont_','');
@@ -539,11 +591,17 @@ socket.on('openChat',function(chat_info){
 		var responses = $('#mssg_cont_' + clicked_on).children('#resp_cont_' + clicked_on);
 	}
 	$.each(chat_log,function(index,value){
+		var tmp = "<div class='mssg_cont level_" + value.level + " parent_" + value.parent + "' id='mssg_cont_" + value.id + "'><div class='chat_mssg' id='" + value.id + "'><div>";
 		if((serial_tracker == value.author || $('#chat_admin').text() == serial_tracker || user_tracker == value.author || $('#chat_admin').text() == user_tracker) && value.message != '<i>This message has been deleted</i>'){
-			var tmp = "<div class='mssg_cont level_" + value.level + " parent_" + value.parent + "' id='mssg_cont_" + value.id + "'><div class='chat_mssg' id='" + value.id + "'><div><span id='" + value.id + "' class='glyphicon glyphicon-remove mssg_icon' data-toggle='tooltip' title='Delete post' data-container='body' data-placement='top'></span><b class='mssg_op' id='" + value.author + "' style='color:" + color_arr[value.serial % 7] + ";'> " + value.author + "(<span class='response_count' id='" + value.id + "'>" + value.responses + "</span>)</b> : " + value.message + "</div><div class='time' id='" + value.inception + "'>" + moment.utc(value.inception).fromNow() + "</div></div></div>";
-		}else{
-			var tmp = "<div class='mssg_cont level_" + value.level + " parent_" + value.parent + "' id='mssg_cont_" + value.id + "'><div class='chat_mssg' id='" + value.id + "'><div><b class='mssg_op' id='" + value.author + "' style='color:" + color_arr[value.serial % 7] + ";'> " + value.author + "(<span class='response_count' id='" + value.id + "'>" + value.responses + "</span>)</b> : " + value.message + "</div><div class='time' id='" + value.inception + "'>" + moment.utc(value.inception).fromNow() + "</div></div></div>"	
+			tmp += "<span id='" + value.id + "' class='glyphicon glyphicon-remove mssg_icon' data-toggle='tooltip' title='Delete post' data-container='body' data-placement='top'></span>";
 		}
+		if(mods.indexOf(value.author) != -1){
+			tmp += "<span class='glyphicon glyphicon-star' style='margin-left:5px;'></span>";	
+		}
+		if(admin.indexOf(value.author) != -1){
+			tmp += "<span class='glyphicon glyphicon-tower' style='margin-left:5px;'></span>";
+		}
+		tmp += "<b class='mssg_op' id='" + value.author + "' style='color:" + color_arr[value.serial % 7] + ";'> " + value.author + "(<span class='response_count' id='" + value.id + "'>" + value.responses + "</span>)</b> : " + value.message + "</div><div class='time' id='" + value.inception + "'>" + moment.utc(value.inception).fromNow() + "</div></div></div>"	
 		messages.push(tmp);
 	});
 	$('#chat_display').html(messages.join(''));

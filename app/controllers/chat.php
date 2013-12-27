@@ -10,20 +10,41 @@ class Chat extends BaseController {
 		$user->save();
 		$tags = Tags::take(20)->orderBy('popularity','desc')->get();
 		$tag_arr = array();
+		$mods = array();
 		foreach($chat->tags as $tag){
 			$tag_arr[] = $tag->name;
 		}
+		foreach($chat->moderators as $mod){
+			$mods[] = $mod->user;
+		}
 		Session::put('curr_page',URL::full());
+		$view['color_arr'] = array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#000');
 		$view['tag_headers'] = $tags;
 		$view['tags'] = $tag_arr;
 		$view['curr_time'] = date('Y:m:d:H:i');
 		$view['chat'] = $chat;
+		$view['mods'] = $mods;
                 return $view;
         }
 
 	public function getAdmin(){
 		$chat = Chats::find(Input::get('id'));
 		return $chat->admin;
+	}
+
+	public function getCheckmod(){
+		$user = htmlentities(Input::get('user'));
+		$chat_id = htmlentities(Input::get('chat_id'));
+		$mem_to_chat = new MembersToChats();
+		$mem_to_chat = $mem_to_chat->whereuser($user)->wherechat_id($chat_id)->first();
+		if($mem_to_chat){
+			if($mem_to_chat->is_mod){
+				return 1;
+			}else{
+				return 0;
+			}
+		}
+		return 0;
 	}
 
 	public function postDetails(){

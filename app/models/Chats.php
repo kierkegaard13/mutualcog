@@ -15,4 +15,8 @@ class Chats extends EloquentBridge
 	public function voted(){
 		return $this->belongsToMany('User','chats_voted','chat_id','member_id');
 	}
+
+	public function moderators(){
+		return $this->hasMany('MembersToChats','chat_id')->select('user')->whereis_mod(1);
+	}
 }

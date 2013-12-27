@@ -134,7 +134,27 @@
 {% block content %}
 <div class="frame_cont">
 	<div class="frame chat_main" id="chat_messages">
-		<div id="chat_display"></div>
+		<div id="chat_display">
+		{% for message in chat.messages %}
+			<div class="mssg_cont level_{{message.level}} parent_{{message.parent}}" id="mssg_cont_{{message.id}}">
+				<div class="chat_mssg" id="{{message.id}}">
+					<div>
+						{% if serial == message.author or serial == chat.admin or user.name == message.author or user.name == chat.admin %}
+							<span id="message.id" class="glyphicon glyphicon-remove mssg_icon" data-toggle="tooltip" title="Delete post" data-container="body" data-placement="top"></span>	
+						{% endif %}  
+						{% if message.author == chat.admin %}
+							<span class="glyphicon glyphicon-star"></span>	
+						{% endif %}
+						{% if message.author in mods %}
+							<span class="glyphicon glyphicon-tower"></span>	
+						{% endif %}
+						<b class="mssg_op" id="{{message.author}}" style="color:{{color_arr[serial % 7]}}"> {{message.author}} (<span class="response_count" id="{{message.id}}">{{message.responses}}</span>)</b> : {{message.message}}
+					</div>
+				<div class="time" id="{{message.inception}}"></div>
+				</div>
+			</div>
+		{% endfor %}
+		</div>
 	</div>
 </div>
 
