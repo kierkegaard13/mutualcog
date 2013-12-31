@@ -8,6 +8,10 @@ class Chats extends EloquentBridge
 		return $this->hasMany('Messages','chat_id');
 	}
 
+	public function messagesOnly(){
+		return $this->hasMany('Messages','chat_id')->whereresponseto('-1');
+	}
+
 	public function tags(){
 		return $this->belongsToMany('Tags','chats_to_tags','chat_id','tag_id');
 	}

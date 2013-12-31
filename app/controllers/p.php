@@ -19,6 +19,7 @@ class P extends BaseController {
 		$user->name = $username;
 		$user = $user->findAll();
 		Session::put('curr_page',URL::full());
+		$view['color_arr'] = array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#000');
 		$view['upvoted'] = $upvoted;
 		$view['downvoted'] = $downvoted;
 		$view['tags'] = $tags;
