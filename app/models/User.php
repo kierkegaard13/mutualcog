@@ -60,6 +60,10 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 	}
 
 	public function interactions(){
-		return $this->belongsToMany('User','interactions','interaction_id','user_id');
+		return $this->belongsToMany('User','interactions','interaction_id','user_id')->withPivot('bond','friended','created_at','updated_at')->orderBy('bond','desc');
+	}
+
+	public function interacted(){
+		return $this->belongsToMany('User','interactions','user_id','interaction_id')->withPivot('bond','friended','created_at','updated_at')->orderBy('bond','desc');
 	}
 }

@@ -73,6 +73,7 @@ Route::group(array('before' => 'assignSerial'), function(){
 		Route::controller('chat','chat');
 		Route::controller('scripts','scripts');
 		Route::get('/p/{user}',array('uses' => 'p@getIndex'));
+		Route::get('/t/{tag}',array('uses' => 't@getIndex'));
 
 		Route::get('/',array('uses' => 'Home@getIndex'));
 

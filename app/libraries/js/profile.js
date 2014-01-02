@@ -2,6 +2,9 @@ updateChatTimes = function(){
 	$.each($('.chat_time'),function(index,value){
 			$(this).text(moment.utc($(this).attr('id')).fromNow());
 			});
+	$.each($('.interaction_time'),function(index,value){
+			$(this).text(moment.utc($(this).attr('id')).fromNow());
+			});
 	$.each($('.time'),function(index,value){
 			$(this).text(moment.utc($(this).attr('id')).fromNow());
 			});
@@ -13,6 +16,20 @@ updateChatTimes = function(){
 $(document).ready(function(){
 	updateChatTimes();
 	setInterval(updateChatTimes,60000);
+	setTimeout(function(){
+		$.ajax({
+			type:'GET',
+			data:{profile_id:$('.profile_name').attr('id')},
+			url:'//mutualcog.com/profile/profilevisit',	
+			success:function(){
+				return true;
+			},
+			error:function(){}
+		});	
+	},20000);
+	$('.chat_mssg').click(function(){
+		window.location.href = "//mutualcog.com/chat/open/" + $('.chat_id_' + $(this).attr('id')).attr('id');
+	});
 });
 
 $('.big_upvote').click(function(e){

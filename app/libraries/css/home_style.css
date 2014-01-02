@@ -236,6 +236,9 @@ body{
 .tag_input {
   height:30px;
 }
+.highlight_light_blue {
+  background-color: #043586 !important;
+}
 .navbar-toggle {
   background-color:#0f131a;
 }

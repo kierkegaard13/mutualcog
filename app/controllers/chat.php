@@ -8,6 +8,64 @@ class Chat extends BaseController {
 		$user = Serials::whereserial_id(Session::get('unique_serial'))->first();
 		$user->reserved = 1;
 		$user->save();
+		if(Auth::check() && isset($chat_id)){
+			$mem_to_chat = new MembersToChats();
+			$mem_to_chat->chat_id = $chat_id;
+			$mem_to_chat->member_id = Auth::user()->id;
+			$mem_to_chat->user = Auth::user()->name;
+			if(!$mem_to_chat->findAll()){  //getting into chat for the first time
+				if($chat->admin_id == Auth::user()->id){
+					$mem_to_chat->is_admin = 1;
+				}
+				$mem_to_chat->save();
+				$all_mems = MembersToChats::wherechat_id($chat_id)->get();
+				foreach($all_mems as $mem){
+					if(preg_match('/[a-zA-Z]/',$mem->user) && $mem->member_id != Auth::user()->id){
+						$interaction = new Interactions();
+						if($interaction->whereuser_id(Auth::user()->id)->whereinteraction_id($mem->member_id)->first()){
+							$interaction = $interaction->whereuser_id(Auth::user()->id)->whereinteraction_id($mem->member_id)->first();
+							$interaction->bond = $interaction->bond + 1;
+							$interaction->save();
+						}else if($interaction->whereuser_id($mem->member_id)->whereinteraction_id(Auth::user()->id)->first()){
+							$interaction = $interaction->whereuser_id($mem->member_id)->whereinteraction_id(Auth::user()->id)->first();
+							$interaction->bond = $interaction->bond + 1;
+							$interaction->save();	
+						}else{
+							$interaction->user_id = Auth::user()->id;
+							$interaction->interaction_id = $mem->member_id;
+							$interaction->bond = 1;
+							$interaction->save();
+						}
+					}
+				}
+			}else{  //have been in chat before
+				$all_mems = MembersToChats::wherechat_id($chat_id)->get();
+				foreach($all_mems as $mem){
+					if(preg_match('/[a-zA-Z]/',$mem->user) && $mem->member_id != Auth::user()->id){
+						$interaction = new Interactions();
+						if($interaction->whereuser_id(Auth::user()->id)->whereinteraction_id($mem->member_id)->first()){  //don't want to repeatedly boost bonds
+						}else if($interaction->whereuser_id($mem->member_id)->whereinteraction_id(Auth::user()->id)->first()){
+						}else{
+							$interaction->user_id = Auth::user()->id;
+							$interaction->interaction_id = $mem->member_id;
+							$interaction->bond = 1;
+							$interaction->save();
+						}
+					}
+				}
+			}
+		}else{
+			$mem_to_chat = new MembersToChats();
+			$mem_to_chat->chat_id = $chat_id;
+			$mem_to_chat->member_id = Session::get('serial_id');
+			$mem_to_chat->user = Session::get('unique_serial');
+			if(!$mem_to_chat->findAll()){
+				if($chat->admin_id == Session::get('serial_id')){
+					$mem_to_chat->is_admin = 1;
+				}
+				$mem_to_chat->save();
+			}
+		}
 		$tags = Tags::take(20)->orderBy('popularity','desc')->get();
 		$tag_arr = array();
 		$mods = array();

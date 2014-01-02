@@ -31,6 +31,7 @@ class Home extends BaseController {
 			}
 		}
 		Session::put('curr_page',URL::full());
+		$view['home_active'] = 'highlight_light_blue';
 		$view['upvoted'] = $upvoted;
 		$view['downvoted'] = $downvoted;
 		$view['tags'] = $tags;

@@ -107,6 +107,11 @@ body{
 	  overflow-y:hidden !important;
 	}
 }
+.add_friend {
+  position:absolute;
+  top:10px;
+  right:15px; 
+}
 .btn-primary {
   background-color:#075de9;
   transition:background-color .5s;
@@ -116,6 +121,10 @@ body{
   background-color:#0549b7;
 }
 .btn-success {
+  transition:background-color .5s;
+  -webkit-transition:background-color .5s;
+}
+.btn-danger {
   transition:background-color .5s;
   -webkit-transition:background-color .5s;
 }
@@ -178,19 +187,21 @@ body{
   font-size:12px;
 }
 .chat_mssg {
+  cursor:pointer;
   background-color:#fff;
   padding:10px;
   box-shadow:2px 2px 2px #999;
   margin-bottom:10px;
   display:table;
-  cursor:pointer;
   font-size:14px;
-}
-.response_count {
-  color:black;
+  transition:background-color .5s;
+  -webkit-transition:background-color .5s;
 }
 .chat_mssg:hover {
   background-color:#eee;
+}
+.response_count {
+  color:black;
 }
 #chat_list {
   position:absolute;
@@ -198,6 +209,16 @@ body{
   left:0px;
   right:0px;
   font-size:18px;
+}
+#chat_messages {
+  background-color:#bbb;
+  position:relative; 
+}
+#chat_display {
+  position:absolute;
+  top:10px;
+  left:10px;
+  right:10px; 
 }
 .chat_info {
   color:#777;
@@ -211,6 +232,13 @@ body{
 }
 .chat_title:hover {
   background-color: #eee;
+}
+.interaction {
+  background-color:#075de9;
+  color:white;
+  margin-right:10px;
+  padding:10px;
+  border-radius:5px; 
 }
 .big_upvote {
   margin-top:-5px;

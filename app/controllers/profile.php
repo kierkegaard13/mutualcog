@@ -1,6 +1,109 @@
 <?php
 
 class Profile extends BaseController {
+	
+	public function getFriend($friend_id){
+		if(Auth::check()){
+			if(Auth::user()->id != $friend_id){
+				$interaction = new Interactions();
+				$interaction->user_id = Auth::user()->id;
+				$interaction->interaction_id = $friend_id;
+				$interaction = $interaction->findAll();
+				if($interaction){
+					$interaction->friended = 1;
+					$interaction->bond = $interaction->bond + 50;
+					$interaction->save();
+					return Redirect::to(Session::get('curr_page'));
+				}else{
+					$interaction = new Interactions();
+					$interaction->user_id = $friend_id;
+					$interaction->interaction_id = Auth::user()->id;
+					$interaction = $interaction->findAll();
+					if($interaction){
+						$interaction->friended = 1;
+						$interaction->bond = $interaction->bond + 50;
+						$interaction->save();
+						return Redirect::to(Session::get('curr_page'));
+					}else{
+						$interaction = new Interactions();
+						$interaction->user_id = Auth::user()->id;
+						$interaction->interaction_id = $friend_id;
+						$interaction->friended = 1;
+						$interaction->bond = 50;
+						$interaction->save();
+						return Redirect::to(Session::get('curr_page'));
+					}
+				}
+			}
+		}
+		return Redirect::to(Session::get('curr_page'));
+	}
+
+	public function getUnfriend($friend_id){
+		if(Auth::check()){
+			if(Auth::user()->id != $friend_id){
+				$interaction = new Interactions();
+				$interaction->user_id = Auth::user()->id;
+				$interaction->interaction_id = $friend_id;
+				$interaction = $interaction->findAll();
+				if($interaction){
+					$interaction->friended = 0;
+					$interaction->bond = $interaction->bond - 50;
+					$interaction->save();
+					return Redirect::to(Session::get('curr_page'));
+				}else{
+					$interaction = new Interactions();
+					$interaction->user_id = $friend_id;
+					$interaction->interaction_id = Auth::user()->id;
+					$interaction = $interaction->findAll();
+					if($interaction){
+						$interaction->friended = 0;
+						$interaction->bond = $interaction->bond - 50;
+						$interaction->save();
+						return Redirect::to(Session::get('curr_page'));
+					}else{
+						return Redirect::to(Session::get('curr_page'));
+					}
+				}
+			}
+		}
+		return Redirect::to(Session::get('curr_page'));
+	}
+
+	public function getProfilevisit(){
+		if(Auth::check()){
+			if(Auth::user()->id != $profile_id){
+				$profile_id = Input::get('profile_id');
+				$interaction = new Interactions();
+				$interaction->user_id = Auth::user()->id;
+				$interaction->interaction_id = $profile_id;
+				$interaction = $interaction->findAll();
+				if($interaction){
+					$interaction->bond = $interaction->bond + 5;
+					$interaction->save();
+					return 1;
+				}else{
+					$interaction = new Interactions();
+					$interaction->user_id = $profile_id;
+					$interaction->interaction_id = Auth::user()->id;
+					$interaction = $interaction->findAll();
+					if($interaction){
+						$interaction->bond = $interaction->bond + 5;
+						$interaction->save();
+						return 1;
+					}else{
+						$interaction = new Interactions();
+						$interaction->user_id = Auth::user()->id;
+						$interaction->interaction_id = $profile_id;
+						$interaction->bond = 5;
+						$interaction->save();
+						return 1;
+					}
+				}
+			}
+		}
+		return 1;
+	}
 
 	public function getCheckuser(){
 		$username = htmlentities(Input::get('username'));
