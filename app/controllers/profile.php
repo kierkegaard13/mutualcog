@@ -3,36 +3,33 @@
 class Profile extends BaseController {
 	
 	public function getFriend($friend_id){
+		if(!isset($friend_id)){
+			return App::abort(404,'You seem to have entered an invalid URL');
+		}
 		if(Auth::check()){
 			if(Auth::user()->id != $friend_id){
-				$interaction = new Interactions();
-				$interaction->user_id = Auth::user()->id;
-				$interaction->interaction_id = $friend_id;
-				$interaction = $interaction->findAll();
+				$interaction = Interactions::join('interaction_users','interaction_users.interaction_id','=','interactions.id')
+					->with('users')
+					->where('interaction_users.user_id', Auth::user()->id)
+					->orWhere('interaction_users.user_id', $friend_id)
+					->first();
 				if($interaction){
 					$interaction->friended = 1;
 					$interaction->bond = $interaction->bond + 50;
 					$interaction->save();
-					return Redirect::to(Session::get('curr_page'));
 				}else{
 					$interaction = new Interactions();
-					$interaction->user_id = $friend_id;
-					$interaction->interaction_id = Auth::user()->id;
-					$interaction = $interaction->findAll();
-					if($interaction){
-						$interaction->friended = 1;
-						$interaction->bond = $interaction->bond + 50;
-						$interaction->save();
-						return Redirect::to(Session::get('curr_page'));
-					}else{
-						$interaction = new Interactions();
-						$interaction->user_id = Auth::user()->id;
-						$interaction->interaction_id = $friend_id;
-						$interaction->friended = 1;
-						$interaction->bond = 50;
-						$interaction->save();
-						return Redirect::to(Session::get('curr_page'));
-					}
+					$interaction->friended = 1;
+					$interaction->bond = 50;
+					$interaction->save();
+					$inter_user = new InteractionUsers();
+					$inter_user->user_id = Auth::user()->id;
+					$inter_user->interaction_id = $interaction->id;
+					$inter_user->save();
+					$inter_user = new InteractionUsers();
+					$inter_user->user_id = $friend_id;
+					$inter_user->interaction_id = $interaction->id;
+					$inter_user->save();
 				}
 			}
 		}
@@ -40,30 +37,20 @@ class Profile extends BaseController {
 	}
 
 	public function getUnfriend($friend_id){
+		if(!isset($friend_id)){
+			return App::abort(404,'You seem to have entered an invalid URL');
+		}
 		if(Auth::check()){
 			if(Auth::user()->id != $friend_id){
-				$interaction = new Interactions();
-				$interaction->user_id = Auth::user()->id;
-				$interaction->interaction_id = $friend_id;
-				$interaction = $interaction->findAll();
+				$interaction = Interactions::join('interaction_users','interaction_users.interaction_id','=','interactions.id')
+					->with('users')
+					->where('interaction_users.user_id', Auth::user()->id)
+					->orWhere('interaction_users.user_id', $friend_id)
+					->first();
 				if($interaction){
-					$interaction->friended = 0;
-					$interaction->bond = $interaction->bond - 50;
+					$interaction->friended = 1;
+					$interaction->bond = $interaction->bond + 50;
 					$interaction->save();
-					return Redirect::to(Session::get('curr_page'));
-				}else{
-					$interaction = new Interactions();
-					$interaction->user_id = $friend_id;
-					$interaction->interaction_id = Auth::user()->id;
-					$interaction = $interaction->findAll();
-					if($interaction){
-						$interaction->friended = 0;
-						$interaction->bond = $interaction->bond - 50;
-						$interaction->save();
-						return Redirect::to(Session::get('curr_page'));
-					}else{
-						return Redirect::to(Session::get('curr_page'));
-					}
 				}
 			}
 		}
@@ -72,33 +59,28 @@ class Profile extends BaseController {
 
 	public function getProfilevisit(){
 		if(Auth::check()){
+			$profile_id = Input::get('profile_id');
 			if(Auth::user()->id != $profile_id){
-				$profile_id = Input::get('profile_id');
-				$interaction = new Interactions();
-				$interaction->user_id = Auth::user()->id;
-				$interaction->interaction_id = $profile_id;
-				$interaction = $interaction->findAll();
+				$interaction = Interactions::join('interaction_users','interaction_users.interaction_id','=','interactions.id')
+					->with('users')
+					->where('interaction_users.user_id', Auth::user()->id)
+					->orWhere('interaction_users.user_id', $profile_id)
+					->first();
 				if($interaction){
 					$interaction->bond = $interaction->bond + 5;
 					$interaction->save();
-					return 1;
 				}else{
 					$interaction = new Interactions();
-					$interaction->user_id = $profile_id;
-					$interaction->interaction_id = Auth::user()->id;
-					$interaction = $interaction->findAll();
-					if($interaction){
-						$interaction->bond = $interaction->bond + 5;
-						$interaction->save();
-						return 1;
-					}else{
-						$interaction = new Interactions();
-						$interaction->user_id = Auth::user()->id;
-						$interaction->interaction_id = $profile_id;
-						$interaction->bond = 5;
-						$interaction->save();
-						return 1;
-					}
+					$interaction->bond = 5;
+					$interaction->save();
+					$inter_user = new InteractionUsers();
+					$inter_user->user_id = Auth::user()->id;
+					$inter_user->interaction_id = $interaction->id;
+					$inter_user->save();
+					$inter_user = new InteractionUsers();
+					$inter_user->user_id = $profile_id;
+					$inter_user->interaction_id = $interaction->id;
+					$inter_user->save();
 				}
 			}
 		}

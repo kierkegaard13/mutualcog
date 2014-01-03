@@ -26,7 +26,7 @@ $(document).ready(function(){
 			},
 			error:function(){}
 		});	
-	},20000);
+	},15000);
 	$('.chat_mssg').click(function(){
 		window.location.href = "//mutualcog.com/chat/open/" + $('.chat_id_' + $(this).attr('id')).attr('id');
 	});

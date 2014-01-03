@@ -34,5 +34,6 @@ class EloquentBridge extends Eloquent
 		}else{}
 		return $result;
 	}
+
 }
 

@@ -91,19 +91,18 @@
 
 <div class="tab-pane fade in" id="friendships">
 	<div class="frame" style="height:620px;">
-		{% for interaction in interactions %}
-			<div>
-				{{interaction.name}}
-			</div>
-		{% endfor %}
-		{% for interaction in interacted %}
-			<div class="col-lg-3 interaction">
-				<a href="{{site}}/p/{{interaction.name}}" style="color:white;"><b>{{interaction.name}}</b></a>
-				<div style="font-size:14px;">
-					<div>Bond : {{interaction.pivot.bond}}</div>
-					<div>Last Interaction : <span class="interaction_time" id="{{interaction.pivot.updated_at}}"></span></div>
+		{% for friendship in friendships %}
+			{% for friend in friendship.users %}
+			{% if friend.name != user.name %}
+				<div class="col-lg-3 interaction">
+					<a href="{{site}}/p/{{friend.name}}" style="color:white;"><b>{{friend.name}}</b></a>
+					<div style="font-size:14px;">
+						<div>Bond : {{friendship.bond}}</div>
+						<div>Last Interaction : <span class="interaction_time" id="{{friendship.updated_at}}"></span></div>
+					</div>
 				</div>
-			</div>
+			{% endif %}
+			{% endfor %}
 		{% endfor %}
 	</div>
 </div>

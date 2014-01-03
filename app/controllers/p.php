@@ -18,25 +18,19 @@ class P extends BaseController {
 			foreach(ChatsVoted::wheremember_id(Auth::user()->id)->wherestatus(2)->get() as $downvote){
 				$downvoted[] = $downvote->chat_id;
 			}
-			$interaction = new Interactions();
-			$interaction->user_id = Auth::user()->id;
-			$interaction->interaction_id = $user->id;
-			$interaction = $interaction->findAll();
-			if($interaction && $interaction->friended == 1){
-				$view['friended'] = 1;		
-			}else{
-				$interaction = new Interactions();
-				$interaction->user_id = $user->id;
-				$interaction->interaction_id = Auth::user()->id;
-				$interaction = $interaction->findAll();
-				if($interaction && $interaction->friended == 1){
-					$view['friended'] = 1;		
+			if($username != Auth::user()->name){
+				$interaction = Interactions::join('interaction_users','interaction_users.interaction_id','=','interactions.id')
+					->with('users')
+					->where('interaction_users.user_id', Auth::user()->id)
+					->orWhere('interaction_users.user_id', $user->id)
+					->first();
+				if($interaction){
+					if($interaction->friended == 1) $view['friended'] = 1;		
 				}
 			}
 		}
 		Session::put('curr_page',URL::full());
-		$view['interactions'] = $user->interactions;
-		$view['interacted'] = $user->interacted;
+		$view['friendships'] = $user->friendships;
 		$view['color_arr'] = array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#000');
 		$view['upvoted'] = $upvoted;
 		$view['downvoted'] = $downvoted;

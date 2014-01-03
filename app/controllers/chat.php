@@ -5,10 +5,13 @@ class Chat extends BaseController {
         public function getOpen($chat_id){
                 $view = View::make('chat');
 		$chat = Chats::find($chat_id);
+		if(!isset($chat_id) || !$chat){
+			return App::abort(404,'You seem to have entered an invalid URL');
+		}
 		$user = Serials::whereserial_id(Session::get('unique_serial'))->first();
 		$user->reserved = 1;
 		$user->save();
-		if(Auth::check() && isset($chat_id)){
+		if(Auth::check()){
 			$mem_to_chat = new MembersToChats();
 			$mem_to_chat->chat_id = $chat_id;
 			$mem_to_chat->member_id = Auth::user()->id;
@@ -21,20 +24,26 @@ class Chat extends BaseController {
 				$all_mems = MembersToChats::wherechat_id($chat_id)->get();
 				foreach($all_mems as $mem){
 					if(preg_match('/[a-zA-Z]/',$mem->user) && $mem->member_id != Auth::user()->id){
-						$interaction = new Interactions();
-						if($interaction->whereuser_id(Auth::user()->id)->whereinteraction_id($mem->member_id)->first()){
-							$interaction = $interaction->whereuser_id(Auth::user()->id)->whereinteraction_id($mem->member_id)->first();
+						$interaction = Interactions::join('interaction_users','interaction_users.interaction_id','=','interactions.id')
+							->with('users')
+							->where('interaction_users.user_id', Auth::user()->id)
+							->orWhere('interaction_users.user_id', $mem->id)
+							->first();
+						if($interaction){
 							$interaction->bond = $interaction->bond + 1;
 							$interaction->save();
-						}else if($interaction->whereuser_id($mem->member_id)->whereinteraction_id(Auth::user()->id)->first()){
-							$interaction = $interaction->whereuser_id($mem->member_id)->whereinteraction_id(Auth::user()->id)->first();
-							$interaction->bond = $interaction->bond + 1;
-							$interaction->save();	
 						}else{
-							$interaction->user_id = Auth::user()->id;
-							$interaction->interaction_id = $mem->member_id;
+							$interaction = new Interactions();
 							$interaction->bond = 1;
 							$interaction->save();
+							$inter_user = new InteractionUsers();
+							$inter_user->user_id = Auth::user()->id;
+							$inter_user->interaction_id = $interaction->id;
+							$inter_user->save();
+							$inter_user = new InteractionUsers();
+							$inter_user->user_id = $mem->member_id;
+							$inter_user->interaction_id = $interaction->id;
+							$inter_user->save();
 						}
 					}
 				}
@@ -42,14 +51,24 @@ class Chat extends BaseController {
 				$all_mems = MembersToChats::wherechat_id($chat_id)->get();
 				foreach($all_mems as $mem){
 					if(preg_match('/[a-zA-Z]/',$mem->user) && $mem->member_id != Auth::user()->id){
-						$interaction = new Interactions();
-						if($interaction->whereuser_id(Auth::user()->id)->whereinteraction_id($mem->member_id)->first()){  //don't want to repeatedly boost bonds
-						}else if($interaction->whereuser_id($mem->member_id)->whereinteraction_id(Auth::user()->id)->first()){
+						$interaction = Interactions::join('interaction_users','interaction_users.interaction_id','=','interactions.id')
+							->with('users')
+							->where('interaction_users.user_id', Auth::user()->id)
+							->orWhere('interaction_users.user_id', $mem->id)
+							->first();
+						if($interaction){
 						}else{
-							$interaction->user_id = Auth::user()->id;
-							$interaction->interaction_id = $mem->member_id;
+							$interaction = new Interactions();
 							$interaction->bond = 1;
 							$interaction->save();
+							$inter_user = new InteractionUsers();
+							$inter_user->user_id = Auth::user()->id;
+							$inter_user->interaction_id = $interaction->id;
+							$inter_user->save();
+							$inter_user = new InteractionUsers();
+							$inter_user->user_id = $mem->member_id;
+							$inter_user->interaction_id = $interaction->id;
+							$inter_user->save();
 						}
 					}
 				}
