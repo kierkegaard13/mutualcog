@@ -24,10 +24,9 @@ class Chat extends BaseController {
 				$all_mems = MembersToChats::wherechat_id($chat_id)->get();
 				foreach($all_mems as $mem){
 					if(preg_match('/[a-zA-Z]/',$mem->user) && $mem->member_id != Auth::user()->id){
-						$interaction = Interactions::join('interaction_users','interaction_users.interaction_id','=','interactions.id')
-							->with('users')
-							->where('interaction_users.user_id', Auth::user()->id)
-							->orWhere('interaction_users.user_id', $mem->id)
+						$interaction = Interactions::whereHas('users',function($q){$q->where('interaction_users.user_id',Auth::user()->id);})
+							->whereHas('users',function($q)use($mem){$q->where('interaction_users.user_id',$mem->id);})
+							->wheretype('friendship')
 							->first();
 						if($interaction){
 							$interaction->bond = $interaction->bond + 1;
@@ -51,11 +50,15 @@ class Chat extends BaseController {
 				$all_mems = MembersToChats::wherechat_id($chat_id)->get();
 				foreach($all_mems as $mem){
 					if(preg_match('/[a-zA-Z]/',$mem->user) && $mem->member_id != Auth::user()->id){
-						$interaction = Interactions::join('interaction_users','interaction_users.interaction_id','=','interactions.id')
-							->with('users')
-							->where('interaction_users.user_id', Auth::user()->id)
-							->orWhere('interaction_users.user_id', $mem->id)
+						$interaction = Interactions::whereHas('users',function($q){$q->where('interaction_users.user_id',Auth::user()->id);})
+							->whereHas('users',function($q)use($mem){$q->where('interaction_users.user_id',$mem->id);})
+							->wheretype('friendship')
 							->first();
+						//$interaction = Interactions::join('interaction_users','interaction_users.interaction_id','=','interactions.id')
+						//	->with('users')
+						//	->where('interaction_users.user_id', Auth::user()->id)
+						//	->orWhere('interaction_users.user_id', $mem->id)
+						//	->first();
 						if($interaction){
 						}else{
 							$interaction = new Interactions();

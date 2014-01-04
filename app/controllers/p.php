@@ -19,10 +19,9 @@ class P extends BaseController {
 				$downvoted[] = $downvote->chat_id;
 			}
 			if($username != Auth::user()->name){
-				$interaction = Interactions::join('interaction_users','interaction_users.interaction_id','=','interactions.id')
-					->with('users')
-					->where('interaction_users.user_id', Auth::user()->id)
-					->orWhere('interaction_users.user_id', $user->id)
+				$interaction = Interactions::whereHas('users',function($q){$q->where('interaction_users.user_id',Auth::user()->id);})
+					->whereHas('users',function($q)use($user){$q->where('interaction_users.user_id',$user->id);})
+					->wheretype('friendship')
 					->first();
 				if($interaction){
 					if($interaction->friended == 1) $view['friended'] = 1;		

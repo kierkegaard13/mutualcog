@@ -8,10 +8,9 @@ class Profile extends BaseController {
 		}
 		if(Auth::check()){
 			if(Auth::user()->id != $friend_id){
-				$interaction = Interactions::join('interaction_users','interaction_users.interaction_id','=','interactions.id')
-					->with('users')
-					->where('interaction_users.user_id', Auth::user()->id)
-					->orWhere('interaction_users.user_id', $friend_id)
+				$interaction = Interactions::whereHas('users',function($q){$q->where('interaction_users.user_id',Auth::user()->id);})
+					->whereHas('users',function($q)use($friend_id){$q->where('interaction_users.user_id',$friend_id);})
+					->wheretype('friendship')
 					->first();
 				if($interaction){
 					$interaction->friended = 1;
@@ -42,10 +41,9 @@ class Profile extends BaseController {
 		}
 		if(Auth::check()){
 			if(Auth::user()->id != $friend_id){
-				$interaction = Interactions::join('interaction_users','interaction_users.interaction_id','=','interactions.id')
-					->with('users')
-					->where('interaction_users.user_id', Auth::user()->id)
-					->orWhere('interaction_users.user_id', $friend_id)
+				$interaction = Interactions::whereHas('users',function($q){$q->where('interaction_users.user_id',Auth::user()->id);})
+					->whereHas('users',function($q)use($friend_id){$q->where('interaction_users.user_id',$friend_id);})
+					->wheretype('friendship')
 					->first();
 				if($interaction){
 					$interaction->friended = 1;
@@ -61,10 +59,9 @@ class Profile extends BaseController {
 		if(Auth::check()){
 			$profile_id = Input::get('profile_id');
 			if(Auth::user()->id != $profile_id){
-				$interaction = Interactions::join('interaction_users','interaction_users.interaction_id','=','interactions.id')
-					->with('users')
-					->where('interaction_users.user_id', Auth::user()->id)
-					->orWhere('interaction_users.user_id', $profile_id)
+				$interaction = Interactions::whereHas('users',function($q){$q->where('interaction_users.user_id',Auth::user()->id);})
+					->whereHas('users',function($q)use($profile_id){$q->where('interaction_users.user_id',$profile_id);})
+					->wheretype('friendship')
 					->first();
 				if($interaction){
 					$interaction->bond = $interaction->bond + 5;
