@@ -84,6 +84,24 @@ class Profile extends BaseController {
 		return 1;
 	}
 
+	public function postAbout(){
+		$profile = User::find(Input::get('id'));
+		if($profile){
+			if(Auth::user()->name == $profile->name){
+				$about = htmlentities(Input::get('about'));
+				$about_raw = $about;
+				$about = Parsedown::instance()->parse($about);
+				$about = str_replace('[comment]','<!--',$about);
+				$about = str_replace('[/comment]','-->',$about);
+				$profile->about_raw = $about_raw;
+				$profile->about = $about;
+				$profile->save();
+				return $profile->about;	
+			}
+		}	
+		return false;
+	}
+
 	public function getCheckuser(){
 		$username = htmlentities(Input::get('username'));
 		$user = new User();

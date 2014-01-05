@@ -35,10 +35,10 @@
 	<span class="glyphicon glyphicon-stop" id="stop_scroll" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Stop scrollbar"></span>
 	<!--<span class="glyphicon glyphicon-list" id="show_members" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Show chat members"></span>-->
 	{% if user.name == chat.admin or serial == chat.admin %}
-	<span class="glyphicon glyphicon-pause pause" id="pause_chat" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Pause chat"></span>
-	<span class="glyphicon glyphicon-tower" id="mod_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Grant holy moderation powers"></span>
-	<span class="glyphicon glyphicon-warning-sign" id="warn_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Warn user"></span>
-	<span class="glyphicon glyphicon-remove" id="kick_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Kick user"></span>
+	<span class="glyphicon glyphicon-pause pause mod_power" id="pause_chat" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Pause chat"></span>
+	<span class="glyphicon glyphicon-tower mod_power" id="mod_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Grant holy moderation powers"></span>
+	<span class="glyphicon glyphicon-warning-sign mod_power" id="warn_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Warn user"></span>
+	<span class="glyphicon glyphicon-remove mod_power" id="kick_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Kick user"></span>
 	{% endif %}
 </div>
 <div id="members_box"><div id="members_list"></div></div>
@@ -91,19 +91,46 @@
 	<span class="chat_time" id="{{chat.inception}}"></span>
 	with Tags:
 	{% for tag in chat.tags %}
-		<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}">#{{tag.name}}</a> </span>
+		<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}" style="color:#075de9;">#{{tag.name}}</a> </span>
 	{% endfor %}
 </div>
-<div class="top_5" id="curr_details">
-{{chat.details}}
+<div class="top_5 {% if user.name == chat.admin or serial == chat.admin %} edit_details {% endif %}" id="curr_details" data-toggle="tooltip" data-placement="top" data-original-title="Click to edit description" data-container="body">
+{{chat.details | slice(0,560) | raw}}... <a id="continue_description" data-toggle="modal" data-target="#continue_modal" href="#" style="color:#075de9;">Continue</a>
+</div>
+<div class="modal fade" id="continue_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="continue_modalLabel">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Chat Description</h4>
+			</div>
+			<div class="modal-body">
+				<div id="curr_details">
+					{{chat.details | raw}}
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>	
 </div>
 {% if user.name == chat.admin or serial == chat.admin %}
-	<button class="btn btn-primary top_5" id="add_details">Edit Details</button>
-	<div class="top_5" id="edit_details" style="display:none;">
-		<textarea rows="6" id="detail_text">
-			{{chat.details}}
-		</textarea>
-		<button class="btn btn-success top_10" id="save_details">Save Details</button>
+	<div class="modal fade" id="description_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="description_modalLabel">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Edit Chat Description</h4>
+				</div>
+				<div class="modal-body">
+					<textarea rows="7" id="detail_text">{{chat.raw_details | raw}}</textarea>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-success" id="save_details">Save Details</button>
+				</div>
+			</div>
+		</div>	
 	</div>
 {% endif %}
 {% endblock %}

@@ -27,6 +27,27 @@ $(document).ready(function(){
 			error:function(){}
 		});	
 	},15000);
+	$('button#save_about').click(function(){
+		$.ajax({
+			type:'POST',
+			data: {about:$('#detail_text').val(),id:$('.profile_name').attr('id')},
+			url:'//mutualcog.com/profile/about',
+			success:function(hresp){
+				$('#edit_box').hide();
+				$('#about_details').html(hresp);
+				$('#about_details').show();
+			},
+			error:function(){
+			}
+		});
+	});
+	if($('#about_details').hasClass('edit_about')){
+		$('#about_details').tooltip();
+		$('#about_details').click(function(){
+			$(this).hide();
+			$('#edit_box').show();
+		});
+	}
 	$('.chat_mssg').click(function(){
 		window.location.href = "//mutualcog.com/chat/open/" + $('.chat_id_' + $(this).attr('id')).attr('id');
 	});

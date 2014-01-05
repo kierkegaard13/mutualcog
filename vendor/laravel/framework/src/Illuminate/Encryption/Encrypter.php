@@ -86,12 +86,14 @@ class Encrypter {
 	public function decrypt($payload)
 	{
 		$payload = $this->getJsonPayload($payload);
+
 		// We'll go ahead and remove the PKCS7 padding from the encrypted value before
 		// we decrypt it. Once we have the de-padded value, we will grab the vector
 		// and decrypt the data, passing back the unserialized from of the value.
 		$value = base64_decode($payload['value']);
 
 		$iv = base64_decode($payload['iv']);
+
 		return unserialize($this->stripPadding($this->mcryptDecrypt($value, $iv)));
 	}
 

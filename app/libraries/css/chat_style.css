@@ -115,6 +115,9 @@ body{
 	  margin-top:60px;
 	  margin-left:0px;
 	}
+	.modal-dialog {
+	  width:50% !important;
+	}
 	.tag_search {
 	  margin-bottom:0px;
 	  margin-top:4px;
@@ -351,6 +354,19 @@ body{
 .highlighted_dark {
   color:#0549b7;
 }
+#curr_details {
+  word-break:break-all;
+}
+.edit_details {
+  transition:background-color .5s;
+  -webkit-transition:background-color .5s;
+  cursor:pointer;
+  height:87%;
+  width:100%;
+}
+.edit_details:hover {
+  background-color:#ccc;
+}
 #show_members {
   margin-top:-5px;
   transition:color .5s;
@@ -479,7 +495,6 @@ body{
   padding:20px;
   position:relative;
   background-color:#fff;
-  opacity:.95;
   margin:0px auto;
   text-align:left;
   height:auto;

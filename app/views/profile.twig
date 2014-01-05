@@ -27,6 +27,23 @@
 
 <div class="tab-pane fade active in" id="about">
 	<div style="height:620px;margin-top:10px;">
+		<div class="{% if user.id == profile.id %} edit_about {% endif %}" id="about_details" data-toggle="tooltip" data-placement="top" data-original-title="Click to edit about me" data-container="body">
+			{{profile.about | raw}}
+		</div>
+		{% if user.id == profile.id %}
+			<div id="edit_box" style="display:none;">
+<textarea rows="25" id="detail_text">{% if not profile.about %}[comment]**Name** : [/comment]
+
+[comment]**Birthday** : [/comment]
+
+[comment]**Location** : [/comment]
+
+[comment]**Interests** : [/comment]
+
+[comment]**About Me** : [/comment]{% else %}{{profile.about_raw | raw}}{% endif %}</textarea>
+				<button class="btn btn-success" id="save_about" style="margin-top:9px;">Save About Me</button>
+			</div>
+		{% endif %}
 	</div>
 </div>
 

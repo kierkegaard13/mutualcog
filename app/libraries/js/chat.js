@@ -179,28 +179,6 @@ $('#search_input').on('keyup',function(e){
 	}
 });
 
-$('button#add_details').click(function(){
-	$(this).css('display','none');
-	$('#curr_details').css('display','none');
-	$('div#edit_details').css('display','');
-});
-
-$('button#save_details').click(function(){
-	$('div#edit_details').css('display','none');
-	$.ajax({
-		type:'POST',
-		data: {details:$('#detail_text').val(),id:$('.chat_id').attr('id')},
-		url:'//mutualcog.com/chat/details',
-		success:function(hresp){
-			$('#curr_details').html(hresp);
-			$('#curr_details').css('display','');
-			$('button#add_details').css('display','');
-		},
-		error:function(){
-		}
-	});
-});
-
 $(window).on('blur',function(){
 	focused = 0;
 });
@@ -243,8 +221,33 @@ $(document).ready(function(){
 			});
 		}
 	});
+	$('a#continue_description').click(function(e){
+		e.stopPropagation();
+		$('#continue_modal').modal();
+	});
+	$('button#save_details').click(function(){
+		$('#description_modal').modal('hide');
+		$.ajax({
+			type:'POST',
+			data: {details:$('#detail_text').val(),id:$('.chat_id').attr('id')},
+			url:'//mutualcog.com/chat/details',
+			success:function(hresp){
+				$('#curr_details').html(hresp);
+				$('#curr_details').show();
+			},
+			error:function(){
+			}
+		});
+	});
 	var showing = 0;
 	var hovering = 0;
+	if($('#curr_details').hasClass('edit_details')){
+		$('#curr_details').tooltip();
+		$('#curr_details').click(function(){
+			$('#description_modal').modal();
+			return false;
+		});
+	}
 	$('#show_members').tooltip();
 	$('#stop_scroll').tooltip();
 	$('#pause_chat').tooltip();
@@ -548,6 +551,15 @@ socket.on('displayMembers',function(info){
 		}
 	});
 	$('#members_list').html(mems.join(''));
+});
+
+socket.on('add_mod_funcs',function(){
+	console.log('hi');
+	$('#user_toolbox').append(' <span class="glyphicon glyphicon-pause pause mod_power" id="pause_chat" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Pause chat"></span> <span class="glyphicon glyphicon-tower mod_power" id="mod_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Grant holy moderation powers"></span> <span class="glyphicon glyphicon-warning-sign mod_power" id="warn_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Warn user"></span> <span class="glyphicon glyphicon-remove mod_power" id="kick_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Kick user"></span> ');
+});
+
+socket.on('remove_mod_funcs',function(){
+	$('.mod_power').remove();
 });
 
 socket.on('pause',function(security){

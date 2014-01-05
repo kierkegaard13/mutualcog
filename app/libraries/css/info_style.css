@@ -112,6 +112,16 @@ body{
   top:10px;
   right:15px; 
 }
+.edit_about {
+  transition:background-color .5s;
+  -webkit-transition:background-color .5s;
+  height:100%;
+  width:100%;
+  cursor:pointer;
+}
+.edit_about:hover {
+  background-color:#ccc;
+}
 .btn-primary {
   background-color:#075de9;
   transition:background-color .5s;
@@ -331,4 +341,25 @@ body{
   white-space:normal;
   overflow:auto;
   word-break:break-all;
+}
+textarea {
+  width:100%;
+  resize:none;
+  border-radius:5px;
+  margin-bottom:0px;
+  padding:10px;
+  margin-top:5px;
+  font-size:16px;
+  border-bottom-color: rgb(238,238,238);
+  border-bottom-style: inset;
+  border-bottom-width: 2px;
+  border-right-color: rgb(238,238,238);
+  border-right-style: inset;
+  border-right-width: 2px;
+  border-top-color: rgb(238,238,238);
+  border-top-style: inset;
+  border-top-width: 2px;
+  border-left-color: rgb(238,238,238);
+  border-left-style: inset;
+  border-left-width: 2px;
 }

@@ -15,7 +15,6 @@ class Chat extends BaseController {
 			$mem_to_chat = new MembersToChats();
 			$mem_to_chat->chat_id = $chat_id;
 			$mem_to_chat->member_id = Auth::user()->id;
-			$mem_to_chat->user = Auth::user()->name;
 			if(!$mem_to_chat->findAll()){  //getting into chat for the first time
 				if($chat->admin_id == Auth::user()->id){
 					$mem_to_chat->is_admin = 1;
@@ -25,7 +24,7 @@ class Chat extends BaseController {
 				foreach($all_mems as $mem){
 					if(preg_match('/[a-zA-Z]/',$mem->user) && $mem->member_id != Auth::user()->id){
 						$interaction = Interactions::whereHas('users',function($q){$q->where('interaction_users.user_id',Auth::user()->id);})
-							->whereHas('users',function($q)use($mem){$q->where('interaction_users.user_id',$mem->id);})
+							->whereHas('users',function($q)use($mem){$q->where('interaction_users.user_id',$mem->member_id);})
 							->wheretype('friendship')
 							->first();
 						if($interaction){
@@ -51,7 +50,7 @@ class Chat extends BaseController {
 				foreach($all_mems as $mem){
 					if(preg_match('/[a-zA-Z]/',$mem->user) && $mem->member_id != Auth::user()->id){
 						$interaction = Interactions::whereHas('users',function($q){$q->where('interaction_users.user_id',Auth::user()->id);})
-							->whereHas('users',function($q)use($mem){$q->where('interaction_users.user_id',$mem->id);})
+							->whereHas('users',function($q)use($mem){$q->where('interaction_users.user_id',$mem->member_id);})
 							->wheretype('friendship')
 							->first();
 						//$interaction = Interactions::join('interaction_users','interaction_users.interaction_id','=','interactions.id')
@@ -131,7 +130,8 @@ class Chat extends BaseController {
 		$chat = Chats::find(Input::get('id'));
 		if($chat){
 			if(Session::get('unique_serial') == $chat->admin || Auth::user()->name == $chat->admin){
-				$details = htmlentities(Input::get('details'));
+				$chat->raw_details = htmlentities(Input::get('details'));
+				$details = Parsedown::instance()->parse(htmlentities(Input::get('details')));
 				$chat->details = $details;
 				$chat->save();
 				return $chat->details;	

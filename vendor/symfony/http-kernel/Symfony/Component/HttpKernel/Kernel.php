@@ -24,7 +24,6 @@ use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\DependencyInjection\Loader\ClosureLoader;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\MergeExtensionConfigurationPass;
@@ -187,7 +186,7 @@ abstract class Kernel implements KernelInterface, TerminableInterface
     }
 
     /**
-     * Gets a http kernel from the container
+     * Gets a HTTP kernel from the container
      *
      * @return HttpKernel
      */

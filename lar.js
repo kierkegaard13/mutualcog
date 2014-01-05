@@ -53,22 +53,9 @@ var prospect = io.on('connection', function(client) {
 					client.is_admin = 1;
 				}
 				client.memb_id = client.user_id;
-				conn.where({member_id:client.memb_id,chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
+				conn.where({chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
 					if(err)console.log(err);
-					if(rows.length == 0){
-						conn.insert('members_to_chats',{member_id:client.memb_id,chat_id:client.chat_id,is_mod:"0",is_admin:client.is_admin,user:client.user},function(err,info){
-							if(err)console.log(err);
-							conn.where({chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
-								if(err)console.log(err);
-								io.sockets.in(client.room).emit('displayMembers',rows);
-							});
-						});
-					}else{
-						conn.where({chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
-							if(err)console.log(err);
-							io.sockets.in(client.room).emit('displayMembers',rows);
-						});
-					}
+					io.sockets.in(client.room).emit('displayMembers',rows);
 				});
 			}else{
 				client.serial = client.user;
@@ -77,22 +64,9 @@ var prospect = io.on('connection', function(client) {
 					client.is_admin = 1;
 				}
 				client.memb_id = client.serial_id;
-				conn.where({member_id:client.memb_id,chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
+				conn.where({chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
 					if(err)console.log(err);
-					if(rows.length == 0){
-						conn.insert('members_to_chats',{member_id:client.memb_id,chat_id:client.chat_id,is_mod:"0",is_admin:client.is_admin,user:client.user},function(err,info){
-							if(err)console.log(err);
-							conn.where({chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
-								if(err)console.log(err);
-								io.sockets.in(client.room).emit('displayMembers',rows);
-							});
-						});
-					}else{
-						conn.where({chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
-							if(err)console.log(err);
-							io.sockets.in(client.room).emit('displayMembers',rows);
-						});
-					}
+					io.sockets.in(client.room).emit('displayMembers',rows);
 				});
 			}
 		});
@@ -158,21 +132,25 @@ var prospect = io.on('connection', function(client) {
 	});
 
 	client.on('make_mod',function(info){
+		var user = info.user;
 		conn.where({user:info.user,chat_id:info.chat_id}).update('members_to_chats',{is_mod:1},function(err,info){
 			if(err)console.log(err);
 			conn.where({chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
 				if(err)console.log(err);
 				io.sockets.in(client.room).emit('displayMembers',rows);
+				io.sockets.in(client.room + '_member_' + user).emit('add_mod_funcs');
 			});
 		});
 	});
 
 	client.on('remove_mod',function(info){
+		var user = info.user;
 		conn.where({user:info.user,chat_id:info.chat_id}).update('members_to_chats',{is_mod:0},function(err,info){
 			if(err)console.log(err);
 			conn.where({chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
 				if(err)console.log(err);
 				io.sockets.in(client.room).emit('displayMembers',rows);
+				io.sockets.in(client.room + '_member_' + user).emit('remove_mod_funcs');
 			});
 		});
 	});
