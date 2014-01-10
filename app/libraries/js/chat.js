@@ -642,14 +642,14 @@ socket.on('openChat',function(chat_info){
 	$.each(chat_log,function(index,value){
 		var tmp = "<div class='mssg_cont level_" + value.level + " parent_" + value.parent + "' id='mssg_cont_" + value.id + "'><div class='chat_mssg' id='" + value.id + "'><div>";
 		if((serial_tracker == value.author || user_tracker == value.author) && value.message != '<i>This message has been deleted</i>'){
-			tmp += "<span id='" + value.id + "' class='glyphicon glyphicon-remove mssg_icon' data-toggle='tooltip' title='Delete post' data-container='body' data-placement='top'></span>";
+			tmp += "<span id='" + value.id + "' style='margin-right:4px;' class='glyphicon glyphicon-remove mssg_icon' data-toggle='tooltip' title='Delete post' data-container='body' data-placement='top'></span>";
 		}
 		if(admin.indexOf(value.author) != -1){
-			tmp += "<span class='glyphicon glyphicon-star' style='margin-left:5px;'></span>";
+			tmp += "<span class='glyphicon glyphicon-star'></span>";
 		}else if(mods.indexOf(value.author) != -1){
-			tmp += "<span class='glyphicon glyphicon-tower' style='margin-left:5px;'></span>";	
+			tmp += "<span class='glyphicon glyphicon-tower'></span>";	
 		}
-		tmp += "<b class='mssg_op' id='" + value.author + "' style='color:" + color_arr[value.serial % 7] + ";'> " + value.author + "(<span class='response_count' id='" + value.id + "'>" + value.responses + "</span>)</b> : " + value.message + "</div><div class='time' id='" + value.inception + "'>" + moment.utc(value.inception).fromNow() + "</div></div></div>"	
+		tmp += "<b class='mssg_op' id='" + value.author + "' style='color:" + color_arr[value.serial % 7] + ";'> " + value.author + " (<span class='response_count' id='" + value.id + "'>" + value.responses + "</span>)</b> : " + value.message + "</div><div class='time' id='" + value.created_at + "'>" + moment.utc(value.created_at).fromNow() + "</div></div></div>"	
 		messages.push(tmp);
 	});
 	$('#chat_display').html(messages.join(''));
@@ -685,14 +685,14 @@ socket.on('openResponses',function(responses){
 		responseto = value.responseto;
 		var tmp = "<div class='responses_to_" + value.responseto + " level_" + value.level + " parent_" + value.parent + " pad_l_20' id='mssg_cont_" + value.id + "'><div class='chat_resp' id='" + value.id + "'><div>";
 		if((serial_tracker == value.author || user_tracker == value.author)  && value.message != '<i>This message has been deleted</i>'){
-			tmp += "<span id='" + value.id + "' class='glyphicon glyphicon-remove resp_icon' data-toggle='tooltip' title='Delete post' data-container='body' data-placement='top'></span>";
+			tmp += "<span id='" + value.id + "' style='margin-right:4px;' class='glyphicon glyphicon-remove resp_icon' data-toggle='tooltip' title='Delete post' data-container='body' data-placement='top'></span>";
 		}
 		if(admin.indexOf(value.author) != -1){
-			tmp += "<span class='glyphicon glyphicon-star' style='margin-left:5px;'></span>";
+			tmp += "<span class='glyphicon glyphicon-star'></span>";
 		}else if(mods.indexOf(value.author) != -1){
-			tmp += "<span class='glyphicon glyphicon-tower' style='margin-left:5px;'></span>";	
+			tmp += "<span class='glyphicon glyphicon-tower'></span>";	
 		}
-		tmp += "<b class='mssg_op' id='" + value.author + "' style='color:" + color_arr[value.serial % 7] + ";'> " + value.author + "(<span class='response_count' id='" + value.id + "'>" + value.responses + "</span>)</b> : " + value.message + "</div><div class='time' id='" + value.inception + "'>" + moment.utc(value.inception).fromNow() + "</div></div></div>"	
+		tmp += "<b class='mssg_op' id='" + value.author + "' style='color:" + color_arr[value.serial % 7] + ";'> " + value.author + " (<span class='response_count' id='" + value.id + "'>" + value.responses + "</span>)</b> : " + value.message + "</div><div class='time' id='" + value.created_at + "'>" + moment.utc(value.created_at).fromNow() + "</div></div></div>"	
 		messages.push(tmp);
 	});
 	$('#mssg_cont_' + responseto).children('#resp_cont_' + responseto).remove();

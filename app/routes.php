@@ -22,10 +22,9 @@ function getUniqueSerialNumber($serial_number=null){
 	if($temp){  //serial number exists
 		$curr_date = date('Y:m:d:H:i');
 		list($year,$month,$day,$hour,$minute) = explode(':',$curr_date);
-		$temp_date = date('Y:m:d:H:i',strtotime($temp->inception));
+		$temp_date = date('Y:m:d:H:i',strtotime($temp->updated_at));
 		list($t_year,$t_month,$t_day,$t_hour,$t_minute) = explode(':',$temp_date);
 		if(($year > $t_year || $month > $t_month || $day > $t_day || ($hour * 60 + $minute) > ($t_hour * 60 + $t_minute) + 481) && $temp->reserved == 0){
-			$temp->inception = date(DATE_ATOM);
 			if(Auth::check()){
 				$temp->user_id = Auth::user()->id;
 			}else{
@@ -39,7 +38,6 @@ function getUniqueSerialNumber($serial_number=null){
 		$serial_number = mt_rand(0,16777215);
 		return getUniqueSerialNumber($serial_number);
 	}
-	$serial->inception = date(DATE_ATOM);
 	if(Auth::check()){
 		$serial->user_id = Auth::user()->id;
 	}
@@ -55,7 +53,7 @@ Route::filter('assignSerial',function(){
 		}else{
 			$serial = Serials::whereserial_id(Session::get('unique_serial'))->first();
 			if($serial){
-				$serial->inception = date(DATE_ATOM);
+				$serial->touch();
 				if(Auth::check()){
 					$serial->user_id = Auth::user()->id;
 				}else{
@@ -72,12 +70,10 @@ Route::group(array('before' => 'assignSerial'), function(){
 
 		Route::controller('home','home');
 		Route::controller('profile','profile');
-		Route::controller('soon','soon');
 		Route::controller('privacy','privacy');
 		Route::controller('terms','terms');
 		Route::controller('tags','TagsController');
 		Route::controller('chat','chat');
-		Route::controller('scripts','scripts');
 		Route::get('/p/{user}',array('uses' => 'p@getIndex'));
 		Route::get('/t/{tag}',array('uses' => 't@getIndex'));
 

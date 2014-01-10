@@ -19,16 +19,37 @@
 				</ul>
 			</div>
 		</form>
-		<ul class="nav navbar-nav">
-			<li><a href="{{site}}/soon">Coming Soon</a></li>
+		{% if logged_in %}
+		<ul class="nav navbar-nav nav_left">
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Subscriptions <b class="caret" style="color:white;"></b></a>
+				<ul class="dropdown-menu" role="menu">
+					{% for sub in user.subscriptions %}
+						<li><a href="{{site}}/t/{{sub.name}}">{{sub.name}}</a></li>
+					{% endfor %}
+				</ul>
+			</li>
+		</ul>
+		<ul class="nav navbar-nav nav_right nav_margin">
 			{% for tag in tags %}
-				{% if curr_tag == tag.name %}
+				{% if curr_tag.name == tag.name %}
 					<li><a class="highlight_light_blue" href="{{site}}/t/{{tag}}">{{tag}}</a></li>
 				{% else %}
 					<li><a href="{{site}}/t/{{tag}}">{{tag}}</a></li>
 				{% endif %}
 			{% endfor %}
 		</ul>
+		{% else %}
+		<ul class="nav navbar-nav nav_right">
+			{% for tag in tags %}
+				{% if curr_tag.name == tag.name %}
+					<li><a class="highlight_light_blue" href="{{site}}/t/{{tag}}">{{tag}}</a></li>
+				{% else %}
+					<li><a href="{{site}}/t/{{tag}}">{{tag}}</a></li>
+				{% endif %}
+			{% endfor %}
+		</ul>
+		{% endif %}
 	</div>
 </nav>
 {% endblock %}
@@ -51,15 +72,18 @@
 </fieldset>
 </form>
 {% else %}
-<div class="last_login" id="{{user.last_login}}"></div>
+<div class="last_login" id="{{user.last_login}}"><b>Last login:</b></div>
 <div>Cognizance: {{user.cognizance}}/{{100 + 20*user.level }} (Level: {{user.level}})</div>
 <div class="progress progress-striped active">
 	<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{user.cognizance}}" aria-valuemin="0" aria-valuemax="{{100 + 20*user.level}}" style="width:{{user.cognizance}}%;">
 		<span class="sr-only">Only {{user.cognizance}}% Complete</span>
 	</div>
 </div>
-<a class="btn btn-success btn_btm_l" href="{{site}}/p/{{user.name}}">My Profile</a>
-<a class="btn btn-primary btn_btm_r" href="{{site}}/profile/logout">Logout</a>
+<select class="form-control">
+	<option value="">Visible and Evaluated</option>
+</select>
+<a class="btn btn-success btn_btm_l btn-sm" href="{{site}}/p/{{user.name}}">My Profile</a>
+<a class="btn btn-primary btn_btm_r btn-sm" href="{{site}}/profile/logout">Logout</a>
 {% endif %}
 {% endblock %}
 
@@ -81,7 +105,36 @@
 </form>
 {% endblock %}
 
+{% block subscription %}
+{% if not home_active %}
+	<div class="content_right">
+	<div class="content_left">
+		<div class="small_content_box">
+			<div class="content_left grad4"></div>
+			<div class="content_right grad4"></div>
+			<div class="content side_content" id="subscribe">
+				<div><a href="{{site}}/t/{{curr_tag.name}}" style="font-size:22px;color:#333;"><b>{{curr_tag.name}}</b></a></div>
+				{% if logged_in %}
+					{% if user_subscribed %}
+						<span><a href="{{site}}/tags/unsubscribe/{{curr_tag.id}}" class="btn btn-danger btn-xs">Unsubscribe</a></span>
+					{% else %}
+						<span><a href="{{site}}/tags/subscribe/{{curr_tag.id}}" class="btn btn-success btn-xs">Subscribe</a></span>
+					{% endif %}
+				{% endif %}
+				{% set tag_subscribers = curr_tag.subscribers | length %}
+				<span>{{tag_subscribers}} Subscriber{% if tag_subscribers != 1 %}s{% endif %}</span>
+				<div style="font-size:14px;"><div class="green_ball"></div> {{curr_tag.online}} online</div>
+			</div>
+		</div>
+	</div>
+	</div>
+{% endif %}
+{% endblock %}
+
 {% block content %}
+<div id="tab_content" class="tab-content">
+
+<div class="tab-pane fade active in" id="hot">
 	<div id="chat_list">
 		{% for chat in chats %} 
 			<div class="chat_title_box">
@@ -116,7 +169,7 @@
 						{% else %}
 							<div class="chat_info">Created by <b>{{chat.admin}}</b>, 
 						{% endif %}
-							<span class="chat_time" id="{{chat.inception}}"></span>
+							<span class="chat_time" id="{{chat.created_at}}"></span>
 							with Tags:
 							{% for tag in chat.tags %}
 								<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}" style="color:#075de9;">#{{tag.name}}</a> </span>
@@ -135,5 +188,176 @@
 		<span style="margin-left:-104px;"><a href="{{site}}/privacy">Privacy Policy</a></span> |
 		<span><a href="{{site}}/terms">Terms of Use</a></span>
 	</div>
+</div>
+
+<div class="tab-pane fade in" id="new">
+	<div id="chat_list">
+		{% for chat in chats_new %} 
+			<div class="chat_title_box">
+				<div class="row">
+					<div class="number_box"> {{loop.index}}. </div>
+					<div class="vote_box">
+						{% if chat.id in upvoted %}
+							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+						{% else %}
+							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+						{% endif %}
+						<div style="margin-top:-5px;margin-bottom:-8px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
+						{% if chat.id in downvoted %}
+							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+						{% else %}
+							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+						{% endif %}
+					</div>
+					{% if chat.image %}
+						<a class="pull-left link_thumbnail" href="{{chat.link}}">
+							<img src="{{chat.image}}" alt="Image Error" width="80" height="80">
+						</a>
+					{% endif %}
+					<div class="chat_title">
+						{% if chat.link %}
+							<a href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+						{% else %}
+							<a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
+						{% endif %}
+						{% if chat.admin % 16777259 == 0 %}
+							<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><b>{{chat.admin}}</b></a>, 
+						{% else %}
+							<div class="chat_info">Created by <b>{{chat.admin}}</b>, 
+						{% endif %}
+							<span class="chat_time" id="{{chat.created_at}}"></span>
+							with Tags:
+							{% for tag in chat.tags %}
+								<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}" style="color:#075de9;">#{{tag.name}}</a> </span>
+							{% endfor %}
+							and <a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:gray;"><b>{{chat.messages | length }} comments</b></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+	<div class="page_links">
+		{{chats_new.links|raw}}
+	</div>
+	<div class="policy">
+		<span style="margin-left:-104px;"><a href="{{site}}/privacy">Privacy Policy</a></span> |
+		<span><a href="{{site}}/terms">Terms of Use</a></span>
+	</div>
+</div>
+
+<div class="tab-pane fade in" id="rising">
+	<div id="chat_list">
+		{% for chat in chats_rising %} 
+			<div class="chat_title_box">
+				<div class="row">
+					<div class="number_box"> {{loop.index}}. </div>
+					<div class="vote_box">
+						{% if chat.id in upvoted %}
+							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+						{% else %}
+							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+						{% endif %}
+						<div style="margin-top:-5px;margin-bottom:-8px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
+						{% if chat.id in downvoted %}
+							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+						{% else %}
+							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+						{% endif %}
+					</div>
+					{% if chat.image %}
+						<a class="pull-left link_thumbnail" href="{{chat.link}}">
+							<img src="{{chat.image}}" alt="Image Error" width="80" height="80">
+						</a>
+					{% endif %}
+					<div class="chat_title">
+						{% if chat.link %}
+							<a href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+						{% else %}
+							<a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
+						{% endif %}
+						{% if chat.admin % 16777259 == 0 %}
+							<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><b>{{chat.admin}}</b></a>, 
+						{% else %}
+							<div class="chat_info">Created by <b>{{chat.admin}}</b>, 
+						{% endif %}
+							<span class="chat_time" id="{{chat.created_at}}"></span>
+							with Tags:
+							{% for tag in chat.tags %}
+								<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}" style="color:#075de9;">#{{tag.name}}</a> </span>
+							{% endfor %}
+							and <a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:gray;"><b>{{chat.messages | length }} comments</b></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+	<div class="page_links">
+		{{chats_rising.links|raw}}
+	</div>
+	<div class="policy">
+		<span style="margin-left:-104px;"><a href="{{site}}/privacy">Privacy Policy</a></span> |
+		<span><a href="{{site}}/terms">Terms of Use</a></span>
+	</div>
+</div>
+
+<div class="tab-pane fade in" id="controversial">
+	<div id="chat_list">
+		{% for chat in chats_contr %} 
+			<div class="chat_title_box">
+				<div class="row">
+					<div class="number_box"> {{loop.index}}. </div>
+					<div class="vote_box">
+						{% if chat.id in upvoted %}
+							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+						{% else %}
+							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+						{% endif %}
+						<div style="margin-top:-5px;margin-bottom:-8px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
+						{% if chat.id in downvoted %}
+							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+						{% else %}
+							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+						{% endif %}
+					</div>
+					{% if chat.image %}
+						<a class="pull-left link_thumbnail" href="{{chat.link}}">
+							<img src="{{chat.image}}" alt="Image Error" width="80" height="80">
+						</a>
+					{% endif %}
+					<div class="chat_title">
+						{% if chat.link %}
+							<a href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+						{% else %}
+							<a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
+						{% endif %}
+						{% if chat.admin % 16777259 == 0 %}
+							<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><b>{{chat.admin}}</b></a>, 
+						{% else %}
+							<div class="chat_info">Created by <b>{{chat.admin}}</b>, 
+						{% endif %}
+							<span class="chat_time" id="{{chat.created_at}}"></span>
+							with Tags:
+							{% for tag in chat.tags %}
+								<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}" style="color:#075de9;">#{{tag.name}}</a> </span>
+							{% endfor %}
+							and <a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:gray;"><b>{{chat.messages | length }} comments</b></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+	<div class="page_links">
+		{{chats_contr.links|raw}}
+	</div>
+	<div class="policy">
+		<span style="margin-left:-104px;"><a href="{{site}}/privacy">Privacy Policy</a></span> |
+		<span><a href="{{site}}/terms">Terms of Use</a></span>
+	</div>
+</div>
+
+</div>
 {% endblock %}
 

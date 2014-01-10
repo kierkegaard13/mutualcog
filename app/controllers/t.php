@@ -5,30 +5,46 @@ class T extends BaseController {
 	public function getIndex($tag)
 	{
 		$view = View::make('home');
-		$chats = Tags::wherename($tag)->first();
-		if(!isset($tag) || !$chats){
+		$view['user_subscribed'] = 0;
+		$curr_tag = Tags::wherename($tag)->first();
+		if(!isset($tag) || !$curr_tag){
 			return App::abort(404,'You seem to have entered an invalid URL');
 		}
-		$chats = $chats->chats;
+		$chats_new = $curr_tag->chatsnew();
+		$chats_rising = $curr_tag->chatsrising();
+		$chats_contr = $curr_tag->chatscontr();
+		$chats = $curr_tag->chats();
 		$tags = Tags::take(20)->orderBy('popularity','desc')->get();
 		$upvoted = array();
 		$downvoted = array();
 		if(Auth::check()){
+			$user = User::find(Auth::user()->id);
+			$user->page = $curr_tag->name;
+			$user->save();
 			foreach(ChatsVoted::wheremember_id(Auth::user()->id)->wherestatus(1)->get() as $upvote){
 				$upvoted[] = $upvote->chat_id;
 			}
 			foreach(ChatsVoted::wheremember_id(Auth::user()->id)->wherestatus(2)->get() as $downvote){
 				$downvoted[] = $downvote->chat_id;
 			}
+			$usertag = UsersToTags::wheretag_id($curr_tag->id)->whereuser_id(Auth::user()->id)->first();
+			if($usertag){
+				$usertag->score = $usertag->score + 1;
+				$usertag->save();
+				$view['user_subscribed'] = 1;
+			}
 		}
 		Session::put('curr_page',URL::full());
 		$view['home_active'] = '';
-		$view['curr_tag'] = htmlentities($tag);
+		$view['curr_tag'] = $curr_tag;
 		$view['upvoted'] = $upvoted;
 		$view['downvoted'] = $downvoted;
 		$view['tags'] = $tags;
 		$view['curr_time'] = date('Y:m:d:H:i'); 
 		$view['chats'] = $chats;
+		$view['chats_new'] = $chats_new;
+		$view['chats_rising'] = $chats_rising;
+		$view['chats_contr'] = $chats_contr; 
                 return $view;
 	}
 

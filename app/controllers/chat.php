@@ -8,6 +8,8 @@ class Chat extends BaseController {
 		if(!isset($chat_id) || !$chat){
 			return App::abort(404,'You seem to have entered an invalid URL');
 		}
+		$chat->views = $chat->views + 1;
+		$chat->save();
 		$user = Serials::whereserial_id(Session::get('unique_serial'))->first();
 		$user->reserved = 1;
 		$user->save();
@@ -15,6 +17,7 @@ class Chat extends BaseController {
 			$mem_to_chat = new MembersToChats();
 			$mem_to_chat->chat_id = $chat_id;
 			$mem_to_chat->member_id = Auth::user()->id;
+			$mem_to_chat->user = Auth::user()->name;
 			if(!$mem_to_chat->findAll()){  //getting into chat for the first time
 				if($chat->admin_id == Auth::user()->id){
 					$mem_to_chat->is_admin = 1;
@@ -208,15 +211,24 @@ class Chat extends BaseController {
 			if(Auth::check()){
 				$chat->admin = Auth::user()->name;
 				$chat->admin_id = Auth::user()->id;
+				if($chat->title && $chat->admin){
+					$chat->save();
+					$ch_voted = new ChatsVoted();
+					$ch_voted->chat_id = $chat->id;
+					$ch_voted->member_id = Auth::user()->id;
+					$ch_voted->status = 1;
+					$ch_voted->save();
+				}else{
+					return Redirect::to(Session::get('curr_page'));
+				}
 			}else{
 				$chat->admin = Session::get('unique_serial');
 				$chat->admin_id = Session::get('serial_id');
-			}
-			$chat->inception = date(DATE_ATOM);
-			if($chat->title && $chat->admin && ($chat->type == 'open')){
-				$chat->save();
-			}else{
-				return Redirect::to(Session::get('curr_page'));
+				if($chat->title && $chat->admin){
+					$chat->save();
+				}else{
+					return Redirect::to(Session::get('curr_page'));
+				}
 			}
 			$chat = $chat->findAll();
 			$tags = Input::get('tags');
@@ -270,12 +282,17 @@ class Chat extends BaseController {
 				$user = $user->findAll();
 				$user_exists = 1;
 			}
-			if($status == 2){
+			if($status == 2){  //downvoted previously
 				if($user_exists){
 					$user->cognizance = $user->cognizance + 2;
 					$user->save();
 				}
 				foreach($chat->tags as $tag){
+					$usertag = UsersToTags::wheretag_id($tag->id)->whereuser_id(Auth::user()->id)->first();
+					if($usertag){
+						$usertag->score = $usertag->score + 2;
+						$usertag->save();
+					}
 					$tag->popularity = $tag->popularity + 2;
 					$tag->save();
 				}
@@ -285,12 +302,17 @@ class Chat extends BaseController {
 				$voted->save();
 				$chat->save();
 				return array('status' => 1,'upvotes' => $chat->upvotes - $chat->downvotes);
-			}elseif($status == 1){
+			}elseif($status == 1){  //upvoted previously
 				if($user_exists){
 					$user->cognizance = $user->cognizance - 1;
 					$user->save();
 				}
 				foreach($chat->tags as $tag){
+					$usertag = UsersToTags::wheretag_id($tag->id)->whereuser_id(Auth::user()->id)->first();
+					if($usertag){
+						$usertag->score = $usertag->score - 1;
+						$usertag->save();
+					}
 					$tag->popularity = $tag->popularity - 1;
 					$tag->save();
 				}
@@ -299,12 +321,17 @@ class Chat extends BaseController {
 				$voted->save();
 				$chat->save();
 				return array('status' => 2,'upvotes' => $chat->upvotes - $chat->downvotes);
-			}else{
+			}else{  //first time voting
 				if($user_exists){
 					$user->cognizance = $user->cognizance + 1;
 					$user->save();
 				}
 				foreach($chat->tags as $tag){
+					$usertag = UsersToTags::wheretag_id($tag->id)->whereuser_id(Auth::user()->id)->first();
+					if($usertag){
+						$usertag->score = $usertag->score + 1;
+						$usertag->save();
+					}
 					$tag->popularity = $tag->popularity + 1;
 					$tag->save();
 				}
@@ -347,6 +374,11 @@ class Chat extends BaseController {
 					$user->save();
 				}
 				foreach($chat->tags as $tag){
+					$usertag = UsersToTags::wheretag_id($tag->id)->whereuser_id(Auth::user()->id)->first();
+					if($usertag){
+						$usertag->score = $usertag->score - 2;
+						$usertag->save();
+					}
 					$tag->popularity = $tag->popularity - 2;
 					$tag->save();
 				}
@@ -362,6 +394,11 @@ class Chat extends BaseController {
 					$user->save();
 				}
 				foreach($chat->tags as $tag){
+					$usertag = UsersToTags::wheretag_id($tag->id)->whereuser_id(Auth::user()->id)->first();
+					if($usertag){
+						$usertag->score = $usertag->score + 1;
+						$usertag->save();
+					}
 					$tag->popularity = $tag->popularity + 1;
 					$tag->save();
 				}
@@ -376,6 +413,11 @@ class Chat extends BaseController {
 					$user->save();
 				}
 				foreach($chat->tags as $tag){
+					$usertag = UsersToTags::wheretag_id($tag->id)->whereuser_id(Auth::user()->id)->first();
+					if($usertag){
+						$usertag->score = $usertag->score - 1;
+						$usertag->save();
+					}
 					$tag->popularity = $tag->popularity - 1;
 					$tag->save();
 				}

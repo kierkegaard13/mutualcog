@@ -3,6 +3,7 @@
 class Chats extends EloquentBridge 
 {
 	protected $table = "chats";
+	public $timestamps = true;
 
 	public function messages(){
 		return $this->hasMany('Messages','chat_id');

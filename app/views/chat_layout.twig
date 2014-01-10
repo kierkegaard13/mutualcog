@@ -23,10 +23,12 @@
 	<div class="chat_content col-sm-7 col-md-8 col-lg-9" id="main">
                 <div style="position:relative;">
                         <div class="big_content_box">
-				<div class="content_left grad_l"></div>
-				<div class="content_right grad_l"></div>
-				<div class="content main_content" id="main_cont">
-					{% block content %}{% endblock %}
+				<div class="content_right">
+				<div class="content_left">
+					<div class="content main_content" id="main_cont">
+						{% block content %}{% endblock %}
+					</div>
+                                </div>
 				</div>
                         </div>
                 </div>
@@ -34,25 +36,31 @@
 	<div class="col-sm-5 col-md-4 col-lg-3" id="side">
                 <div style="position:relative;">
                         <div class="small_content_box tool_box">
-                                <div class="content_right grad_r_0"></div>
-                                <div class="content_left grad_r_0"></div>
-                                <div class="content box_r_0 side_content_r" id="side_cont">
-					{% block tools %}{% endblock %}
+				<div class="content_right">
+				<div class="content_left">
+					<div class="content box_r_0">
+						{% block tools %}{% endblock %}
+					</div>
                                 </div>
+				</div>
                         </div>
                         <div class="small_content_box">
-                                <div class="content_right grad_r_1"></div>
-                                <div class="content_left grad_r_1"></div>
-                                <div class="content box_r_1 side_content_r" id="side_cont">
-					{% block welcome %}{% endblock %}
+				<div class="content_right">
+				<div class="content_left">
+					<div class="content box_r_1">
+						{% block welcome %}{% endblock %}
+					</div>
                                 </div>
+				</div>
                         </div>
                         <div class="small_content_box">
-                                <div class="content_right grad_r_2"></div>
-                                <div class="content_left grad_r_2"></div>
-                                <div class="content box_r_2 side_content_r" id="side_cont">
-                                        {% block details %}{% endblock %}
+				<div class="content_right">
+				<div class="content_left">
+					<div class="content box_r_2">
+						{% block details %}{% endblock %}
+					</div>
                                 </div>
+				</div>
                         </div>
                 </div>
         </div>

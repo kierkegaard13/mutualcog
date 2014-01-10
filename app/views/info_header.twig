@@ -19,12 +19,37 @@
 				</ul>
 			</div>
 		</form>
-		<ul class="nav navbar-nav">
-			<li><a href="{{site}}/soon">Coming Soon</a></li>
+		{% if logged_in %}
+		<ul class="nav navbar-nav nav_left">
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Subscriptions <b class="caret" style="color:white;"></b></a>
+				<ul class="dropdown-menu" role="menu">
+					{% for sub in user.subscriptions %}
+						<li><a href="{{site}}/t/{{sub.name}}">{{sub.name}}</a></li>
+					{% endfor %}
+				</ul>
+			</li>
+		</ul>
+		<ul class="nav navbar-nav nav_right nav_margin">
 			{% for tag in tags %}
-				<li><a href="{{site}}/t/{{tag}}">{{tag}}</a></li>
+				{% if curr_tag == tag.name %}
+					<li><a class="highlight_light_blue" href="{{site}}/t/{{tag}}">{{tag}}</a></li>
+				{% else %}
+					<li><a href="{{site}}/t/{{tag}}">{{tag}}</a></li>
+				{% endif %}
 			{% endfor %}
 		</ul>
+		{% else %}
+		<ul class="nav navbar-nav nav_right">
+			{% for tag in tags %}
+				{% if curr_tag == tag.name %}
+					<li><a class="highlight_light_blue" href="{{site}}/t/{{tag}}">{{tag}}</a></li>
+				{% else %}
+					<li><a href="{{site}}/t/{{tag}}">{{tag}}</a></li>
+				{% endif %}
+			{% endfor %}
+		</ul>
+		{% endif %}
 	</div>
 </nav>
 {% endblock %}

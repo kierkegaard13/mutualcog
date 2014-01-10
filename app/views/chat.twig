@@ -19,12 +19,37 @@
 				</ul>
 			</div>
 		</form>
-		<ul class="nav navbar-nav">
-			<li><a href="{{site}}/soon">Coming Soon</a></li>
+		{% if logged_in %}
+		<ul class="nav navbar-nav nav_left">
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Subscriptions <b class="caret" style="color:white;"></b></a>
+				<ul class="dropdown-menu" role="menu">
+					{% for sub in user.subscriptions %}
+						<li><a href="{{site}}/t/{{sub.name}}">{{sub.name}}</a></li>
+					{% endfor %}
+				</ul>
+			</li>
+		</ul>
+		<ul class="nav navbar-nav nav_right nav_margin">
 			{% for tag in tag_headers %}
-				<li><a href="{{site}}/t/{{tag}}">{{tag}}</a></li>
+				{% if curr_tag == tag.name %}
+					<li><a class="highlight_light_blue" href="{{site}}/t/{{tag}}">{{tag}}</a></li>
+				{% else %}
+					<li><a href="{{site}}/t/{{tag}}">{{tag}}</a></li>
+				{% endif %}
 			{% endfor %}
 		</ul>
+		{% else %}
+		<ul class="nav navbar-nav nav_right">
+			{% for tag in tag_headers %}
+				{% if curr_tag == tag.name %}
+					<li><a class="highlight_light_blue" href="{{site}}/t/{{tag}}">{{tag}}</a></li>
+				{% else %}
+					<li><a href="{{site}}/t/{{tag}}">{{tag}}</a></li>
+				{% endif %}
+			{% endfor %}
+		</ul>
+		{% endif %}
 	</div>
 </nav>
 {% endblock %}
@@ -80,22 +105,25 @@
 			<span class="sr-only">Only {{user.cognizance}}% Complete</span>
 		</div>
 	</div>
-	<a class="btn btn-success btn_btm_l" href="{{site}}/p/{{user.name}}">My Profile</a>
-	<a class="btn btn-primary btn_btm_r" href="{{site}}/profile/logout">Logout</a>
+	<select class="form-control">
+		<option value="">Visible and Evaluated</option>
+	</select>
+	<a class="btn btn-success btn_btm_l btn-sm" href="{{site}}/p/{{user.name}}">My Profile</a>
+	<a class="btn btn-primary btn_btm_r btn-sm" href="{{site}}/profile/logout">Logout</a>
 {% endif %}
 {% endblock %}
 
 {% block details %}
 <div class="chat_id" id="{{chat.id}}">{{chat.title}}</div>
 <div style="color:#777;font-size:12px;"><b>Created by </b> <span id="chat_admin">{{chat.admin}}</span>, 
-	<span class="chat_time" id="{{chat.inception}}"></span>
+	<span class="chat_time" id="{{chat.created_at}}"></span>
 	with Tags:
 	{% for tag in chat.tags %}
 		<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}" style="color:#075de9;">#{{tag.name}}</a> </span>
 	{% endfor %}
 </div>
 <div class="top_5 {% if user.name == chat.admin or serial == chat.admin %} edit_details {% endif %}" id="curr_details" data-toggle="tooltip" data-placement="top" data-original-title="Click to edit description" data-container="body">
-{{chat.details | slice(0,560) | raw}}... <a id="continue_description" data-toggle="modal" data-target="#continue_modal" href="#" style="color:#075de9;">Continue</a>
+{% if chat.details %}{{chat.details | slice(0,510) | raw}}...<a id="continue_description" data-toggle="modal" data-target="#continue_modal" href="#" style="color:#075de9;word-break:break-all;">Continue</a>{% endif %}
 </div>
 <div class="modal fade" id="continue_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="continue_modalLabel">
 	<div class="modal-dialog">
@@ -177,7 +205,7 @@
 						{% endif %}
 						<b class="mssg_op" id="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}} (<span class="response_count" id="{{message.id}}">{{message.responses}}</span>)</b> : {{message.message | raw}}
 					</div>
-				<div class="time" id="{{message.inception}}"></div>
+				<div class="time" id="{{message.created_at}}"></div>
 				</div>
 			</div>
 		{% endfor %}

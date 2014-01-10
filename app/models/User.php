@@ -63,4 +63,8 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 		return $this->belongsToMany('Interactions','interaction_users','user_id','interaction_id')->orderBy('bond');
 	}
 
+	public function subscriptions(){
+		return $this->belongsToMany('Tags','users_to_tags','user_id','tag_id');
+	}
+
 }

@@ -12,5 +12,24 @@ class TagsController extends BaseController {
 		}
 		return $tag_arr;
 	}
+
+	public function getSubscribe($tag_id){
+		if(Auth::check()){
+			$usertag = new UsersToTags();
+			$usertag->tag_id = htmlentities($tag_id);
+			$usertag->user_id = Auth::user()->id;
+			$usertag->score = 1;
+			$usertag->save();
+		}
+		return Redirect::to(Session::get('curr_page'));
+	}
+
+	public function getUnsubscribe($tag_id){
+		$usertag = UsersToTags::whereuser_id(Auth::user()->id)->wheretag_id($tag_id)->first();
+		if($usertag){
+			$usertag->delete();
+		}
+		return Redirect::to(Session::get('curr_page'));
+	}
 }
 
