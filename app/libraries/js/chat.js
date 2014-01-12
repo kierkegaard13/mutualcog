@@ -6,6 +6,8 @@ var mssg_clicked = -1;
 var live = 1;
 var banned = 0;
 var chat_id = $('.chat_id').attr('id');
+var upvoted = jQuery.parseJSON($('#up_arr').text());
+var downvoted = jQuery.parseJSON($('#down_arr').text());
         
 var socket = io.connect('http://localhost:3000/');
 
@@ -21,6 +23,142 @@ var serial_tracker = $('#serial_tracker').text();
 
 var user_id = $('#user_id').text();
 var user_tracker = $('#user_tracker').text();
+
+$('.big_upvote').click(function(e){
+	e.stopPropagation();
+	var upvote_id = $(this).attr('id');
+	var chat_id = $(this).attr('id').replace('upvote_','');
+	var url = '//mutualcog.com/chat/upvote';
+	$.ajax({
+		type:'POST',
+		data:{id:chat_id},
+		url:url,
+		success:function(hresp){
+			if(hresp.status == 1 || hresp.status == 3){
+				$('#votes_' + chat_id).text(hresp.upvotes);
+				$('#upvote_' + chat_id).css('color','#57bf4b');
+				$('#downvote_' + chat_id).css('color','');
+			}else if(hresp.status == 2){
+				$('#votes_' + chat_id).text(hresp.upvotes);
+				$('#upvote_' + chat_id).css('color','');
+				$('#downvote_' + chat_id).css('color','');
+			}else{
+				$('#' + upvote_id).tooltip('show');
+			}
+		},
+		error:function(){}
+	});
+});
+
+$('.big_downvote').click(function(e){
+	e.stopPropagation();
+	var downvote_id = $(this).attr('id');
+	var chat_id = $(this).attr('id').replace('downvote_','');
+	var url = '//mutualcog.com/chat/downvote';
+	$.ajax({
+		type:'POST',
+		data:{id:chat_id},
+		url:url,
+		success:function(hresp){
+			if(hresp.status == 1 || hresp.status == 3){
+				$('#votes_' + chat_id).text(hresp.upvotes);
+				$('#downvote_' + chat_id).css('color','red');
+				$('#upvote_' + chat_id).css('color','');
+			}else if(hresp.status == 2){
+				$('#votes_' + chat_id).text(hresp.upvotes);
+				$('#upvote_' + chat_id).css('color','');
+				$('#downvote_' + chat_id).css('color','');
+			}else{
+				$('#' + downvote_id).tooltip('show');
+			}
+		},
+		error:function(){ }
+	});
+});
+
+socket.on('updateVotes',function(info) {
+	$('#mssg_votes_' + info.message_id).text(info.response.upvotes);
+});
+
+upvoteMssg = function(e){
+	e.stopPropagation();
+	var message_id = $(this).attr('id').replace('mssg_upvote_','');
+	var url = '//mutualcog.com/chat/message-upvote';
+	$.ajax({
+		type:'POST',
+		data:{id:message_id},
+		url:url,
+		success:function(hresp){
+			if(hresp.status == 1 || hresp.status == 3){
+				if(hresp.status == 1){
+					downvoted.splice(downvoted.indexOf(message_id.toString()),1);						
+					upvoted.push(message_id.toString());
+				}else{
+					upvoted.push(message_id.toString());
+				}
+				if($('#mssg_cont_' + message_id).hasClass('mssg_cont')){
+					socket.emit('update_votes',{id:message_id,response:hresp,responseto:'global'});
+				}else{
+					socket.emit('update_votes',{id:message_id,response:hresp,responseto:$('#message').attr('class')});
+				}
+				$('#mssg_upvote_' + message_id).css('color','#57bf4b');
+				$('#mssg_downvote_' + message_id).css('color','');
+			}else if(hresp.status == 2){
+				upvoted.splice(upvoted.indexOf(message_id.toString()),1);
+				if($('#mssg_cont_' + message_id).hasClass('mssg_cont')){
+					socket.emit('update_votes',{id:message_id,response:hresp,responseto:'global'});
+				}else{
+					socket.emit('update_votes',{id:message_id,response:hresp,responseto:$('#message').attr('class')});
+				}
+				$('#mssg_upvote_' + message_id).css('color','');
+				$('#mssg_downvote_' + message_id).css('color','');
+			}else{
+				$('#mssg_upvote_' + message_id).tooltip('show');
+			}
+		},
+		error:function(){}
+	});
+};
+
+downvoteMssg = function(e){
+	e.stopPropagation();
+	var message_id = $(this).attr('id').replace('mssg_downvote_','');
+	var url = '//mutualcog.com/chat/message-downvote';
+	$.ajax({
+		type:'POST',
+		data:{id:message_id},
+		url:url,
+		success:function(hresp){
+			if(hresp.status == 1 || hresp.status == 3){
+				if(hresp.status == 1){
+					upvoted.splice(downvoted.indexOf(message_id.toString()),1);						
+					downvoted.push(message_id.toString());
+				}else{
+					downvoted.push(message_id.toString());
+				}
+				if($('#mssg_cont_' + message_id).hasClass('mssg_cont')){
+					socket.emit('update_votes',{id:message_id,response:hresp,responseto:'global'});
+				}else{
+					socket.emit('update_votes',{id:message_id,response:hresp,responseto:$('#message').attr('class')});
+				}
+				$('#mssg_downvote_' + message_id).css('color','red');
+				$('#mssg_upvote_' + message_id).css('color','');
+			}else if(hresp.status == 2){
+				downvoted.splice(downvoted.indexOf(message_id.toString()),1);
+				if($('#mssg_cont_' + message_id).hasClass('mssg_cont')){
+					socket.emit('update_votes',{id:message_id,response:hresp,responseto:'global'});
+				}else{
+					socket.emit('update_votes',{id:message_id,response:hresp,responseto:$('#message').attr('class')});
+				}
+				$('#mssg_upvote_' + message_id).css('color','');
+				$('#mssg_downvote_' + message_id).css('color','');
+			}else{
+				$('#mssg_downvote_' + message_id).tooltip('show');
+			}
+		},
+		error:function(){ }
+	});
+};
 
 $('#login_form').submit(function(){
 	var submit = 1;
@@ -233,7 +371,7 @@ $(document).ready(function(){
 			url:'//mutualcog.com/chat/details',
 			success:function(hresp){
 				$('#curr_details').html(hresp);
-				$('#curr_details').show();
+				socket.emit('update_details',hresp);
 			},
 			error:function(){
 			}
@@ -248,6 +386,8 @@ $(document).ready(function(){
 			return false;
 		});
 	}
+	$('.mssg_upvote').on('click',upvoteMssg);
+	$('.mssg_downvote').on('click',downvoteMssg);
 	$('#show_members').tooltip();
 	$('#stop_scroll').tooltip();
 	$('#pause_chat').tooltip();
@@ -350,9 +490,9 @@ $(document).ready(function(){
 deleteIt = function(e){
 	e.stopPropagation();
 	if($('#logged_in').text() == 1){
-		socket.emit('delete_message',{id:user_id,user:user_tracker,serial:serial_tracker,responses:$(this).parent().children('.mssg_op').children('.response_count').text()});
+		socket.emit('delete_message',{id:$(this).parents('.chat_mssg').first().attr('id'),user:user_tracker,serial:serial_tracker,responses:$(this).parent().find('.response_count').text()});
 	}else{
-		socket.emit('delete_message',{id:serial_id,user:serial_tracker,serial:serial_tracker,responses:$(this).parent().children('.mssg_op').children('.response_count').text()});
+		socket.emit('delete_message',{id:$(this).parents('.chat_mssg').first().attr('id'),user:serial_tracker,serial:serial_tracker,responses:$(this).parent().find('.response_count').text()});
 	}
 };
 
@@ -400,9 +540,9 @@ getResponse = function(e){
 		$(this).css('background-color','#eee');
 		$('#message').attr('class',$(this).attr('id'));
 		if($('#message').text() != ""){
-			$('#message').text("Press enter to respond to " + $(this).children().eq(0).children('.mssg_op').attr('id') + "\'s message");
+			$('#message').text("Press enter to respond to " + $(this).find('.mssg_op').attr('id') + "\'s message");
 		}else{
-			$('#message').val("Press enter to respond to " + $(this).children().eq(0).children('.mssg_op').attr('id') + "\'s message");
+			$('#message').val("Press enter to respond to " + $(this).find('.mssg_op').attr('id') + "\'s message");
 			$('#message').on('click',function(){
 				$(this).val("");
 				$(this).off('click');
@@ -418,9 +558,9 @@ getResponse = function(e){
 			$(this).css('background-color','#eee');
 			$('#message').attr('class',$(this).attr('id'));
 			if($('#message').text() != ""){
-				$('#message').text("Press enter to respond to " + $(this).children().eq(0).children('.mssg_op').attr('id') + "\'s message");
+				$('#message').text("Press enter to respond to " + $(this).find('.mssg_op').attr('id') + "\'s message");
 			}else{
-				$('#message').val("Press enter to respond to " + $(this).children().eq(0).children('.mssg_op').attr('id') + "\'s message");
+				$('#message').val("Press enter to respond to " + $(this).find('.mssg_op').attr('id') + "\'s message");
 				$('#message').on('click',function(){
 					$(this).val("");
 					$(this).off('click');
@@ -529,6 +669,10 @@ socket.on('alertUserToResponse',function(info){
 	}
 });
 
+socket.on('display_details',function(info){
+	$('#curr_details').html(info);
+});
+
 socket.on('updateResponseCount',function(info){
 	$('#' + info.id + '.response_count').animate({color:'#57bf4b'},'slow');	
 	$('#' + info.id + '.response_count').animate({color:'black'},'slow');	
@@ -555,7 +699,7 @@ socket.on('displayMembers',function(info){
 
 socket.on('add_mod_funcs',function(){
 	console.log('hi');
-	$('#user_toolbox').append(' <span class="glyphicon glyphicon-pause pause mod_power" id="pause_chat" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Pause chat"></span> <span class="glyphicon glyphicon-tower mod_power" id="mod_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Grant holy moderation powers"></span> <span class="glyphicon glyphicon-warning-sign mod_power" id="warn_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Warn user"></span> <span class="glyphicon glyphicon-remove mod_power" id="kick_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Kick user"></span> ');
+	$('#user_toolbox').append('<span class="glyphicon glyphicon-warning-sign mod_power" id="warn_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Warn user"></span> <span class="glyphicon glyphicon-remove mod_power" id="kick_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Kick user"></span> ');
 });
 
 socket.on('remove_mod_funcs',function(){
@@ -640,7 +784,15 @@ socket.on('openChat',function(chat_info){
 		var responses = $('#mssg_cont_' + clicked_on).children('#resp_cont_' + clicked_on);
 	}
 	$.each(chat_log,function(index,value){
-		var tmp = "<div class='mssg_cont level_" + value.level + " parent_" + value.parent + "' id='mssg_cont_" + value.id + "'><div class='chat_mssg' id='" + value.id + "'><div>";
+		var tmp = "<div class='mssg_cont level_" + value.level + " parent_" + value.parent + "' id='mssg_cont_" + value.id + "'><div class='chat_mssg' id='" + value.id + "'><span class='vote_box'>";
+		if(upvoted.indexOf(value.id.toString()) != -1){
+			tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + value.id + '" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_' + value.id + '">' + (value.upvotes - value.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + value.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>';
+		}else if(downvoted.indexOf(value.id.toString()) != -1){
+			tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + value.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_' + value.id + '">' + (value.upvotes - value.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + value.id + '" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>';
+		}else{
+			tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + value.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_' + value.id + '">' + (value.upvotes - value.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + value.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>';
+		}
+		tmp += '</span><span>'
 		if((serial_tracker == value.author || user_tracker == value.author) && value.message != '<i>This message has been deleted</i>'){
 			tmp += "<span id='" + value.id + "' style='margin-right:4px;' class='glyphicon glyphicon-remove mssg_icon' data-toggle='tooltip' title='Delete post' data-container='body' data-placement='top'></span>";
 		}
@@ -649,7 +801,7 @@ socket.on('openChat',function(chat_info){
 		}else if(mods.indexOf(value.author) != -1){
 			tmp += "<span class='glyphicon glyphicon-tower'></span>";	
 		}
-		tmp += "<b class='mssg_op' id='" + value.author + "' style='color:" + color_arr[value.serial % 7] + ";'> " + value.author + " (<span class='response_count' id='" + value.id + "'>" + value.responses + "</span>)</b> : " + value.message + "</div><div class='time' id='" + value.created_at + "'>" + moment.utc(value.created_at).fromNow() + "</div></div></div>"	
+		tmp += "<b class='mssg_op' id='" + value.author + "' style='color:" + color_arr[value.serial % 7] + ";'> " + value.author + " (<span class='response_count' id='" + value.id + "'>" + value.responses + "</span>)</b> : " + value.message + "</span><div><div class='time' id='" + value.created_at + "'>" + moment.utc(value.created_at).fromNow() + "</div></div></div></div>"	
 		messages.push(tmp);
 	});
 	$('#chat_display').html(messages.join(''));
@@ -666,6 +818,8 @@ socket.on('openChat',function(chat_info){
 		$('#' + chat_info.clicked + '.chat_mssg').css('background-color','#eee');
 		$('#message').attr('class',chat_info.clicked);
 	}
+	$('.mssg_upvote').on('click',upvoteMssg);
+	$('.mssg_downvote').on('click',downvoteMssg);
 	$('.chat_mssg').on('click',getResponse);
 	$('.chat_resp').on('click',getResponse);
 	$('.chat_link').click(function(e){e.stopPropagation();});
@@ -683,7 +837,15 @@ socket.on('openResponses',function(responses){
 	var responseto = -1;
 	$.each(responses,function(index,value){
 		responseto = value.responseto;
-		var tmp = "<div class='responses_to_" + value.responseto + " level_" + value.level + " parent_" + value.parent + " pad_l_20' id='mssg_cont_" + value.id + "'><div class='chat_resp' id='" + value.id + "'><div>";
+		var tmp = "<div class='responses_to_" + value.responseto + " level_" + value.level + " parent_" + value.parent + " pad_l_20' id='mssg_cont_" + value.id + "'><div class='chat_resp' id='" + value.id + "'><span class='vote_box'>";
+		if(upvoted.indexOf(value.id.toString()) != -1){
+			tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + value.id + '" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_' + value.id + '">' + (value.upvotes - value.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + value.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>';
+		}else if(downvoted.indexOf(value.id.toString()) != -1){
+			tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + value.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_' + value.id + '">' + (value.upvotes - value.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + value.id + '" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>';
+		}else{
+			tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + value.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_' + value.id + '">' + (value.upvotes - value.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + value.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>';
+		}
+		tmp += '</span><span>'
 		if((serial_tracker == value.author || user_tracker == value.author)  && value.message != '<i>This message has been deleted</i>'){
 			tmp += "<span id='" + value.id + "' style='margin-right:4px;' class='glyphicon glyphicon-remove resp_icon' data-toggle='tooltip' title='Delete post' data-container='body' data-placement='top'></span>";
 		}
@@ -692,11 +854,13 @@ socket.on('openResponses',function(responses){
 		}else if(mods.indexOf(value.author) != -1){
 			tmp += "<span class='glyphicon glyphicon-tower'></span>";	
 		}
-		tmp += "<b class='mssg_op' id='" + value.author + "' style='color:" + color_arr[value.serial % 7] + ";'> " + value.author + " (<span class='response_count' id='" + value.id + "'>" + value.responses + "</span>)</b> : " + value.message + "</div><div class='time' id='" + value.created_at + "'>" + moment.utc(value.created_at).fromNow() + "</div></div></div>"	
+		tmp += "<b class='mssg_op' id='" + value.author + "' style='color:" + color_arr[value.serial % 7] + ";'> " + value.author + " (<span class='response_count' id='" + value.id + "'>" + value.responses + "</span>)</b> : " + value.message + "</span><div><div class='time' id='" + value.created_at + "'>" + moment.utc(value.created_at).fromNow() + "</div></div></div></div>"	
 		messages.push(tmp);
 	});
 	$('#mssg_cont_' + responseto).children('#resp_cont_' + responseto).remove();
 	$('#mssg_cont_' + responseto).append('<div id="resp_cont_' + responseto + '" class="resp_cont">' + messages.join('') + '</div>');
+	$('.mssg_upvote').on('click',upvoteMssg);
+	$('.mssg_downvote').on('click',downvoteMssg);
 	$('.resp_icon').on('click',deleteIt);
 	$('.resp_icon').tooltip();
 	$('.chat_resp').off('click');

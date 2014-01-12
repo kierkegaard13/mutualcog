@@ -53,7 +53,7 @@ body{
 	  border-top-left-radius:0px; 
 	}
 	.nav_left .dropdown-menu {
-	  background-color:#043586;
+	  background-color:#032f75;
 	  border:none !important;
 	  min-width:100px !important;
 	  width:143px;
@@ -205,7 +205,7 @@ body{
   border-bottom-color:white;
 }
 .nav .open>a, .nav .open>a:hover, .nav .open>a:focus {
-  background-color:#043586;
+  background-color:#032f75;
 }
 legend {
   margin-bottom:10px;
@@ -264,7 +264,7 @@ select {
   height:30px;
 }
 .highlight_light_blue {
-  background-color: #043586 !important;
+  background-color: #032f75 !important;
 }
 .navbar-toggle {
   background-color:#0f131a;
@@ -283,7 +283,7 @@ select {
 }
 .navbar-brand:hover {
   color:#fff;
-  background-color: #043586;
+  background-color: #032f75;
 }
 .navbar .nav>li>a {
   color:#fff;
@@ -293,7 +293,7 @@ select {
 }
 .navbar .nav>li>a:hover {
   color:#fff;
-  background-color: #043586;
+  background-color: #032f75;
 }
 .navbar-nav>li>a {
   padding-top:10px;

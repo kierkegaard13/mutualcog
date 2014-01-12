@@ -24,4 +24,13 @@ class Chats extends EloquentBridge
 	public function moderators(){
 		return $this->hasMany('MembersToChats','chat_id')->select('user')->whereis_mod(1);
 	}
+
+	public function seen(){
+		if(Auth::check()){
+			return count(MembersToChats::wheremember_id(Auth::user()->id)->wherechat_id($this->id)->first());
+		}else{
+			return count(MembersToChats::wheremember_id(Session::get('serial_id'))->wherechat_id($this->id)->first());
+		}
+	}
+
 }

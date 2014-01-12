@@ -16,6 +16,12 @@ class TagsController extends BaseController {
 	public function getSubscribe($tag_id){
 		if(Auth::check()){
 			$usertag = new UsersToTags();
+			$tag = Tags::find($tag_id);
+			if($tag->admin == '0' && Auth::user()->owned() < 3){
+				$usertag->is_admin = 1;
+				$tag->admin = Auth::user()->name;
+				$tag->save();
+			}
 			$usertag->tag_id = htmlentities($tag_id);
 			$usertag->user_id = Auth::user()->id;
 			$usertag->score = 1;
@@ -25,9 +31,16 @@ class TagsController extends BaseController {
 	}
 
 	public function getUnsubscribe($tag_id){
-		$usertag = UsersToTags::whereuser_id(Auth::user()->id)->wheretag_id($tag_id)->first();
-		if($usertag){
-			$usertag->delete();
+		if(Auth::check()){
+			$usertag = UsersToTags::whereuser_id(Auth::user()->id)->wheretag_id($tag_id)->first();
+			$tag = Tags::find($tag_id);
+			if($tag->admin == Auth::user()->name){
+				$tag->admin = '0';
+				$tag->save();
+			}
+			if($usertag){
+				$usertag->delete();
+			}
 		}
 		return Redirect::to(Session::get('curr_page'));
 	}

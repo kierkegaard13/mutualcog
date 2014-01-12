@@ -67,4 +67,24 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 		return $this->belongsToMany('Tags','users_to_tags','user_id','tag_id');
 	}
 
+	public function owned(){
+		return count(UsersToTags::whereuser_id($this->id)->whereis_admin(1)->get());
+	}
+
+	public function upvotedChats(){
+		return ChatsVoted::wheremember_id($this->id)->wherestatus(1)->get();
+	}
+
+	public function downvotedChats(){
+		return ChatsVoted::wheremember_id($this->id)->wherestatus(2)->get();
+	}
+
+	public function upvotedMessages(){
+		return MessagesVoted::wheremember_id($this->id)->wherestatus(1)->get();
+	}
+
+	public function downvotedMessages(){
+		return MessagesVoted::wheremember_id($this->id)->wherestatus(2)->get();
+	}
+
 }

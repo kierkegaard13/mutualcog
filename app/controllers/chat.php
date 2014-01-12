@@ -13,7 +13,23 @@ class Chat extends BaseController {
 		$user = Serials::whereserial_id(Session::get('unique_serial'))->first();
 		$user->reserved = 1;
 		$user->save();
+		$upvoted = array();
+		$downvoted = array();
+		$mssg_upvoted = array();
+		$mssg_downvoted = array();
 		if(Auth::check()){
+			foreach(Auth::user()->upvotedChats() as $upvote){
+				$upvoted[] = $upvote->chat_id;
+			}
+			foreach(Auth::user()->downvotedChats() as $downvote){
+				$downvoted[] = $downvote->chat_id;
+			}
+			foreach(Auth::user()->upvotedMessages() as $upvote){
+				$mssg_upvoted[] = $upvote->message_id;
+			}
+			foreach(Auth::user()->downvotedMessages() as $downvote){
+				$mssg_downvoted[] = $downvote->message_id;
+			}
 			$mem_to_chat = new MembersToChats();
 			$mem_to_chat->chat_id = $chat_id;
 			$mem_to_chat->member_id = Auth::user()->id;
@@ -104,6 +120,10 @@ class Chat extends BaseController {
 		$view['tag_headers'] = $tags;
 		$view['tags'] = $tag_arr;
 		$view['curr_time'] = date('Y:m:d:H:i');
+		$view['upvoted'] = $upvoted;
+		$view['downvoted'] = $downvoted;
+		$view['mssg_upvoted'] = $mssg_upvoted;
+		$view['mssg_downvoted'] = $mssg_downvoted;
 		$view['chat'] = $chat;
 		$view['mods'] = $mods;
                 return $view;
@@ -368,7 +388,7 @@ class Chat extends BaseController {
 				$user = $user->findAll();
 				$user_exists = 1;
 			}
-			if($status == 1){
+			if($status == 1){  //upvoted previously
 				if($user_exists){
 					$user->cognizance = $user->cognizance - 2;
 					$user->save();
@@ -388,7 +408,7 @@ class Chat extends BaseController {
 				$voted->save();
 				$chat->save();
 				return array('status' => 1,'upvotes' => $chat->upvotes - $chat->downvotes);
-			}elseif($status == 2){
+			}elseif($status == 2){  //downvoted previously
 				if($user_exists){
 					$user->cognizance = $user->cognizance + 1;
 					$user->save();
@@ -407,7 +427,7 @@ class Chat extends BaseController {
 				$voted->save();
 				$chat->save();
 				return array('status' => 2,'upvotes' => $chat->upvotes - $chat->downvotes);
-			}else{
+			}else{  //first time downvoting
 				if($user_exists){
 					$user->cognizance = $user->cognizance - 1;
 					$user->save();
@@ -426,6 +446,124 @@ class Chat extends BaseController {
 				$voted->save();
 				$chat->save();
 				return array('status' => 3,'upvotes' => $chat->upvotes - $chat->downvotes);
+			}
+		}else{
+			return array('status' => 0,'upvotes' => 0);
+		}
+	}
+
+	public function postMessageUpvote(){
+		if(Auth::check()){
+			$message_id = Input::get('id');
+			$member = Auth::user()->id;
+			$message = Messages::find($message_id);
+			$voted = new MessagesVoted();
+			$status = 0;
+			$temp = $voted->wheremember_id($member)->wheremessage_id($message_id)->first();
+			if($temp){
+				$voted = $temp;
+				$status = $voted->status;
+			}else{
+				$voted->member_id = $member;
+				$voted->message_id = $message_id;
+			}
+			$user_exists = 0;
+			if(preg_match('/[a-zA-Z]/',$message->author)){
+				$user = new User();
+				$user->name = $message->author;
+				$user = $user->findAll();
+				$user_exists = 1;
+			}
+			if($status == 2){  //downvoted previously
+				if($user_exists){
+					$user->cognizance = $user->cognizance + 2;
+					$user->save();
+				}
+				$message->upvotes = $message->upvotes + 1;
+				$message->downvotes = $message->downvotes - 1;
+				$voted->status = 1;
+				$voted->save();
+				$message->save();
+				return array('status' => 1,'upvotes' => $message->upvotes - $message->downvotes);
+			}elseif($status == 1){  //upvoted previously
+				if($user_exists){
+					$user->cognizance = $user->cognizance - 1;
+					$user->save();
+				}
+				$message->upvotes = $message->upvotes - 1;
+				$voted->status = 0;
+				$voted->save();
+				$message->save();
+				return array('status' => 2,'upvotes' => $message->upvotes - $message->downvotes);
+			}else{  //first time voting
+				if($user_exists){
+					$user->cognizance = $user->cognizance + 1;
+					$user->save();
+				}
+				$message->upvotes = $message->upvotes + 1;
+				$voted->status = 1;	
+				$voted->save();
+				$message->save();
+				return array('status' => 3,'upvotes' => $message->upvotes - $message->downvotes);
+			}
+		}else{
+			return array('status' => 0,'upvotes' => 0);
+		}
+	}
+
+	public function postMessageDownvote(){
+		if(Auth::check()){
+			$message_id = Input::get('id');
+			$member = Auth::user()->id;
+			$message = Messages::find($message_id);
+			$voted = new MessagesVoted();
+			$status = 0;
+			$temp = $voted->wheremember_id($member)->wheremessage_id($message_id)->first();
+			if($temp){
+				$voted = $temp;
+				$status = $voted->status;
+			}else{
+				$voted->member_id = $member;
+				$voted->message_id = $message_id;
+			}
+			$user_exists = 0;
+			if(preg_match('/[a-zA-Z]/',$message->author)){
+				$user = new User();
+				$user->name = $message->author;
+				$user = $user->findAll();
+				$user_exists = 1;
+			}
+			if($status == 1){
+				if($user_exists){
+					$user->cognizance = $user->cognizance - 2;
+					$user->save();
+				}
+				$message->upvotes = $message->upvotes - 1;
+				$message->downvotes = $message->downvotes + 1;
+				$voted->status = 2;
+				$voted->save();
+				$message->save();
+				return array('status' => 1,'upvotes' => $message->upvotes - $message->downvotes);
+			}elseif($status == 2){
+				if($user_exists){
+					$user->cognizance = $user->cognizance + 1;
+					$user->save();
+				}
+				$message->downvotes = $message->downvotes - 1;
+				$voted->status = 0;
+				$voted->save();
+				$message->save();
+				return array('status' => 2,'upvotes' => $message->upvotes - $message->downvotes);
+			}else{
+				if($user_exists){
+					$user->cognizance = $user->cognizance - 1;
+					$user->save();
+				}
+				$message->downvotes = $message->downvotes + 1;
+				$voted->status = 2;	
+				$voted->save();
+				$message->save();
+				return array('status' => 3,'upvotes' => $message->upvotes - $message->downvotes);
 			}
 		}else{
 			return array('status' => 0,'upvotes' => 0);

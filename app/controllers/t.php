@@ -18,13 +18,10 @@ class T extends BaseController {
 		$upvoted = array();
 		$downvoted = array();
 		if(Auth::check()){
-			$user = User::find(Auth::user()->id);
-			$user->page = $curr_tag->name;
-			$user->save();
-			foreach(ChatsVoted::wheremember_id(Auth::user()->id)->wherestatus(1)->get() as $upvote){
+			foreach(Auth::user()->upvotedChats() as $upvote){
 				$upvoted[] = $upvote->chat_id;
 			}
-			foreach(ChatsVoted::wheremember_id(Auth::user()->id)->wherestatus(2)->get() as $downvote){
+			foreach(Auth::user()->downvotedChats() as $downvote){
 				$downvoted[] = $downvote->chat_id;
 			}
 			$usertag = UsersToTags::wheretag_id($curr_tag->id)->whereuser_id(Auth::user()->id)->first();

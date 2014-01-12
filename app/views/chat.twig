@@ -114,6 +114,21 @@
 {% endblock %}
 
 {% block details %}
+<div class="vote_box">
+	{% if chat.id in upvoted %}
+		<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+		<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
+		<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+	{% elseif chat.id in downvoted %}
+		<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+		<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
+		<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+	{% else %}
+		<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+		<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
+		<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+	{% endif %}
+</div>
 <div class="chat_id" id="{{chat.id}}">{{chat.title}}</div>
 <div style="color:#777;font-size:12px;"><b>Created by </b> <span id="chat_admin">{{chat.admin}}</span>, 
 	<span class="chat_time" id="{{chat.created_at}}"></span>
@@ -123,7 +138,7 @@
 	{% endfor %}
 </div>
 <div class="top_5 {% if user.name == chat.admin or serial == chat.admin %} edit_details {% endif %}" id="curr_details" data-toggle="tooltip" data-placement="top" data-original-title="Click to edit description" data-container="body">
-{% if chat.details %}{{chat.details | slice(0,510) | raw}}...<a id="continue_description" data-toggle="modal" data-target="#continue_modal" href="#" style="color:#075de9;word-break:break-all;">Continue</a>{% endif %}
+{% if chat.details %}{{chat.details | slice(0,510) | raw}}{% if chat.details | length > 400 %}...<a id="continue_description" data-toggle="modal" data-target="#continue_modal" href="#" style="color:#075de9;word-break:break-all;">Continue</a>{% endif %}{% endif %}
 </div>
 <div class="modal fade" id="continue_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="continue_modalLabel">
 	<div class="modal-dialog">
@@ -187,13 +202,30 @@
 {% endblock %}
 
 {% block content %}
+<div id="up_arr" style="display:none;">{{mssg_upvoted | json_encode()}}</div>
+<div id="down_arr" style="display:none;">{{mssg_downvoted | json_encode()}}</div>
 <div class="frame_cont">
 	<div class="frame chat_main" id="chat_messages">
 		<div id="chat_display">
 		{% for message in chat.messagesOnly %}
 			<div class="mssg_cont level_{{message.level}} parent_{{message.parent}}" id="mssg_cont_{{message.id}}">
 				<div class="chat_mssg" id="{{message.id}}">
-					<div>
+					<span class="vote_box">
+						{% if message.id in mssg_upvoted %}
+							<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
+							<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
+							<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
+						{% elseif message.id in mssg_downvoted %}
+							<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
+							<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
+							<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
+						{% else %}
+							<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
+							<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
+							<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
+						{% endif %}
+					</span>
+					<span>
 						{% if serial == message.author or user.name == message.author and message.message != '<i>This message has been deleted</i>' %}
 							<span id="message.id" class="glyphicon glyphicon-remove mssg_icon" data-toggle="tooltip" title="Delete post" data-container="body" data-placement="top"></span>	
 						{% endif %}  
@@ -204,8 +236,10 @@
 							<span class="glyphicon glyphicon-tower"></span>	
 						{% endif %}
 						<b class="mssg_op" id="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}} (<span class="response_count" id="{{message.id}}">{{message.responses}}</span>)</b> : {{message.message | raw}}
+					</span>
+					<div>
+						<div class="time" id="{{message.created_at}}"></div>
 					</div>
-				<div class="time" id="{{message.created_at}}"></div>
 				</div>
 			</div>
 		{% endfor %}

@@ -113,7 +113,7 @@
 			<div class="content_left grad4"></div>
 			<div class="content_right grad4"></div>
 			<div class="content side_content" id="subscribe">
-				<div><a href="{{site}}/t/{{curr_tag.name}}" style="font-size:22px;color:#333;"><b>{{curr_tag.name}}</b></a></div>
+				<div><a href="{{site}}/t/{{curr_tag.name}}" style="font-size:22px;color:#333;"><b>{{curr_tag.name}}</b>{% if curr_tag.admin == user.name %} (Admin) {% endif %}</a></div>
 				{% if logged_in %}
 					{% if user_subscribed %}
 						<span><a href="{{site}}/tags/unsubscribe/{{curr_tag.id}}" class="btn btn-danger btn-xs">Unsubscribe</a></span>
@@ -143,13 +143,15 @@
 					<div class="vote_box">
 						{% if chat.id in upvoted %}
 							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-						{% else %}
+							<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
+							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+						{% elseif chat.id in downvoted %}
 							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-						{% endif %}
-						<div style="margin-top:-5px;margin-bottom:-8px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-						{% if chat.id in downvoted %}
+							<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
 							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
 						{% else %}
+							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+							<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
 							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
 						{% endif %}
 					</div>
@@ -159,10 +161,18 @@
 						</a>
 					{% endif %}
 					<div class="chat_title">
-						{% if chat.link %}
-							<a href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+						{% if chat.seen %}
+							{% if chat.link %}
+								<a href="{{chat.link}}" style="color:purple;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+							{% else %}
+								<a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:purple;">{{chat.title}}</a>
+							{% endif %}
 						{% else %}
-							<a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
+							{% if chat.link %}
+								<a href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+							{% else %}
+								<a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
+							{% endif %}
 						{% endif %}
 						{% if chat.admin % 16777259 == 0 %}
 							<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><b>{{chat.admin}}</b></a>, 
@@ -199,13 +209,15 @@
 					<div class="vote_box">
 						{% if chat.id in upvoted %}
 							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-						{% else %}
+							<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
+							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+						{% elseif chat.id in downvoted %}
 							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-						{% endif %}
-						<div style="margin-top:-5px;margin-bottom:-8px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-						{% if chat.id in downvoted %}
+							<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
 							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
 						{% else %}
+							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+							<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
 							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
 						{% endif %}
 					</div>
@@ -215,10 +227,18 @@
 						</a>
 					{% endif %}
 					<div class="chat_title">
-						{% if chat.link %}
-							<a href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+						{% if chat.seen %}
+							{% if chat.link %}
+								<a href="{{chat.link}}" style="color:purple;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+							{% else %}
+								<a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:purple;">{{chat.title}}</a>
+							{% endif %}
 						{% else %}
-							<a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
+							{% if chat.link %}
+								<a href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+							{% else %}
+								<a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
+							{% endif %}
 						{% endif %}
 						{% if chat.admin % 16777259 == 0 %}
 							<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><b>{{chat.admin}}</b></a>, 
@@ -255,13 +275,15 @@
 					<div class="vote_box">
 						{% if chat.id in upvoted %}
 							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-						{% else %}
+							<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
+							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+						{% elseif chat.id in downvoted %}
 							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-						{% endif %}
-						<div style="margin-top:-5px;margin-bottom:-8px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-						{% if chat.id in downvoted %}
+							<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
 							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
 						{% else %}
+							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+							<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
 							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
 						{% endif %}
 					</div>
@@ -271,10 +293,18 @@
 						</a>
 					{% endif %}
 					<div class="chat_title">
-						{% if chat.link %}
-							<a href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+						{% if chat.seen %}
+							{% if chat.link %}
+								<a href="{{chat.link}}" style="color:purple;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+							{% else %}
+								<a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:purple;">{{chat.title}}</a>
+							{% endif %}
 						{% else %}
-							<a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
+							{% if chat.link %}
+								<a href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+							{% else %}
+								<a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
+							{% endif %}
 						{% endif %}
 						{% if chat.admin % 16777259 == 0 %}
 							<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><b>{{chat.admin}}</b></a>, 
@@ -311,13 +341,15 @@
 					<div class="vote_box">
 						{% if chat.id in upvoted %}
 							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-						{% else %}
+							<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
+							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+						{% elseif chat.id in downvoted %}
 							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-						{% endif %}
-						<div style="margin-top:-5px;margin-bottom:-8px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-						{% if chat.id in downvoted %}
+							<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
 							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
 						{% else %}
+							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+							<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
 							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
 						{% endif %}
 					</div>
@@ -327,10 +359,18 @@
 						</a>
 					{% endif %}
 					<div class="chat_title">
-						{% if chat.link %}
-							<a href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+						{% if chat.seen %}
+							{% if chat.link %}
+								<a href="{{chat.link}}" style="color:purple;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+							{% else %}
+								<a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:purple;">{{chat.title}}</a>
+							{% endif %}
 						{% else %}
-							<a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
+							{% if chat.link %}
+								<a href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+							{% else %}
+								<a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
+							{% endif %}
 						{% endif %}
 						{% if chat.admin % 16777259 == 0 %}
 							<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><b>{{chat.admin}}</b></a>, 

@@ -45,6 +45,7 @@ var prospect = io.on('connection', function(client) {
 			if(err)console.log(err);
 			client.admin = rows[0].admin;
 			client.is_admin = 0;
+			client.is_mod = 0;
 			if(info.logged_in == 1){
 				client.serial = sanitize(info.serial).xss();
 				client.serial_id = sanitize(info.serial_id).xss();
@@ -102,21 +103,21 @@ var prospect = io.on('connection', function(client) {
 	});
 
 	client.on('pause_all',function(){
-		conn.where({id:client.chat_id}).update('chats',{live:0},function(err,info){
-			if(err)console.log(err);
-			if(client.is_admin){
-				io.sockets.in(client.room).emit('pause',{hash:'QcWd9JN5Wv7R3CB2'});
-			}
-		});
+		if(client.is_admin){
+			conn.where({id:client.chat_id}).update('chats',{live:0},function(err,info){
+				if(err)console.log(err);
+					io.sockets.in(client.room).emit('pause',{hash:'QcWd9JN5Wv7R3CB2'});
+			});
+		}
 	});
 
 	client.on('play_all',function(){
-		conn.where({id:client.chat_id}).update('chats',{live:1},function(err,info){
-			if(err)console.log(err);
-			if(client.is_admin){
-				io.sockets.in(client.room).emit('play',{hash:'b7vNPSsxNBCzJHAY'});
-			}
-		});
+		if(client.is_admin){
+			conn.where({id:client.chat_id}).update('chats',{live:1},function(err,info){
+				if(err)console.log(err);
+					io.sockets.in(client.room).emit('play',{hash:'b7vNPSsxNBCzJHAY'});
+			});
+		}
 	});
 
 	client.on('pause',function(security){
@@ -133,37 +134,57 @@ var prospect = io.on('connection', function(client) {
 
 	client.on('make_mod',function(info){
 		var user = info.user;
-		conn.where({user:info.user,chat_id:info.chat_id}).update('members_to_chats',{is_mod:1},function(err,info){
-			if(err)console.log(err);
-			conn.where({chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
+		if(client.is_admin){
+			conn.where({user:info.user,chat_id:info.chat_id}).update('members_to_chats',{is_mod:1},function(err,info){
 				if(err)console.log(err);
-				io.sockets.in(client.room).emit('displayMembers',rows);
-				io.sockets.in(client.room + '_member_' + user).emit('add_mod_funcs');
+				conn.where({chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
+					if(err)console.log(err);
+					io.sockets.in(client.room).emit('displayMembers',rows);
+					io.sockets.in(client.room + '_member_' + user).emit('add_mod_funcs');
+				});
 			});
-		});
+		}
 	});
 
 	client.on('remove_mod',function(info){
 		var user = info.user;
-		conn.where({user:info.user,chat_id:info.chat_id}).update('members_to_chats',{is_mod:0},function(err,info){
-			if(err)console.log(err);
-			conn.where({chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
+		if(client.is_admin){
+			conn.where({user:info.user,chat_id:info.chat_id}).update('members_to_chats',{is_mod:0},function(err,info){
 				if(err)console.log(err);
-				io.sockets.in(client.room).emit('displayMembers',rows);
-				io.sockets.in(client.room + '_member_' + user).emit('remove_mod_funcs');
+				conn.where({chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
+					if(err)console.log(err);
+					io.sockets.in(client.room).emit('displayMembers',rows);
+					io.sockets.in(client.room + '_member_' + user).emit('remove_mod_funcs');
+				});
 			});
-		});
+		}
 	});
 
 	client.on('warn',function(info){
-		io.sockets.in(client.room + '_member_' + info.member).emit('warn');
+		if(client.is_admin || client.is_mod){
+			io.sockets.in(client.room + '_member_' + info.member).emit('warn');
+		}
 	});
 
 	client.on('kick',function(info){
-		if(banned.indexOf(info.member) == -1){
-			banned.push(info.member);
+		if(client.is_admin || client.is_mod){
+			if(banned.indexOf(info.member) == -1){
+				banned.push(info.member);
+			}
+			io.sockets.in(client.room + '_member_' + info.member).emit('kick');
 		}
-		io.sockets.in(client.room + '_member_' + info.member).emit('kick');
+	});
+
+	client.on('update_votes',function(info){
+		if(info.responseto == 'global'){
+			io.sockets.in(client.room).emit('updateVotes',{message_id:info.id,response:info.response});
+		}else{
+			io.sockets.in(client.room + '_response_' + info.responseto).emit('updateVotes',{message_id:info.id,response:info.response});
+		}
+	});
+
+	client.on('update_details',function(info){
+		io.sockets.in(client.room).emit('display_details',info);
 	});
 
 	// Success!  Now listen to messages to be received
@@ -180,13 +201,13 @@ var prospect = io.on('connection', function(client) {
 				event.message = event.message.replace(url_reg2,"<a class='chat_link' href='\/\/$2\.$3$4'>$2\.$3$4</a>");
 				event.message = event.message.replace(url_reg3,"$1$2style='max-width:300px;max-height:200px;margin-bottom:5px;' $3");
 			}
-			conn.insert('messages',{message:event.message,chat_id:client.chat_id,member_id:client.memb_id,inception:moment.utc().format(),responseto:"-1",author:client.user,serial:client.serial},function(err,info){
+			conn.insert('messages',{message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:"-1",author:client.user,serial:client.serial},function(err,info){
 				if(err) console.log(err);
 				conn.where({chat_id:client.chat_id,responseto:"-1"}).order_by('messages.id asc').get('messages',function(err,rows){
 					if(err)console.log(err);
 					io.sockets.in(client.room).emit('openChat',{rows:rows,clicked:"-1"});
 				});
-				conn.where({serial_id:client.serial}).update('serials',{inception:moment.utc().format()},function(err,info){
+				conn.where({serial_id:client.serial}).update('serials',{updated_at:moment.utc().format()},function(err,info){
 					if(err) console.log(err);
 				});
 			});
@@ -206,7 +227,7 @@ var prospect = io.on('connection', function(client) {
 				event.message = event.message.replace(url_reg2,"<a class='chat_link' href='\/\/$2\.$3$4'>$2\.$3$4</a>");
 				event.message = event.message.replace(url_reg3,"$1$2style='max-width:300px;max-height:200px;margin-bottom:5px;' $3");
 			}
-			conn.insert('messages',{message:event.message,chat_id:client.chat_id,member_id:client.memb_id,inception:moment.utc().format(),responseto:event.responseto,level:event.level,parent:event.parent,author:client.user,serial:client.serial},function(err,info){
+			conn.insert('messages',{message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:event.responseto,level:event.level,parent:event.parent,author:client.user,serial:client.serial},function(err,info){
 				if(err) console.log(err);
 				conn.where({chat_id:client.chat_id,responseto:event.responseto}).order_by('messages.id asc').get('messages',function(err,rows){
 					if(err)console.log(err);
@@ -235,7 +256,7 @@ var prospect = io.on('connection', function(client) {
 						}
 					});
 				});
-				conn.where({serial_id:client.serial}).update('serials',{inception:moment.utc().format()},function(err,info){
+				conn.where({serial_id:client.serial}).update('serials',{updated_at:moment.utc().format()},function(err,info){
 					if(err) console.log(err);
 				});
 			});
@@ -244,12 +265,15 @@ var prospect = io.on('connection', function(client) {
 
 	client.on('delete_message',function(mssg_info){
 		var replace = '<i>This message has been deleted</i>';
-		if(mssg_info.id == client.memb_id){
-			conn.where({id:mssg_info.id}).update('messages',{message:replace},function(err){
-				if(err)console.log(err);
-				io.sockets.in(client.room).emit('softDelete',{id:mssg_info.id,user:mssg_info.user,serial:mssg_info.serial,responses:mssg_info.responses});
-			});
-		}
+		conn.where({id:mssg_info.id}).get('messages',function(err,rows){
+			if(err)console.log(err);
+			if(rows[0].member_id == client.memb_id){
+				conn.where({id:mssg_info.id}).update('messages',{message:replace},function(err){
+					if(err)console.log(err);
+					io.sockets.in(client.room).emit('softDelete',{id:mssg_info.id,user:mssg_info.user,serial:mssg_info.serial,responses:mssg_info.responses});
+				});
+			}
+		});
 	});
 
 	client.on('disconnect',function(){
