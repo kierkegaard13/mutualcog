@@ -5,6 +5,13 @@ body{
 p{
   margin:0;
 }
+blockquote{
+  margin:5px 25px;
+  padding:0;
+}
+pre{
+  margin-left:25px;
+}
 @media screen and (min-width:768px) and (min-height:0px){
 	.main_content {
 	  height:460px !important;

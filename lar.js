@@ -1,17 +1,25 @@
 var mysql = require('mysql-activerecord'),
-    marked = require('marked'),
-    conn = new mysql.Adapter({
-	server: 'localhost',
-	username: 'root',
-	password: 'snareline1',
-	database: 'test'
-    }),
-    moment = require('moment');
+	marked = require('marked'),
+	conn = new mysql.Adapter({
+		server: 'localhost',
+		username: 'root',
+		password: 'snareline1',
+		database: 'test'
+	}),
+	moment = require('moment');
+
+marked.setOptions({
+	sanitize:true
+});
 
 process.env.TZ = 'UTC';
 var clients = new Array();
 var banned = new Array();
 var live = 1;
+
+function hashHtml(text){
+	return text.replace(/#/,'&#035;');
+}
 
 function sanitize(text) {
 	return text.replace(/&/g, '&amp;').
@@ -199,9 +207,10 @@ var prospect = io.on('connection', function(client) {
 			var url_reg = /(\s)(https?:\/\/)?([\da-z-]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/g;
 			var url_reg2 = /^(https?:\/\/)?([\da-z-]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/g;
 			var url_reg3 = /(img)(\s)(src\=)/g;
-			event.message = sanitize(event.message);  //sanitize
+			event.message = hashHtml(event.message);
 			event.message = marked(event.message);
-			event.message = event.message.slice(3,event.message.length - 5);
+			event.message = event.message.replace(/\<p\>/,'');
+			event.message = event.message.replace(/\<\/p\>/,'');
 			if(event.message){
 				event.message = event.message.replace(url_reg,"$1<a class='chat_link' href='\/\/$3\.$4$5'>$3\.$4$5</a>");
 				event.message = event.message.replace(url_reg2,"<a class='chat_link' href='\/\/$2\.$3$4'>$2\.$3$4</a>");
@@ -225,9 +234,10 @@ var prospect = io.on('connection', function(client) {
 			var url_reg = /(\s)(https?:\/\/)?([\da-z-]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/g;
 			var url_reg2 = /^(https?:\/\/)?([\da-z-]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/g;
 			var url_reg3 = /(img)(\s)(src\=)/g;
-			event.message = sanitize(event.message);  //sanitize
+			event.message = hashHtml(event.message);
 			event.message = marked(event.message);
-			event.message = event.message.slice(3,event.message.length - 5);
+			event.message = event.message.replace(/\<p\>/,'');
+			event.message = event.message.replace(/\<\/p\>/,'');
 			if(event.message){
 				event.message = event.message.replace(url_reg,"$1<a class='chat_link' href='\/\/$3\.$4$5'>$3\.$4$5</a>");
 				event.message = event.message.replace(url_reg2,"<a class='chat_link' href='\/\/$2\.$3$4'>$2\.$3$4</a>");
