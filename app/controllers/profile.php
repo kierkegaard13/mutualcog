@@ -164,7 +164,6 @@ class Profile extends BaseController {
 			$user->password = Crypt::encrypt($pass);
 			$user->last_login = date(DATE_ATOM);
 			$user->save();
-			$user = $user->findAll();
 			Auth::login($user);
 			return Redirect::to(Session::get('curr_page'));
 		}elseif($username && $pass){

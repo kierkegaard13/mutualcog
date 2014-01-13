@@ -1,6 +1,4 @@
 var mysql = require('mysql-activerecord'),
-    sanitize = require('validator').sanitize,
-    check = require('validator').check,
     marked = require('marked'),
     conn = new mysql.Adapter({
 	server: 'localhost',
@@ -10,17 +8,25 @@ var mysql = require('mysql-activerecord'),
     }),
     moment = require('moment');
 
+process.env.TZ = 'UTC';
 var clients = new Array();
 var banned = new Array();
 var live = 1;
+
+function sanitize(text) {
+	return text.replace(/&/g, '&amp;').
+		replace(/</g, '&lt;').  // it's not neccessary to escape >
+		replace(/"/g, '&quot;').
+		replace(/'/g, '&#039;');
+}
 
 var io = require('socket.io').listen(3000);
 var prospect = io.on('connection', function(client) {
 
 	//client variable unique to user but globals apply to all
 	client.on('room',function(room){
-		client.room = 'chat_' + sanitize(room).xss();
-		client.chat_id = sanitize(room).xss();
+		client.room = 'chat_' + sanitize(room);  //sanitize
+		client.chat_id = sanitize(room);  //sanitize
 		client.join(client.room);
 		var rooms_joined = io.sockets.manager.roomClients[client.id];
 		client.rooms = new Array();
@@ -37,7 +43,7 @@ var prospect = io.on('connection', function(client) {
 
 	client.on('add_member',function(info){
 		var members = new Array();
-		client.user = sanitize(info.new_member).xss();
+		client.user = sanitize(info.new_member);  //sanitize
 		client.join(client.room + '_member_' + client.user);
 		clients.push(info.new_member); //is aware of all chat members 
 		console.log(client.user + ' has connected');
@@ -47,9 +53,9 @@ var prospect = io.on('connection', function(client) {
 			client.is_admin = 0;
 			client.is_mod = 0;
 			if(info.logged_in == 1){
-				client.serial = sanitize(info.serial).xss();
-				client.serial_id = sanitize(info.serial_id).xss();
-				client.user_id = sanitize(info.user_id).xss();
+				client.serial = sanitize(info.serial);  //sanitize
+				client.serial_id = sanitize(info.serial_id);  //sanitize
+				client.user_id = sanitize(info.user_id);  //sanitize
 				if((client.user == client.admin || client.serial == client.admin) && (client.user_id == rows[0].admin_id || client.serial_id == rows[0].admin_id)){  //added in case a user logs in after creating a chat
 					client.is_admin = 1;
 				}
@@ -60,7 +66,7 @@ var prospect = io.on('connection', function(client) {
 				});
 			}else{
 				client.serial = client.user;
-				client.serial_id = sanitize(info.serial_id).xss();
+				client.serial_id = sanitize(info.serial_id);  //sanitize
 				if(client.user == client.admin && client.serial_id == rows[0].admin_id){  //added in case a user logs in after creating a chat
 					client.is_admin = 1;
 				}
@@ -193,9 +199,9 @@ var prospect = io.on('connection', function(client) {
 			var url_reg = /(\s)(https?:\/\/)?([\da-z-]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/g;
 			var url_reg2 = /^(https?:\/\/)?([\da-z-]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/g;
 			var url_reg3 = /(img)(\s)(src\=)/g;
+			event.message = sanitize(event.message);  //sanitize
 			event.message = marked(event.message);
 			event.message = event.message.slice(3,event.message.length - 5);
-			event.message = sanitize(event.message).xss();
 			if(event.message){
 				event.message = event.message.replace(url_reg,"$1<a class='chat_link' href='\/\/$3\.$4$5'>$3\.$4$5</a>");
 				event.message = event.message.replace(url_reg2,"<a class='chat_link' href='\/\/$2\.$3$4'>$2\.$3$4</a>");
@@ -219,9 +225,9 @@ var prospect = io.on('connection', function(client) {
 			var url_reg = /(\s)(https?:\/\/)?([\da-z-]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/g;
 			var url_reg2 = /^(https?:\/\/)?([\da-z-]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/g;
 			var url_reg3 = /(img)(\s)(src\=)/g;
+			event.message = sanitize(event.message);  //sanitize
 			event.message = marked(event.message);
 			event.message = event.message.slice(3,event.message.length - 5);
-			event.message = sanitize(event.message).xss();
 			if(event.message){
 				event.message = event.message.replace(url_reg,"$1<a class='chat_link' href='\/\/$3\.$4$5'>$3\.$4$5</a>");
 				event.message = event.message.replace(url_reg2,"<a class='chat_link' href='\/\/$2\.$3$4'>$2\.$3$4</a>");

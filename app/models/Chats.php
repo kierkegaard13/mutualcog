@@ -10,7 +10,7 @@ class Chats extends EloquentBridge
 	}
 
 	public function messagesOnly(){
-		return $this->hasMany('Messages','chat_id')->whereresponseto('-1');
+		return $this->hasMany('Messages','chat_id')->whereresponseto('-1')->orderBy('id');
 	}
 
 	public function tags(){

@@ -186,7 +186,6 @@ class Chat extends BaseController {
 		if(htmlentities(Input::get('js_key')) != 'js_enabled'){
 			$validated = 0;
 		}
-		$validated = 1;
 		if($validated){
 			$chat = new Chats();
 			if(strlen(Input::get('title')) < 3 || strlen(Input::get('title')) > 180){
