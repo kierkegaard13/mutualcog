@@ -764,13 +764,6 @@ socket.on('check_live',function(live){
 	$('.chat_mssg').on('click',getResponse);
 	$('.chat_resp').on('click',getResponse);
 	$('.chat_link').click(function(e){e.stopPropagation();});
-	if(!stop_scroll){
-		$('#chat_messages').off('scroll',scroll_mod);
-		$('#chat_messages').scrollTop($('#chat_display').height());
-		window.setTimeout(function(){
-			$('#chat_messages').on('scroll',scroll_mod);
-		},100);
-	}
 });
 
 socket.on('openChat',function(chat_info){
@@ -906,28 +899,43 @@ $('#message').click(function(){
 	$(this).text("");
 });
 
-$('#message').keypress(function(e){
+var keys = new Array();
+
+$('#message').keydown(function(e){
+	keys.push(e.which);
+});
+
+$('#message').keyup(function(e){
 	if(live && banned == 0){
 		if(e.which == 13){
-			if($('#message').val() != ""){
-				if($('#message').attr('class') == 'global'){
-					sendMessageToServer({message:$('#message').val()});
-				}else{
-					var responseto = $('#message').attr('class');
-					var level = parseInt($('#mssg_cont_' + responseto).attr('class').split(" ")[1].replace('level_','')) + 1;
-					console.log(level);
-					if($('#mssg_cont_' + responseto).attr('class').split(" ")[2].replace('parent_','') == -1){
-						var resp_parent = responseto;
+			if(keys.indexOf(16) == -1){
+				keys.splice(keys.indexOf(e.which),1);
+				if($('#message').val().trim() != ""){
+					if($('#message').attr('class') == 'global'){
+						sendMessageToServer({message:$('#message').val()});
 					}else{
-						var resp_parent = $('#mssg_cont_' + responseto).parents('.mssg_cont').last().attr('id').replace('mssg_cont_','');
+						var responseto = $('#message').attr('class');
+						var level = parseInt($('#mssg_cont_' + responseto).attr('class').split(" ")[1].replace('level_','')) + 1;
+						console.log(level);
+						if($('#mssg_cont_' + responseto).attr('class').split(" ")[2].replace('parent_','') == -1){
+							var resp_parent = responseto;
+						}else{
+							var resp_parent = $('#mssg_cont_' + responseto).parents('.mssg_cont').last().attr('id').replace('mssg_cont_','');
+						}
+						sendResponseToServer({message:$('#message').val(),responseto:responseto,level:level,parent:resp_parent},clicked_on);	
 					}
-					sendResponseToServer({message:$('#message').val(),responseto:responseto,level:level,parent:resp_parent},clicked_on);	
+					$('#message').val("");
 				}
-				$('#message').val("");
+			}else{
+				keys.splice(keys.indexOf(e.which),1);
+				return true;
 			}
-			return false;
+		}else{
+			keys.splice(keys.indexOf(e.which),1);
 		}
 		return true;
+	}else{
+		keys.splice(keys.indexOf(e.which),1);
 	}
 });
 

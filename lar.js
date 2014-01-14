@@ -9,7 +9,10 @@ var mysql = require('mysql-activerecord'),
 	moment = require('moment');
 
 marked.setOptions({
-	sanitize:true
+	sanitize:true,
+	highlight:function (code) {
+		return require('highlight.js').highlightAuto(code).value;
+	}
 });
 
 process.env.TZ = 'UTC';
@@ -203,14 +206,14 @@ var prospect = io.on('connection', function(client) {
 
 	// Success!  Now listen to messages to be received
 	client.on('message_sent',function(event){ 
-		if(live && banned.indexOf(client.user) == -1){
+		if(live && banned.indexOf(client.user) == -1 && event.message.replace(/^\s+|\s+$/g,'') != ''){
 			var url_reg = /(\s)(https?:\/\/)?([\da-z-]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/g;
 			var url_reg2 = /^(https?:\/\/)?([\da-z-]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/g;
 			var url_reg3 = /(img)(\s)(src\=)/g;
 			event.message = hashHtml(event.message);
 			event.message = marked(event.message);
-			event.message = event.message.replace(/\<p\>/,'');
-			event.message = event.message.replace(/\<\/p\>/,'');
+			event.message = event.message.replace(/^\<p\>/,'');
+			event.message = event.message.replace(/$\<\/p\>/,'');
 			if(event.message){
 				event.message = event.message.replace(url_reg,"$1<a class='chat_link' href='\/\/$3\.$4$5'>$3\.$4$5</a>");
 				event.message = event.message.replace(url_reg2,"<a class='chat_link' href='\/\/$2\.$3$4'>$2\.$3$4</a>");
@@ -230,7 +233,7 @@ var prospect = io.on('connection', function(client) {
 	});
 
 	client.on('response_sent',function(event){ 
-		if(live && banned.indexOf(client.user) == -1){
+		if(live && banned.indexOf(client.user) == -1 && event.message.replace(/^\s+|\s+$/g,'') != ''){
 			var url_reg = /(\s)(https?:\/\/)?([\da-z-]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/g;
 			var url_reg2 = /^(https?:\/\/)?([\da-z-]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/g;
 			var url_reg3 = /(img)(\s)(src\=)/g;
