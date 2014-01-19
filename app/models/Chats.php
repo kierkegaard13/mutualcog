@@ -6,11 +6,11 @@ class Chats extends EloquentBridge
 	public $timestamps = true;
 
 	public function messages(){
-		return $this->hasMany('Messages','chat_id');
+		return $this->hasMany('Messages','chat_id')->wherereadable('1')->orderBy('rank');
 	}
 
 	public function messagesOnly(){
-		return $this->hasMany('Messages','chat_id')->whereresponseto('-1')->orderBy('id');
+		return $this->hasMany('Messages','chat_id')->wherereadable('1')->whereresponseto('0')->orderBy('rank');
 	}
 
 	public function tags(){

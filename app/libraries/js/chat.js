@@ -767,41 +767,26 @@ socket.on('check_live',function(live){
 });
 
 socket.on('openChat',function(chat_info){
-	var chat_log = chat_info.rows;
-	var messages = new Array();
-	if($('#mssg_cont_' + clicked_on).parent('.resp_cont').length){  //gets responses that user is looking at
-		var tmp_clicked = clicked_on;
-		clicked_on = $('#mssg_cont_' + clicked_on).parents('.resp_cont').last().attr('id').replace('resp_cont_','');
-		var responses = $('#mssg_cont_' + clicked_on).children('#resp_cont_' + clicked_on);
+	var tmp = "<div class='mssg_cont level_0 parent_0' id='mssg_cont_" + chat_info.id + "'><div class='chat_mssg' id='" + chat_info.id + "'><span class='vote_box'>";
+	if(upvoted.indexOf(chat_info.id.toString()) != -1){
+		tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + chat_info.id + '" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_' + chat_info.id + '">0</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + chat_info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>';
+	}else if(downvoted.indexOf(chat_info.id.toString()) != -1){
+		tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + chat_info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_' + chat_info.id + '">0</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + chat_info.id + '" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>';
 	}else{
-		var responses = $('#mssg_cont_' + clicked_on).children('#resp_cont_' + clicked_on);
+		tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + chat_info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_' + chat_info.id + '">0</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + chat_info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>';
 	}
-	$.each(chat_log,function(index,value){
-		var tmp = "<div class='mssg_cont level_" + value.level + " parent_" + value.parent + "' id='mssg_cont_" + value.id + "'><div class='chat_mssg' id='" + value.id + "'><span class='vote_box'>";
-		if(upvoted.indexOf(value.id.toString()) != -1){
-			tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + value.id + '" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_' + value.id + '">' + (value.upvotes - value.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + value.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>';
-		}else if(downvoted.indexOf(value.id.toString()) != -1){
-			tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + value.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_' + value.id + '">' + (value.upvotes - value.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + value.id + '" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>';
-		}else{
-			tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + value.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_' + value.id + '">' + (value.upvotes - value.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + value.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>';
-		}
-		tmp += '</span><span>'
-		if((serial_tracker == value.author || user_tracker == value.author) && value.message != '<i>This message has been deleted</i>'){
-			tmp += "<span id='" + value.id + "' style='margin-right:4px;' class='glyphicon glyphicon-remove mssg_icon' data-toggle='tooltip' title='Delete post' data-container='body' data-placement='top'></span>";
-		}
-		if(admin.indexOf(value.author) != -1){
-			tmp += "<span class='glyphicon glyphicon-star'></span>";
-		}else if(mods.indexOf(value.author) != -1){
-			tmp += "<span class='glyphicon glyphicon-tower'></span>";	
-		}
-		tmp += "<b class='mssg_op' id='" + value.author + "' style='color:" + color_arr[value.serial % 7] + ";'> " + value.author + " (<span class='response_count' id='" + value.id + "'>" + value.responses + "</span>)</b> : " + value.message + "</span><div><div class='time' id='" + value.created_at + "'>" + moment.utc(value.created_at).fromNow() + "</div></div></div></div>"	
-		messages.push(tmp);
-	});
-	$('#chat_display').html(messages.join(''));
-	$('#mssg_cont_' + clicked_on).append(responses);
-	if(tmp_clicked){
-		clicked_on = tmp_clicked;
+	tmp += '</span><span>'
+	if((serial_tracker == chat_info.author || user_tracker == chat_info.author) && chat_info.message != '<i>This message has been deleted</i>'){
+		tmp += "<span id='" + chat_info.id + "' style='margin-right:4px;' class='glyphicon glyphicon-remove mssg_icon' data-toggle='tooltip' title='Delete post' data-container='body' data-placement='top'></span>";
 	}
+	if(admin.indexOf(chat_info.author) != -1){
+		tmp += "<span class='glyphicon glyphicon-star'></span>";
+	}else if(mods.indexOf(chat_info.author) != -1){
+		tmp += "<span class='glyphicon glyphicon-tower'></span>";	
+	}
+	tmp += "<b class='mssg_op' id='" + chat_info.author + "' style='color:" + color_arr[chat_info.serial % 7] + ";'> " + chat_info.author + " (<span class='response_count' id='" + chat_info.id + "'>0</span>)</b> : " + chat_info.message + "</span><div><div class='time' id='" + chat_info.created_at + "'>" + moment.utc(chat_info.created_at).fromNow() + "</div></div></div></div>"	
+	console.log(tmp)
+	$('#chat_display').append(tmp);
 	$('.mssg_icon').tooltip();
 	$('.mssg_icon').on('click',deleteIt);
 	if(!focused && !title_blinking){
@@ -827,7 +812,7 @@ socket.on('openChat',function(chat_info){
 
 socket.on('openResponses',function(responses){
 	var messages = new Array();
-	var responseto = -1;
+	var responseto = 0;
 	$.each(responses,function(index,value){
 		responseto = value.responseto;
 		var tmp = "<div class='responses_to_" + value.responseto + " level_" + value.level + " parent_" + value.parent + " pad_l_20' id='mssg_cont_" + value.id + "'><div class='chat_resp' id='" + value.id + "'><span class='vote_box'>";
@@ -896,6 +881,8 @@ function sendResponseToServer(response,clicked_on) {
 }
 
 $('#message').click(function(){
+	$('.enter_hint').text("");
+	$('.response_hint').text("");
 	$(this).text("");
 });
 
@@ -907,8 +894,8 @@ $('#message').keydown(function(e){
 
 $('#message').keyup(function(e){
 	if(live && banned == 0){
-		if(e.which == 13){
-			if(keys.indexOf(16) == -1){
+		if(e.which == 13){  //enter key
+			if(keys.indexOf(16) == -1){  //shift key not pressed
 				keys.splice(keys.indexOf(e.which),1);
 				if($('#message').val().trim() != ""){
 					if($('#message').attr('class') == 'global'){
@@ -916,8 +903,7 @@ $('#message').keyup(function(e){
 					}else{
 						var responseto = $('#message').attr('class');
 						var level = parseInt($('#mssg_cont_' + responseto).attr('class').split(" ")[1].replace('level_','')) + 1;
-						console.log(level);
-						if($('#mssg_cont_' + responseto).attr('class').split(" ")[2].replace('parent_','') == -1){
+						if($('#mssg_cont_' + responseto).attr('class').split(" ")[2].replace('parent_','') == 0){
 							var resp_parent = responseto;
 						}else{
 							var resp_parent = $('#mssg_cont_' + responseto).parents('.mssg_cont').last().attr('id').replace('mssg_cont_','');

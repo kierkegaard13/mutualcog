@@ -735,9 +735,16 @@ textarea {
   border-left-style: inset;
   border-left-width: 2px;
 }
-.enter_alert{
+.enter_hint{
   position:absolute;
   bottom:25px;
+  right:25px;
+  color:#777;
+  font-size:14px; 
+}
+.response_hint{
+  position:absolute;
+  bottom:50px;
   right:25px;
   color:#777;
   font-size:14px; 
