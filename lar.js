@@ -10,6 +10,7 @@ var mysql = require('mysql-activerecord'),
 
 marked.setOptions({
 	sanitize:true,
+	breaks:true,
 	highlight:function (code) {
 		return require('highlight.js').highlightAuto(code).value;
 	}
@@ -213,17 +214,17 @@ var prospect = io.on('connection', function(client) {
 			event.message = hashHtml(event.message);
 			event.message = marked(event.message);
 			event.message = event.message.replace(/^\<p\>/,'');
-			event.message = event.message.replace(/$\<\/p\>/,'');
+			event.message = event.message.replace(/<\/p\>$/,'');
 			if(event.message){
 				event.message = event.message.replace(url_reg,"$1<a class='chat_link' href='\/\/$3\.$4$5'>$3\.$4$5</a>");
 				event.message = event.message.replace(url_reg2,"<a class='chat_link' href='\/\/$2\.$3$4'>$2\.$3$4</a>");
 				event.message = event.message.replace(url_reg3,"$1$2style='max-width:300px;max-height:200px;margin-bottom:5px;' $3");
 			}
-			conn.insert('messages',{message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:"-1",author:client.user,serial:client.serial},function(err,info){
+			conn.insert('messages',{message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:"0",author:client.user,serial:client.serial},function(err,info){
 				if(err) console.log(err);
-				conn.where({chat_id:client.chat_id,responseto:"-1"}).order_by('messages.id asc').get('messages',function(err,rows){
+				io.sockets.in(client.room).emit('openChat',{id:info.insertId,message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:"0",author:client.user,serial:client.serial,clicked:"-1"});
+				conn.where({id:info.insertId}).update('messages',{rank:info.insertId*1000000 + moment.utc().valueOf()/100000000000,readable:1},function(err,info){
 					if(err)console.log(err);
-					io.sockets.in(client.room).emit('openChat',{rows:rows,clicked:"-1"});
 				});
 				conn.where({serial_id:client.serial}).update('serials',{updated_at:moment.utc().format()},function(err,info){
 					if(err) console.log(err);
@@ -239,14 +240,14 @@ var prospect = io.on('connection', function(client) {
 			var url_reg3 = /(img)(\s)(src\=)/g;
 			event.message = hashHtml(event.message);
 			event.message = marked(event.message);
-			event.message = event.message.replace(/\<p\>/,'');
-			event.message = event.message.replace(/\<\/p\>/,'');
+			event.message = event.message.replace(/^\<p\>/,'');
+			event.message = event.message.replace(/\<\/p\>$/,'');
 			if(event.message){
 				event.message = event.message.replace(url_reg,"$1<a class='chat_link' href='\/\/$3\.$4$5'>$3\.$4$5</a>");
 				event.message = event.message.replace(url_reg2,"<a class='chat_link' href='\/\/$2\.$3$4'>$2\.$3$4</a>");
 				event.message = event.message.replace(url_reg3,"$1$2style='max-width:300px;max-height:200px;margin-bottom:5px;' $3");
 			}
-			conn.insert('messages',{message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:event.responseto,level:event.level,parent:event.parent,author:client.user,serial:client.serial},function(err,info){
+			conn.insert('messages',{message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:event.responseto,level:event.level,parent:event.parent,author:client.user,serial:client.serial,rank:event.parent*1000000 + moment.utc().valueOf()/100000000000,readable:1},function(err,info){
 				if(err) console.log(err);
 				conn.where({chat_id:client.chat_id,responseto:event.responseto}).order_by('messages.id asc').get('messages',function(err,rows){
 					if(err)console.log(err);
