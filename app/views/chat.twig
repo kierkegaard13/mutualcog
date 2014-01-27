@@ -249,6 +249,9 @@
 						{% endif %}
 						<b class="mssg_op" id="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}} (<span class="response_count" id="{{message.id}}">{{message.responses}}</span>)</b> : {{message.message | raw}}
 					</span>
+					<span style="padding:5px;" id="toggle_{{message.id}}" class="toggle_responses">
+						<span class="caret caret_tooltip" id="caret_{{message.id}}" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span>
+					</span>
 					<div>
 						<div class="time" id="{{message.created_at}}"></div>
 					</div>
@@ -294,6 +297,9 @@
 								{% endif %}
 								<b class="mssg_op" id="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}} (<span class="response_count" id="{{message.id}}">{{message.responses}}</span>)</b> : {{message.message | raw}}
 							</span>
+							<span style="padding:5px;" id="toggle_{{message.id}}" class="toggle_responses">
+								<span class="caret caret_tooltip" id="caret_{{message.id}}" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span>
+							</span>
 							<div>
 								<div class="time" id="{{message.created_at}}"></div>
 							</div>
@@ -301,9 +307,8 @@
 					</div>
 			{% endif %}
 			{% if loop.last %}
-				{% if prev_level > message.level %}
+				{% if prev_level > 0 %}
 					{% for i in 0..prev_level - 1 %}
-						<div>THIRD TRIGGER {{prev_level}}</div>
 						</div>
 					{% endfor %}
 				{% endif %}
