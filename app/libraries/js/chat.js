@@ -177,8 +177,6 @@ $('#login_form').submit(function(){
                         url:'//mutualcog.com/profile/checkuser',
                         async:false,
                 }).responseText;
-		console.log(username);
-		console.log(response);
 		if(response == 1){
 			var response = $.ajax({
 				type:'GET',
@@ -666,7 +664,6 @@ socket.on('displayMembers',function(info){
 });
 
 socket.on('add_mod_funcs',function(){
-	console.log('hi');
 	$('#user_toolbox').append('<span class="glyphicon glyphicon-warning-sign mod_power" id="warn_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Warn user"></span> <span class="glyphicon glyphicon-remove mod_power" id="kick_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Kick user"></span> ');
 });
 
@@ -728,11 +725,15 @@ socket.on('check_live',function(live){
 		}
 	}
 	$('.mssg_icon').tooltip();
-	$('.mssg_icon').on('click',deleteIt);
-	$('.chat_mssg').on('click',setClicked);
-	$('.chat_resp').on('click',setClicked);
-	$('.toggle_responses').on('click',getResponses);
-	$('.chat_link').click(function(e){e.stopPropagation();});
+	$('.resp_icon').tooltip();
+	$('#chat_display').on('click','.mssg_icon',deleteIt);
+	$('#chat_display').on('click','.resp_icon',deleteIt);
+	$('#chat_display').on('click','.mssg_upvote',upvoteMssg);
+	$('#chat_display').on('click','.mssg_downvote',downvoteMssg);
+	$('#chat_display').on('click','.chat_mssg',setClicked);
+	$('#chat_display').on('click','.chat_resp',setClicked);
+	$('#chat_display').on('click','.toggle_responses',getResponses);
+	$('#chat_display').on('click','.chat_link',function(e){e.stopPropagation();});
 });
 
 socket.on('openChat',function(chat_info){
@@ -756,14 +757,7 @@ socket.on('openChat',function(chat_info){
 	tmp += "<b class='mssg_op' id='" + chat_info.author + "' style='color:" + color_arr[chat_info.serial % 7] + ";'> " + chat_info.author + " (<span class='response_count' id='" + chat_info.id + "'>0</span>)</b> : " + chat_info.message + "</span><div><div class='time' id='" + chat_info.created_at + "'>" + moment.utc(chat_info.created_at).fromNow() + "</div></div></div></div>"	
 	$('.tmp_message').remove();
 	$('#chat_display').append(tmp);
-	$('.mssg_icon').off('click');
-	$('.mssg_upvote').off('click');
-	$('.mssg_downvote').off('click');
-	$('.chat_mssg').off('click');
-	$('.chat_link').off('click');
-	$('.toggle_responses').off('click');
 	$('.mssg_icon').tooltip();
-	$('.mssg_icon').on('click',deleteIt);
 	if(!focused && !title_blinking){
 		notifyMessage();
 	}
@@ -771,11 +765,6 @@ socket.on('openChat',function(chat_info){
 		$('#' + chat_info.clicked + '.chat_mssg').css('background-color','#eee');
 		$('#message').attr('class',chat_info.clicked);
 	}
-	$('.mssg_upvote').on('click',upvoteMssg);
-	$('.mssg_downvote').on('click',downvoteMssg);
-	$('.chat_mssg').on('click',setClicked);
-	$('.toggle_responses').on('click',getResponses);
-	$('.chat_link').click(function(e){e.stopPropagation();});
 	if(!stop_scroll){
 		$('#chat_messages').off('scroll',scroll_mod);
 		$('#chat_messages').scrollTop($('#chat_display').height());
@@ -809,22 +798,9 @@ socket.on('openResponses',function(response){
 	if($('#resp_cont_' + response.responseto).length){
 		$('#resp_cont_' + response.responseto).append(tmp);
 	}else{
-		console.log('hi');
-		$('#mssg_cont_' + response.responseto).append('<div id="resp_cont_' + responseto + '" class="resp_cont">' + tmp + '</div>');
+		$('#mssg_cont_' + response.responseto).append('<div id="resp_cont_' + response.responseto + '" class="resp_cont">' + tmp + '</div>');
 	}
-	$('.resp_icon').off('click');
-	$('.chat_resp').off('click');
-	$('.mssg_upvote').off('click');
-	$('.mssg_downvote').off('click');
-	$('.chat_link').off('click');
-	$('.toggle_responses').off('click');
-	$('.mssg_upvote').on('click',upvoteMssg);
-	$('.mssg_downvote').on('click',downvoteMssg);
-	$('.resp_icon').on('click',deleteIt);
 	$('.resp_icon').tooltip();
-	$('.chat_resp').on('click',setClicked);
-	$('.toggle_responses').on('click',getResponses);
-	$('.chat_link').click(function(e){e.stopPropagation();});
 	if(!focused && !title_blinking){
 		notifyMessage();
 	}
