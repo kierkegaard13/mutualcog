@@ -202,7 +202,7 @@ var prospect = io.on('connection', function(client) {
 			conn.insert('messages',{message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:"0",author:client.user,serial:client.serial},function(err,info){
 				if(err) console.log(err);
 				io.sockets.in(client.room).emit('openChat',{id:info.insertId,message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),responseto:"0",author:client.user,serial:client.serial,clicked:"-1"});
-				conn.where({id:info.insertId}).update('messages',{rank:info.insertId*1000000 + moment.utc().valueOf()/100000000000,readable:1},function(err,info){
+				conn.where({id:info.insertId}).update('messages',{rank:info.insertId*1000000 + moment.utc().unix()/100000000,readable:1},function(err,info){
 					if(err)console.log(err);
 				});
 				conn.where({serial_id:client.serial}).update('serials',{updated_at:moment.utc().format()},function(err,info){
@@ -215,7 +215,7 @@ var prospect = io.on('connection', function(client) {
 	client.on('response_sent',function(event){ 
 		if(live && banned.indexOf(client.user) == -1 && event.message.replace(/^\s+|\s+$/g,'') != ''){
 			event.message = processMessage(event.message);
-			conn.insert('messages',{message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:event.responseto,level:event.level,parent:event.parent,author:client.user,serial:client.serial,rank:event.parent*1000000 + moment.utc().valueOf()/100000000000,readable:1},function(err,info){
+			conn.insert('messages',{message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:event.responseto,level:event.level,parent:event.parent,author:client.user,serial:client.serial,rank:event.parent*1000000 + (1000-5*(event.level - 1))*(event.child_num) + moment.utc().unix()/100000000,readable:1},function(err,info){
 				if(err) console.log(err);
 				io.sockets.in(client.room).emit('openResponses',{id:info.insertId,message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),responseto:event.responseto,author:client.user,serial:client.serial,level:event.level,parent:event.parent});
 				var insert_id = info.insertId;

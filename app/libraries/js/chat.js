@@ -874,12 +874,13 @@ $('#message').keyup(function(e){
 					}else{
 						var responseto = $('#message').attr('class');
 						var level = parseInt($('#mssg_cont_' + responseto).attr('class').split(" ")[1].replace('level_','')) + 1;
+						var child_num = parseInt($('#mssg_cont_' + responseto).children('.resp_cont').length);
 						if($('#mssg_cont_' + responseto).attr('class').split(" ")[2].replace('parent_','') == 0){
 							var resp_parent = responseto;
 						}else{
 							var resp_parent = $('#mssg_cont_' + responseto).parents('.mssg_cont').last().attr('id').replace('mssg_cont_','');
 						}
-						sendResponseToServer({message:$('#message').val(),responseto:responseto,level:level,parent:resp_parent},clicked_on);	
+						sendResponseToServer({message:$('#message').val(),responseto:responseto,level:level,parent:resp_parent,child_num:child_num},clicked_on);	
 					}
 					$('#message').val("");
 				}
