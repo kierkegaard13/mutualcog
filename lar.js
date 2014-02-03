@@ -51,6 +51,17 @@ function processMessage(message){
 	return message;
 }
 
+function repeatString(x,n){
+	var s = '';
+	for(;;){
+		if(n & 1) s += x;
+		n >>= 1;
+		if(n) x += x;
+		else break;
+	}
+	return s;
+}
+
 var io = require('socket.io').listen(3000);
 var prospect = io.on('connection', function(client) {
 
@@ -201,8 +212,9 @@ var prospect = io.on('connection', function(client) {
 			event.message = processMessage(event.message);
 			conn.insert('messages',{message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:"0",author:client.user,serial:client.serial},function(err,info){
 				if(err) console.log(err);
-				io.sockets.in(client.room).emit('openChat',{id:info.insertId,message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),responseto:"0",author:client.user,serial:client.serial,clicked:"-1"});
-				conn.where({id:info.insertId}).update('messages',{rank:info.insertId*1000000 + moment.utc().unix()/100000000,readable:1},function(err,info){
+				io.sockets.in(client.room).emit('publishMessage',{id:info.insertId,message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),responseto:"0",author:client.user,serial:client.serial,clicked:"-1"});
+				insert_id = info.insertId;
+				conn.where({id:info.insertId}).update('messages',{path:"0" + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id,readable:1},function(err,info){
 					if(err)console.log(err);
 				});
 				conn.where({serial_id:client.serial}).update('serials',{updated_at:moment.utc().format()},function(err,info){
@@ -215,10 +227,16 @@ var prospect = io.on('connection', function(client) {
 	client.on('response_sent',function(event){ 
 		if(live && banned.indexOf(client.user) == -1 && event.message.replace(/^\s+|\s+$/g,'') != ''){
 			event.message = processMessage(event.message);
-			conn.insert('messages',{message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:event.responseto,level:event.level,parent:event.parent,author:client.user,serial:client.serial,rank:event.parent*1000000 + (1000-5*(event.level - 1))*(event.child_num) + moment.utc().unix()/100000000,readable:1},function(err,info){
+			conn.insert('messages',{message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:event.responseto,level:event.level,parent:event.parent,author:client.user,serial:client.serial},function(err,info){
 				if(err) console.log(err);
-				io.sockets.in(client.room).emit('openResponses',{id:info.insertId,message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),responseto:event.responseto,author:client.user,serial:client.serial,level:event.level,parent:event.parent});
+				io.sockets.in(client.room).emit('publishResponse',{id:info.insertId,message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),responseto:event.responseto,author:client.user,serial:client.serial,level:event.level,parent:event.parent});
 				var insert_id = info.insertId;
+				conn.where({id:event.responseto}).get('messages',function(err,rows){
+					if(err)console.log(err);
+					conn.where({id:insert_id}).update('messages',{path:rows[0].path + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id,readable:1},function(err,info){
+						if(err)console.log(err);
+					});
+				});
 				conn.where({id:event.responseto}).get('messages',function(err,rows){
 					if(err)console.log(err);
 					conn.where({id:event.responseto}).update('messages',{responses:rows[0].responses + 1},function(err,info){
@@ -237,7 +255,7 @@ var prospect = io.on('connection', function(client) {
 	});
 
 	client.on('delete_message',function(mssg_info){
-		var replace = '<i>This message has been deleted</i>';
+		var replace = '<em>This message has been deleted</em>';
 		conn.where({id:mssg_info.id}).get('messages',function(err,rows){
 			if(err)console.log(err);
 			if(rows[0].member_id == client.memb_id){

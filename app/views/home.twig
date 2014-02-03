@@ -22,7 +22,7 @@
 		{% if logged_in %}
 		<ul class="nav navbar-nav nav_left">
 			<li class="dropdown">
-				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Subscriptions <b class="caret" style="color:white;"></b></a>
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Subscriptions <strong class="caret" style="color:white;"></strong></a>
 				<ul class="dropdown-menu" role="menu">
 					{% for sub in user.subscriptions %}
 						<li><a href="{{site}}/t/{{sub.name}}">{{sub.name}}</a></li>
@@ -57,7 +57,7 @@
 {% block welcome %}
 <div style="margin-bottom:10px;">Welcome, {% if not user %}<span id="serial_tracker">{{serial}}</span>{% else %}<span id="user_tracker">{{user.name}}</span>{% endif %}</div>
 {% if not logged_in %}
-<form method="post" action="{{site}}/profile/newuser" class="mutual_form" id="login_form">
+<form method="post" action="{{site}}/profile/new-user" class="mutual_form" id="login_form">
 <fieldset>
 	<div id="user_group" class="form-group">
 		<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Username must be longer than 2 characters but less than 15" data-trigger="focus" data-container="body" type="text" name="username" id="username" placeholder="Enter your actual or preferred username">
@@ -72,7 +72,7 @@
 </fieldset>
 </form>
 {% else %}
-<div class="last_login" id="{{user.last_login}}"><b>Last login:</b></div>
+<div class="last_login" id="{{user.last_login}}"><strong>Last login:</strong></div>
 <div>Cognizance: {{user.cognizance}}/{{100 + 20*user.level }} (Level: {{user.level}})</div>
 <div class="progress progress-striped active">
 	<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{user.cognizance}}" aria-valuemin="0" aria-valuemax="{{100 + 20*user.level}}" style="width:{{user.cognizance}}%;">
@@ -88,7 +88,7 @@
 {% endblock %}
 
 {% block create %}
-<form method="post" action="{{site}}/chat/newchat" class="mutual_form" id="home_form">
+<form method="post" action="{{site}}/chat/new-chat" class="mutual_form" id="home_form">
 <fieldset>
 	<legend>Create a new Chat</legend>
 	<div id="title_group" class="form-group">
@@ -113,7 +113,7 @@
 			<div class="content_left grad4"></div>
 			<div class="content_right grad4"></div>
 			<div class="content side_content" id="subscribe">
-				<div><a href="{{site}}/t/{{curr_tag.name}}" style="font-size:22px;color:#333;"><b>{{curr_tag.name}}</b>{% if curr_tag.admin == user.name %} (Admin) {% endif %}</a></div>
+				<div><a href="{{site}}/t/{{curr_tag.name}}" style="font-size:22px;color:#333;"><strong>{{curr_tag.name}}</strong>{% if curr_tag.admin == user.name %} (Admin) {% endif %}</a></div>
 				{% if logged_in %}
 					{% if user_subscribed %}
 						<span><a href="{{site}}/tags/unsubscribe/{{curr_tag.id}}" class="btn btn-danger btn-xs">Unsubscribe</a></span>
@@ -175,16 +175,16 @@
 							{% endif %}
 						{% endif %}
 						{% if chat.admin % 16777259 == 0 %}
-							<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><b>{{chat.admin}}</b></a>, 
+							<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><strong>{{chat.admin}}</strong></a>, 
 						{% else %}
-							<div class="chat_info">Created by <b>{{chat.admin}}</b>, 
+							<div class="chat_info">Created by <strong>{{chat.admin}}</strong>, 
 						{% endif %}
 							<span class="chat_time" id="{{chat.created_at}}"></span>
 							with Tags:
 							{% for tag in chat.tags %}
 								<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}" style="color:#075de9;">#{{tag.name}}</a> </span>
 							{% endfor %}
-							and <a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:gray;"><b>{{chat.messages | length }} comments</b></a>
+							and <a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:gray;"><strong>{{chat.messages | length }} comments</strong></a>
 						</div>
 					</div>
 				</div>
@@ -241,16 +241,16 @@
 							{% endif %}
 						{% endif %}
 						{% if chat.admin % 16777259 == 0 %}
-							<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><b>{{chat.admin}}</b></a>, 
+							<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><strong>{{chat.admin}}</strong></a>, 
 						{% else %}
-							<div class="chat_info">Created by <b>{{chat.admin}}</b>, 
+							<div class="chat_info">Created by <strong>{{chat.admin}}</strong>, 
 						{% endif %}
 							<span class="chat_time" id="{{chat.created_at}}"></span>
 							with Tags:
 							{% for tag in chat.tags %}
 								<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}" style="color:#075de9;">#{{tag.name}}</a> </span>
 							{% endfor %}
-							and <a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:gray;"><b>{{chat.messages | length }} comments</b></a>
+							and <a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:gray;"><strong>{{chat.messages | length }} comments</strong></a>
 						</div>
 					</div>
 				</div>
@@ -307,16 +307,16 @@
 							{% endif %}
 						{% endif %}
 						{% if chat.admin % 16777259 == 0 %}
-							<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><b>{{chat.admin}}</b></a>, 
+							<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><strong>{{chat.admin}}</strong></a>, 
 						{% else %}
-							<div class="chat_info">Created by <b>{{chat.admin}}</b>, 
+							<div class="chat_info">Created by <strong>{{chat.admin}}</strong>, 
 						{% endif %}
 							<span class="chat_time" id="{{chat.created_at}}"></span>
 							with Tags:
 							{% for tag in chat.tags %}
 								<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}" style="color:#075de9;">#{{tag.name}}</a> </span>
 							{% endfor %}
-							and <a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:gray;"><b>{{chat.messages | length }} comments</b></a>
+							and <a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:gray;"><strong>{{chat.messages | length }} comments</strong></a>
 						</div>
 					</div>
 				</div>
@@ -373,16 +373,16 @@
 							{% endif %}
 						{% endif %}
 						{% if chat.admin % 16777259 == 0 %}
-							<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><b>{{chat.admin}}</b></a>, 
+							<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><strong>{{chat.admin}}</strong></a>, 
 						{% else %}
-							<div class="chat_info">Created by <b>{{chat.admin}}</b>, 
+							<div class="chat_info">Created by <strong>{{chat.admin}}</strong>, 
 						{% endif %}
 							<span class="chat_time" id="{{chat.created_at}}"></span>
 							with Tags:
 							{% for tag in chat.tags %}
 								<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}" style="color:#075de9;">#{{tag.name}}</a> </span>
 							{% endfor %}
-							and <a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:gray;"><b>{{chat.messages | length }} comments</b></a>
+							and <a href="{{site}}/chat/{{chat.type}}/{{chat.id}}" style="color:gray;"><strong>{{chat.messages | length }} comments</strong></a>
 						</div>
 					</div>
 				</div>

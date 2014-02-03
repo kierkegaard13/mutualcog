@@ -188,9 +188,13 @@ body{
 	}
 }
 .dropdown-menu>li>a {
-  color:white;
+  transition:color .5s;
+  -webkit-transition:color .5s;
   transition:background-color .5s;
   -webkit-transition:background-color .5s;
+}
+.nav_left .dropdown-menu>li>a {
+  color:white;
 }
 .dropdown-menu>li>a:hover {
   color:white;

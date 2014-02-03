@@ -134,7 +134,7 @@ class Chat extends BaseController {
 		return $chat->admin;
 	}
 
-	public function getCheckmod(){
+	public function getCheckMod(){
 		$user = htmlentities(Input::get('user'));
 		$chat_id = htmlentities(Input::get('chat_id'));
 		$mem_to_chat = new MembersToChats();
@@ -163,7 +163,7 @@ class Chat extends BaseController {
 		return false;
 	}
 
-	public function postNewchat(){
+	public function postNewChat(){
 		$validated = 0;
 		$curr_date = date('Y:m:d:H:i');
 		list($year,$month,$day,$hour,$minute) = explode(':',$curr_date);

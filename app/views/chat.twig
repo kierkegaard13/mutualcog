@@ -22,7 +22,7 @@
 		{% if logged_in %}
 		<ul class="nav navbar-nav nav_left">
 			<li class="dropdown">
-				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Subscriptions <b class="caret" style="color:white;"></b></a>
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Subscriptions <strong class="caret" style="color:white;"></strong></a>
 				<ul class="dropdown-menu" role="menu">
 					{% for sub in user.subscriptions %}
 						<li><a href="{{site}}/t/{{sub.name}}">{{sub.name}}</a></li>
@@ -83,7 +83,7 @@
 	{% endif %}
 </div>
 {% if not logged_in %}
-	<form method="post" action="{{site}}/profile/newuser" class="mutual_form" id="login_form">
+	<form method="post" action="{{site}}/profile/new-user" class="mutual_form" id="login_form">
 	<fieldset>
 		<div id="user_group" class="form-group">
 			<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Username must be longer than 2 characters but less than 15" data-trigger="focus" data-container="body" type="text" name="username" id="username" placeholder="Enter your actual or preferred username">
@@ -130,7 +130,7 @@
 	{% endif %}
 </div>
 <div class="chat_id" id="{{chat.id}}">{{chat.title}}</div>
-<div style="color:#777;font-size:12px;"><b>Created by </b> <span id="chat_admin">{{chat.admin}}</span>, 
+<div style="color:#777;font-size:12px;"><strong>Created by </strong> <span id="chat_admin">{{chat.admin}}</span>, 
 	<span class="chat_time" id="{{chat.created_at}}"></span>
 	with Tags:
 	{% for tag in chat.tags %}
@@ -181,19 +181,19 @@
 {% block members %}
 <div class="frame" style="height:550px;">
 	<div class="chat_title">
-		<div><b>Chat Admin</b></div>
+		<div><strong>Chat Admin</strong></div>
 		<div id="display_admin">
 		
 		</div>
 	</div>
 	<div class="chat_title">
-		<div><b>Chat Moderators</b></div>
+		<div><strong>Chat Moderators</strong></div>
 		<div id="display_mods">
 		
 		</div>
 	</div>
 	<div class="chat_title">
-		<div><b>Chat Members</b></div>
+		<div><strong>Chat Members</strong></div>
 		<div id="display_members">
 		
 		</div>
@@ -222,37 +222,41 @@
 			{% set prev_level = message.level %}
 			<div class="mssg_cont level_{{message.level}} parent_{{message.parent}}" id="mssg_cont_{{message.id}}">
 				<div class="chat_mssg" id="{{message.id}}">
-					<span class="vote_box">
-						{% if message.id in mssg_upvoted %}
-							<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
-							<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
-							<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
-						{% elseif message.id in mssg_downvoted %}
-							<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
-							<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
-							<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
-						{% else %}
-							<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
-							<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
-							<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
-						{% endif %}
-					</span>
-					<span>
-						{% if serial == message.author or user.name == message.author and message.message != '<i>This message has been deleted</i>' %}
-							<span id="message.id" class="glyphicon glyphicon-remove mssg_icon" data-toggle="tooltip" title="Delete post" data-container="body" data-placement="top"></span>	
-						{% endif %}  
-						{% if message.author == chat.admin %}
-							<span class="glyphicon glyphicon-star"></span>	
-						{% endif %}
-						{% if message.author in mods %}
-							<span class="glyphicon glyphicon-tower"></span>	
-						{% endif %}
-						<b class="mssg_op" id="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}} (<span class="response_count" id="{{message.id}}">{{message.responses}}</span>)</b> : {{message.message | raw}}
-					</span>
-					<span style="padding:5px;" id="toggle_{{message.id}}" class="toggle_responses">
-						<span class="caret caret_tooltip" id="caret_{{message.id}}" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span>
-					</span>
-					<div>
+					<div class="row" style="margin:0;">
+						<div id="toggle_{{message.id}}" class="toggle_responses">
+							<span class="caret caret_tooltip" id="caret_{{message.id}}" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span>
+						</div>
+						<div class="mssg_body_cont">
+							<span class="vote_box">
+								{% if message.id in mssg_upvoted %}
+									<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
+									<div class="upvote_count" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
+									<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
+								{% elseif message.id in mssg_downvoted %}
+									<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
+									<div class="upvote_count" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
+									<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
+								{% else %}
+									<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
+									<div class="upvote_count" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
+									<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
+								{% endif %}
+							</span>
+							<span class="mssg_body">
+								{% if 'This message has been deleted' in message.message == 0 and (serial == message.author or user.name == message.author) %}
+									<span id="message.id" class="glyphicon glyphicon-remove mssg_icon" data-toggle="tooltip" title="Delete post" data-container="body" data-placement="top"></span>	
+								{% endif %}  
+								{% if message.author == chat.admin %}
+									<span class="glyphicon glyphicon-star"></span>	
+								{% endif %}
+								{% if message.author in mods %}
+									<span class="glyphicon glyphicon-tower"></span>	
+								{% endif %}
+								<strong class="mssg_op" id="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}} (<span class="response_count" id="{{message.id}}">{{message.responses}}</span>)</strong> : {{message.message | raw}}
+							</span>
+						</div>
+					</div>
+					<div class="time_box">
 						<div class="time" id="{{message.created_at}}"></div>
 					</div>
 				</div>
@@ -270,37 +274,41 @@
 				{% endif %}
 					<div class="response_to_{{message.responseto}} level_{{message.level}} parent_{{message.parent}}" id="mssg_cont_{{message.id}}" style="padding-left:{{20*message.level}}px">
 						<div class="chat_resp" id="{{message.id}}">
-							<span class="vote_box">
-								{% if message.id in mssg_upvoted %}
-									<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
-									<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
-									<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
-								{% elseif message.id in mssg_downvoted %}
-									<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
-									<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
-									<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
-								{% else %}
-									<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
-									<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
-									<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
-								{% endif %}
-							</span>
-							<span>
-								{% if serial == message.author or user.name == message.author and message.message != '<i>This message has been deleted</i>' %}
-									<span id="message.id" class="glyphicon glyphicon-remove mssg_icon" data-toggle="tooltip" title="Delete post" data-container="body" data-placement="top"></span>	
-								{% endif %}  
-								{% if message.author == chat.admin %}
-									<span class="glyphicon glyphicon-star"></span>	
-								{% endif %}
-								{% if message.author in mods %}
-									<span class="glyphicon glyphicon-tower"></span>	
-								{% endif %}
-								<b class="mssg_op" id="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}} (<span class="response_count" id="{{message.id}}">{{message.responses}}</span>)</b> : {{message.message | raw}}
-							</span>
-							<span style="padding:5px;" id="toggle_{{message.id}}" class="toggle_responses">
-								<span class="caret caret_tooltip" id="caret_{{message.id}}" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span>
-							</span>
-							<div>
+							<div class="row" style="margin:0;">
+								<div id="toggle_{{message.id}}" class="toggle_responses">
+									<span class="caret caret_tooltip" id="caret_{{message.id}}" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span>
+								</div>
+								<div class="mssg_body_cont">
+									<span class="vote_box">
+										{% if message.id in mssg_upvoted %}
+											<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
+											<div class="upvote_count" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
+											<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
+										{% elseif message.id in mssg_downvoted %}
+											<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
+											<div class="upvote_count" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
+											<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
+										{% else %}
+											<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
+											<div class="upvote_count" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
+											<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
+										{% endif %}
+									</span>
+									<span class="mssg_body">
+										{% if 'This message has been deleted' in message.message == 0 and (serial == message.author or user.name == message.author) %}
+											<span id="message.id" class="glyphicon glyphicon-remove mssg_icon" data-toggle="tooltip" title="Delete post" data-container="body" data-placement="top"></span>	
+										{% endif %}  
+										{% if message.author == chat.admin %}
+											<span class="glyphicon glyphicon-star"></span>	
+										{% endif %}
+										{% if message.author in mods %}
+											<span class="glyphicon glyphicon-tower"></span>	
+										{% endif %}
+										<strong class="mssg_op" id="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}} (<span class="response_count" id="{{message.id}}">{{message.responses}}</span>)</strong> : {{message.message | raw}}
+									</span>
+								</div>
+							</div>
+							<div class="time_box">
 								<div class="time" id="{{message.created_at}}"></div>
 							</div>
 						</div>

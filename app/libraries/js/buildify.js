@@ -16,6 +16,9 @@ buildify.task({
 		buildify().load('info.js')
 			.uglify()
 			.save('info.min.js');
+		buildify().load('profile.js')
+			.uglify()
+			.save('profile.min.js');
 	}
 });
 

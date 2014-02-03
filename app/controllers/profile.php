@@ -55,7 +55,7 @@ class Profile extends BaseController {
 		return Redirect::to(Session::get('curr_page'));
 	}
 
-	public function getProfilevisit(){
+	public function getProfileVisit(){
 		if(Auth::check()){
 			$profile_id = Input::get('profile_id');
 			if(Auth::user()->id != $profile_id){
@@ -102,7 +102,7 @@ class Profile extends BaseController {
 		return false;
 	}
 
-	public function getCheckuser(){
+	public function getCheckUser(){
 		$username = htmlentities(Input::get('username'));
 		$user = new User();
 		$user->name = ucfirst($username);
@@ -113,7 +113,7 @@ class Profile extends BaseController {
 		}
 	}
 
-	public function getCheckalpha(){
+	public function getCheckAlpha(){
 		$username = htmlentities(Input::get('username'));
 		if(preg_match('/[a-zA-Z]/',$username)){
 			return 1;
@@ -122,7 +122,7 @@ class Profile extends BaseController {
 		}
 	}
 
-	public function getCheckcredentials(){
+	public function getCheckCredentials(){
 		$username = ucfirst(htmlentities(Input::get('username')));
 		$pass = htmlentities(Input::get('pass'));
 		$user = new User();
@@ -141,7 +141,7 @@ class Profile extends BaseController {
 		return Redirect::to(Session::get('curr_page'));
 	}
 
-	public function postNewuser(){
+	public function postNewUser(){
 		$username = htmlentities(Input::get('username'));
 		$pass = htmlentities(Input::get('pass'));
 		$pass2 = htmlentities(Input::get('pass2'));

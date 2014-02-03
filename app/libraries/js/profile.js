@@ -9,7 +9,7 @@ updateChatTimes = function(){
 			$(this).text(moment.utc($(this).attr('id')).fromNow());
 			});
 	if($('.last_login').length){
-		$('.last_login').html('<b>Last login: </b>' + moment.utc($('.last_login').attr('id')).fromNow());
+		$('.last_login').html('<strong>Last login: </strong>' + moment.utc($('.last_login').attr('id')).fromNow());
 	}
 }
 
@@ -20,7 +20,7 @@ $(document).ready(function(){
 		$.ajax({
 			type:'GET',
 			data:{profile_id:$('.profile_name').attr('id')},
-			url:'//mutualcog.com/profile/profilevisit',	
+			url:'//mutualcog.com/profile/profile-visit',	
 			success:function(){
 				return true;
 			},
@@ -177,13 +177,13 @@ $(window).on('click',function(e){
 var selected_term = -1;
 
 $('#search_input').on('keydown',function(e){
-	if(e.keyCode == 13){  //enter key
+	if(e.keyCode == 13){  /*enter key*/
 		if(selected_term == -1){
 		}else{
 			location.assign($('li#search_' + selected_term).children('a').attr('href'));
 		}	
 		return false;
-	}else if(e.keyCode == 38){  //up arrow
+	}else if(e.keyCode == 38){  /*up arrow*/
 		if(selected_term != 0){
 			selected_term--;
 			$('.tag_results').css('background-color','');
@@ -191,7 +191,7 @@ $('#search_input').on('keydown',function(e){
 			
 		}
 		return false;
-	}else if(e.keyCode == 40){  //down arrow
+	}else if(e.keyCode == 40){  /*down arrow*/
 		if(selected_term != $('#tag_dropdown').length){
 			selected_term++;
 			$('.tag_results').css('background-color','');
@@ -203,9 +203,9 @@ $('#search_input').on('keydown',function(e){
 
 $('#search_input').on('keyup',function(e){
 	var tag = $(this).val();	
-	if(e.keyCode == 13){  //enter key
+	if(e.keyCode == 13){  /*enter key*/
 		return false;
-	}else if(e.keyCode == 38 || e.keyCode == 40){  //up arrow or down arrow
+	}else if(e.keyCode == 38 || e.keyCode == 40){  /*up arrow or down arrow*/
 	}else{
 		if(tag.length > 2){
 			$.ajax({
@@ -215,7 +215,7 @@ $('#search_input').on('keyup',function(e){
 				success:function(hresp){
 					var content = '';
 					$.each(hresp,function(index,value){
-						content += '<li id="search_' + index + '" class="tag_results"><a href="//mutualcog.com/tags/tag/' + value.name + '">' + value.name + '</a></li>';
+						content += '<li id="search_' + index + '" class="tag_results"><a href="//mutualcog.com/t/' + value.name + '">' + value.name + '</a></li>';
 					});
 					if(content){
 						$('#tag_dropdown').show();

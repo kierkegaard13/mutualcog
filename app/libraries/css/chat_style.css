@@ -250,6 +250,7 @@ pre{
 .vote_box {
   position:relative;
   float:left;
+  margin-top:1px;
   margin-right:10px;
   margin-bottom:-5px;
 }
@@ -306,9 +307,13 @@ pre{
   color:red;
 }
 .dropdown-menu>li>a {
-  color:white;
+  transition:color .5s;
+  -webkit-transition:color .5s;
   transition:background-color .5s;
   -webkit-transition:background-color .5s;
+}
+.nav_left .dropdown-menu>li>a {
+  color:white;
 }
 .dropdown-menu>li>a:hover {
   color:white;
@@ -336,6 +341,16 @@ pre{
 .btn-success {
   transition:background-color .5s;
   -webkit-transition:background-color .5s;
+}
+.toggle_responses {
+  padding-left:5px;
+  width:20px;
+  float:right; 
+}
+.upvote_count {
+  margin-top:-5px;
+  margin-bottom:-5px;
+  text-align:center;
 }
 .tag_input {
   height:30px;
@@ -648,7 +663,17 @@ select {
 #chat_display {
   position:relative;
 }
+.time_box {
+  position:absolute;
+  right:10px;
+  bottom:10px;
+}
+.mssg_body_cont {
+  margin-right:30px;
+  margin-bottom:10px;
+}
 .chat_mssg {
+  position:relative;
   background-color:#fff;
   padding:10px;
   box-shadow:2px 2px 2px #999;
@@ -660,6 +685,7 @@ select {
   -webkit-transition:background-color .5s;
 }
 .chat_resp {
+  position:relative;
   background-color:#fff;
   padding:10px;
   box-shadow:2px 2px 2px #999;

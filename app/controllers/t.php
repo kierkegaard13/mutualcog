@@ -18,6 +18,8 @@ class T extends BaseController {
 		$upvoted = array();
 		$downvoted = array();
 		if(Auth::check()){
+			Auth::user()->page = $tag;
+			Auth::user()->save();
 			foreach(Auth::user()->upvotedChats() as $upvote){
 				$upvoted[] = $upvote->chat_id;
 			}
