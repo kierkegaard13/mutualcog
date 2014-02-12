@@ -28,7 +28,6 @@ return array(
     'Predis' => array($vendorDir . '/predis/predis/lib'),
     'Patchwork' => array($vendorDir . '/patchwork/utf8/class'),
     'Parsedown' => array($vendorDir . '/erusev/parsedown'),
-    'PHPParser' => array($vendorDir . '/nikic/php-parser/lib'),
     'Normalizer' => array($vendorDir . '/patchwork/utf8/class'),
     'Net' => array($vendorDir . '/phpseclib/phpseclib/phpseclib'),
     'Monolog' => array($vendorDir . '/monolog/monolog/src'),

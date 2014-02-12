@@ -38,6 +38,7 @@ class Chat extends BaseController {
 				if($chat->admin_id == Auth::user()->id){
 					$mem_to_chat->is_admin = 1;
 				}
+				$mem_to_chat->active = 1;
 				$mem_to_chat->save();
 				$all_mems = MembersToChats::wherechat_id($chat_id)->get();
 				foreach($all_mems as $mem){
@@ -65,6 +66,8 @@ class Chat extends BaseController {
 					}
 				}
 			}else{  //have been in chat before
+				$mem_to_chat->active = 1;
+				$mem_to_chat->save();
 				$all_mems = MembersToChats::wherechat_id($chat_id)->get();
 				foreach($all_mems as $mem){
 					if(preg_match('/[a-zA-Z]/',$mem->user) && $mem->member_id != Auth::user()->id){
@@ -148,13 +151,20 @@ class Chat extends BaseController {
 		}
 		return 0;
 	}
-
+	
 	public function postDetails(){
 		$chat = Chats::find(Input::get('id'));
 		if($chat){
 			if(Session::get('unique_serial') == $chat->admin || Auth::user()->name == $chat->admin){
-				$chat->raw_details = htmlentities(Input::get('details'));
-				$details = Parsedown::instance()->parse(htmlentities(Input::get('details')));
+				$details = htmlentities(Input::get('details'));
+				$chat->raw_details = $details;
+				$details = Parsedown::instance()->parse($details);
+				$reg1 = '/(\s)(https?:\/\/)?([\da-z-\.]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/';
+				$reg2 = '/>(https?:\/\/)?([\da-z-\.]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/';
+				$reg3 = '/(img)(\s)(alt)/';
+				$details = preg_replace($reg1,"$1<a class='chat_link' href='\/\/$3.$4$5'>$3.$4$5</a>",$details);
+				$details = preg_replace($reg2,"><a class='chat_link' href='\/\/$2.$3$4'>$2.$3$4</a>",$details);
+				$details = preg_replace($reg3,"$1$2style='max-width:300px;max-height:200px;margin-bottom:5px;' $3",$details);
 				$chat->details = $details;
 				$chat->save();
 				return $chat->details;	
