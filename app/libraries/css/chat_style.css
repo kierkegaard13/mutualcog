@@ -146,6 +146,7 @@ pre{
 	  padding-top:10px;
 	  padding-right:10px;
 	  padding-bottom:10px;
+	  height:auto;
 	}
 	.navbar-collapse.collapse {
 	  margin-left:73px;
@@ -410,6 +411,9 @@ pre{
 }
 .highlighted_dark {
   color:#0549b7;
+}
+a.chat_link {
+  color:#075de9;
 }
 #curr_details {
   overflow-x:hidden;
@@ -760,6 +764,9 @@ textarea {
   border-left-color: rgb(238,238,238);
   border-left-style: inset;
   border-left-width: 2px;
+}
+textarea#message {
+  margin-bottom:-5px;
 }
 .enter_hint{
   position:absolute;

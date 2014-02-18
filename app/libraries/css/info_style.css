@@ -71,6 +71,7 @@ body{
 	  padding-top:10px;
 	  padding-right:10px;
 	  padding-bottom:10px;
+	  height:auto;
 	}
 	.navbar-collapse.collapse {
 	  margin-left:73px;

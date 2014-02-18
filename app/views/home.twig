@@ -73,9 +73,9 @@
 </form>
 {% else %}
 <div class="last_login" id="{{user.last_login}}"><strong>Last login:</strong></div>
-<div>Cognizance: {{user.cognizance}}/{{100 + 20*user.level }} (Level: {{user.level}})</div>
+<div>Cognizance: {{user.cognizance}}/{{user.next_level}} (Level: {{user.level}})</div>
 <div class="progress progress-striped active">
-	<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{user.cognizance}}" aria-valuemin="0" aria-valuemax="{{100 + 20*user.level}}" style="width:{{user.cognizance}}%;">
+	<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{user.cognizance}}" aria-valuemin="0" aria-valuemax="{{user.next_level}}" style="width:{{user.cognizance}}%;">
 		<span class="sr-only">Only {{user.cognizance}}% Complete</span>
 	</div>
 </div>

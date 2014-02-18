@@ -158,13 +158,23 @@ class Chat extends BaseController {
 			if(Session::get('unique_serial') == $chat->admin || Auth::user()->name == $chat->admin){
 				$details = htmlentities(Input::get('details'));
 				$chat->raw_details = $details;
-				$details = Parsedown::instance()->parse($details);
+				$details = Parsedown::instance()->set_breaks_enabled(true)->parse($details);
 				$reg1 = '/(\s)(https?:\/\/)?([\da-z-\.]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/';
 				$reg2 = '/>(https?:\/\/)?([\da-z-\.]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/';
 				$reg3 = '/(img)(\s)(alt)/';
 				$details = preg_replace($reg1,"$1<a class='chat_link' href='\/\/$3.$4$5'>$3.$4$5</a>",$details);
 				$details = preg_replace($reg2,"><a class='chat_link' href='\/\/$2.$3$4'>$2.$3$4</a>",$details);
 				$details = preg_replace($reg3,"$1$2style='max-width:300px;max-height:200px;margin-bottom:5px;' $3",$details);
+				if(preg_match("/\/p\/([^\s]*)(<)/",$details)){
+					$details = preg_replace("/\/p\/([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/p/$1'>/p/$1</a>$2",$details);
+				}else{
+					$details = preg_replace("/\/p\/([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/p/$1'>/p/$1</a>$2",$details);
+				}
+				if(preg_match("/\/t\/([^\s]*)(<)/",$details)){
+					$details = preg_replace("/\/t\/([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/t/$1'>/t/$1</a>$2",$details);
+				}else{
+					$details = preg_replace("/\/t\/([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/t/$1'>/t/$1</a>$2",$details);
+				}
 				$chat->details = $details;
 				$chat->save();
 				return $chat->details;	
@@ -313,7 +323,13 @@ class Chat extends BaseController {
 			}
 			if($status == 2){  //downvoted previously
 				if($user_exists){
-					$user->cognizance = $user->cognizance + 2;
+					if($user->cognizance + 2 >= $user->next_level){
+						$user->cognizance = ($user->cognizance + 2) % $user->next_level;
+						$user->level = $user->level + 1;
+						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
+					}else{
+						$user->cognizance = ($user->cognizance + 2) % $user->next_level;
+					}
 					$user->save();
 				}
 				foreach($chat->tags as $tag){
@@ -333,7 +349,15 @@ class Chat extends BaseController {
 				return array('status' => 1,'upvotes' => $chat->upvotes - $chat->downvotes);
 			}elseif($status == 1){  //upvoted previously
 				if($user_exists){
-					$user->cognizance = $user->cognizance - 1;
+					if($user->level > 0 && $user->cognizance - 1 < 0){
+						$user->level = $user->level - 1;
+						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
+						$user->cognizance = $user->next_level - 1;
+					}else if($user->level == 0){
+						$user->cognizance = ($user->cognizance - 1 > -1) ? $user->cognizance : $user->cognizance - 1;
+					}else{
+						$user->cognizance = $user->cognizance - 1;
+					}
 					$user->save();
 				}
 				foreach($chat->tags as $tag){
@@ -352,7 +376,13 @@ class Chat extends BaseController {
 				return array('status' => 2,'upvotes' => $chat->upvotes - $chat->downvotes);
 			}else{  //first time voting
 				if($user_exists){
-					$user->cognizance = $user->cognizance + 1;
+					if($user->cognizance + 1 >= $user->next_level){
+						$user->cognizance = ($user->cognizance + 1) % $user->next_level;
+						$user->level = $user->level + 1;
+						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
+					}else{
+						$user->cognizance = ($user->cognizance + 1) % $user->next_level;
+					}
 					$user->save();
 				}
 				foreach($chat->tags as $tag){
@@ -399,7 +429,19 @@ class Chat extends BaseController {
 			}
 			if($status == 1){  //upvoted previously
 				if($user_exists){
-					$user->cognizance = $user->cognizance - 2;
+					if($user->level > 0 && $user->cognizance - 2 < 0){
+						$user->level = $user->level - 1;
+						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
+						$user->cognizance = $user->next_level - 2;
+					}else if($user->level == 0){
+						if($user->cognizance - 2 > -1){
+							$user->cognizance = $user->cognizance - 2;
+						}else if($user->cognizance - 1 > -1){
+							$user->cognizance = $user->cognizance - 1;
+						}else{}
+					}else{
+						$user->cognizance = $user->cognizance - 1;
+					}
 					$user->save();
 				}
 				foreach($chat->tags as $tag){
@@ -419,7 +461,13 @@ class Chat extends BaseController {
 				return array('status' => 1,'upvotes' => $chat->upvotes - $chat->downvotes);
 			}elseif($status == 2){  //downvoted previously
 				if($user_exists){
-					$user->cognizance = $user->cognizance + 1;
+					if($user->cognizance + 1 >= $user->next_level){
+						$user->cognizance = ($user->cognizance + 1) % $user->next_level;
+						$user->level = $user->level + 1;
+						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
+					}else{
+						$user->cognizance = ($user->cognizance + 1) % $user->next_level;
+					}
 					$user->save();
 				}
 				foreach($chat->tags as $tag){
@@ -438,7 +486,15 @@ class Chat extends BaseController {
 				return array('status' => 2,'upvotes' => $chat->upvotes - $chat->downvotes);
 			}else{  //first time downvoting
 				if($user_exists){
-					$user->cognizance = $user->cognizance - 1;
+					if($user->level > 0 && $user->cognizance - 1 < 0){
+						$user->level = $user->level - 1;
+						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
+						$user->cognizance = $user->next_level - 1;
+					}else if($user->level == 0){
+						$user->cognizance = ($user->cognizance - 1 > -1) ? $user->cognizance : $user->cognizance - 1;
+					}else{
+						$user->cognizance = $user->cognizance - 1;
+					}
 					$user->save();
 				}
 				foreach($chat->tags as $tag){
@@ -485,7 +541,13 @@ class Chat extends BaseController {
 			}
 			if($status == 2){  //downvoted previously
 				if($user_exists){
-					$user->cognizance = $user->cognizance + 2;
+					if($user->cognizance + 2 >= $user->next_level){
+						$user->cognizance = ($user->cognizance + 2) % $user->next_level;
+						$user->level = $user->level + 1;
+						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
+					}else{
+						$user->cognizance = ($user->cognizance + 2) % $user->next_level;
+					}
 					$user->save();
 				}
 				$message->upvotes = $message->upvotes + 1;
@@ -496,7 +558,15 @@ class Chat extends BaseController {
 				return array('status' => 1,'upvotes' => $message->upvotes - $message->downvotes);
 			}elseif($status == 1){  //upvoted previously
 				if($user_exists){
-					$user->cognizance = $user->cognizance - 1;
+					if($user->level > 0 && $user->cognizance - 1 < 0){
+						$user->level = $user->level - 1;
+						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
+						$user->cognizance = $user->next_level - 1;
+					}else if($user->level == 0){
+						$user->cognizance = ($user->cognizance - 1 > -1) ? $user->cognizance : $user->cognizance - 1;
+					}else{
+						$user->cognizance = $user->cognizance - 1;
+					}
 					$user->save();
 				}
 				$message->upvotes = $message->upvotes - 1;
@@ -506,7 +576,13 @@ class Chat extends BaseController {
 				return array('status' => 2,'upvotes' => $message->upvotes - $message->downvotes);
 			}else{  //first time voting
 				if($user_exists){
-					$user->cognizance = $user->cognizance + 1;
+					if($user->cognizance + 1 >= $user->next_level){
+						$user->cognizance = ($user->cognizance + 1) % $user->next_level;
+						$user->level = $user->level + 1;
+						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
+					}else{
+						$user->cognizance = ($user->cognizance + 1) % $user->next_level;
+					}
 					$user->save();
 				}
 				$message->upvotes = $message->upvotes + 1;
@@ -544,7 +620,19 @@ class Chat extends BaseController {
 			}
 			if($status == 1){
 				if($user_exists){
-					$user->cognizance = $user->cognizance - 2;
+					if($user->level > 0 && $user->cognizance - 2 < 0){
+						$user->level = $user->level - 1;
+						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
+						$user->cognizance = $user->next_level - 2;
+					}else if($user->level == 0){
+						if($user->cognizance - 2 > -1){
+							$user->cognizance = $user->cognizance - 2;
+						}else if($user->cognizance - 1 > -1){
+							$user->cognizance = $user->cognizance - 1;
+						}else{}
+					}else{
+						$user->cognizance = $user->cognizance - 1;
+					}
 					$user->save();
 				}
 				$message->upvotes = $message->upvotes - 1;
@@ -555,7 +643,13 @@ class Chat extends BaseController {
 				return array('status' => 1,'upvotes' => $message->upvotes - $message->downvotes);
 			}elseif($status == 2){
 				if($user_exists){
-					$user->cognizance = $user->cognizance + 1;
+					if($user->cognizance + 1 >= $user->next_level){
+						$user->cognizance = ($user->cognizance + 1) % $user->next_level;
+						$user->level = $user->level + 1;
+						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
+					}else{
+						$user->cognizance = ($user->cognizance + 1) % $user->next_level;
+					}
 					$user->save();
 				}
 				$message->downvotes = $message->downvotes - 1;
@@ -565,7 +659,15 @@ class Chat extends BaseController {
 				return array('status' => 2,'upvotes' => $message->upvotes - $message->downvotes);
 			}else{
 				if($user_exists){
-					$user->cognizance = $user->cognizance - 1;
+					if($user->level > 0 && $user->cognizance - 1 < 0){
+						$user->level = $user->level - 1;
+						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
+						$user->cognizance = $user->next_level - 1;
+					}else if($user->level == 0){
+						$user->cognizance = ($user->cognizance - 1 > -1) ? $user->cognizance : $user->cognizance - 1;
+					}else{
+						$user->cognizance = $user->cognizance - 1;
+					}
 					$user->save();
 				}
 				$message->downvotes = $message->downvotes + 1;

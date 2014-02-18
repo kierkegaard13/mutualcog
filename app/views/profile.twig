@@ -3,14 +3,14 @@
 {% block content %}
 <h1 class="profile_name" id="{{profile.id}}" style="margin-top:0px;">{{profile.name}}</h1>
 {% if logged_in and profile.id != user.id and friended == 0 %}
-	<a class="btn btn-primary add_friend" href="{{site}}/profile/friend/{{profile.id}}"><div class="glyphicon glyphicon-plus"></div> Add Friend</a>
+	<a class="btn btn-primary add_friend" href="{{site}}/profile/friend/{{profile.id}}"><div class="glyphicon glyphicon-plus"></div> Send Friend Request</a>
 {% elseif friended == 1 %}
 	<a class="btn btn-danger add_friend" href="{{site}}/profile/unfriend/{{profile.id}}"><div class="glyphicon glyphicon-minus"></div> Remove Friend</a>
 {% endif %}
 <div>Posts: {{profile.posts | length}}</div>
 <div>Comments: {{profile.messages | length}}</div>
 <div>Level: {{profile.level}}</div>
-<div>Cognizance: {{profile.cognizance}}/{{100 + 20*profile.level}}
+<div>Cognizance: {{profile.cognizance}}/{{profile.next_level}}
 <div class="progress progress-striped active">
 	<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{profile.cognizance}}" aria-valuemin="0" aria-valuemax="{{100 + 20*profile.level}}" style="width:{{profile.cognizance}}%;">
 		<span class="sr-only">Only {{profile.cognizance}}% Complete</span>
