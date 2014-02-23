@@ -90,7 +90,23 @@ class Profile extends BaseController {
 			if(Auth::user()->name == $profile->name){
 				$about = htmlentities(Input::get('about'));
 				$about_raw = $about;
-				$about = Parsedown::instance()->parse($about);
+				$about = Parsedown::instance()->set_breaks_enabled(true)->parse($about);
+				$reg1 = '/(\s)(https?:\/\/)?([\da-z-\.]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/';
+				$reg2 = '/>(https?:\/\/)?([\da-z-\.]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/';
+				$reg3 = '/(img)(\s)(alt)/';
+				$about = preg_replace($reg1,"$1<a class='chat_link' href='\/\/$3.$4$5'>$3.$4$5</a>",$about);
+				$about = preg_replace($reg2,"><a class='chat_link' href='\/\/$2.$3$4'>$2.$3$4</a>",$about);
+				$about = preg_replace($reg3,"$1$2style='max-width:300px;max-height:200px;margin-bottom:5px;' $3",$about);
+				if(preg_match("/\/p\/([^\s]*)(<)/",$about)){
+					$about = preg_replace("/\/p\/([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/p/$1'>/p/$1</a>$2",$about);
+				}else{
+					$about = preg_replace("/\/p\/([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/p/$1'>/p/$1</a>$2",$about);
+				}
+				if(preg_match("/\/t\/([^\s]*)(<)/",$about)){
+					$about = preg_replace("/\/t\/([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/t/$1'>/t/$1</a>$2",$about);
+				}else{
+					$about = preg_replace("/\/t\/([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/t/$1'>/t/$1</a>$2",$about);
+				}
 				$about = str_replace('[comment]','<!--',$about);
 				$about = str_replace('[/comment]','-->',$about);
 				$profile->about_raw = $about_raw;

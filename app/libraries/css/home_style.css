@@ -332,9 +332,6 @@ select {
   margin-top:0px;
   margin-bottom:-5px;
 }
-.box1 {
-  height:260px !important;
-}
 .small_content_box {
   position:relative;
   margin:0px auto;
@@ -385,14 +382,14 @@ select {
   background-color: #eee;
 }
 .btn_btm_r {
-  position:absolute;
-  bottom:20px;
-  right:20px; 
+  float:right;
 }
 .btn_btm_l {
-  position:absolute;
-  bottom:20px;
-  left:20px;
+  float:left;
+}
+.welcome_btn_cont {
+  height:25px;
+  margin-top:10px;
 }
 .suggested_tags {
   cursor:pointer;

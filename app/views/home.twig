@@ -57,33 +57,35 @@
 {% block welcome %}
 <div style="margin-bottom:10px;">Welcome, {% if not user %}<span id="serial_tracker">{{serial}}</span>{% else %}<span id="user_tracker">{{user.name}}</span>{% endif %}</div>
 {% if not logged_in %}
-<form method="post" action="{{site}}/profile/new-user" class="mutual_form" id="login_form">
-<fieldset>
-	<div id="user_group" class="form-group">
-		<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Username must be longer than 2 characters but less than 15" data-trigger="focus" data-container="body" type="text" name="username" id="username" placeholder="Enter your actual or preferred username">
-	</div>
-	<div id="pass1_group" class="form-group">
-		<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Password must be longer than 6 characters but less than 30" data-trigger="focus" data-container="body" type="password" name="pass" id="pass" placeholder="Enter your password">
-	</div>
-	<div id="pass2_group" class="form-group">
-		<input class="form-control" data-toggle="popover" data-original-title="Passwords don't match" data-container="body" data-placement="left" data-trigger="focus" type="password" name="pass2" id="pass2" placeholder="Enter password again to register">
-	</div>
-	<button class="btn btn-primary" type="Submit" style="width:100%;">Login/Register</button>
-</fieldset>
-</form>
+	<form method="post" action="{{site}}/profile/new-user" class="mutual_form" id="login_form">
+	<fieldset>
+		<div id="user_group" class="form-group">
+			<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Username must be longer than 2 characters but less than 15" data-trigger="focus" data-container="body" type="text" name="username" id="username" placeholder="Enter your actual or preferred username">
+		</div>
+		<div id="pass1_group" class="form-group">
+			<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Password must be longer than 6 characters but less than 30" data-trigger="focus" data-container="body" type="password" name="pass" id="pass" placeholder="Enter your password">
+		</div>
+		<div id="pass2_group" class="form-group">
+			<input class="form-control" data-toggle="popover" data-original-title="Passwords don't match" data-container="body" data-placement="left" data-trigger="focus" type="password" name="pass2" id="pass2" placeholder="Enter password again to register">
+		</div>
+		<button class="btn btn-primary" type="Submit" style="width:100%;">Login/Register</button>
+	</fieldset>
+	</form>
 {% else %}
-<div class="last_login" id="{{user.last_login}}"><strong>Last login:</strong></div>
-<div>Cognizance: {{user.cognizance}}/{{user.next_level}} (Level: {{user.level}})</div>
-<div class="progress progress-striped active">
-	<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{user.cognizance}}" aria-valuemin="0" aria-valuemax="{{user.next_level}}" style="width:{{user.cognizance}}%;">
-		<span class="sr-only">Only {{user.cognizance}}% Complete</span>
+	<div class="last_login" id="{{user.last_login}}"><strong>Last login:</strong></div>
+	<div>Cognizance: {{user.cognizance}}/{{user.next_level}} (Level: {{user.level}})</div>
+	<div class="progress progress-striped active">
+		<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{user.cognizance}}" aria-valuemin="0" aria-valuemax="{{user.next_level}}" style="width:{{user.cognizance}}%;">
+			<span class="sr-only">Only {{user.cognizance}}% Complete</span>
+		</div>
 	</div>
-</div>
-<select class="form-control">
-	<option value="">Visible and Evaluated</option>
-</select>
-<a class="btn btn-success btn_btm_l btn-sm" href="{{site}}/p/{{user.name}}">My Profile</a>
-<a class="btn btn-primary btn_btm_r btn-sm" href="{{site}}/profile/logout">Logout</a>
+	<select class="form-control">
+		<option value="">Visible and Evaluated</option>
+	</select>
+	<div class="welcome_btn_cont">
+		<a class="btn btn-success btn_btm_l btn-sm" href="{{site}}/p/{{user.name}}">My Profile</a>
+		<a class="btn btn-primary btn_btm_r btn-sm" href="{{site}}/profile/logout">Logout</a>
+	</div>
 {% endif %}
 {% endblock %}
 

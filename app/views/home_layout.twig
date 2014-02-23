@@ -40,7 +40,7 @@
                         <div class="small_content_box">
 				<div class="content_right">
 				<div class="content_left">
-					<div class="content side_content box1" id="welcome_user">
+					<div class="content side_content" id="welcome_user">
 						{% block welcome %}{% endblock %}
 					</div>
                                 </div>
@@ -56,6 +56,8 @@
                                 </div>
 				</div>
                         </div>
+			{% block description %}{% endblock %}
+			{% block rules %}{% endblock %}
                 </div>
         </div>
 </div>

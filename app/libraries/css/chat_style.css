@@ -248,6 +248,38 @@ pre{
 	  margin-bottom:20px !important;
 	}
 }
+.rotate {
+  -moz-transform: rotate(-180deg);
+  -webkit-transform: rotate(-180deg);
+  transform: rotate(-180deg);
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2)
+}
+.notify_position {
+  position:absolute;
+  top:0px;
+  right:15px;
+}
+.notify_bubble {
+  font-size:60px;
+  color:#075de9;
+  cursor:pointer;
+  z-index:3;
+  opacity:.9;
+  transition:color .5s;
+  -webkit-transition:color .5s;
+}
+.notify_bubble:hover {
+  color:#0549b7;
+}
+.notify_text {
+  background-color:white;
+  border-radius:10px;
+  padding:0px 7px;
+  position:absolute;
+  z-index:2;
+  top:28px;
+  right:33px;
+}
 .vote_box {
   position:relative;
   float:left;
@@ -632,14 +664,14 @@ select {
   color:#08c;
 }
 .btn_btm_r {
-  position:absolute;
-  bottom:20px;
-  right:20px; 
+  float:right;
 }
 .btn_btm_l {
-  position:absolute;
-  bottom:20px;
-  left:20px;
+  float:left;
+}
+.welcome_btn_cont {
+  height:25px;
+  margin-top:10px;
 }
 .chat_id {
   margin-top:-5px;

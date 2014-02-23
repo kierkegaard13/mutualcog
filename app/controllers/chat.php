@@ -66,6 +66,7 @@ class Chat extends BaseController {
 					}
 				}
 			}else{  //have been in chat before
+				$mem_to_chat = $mem_to_chat->findAll();
 				$mem_to_chat->active = 1;
 				$mem_to_chat->save();
 				$all_mems = MembersToChats::wherechat_id($chat_id)->get();
@@ -97,11 +98,12 @@ class Chat extends BaseController {
 					}
 				}
 			}
-		}else{
+		}else{  //not logged in
 			$mem_to_chat = new MembersToChats();
 			$mem_to_chat->chat_id = $chat_id;
 			$mem_to_chat->member_id = Session::get('serial_id');
 			$mem_to_chat->user = Session::get('unique_serial');
+			$mem_to_chat->active = 1;
 			if(!$mem_to_chat->findAll()){
 				if($chat->admin_id == Session::get('serial_id')){
 					$mem_to_chat->is_admin = 1;
@@ -323,6 +325,7 @@ class Chat extends BaseController {
 			}
 			if($status == 2){  //downvoted previously
 				if($user_exists){
+					$user->total_cognizance = $user->total_cognizance + 2;
 					if($user->cognizance + 2 >= $user->next_level){
 						$user->cognizance = ($user->cognizance + 2) % $user->next_level;
 						$user->level = $user->level + 1;
@@ -349,6 +352,7 @@ class Chat extends BaseController {
 				return array('status' => 1,'upvotes' => $chat->upvotes - $chat->downvotes);
 			}elseif($status == 1){  //upvoted previously
 				if($user_exists){
+					$user->total_cognizance = $user->total_cognizance - 1;
 					if($user->level > 0 && $user->cognizance - 1 < 0){
 						$user->level = $user->level - 1;
 						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
@@ -376,6 +380,7 @@ class Chat extends BaseController {
 				return array('status' => 2,'upvotes' => $chat->upvotes - $chat->downvotes);
 			}else{  //first time voting
 				if($user_exists){
+					$user->total_cognizance = $user->total_cognizance + 1;
 					if($user->cognizance + 1 >= $user->next_level){
 						$user->cognizance = ($user->cognizance + 1) % $user->next_level;
 						$user->level = $user->level + 1;
@@ -429,6 +434,7 @@ class Chat extends BaseController {
 			}
 			if($status == 1){  //upvoted previously
 				if($user_exists){
+					$user->total_cognizance = $user->total_cognizance - 2;
 					if($user->level > 0 && $user->cognizance - 2 < 0){
 						$user->level = $user->level - 1;
 						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
@@ -461,6 +467,7 @@ class Chat extends BaseController {
 				return array('status' => 1,'upvotes' => $chat->upvotes - $chat->downvotes);
 			}elseif($status == 2){  //downvoted previously
 				if($user_exists){
+					$user->total_cognizance = $user->total_cognizance + 1;
 					if($user->cognizance + 1 >= $user->next_level){
 						$user->cognizance = ($user->cognizance + 1) % $user->next_level;
 						$user->level = $user->level + 1;
@@ -486,6 +493,7 @@ class Chat extends BaseController {
 				return array('status' => 2,'upvotes' => $chat->upvotes - $chat->downvotes);
 			}else{  //first time downvoting
 				if($user_exists){
+					$user->total_cognizance = $user->total_cognizance - 1;
 					if($user->level > 0 && $user->cognizance - 1 < 0){
 						$user->level = $user->level - 1;
 						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
@@ -541,6 +549,7 @@ class Chat extends BaseController {
 			}
 			if($status == 2){  //downvoted previously
 				if($user_exists){
+					$user->total_cognizance = $user->total_cognizance + 2;
 					if($user->cognizance + 2 >= $user->next_level){
 						$user->cognizance = ($user->cognizance + 2) % $user->next_level;
 						$user->level = $user->level + 1;
@@ -558,6 +567,7 @@ class Chat extends BaseController {
 				return array('status' => 1,'upvotes' => $message->upvotes - $message->downvotes);
 			}elseif($status == 1){  //upvoted previously
 				if($user_exists){
+					$user->total_cognizance = $user->total_cognizance - 1;
 					if($user->level > 0 && $user->cognizance - 1 < 0){
 						$user->level = $user->level - 1;
 						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
@@ -576,6 +586,7 @@ class Chat extends BaseController {
 				return array('status' => 2,'upvotes' => $message->upvotes - $message->downvotes);
 			}else{  //first time voting
 				if($user_exists){
+					$user->total_cognizance = $user->total_cognizance + 1;
 					if($user->cognizance + 1 >= $user->next_level){
 						$user->cognizance = ($user->cognizance + 1) % $user->next_level;
 						$user->level = $user->level + 1;
@@ -618,8 +629,9 @@ class Chat extends BaseController {
 				$user = $user->findAll();
 				$user_exists = 1;
 			}
-			if($status == 1){
+			if($status == 1){  //upvoted previously
 				if($user_exists){
+					$user->total_cognizance = $user->total_cognizance - 2;
 					if($user->level > 0 && $user->cognizance - 2 < 0){
 						$user->level = $user->level - 1;
 						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
@@ -641,8 +653,9 @@ class Chat extends BaseController {
 				$voted->save();
 				$message->save();
 				return array('status' => 1,'upvotes' => $message->upvotes - $message->downvotes);
-			}elseif($status == 2){
+			}elseif($status == 2){  //downvoted previously
 				if($user_exists){
+					$user->total_cognizance = $user->total_cognizance + 1;
 					if($user->cognizance + 1 >= $user->next_level){
 						$user->cognizance = ($user->cognizance + 1) % $user->next_level;
 						$user->level = $user->level + 1;
@@ -657,8 +670,9 @@ class Chat extends BaseController {
 				$voted->save();
 				$message->save();
 				return array('status' => 2,'upvotes' => $message->upvotes - $message->downvotes);
-			}else{
+			}else{  //first time downvoting
 				if($user_exists){
+					$user->total_cognizance = $user->total_cognizance - 1;
 					if($user->level > 0 && $user->cognizance - 1 < 0){
 						$user->level = $user->level - 1;
 						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));

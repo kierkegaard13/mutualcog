@@ -108,8 +108,10 @@
 	<select class="form-control">
 		<option value="">Visible and Evaluated</option>
 	</select>
-	<a class="btn btn-success btn_btm_l btn-sm" href="{{site}}/p/{{user.name}}">My Profile</a>
-	<a class="btn btn-primary btn_btm_r btn-sm" href="{{site}}/profile/logout">Logout</a>
+	<div class="welcome_btn_cont">
+		<a class="btn btn-success btn_btm_l btn-sm" href="{{site}}/p/{{user.name}}">My Profile</a>
+		<a class="btn btn-primary btn_btm_r btn-sm" href="{{site}}/profile/logout">Logout</a>
+	</div>
 {% endif %}
 {% endblock %}
 
@@ -205,6 +207,8 @@
 <div id="up_arr" style="display:none;">{{mssg_upvoted | json_encode()}}</div>
 <div id="down_arr" style="display:none;">{{mssg_downvoted | json_encode()}}</div>
 <div class="frame_cont">
+	<div class="notify_position"><div class="glyphicon glyphicon-map-marker rotate notify_bubble"></div></div>
+	<div class="notify_text">0</div>
 	<div class="frame chat_main" id="chat_messages">
 		<div id="chat_display">
 		{% set init = 0 %}
