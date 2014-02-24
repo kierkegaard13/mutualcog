@@ -254,9 +254,20 @@ pre{
   transform: rotate(-180deg);
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2)
 }
-.notify_position {
+#notify_cont_top {
+  display:none;
+}
+#notify_cont_bottom {
+  display:none;
+}
+.notify_position_top {
   position:absolute;
   top:0px;
+  right:15px;
+}
+.notify_position_bottom {
+  position:absolute;
+  bottom:0px;
   right:15px;
 }
 .notify_bubble {
@@ -269,15 +280,24 @@ pre{
   -webkit-transition:color .5s;
 }
 .notify_bubble:hover {
-  color:#0549b7;
+  color:#021b44;
 }
-.notify_text {
+#notify_text_top {
   background-color:white;
   border-radius:10px;
   padding:0px 7px;
   position:absolute;
   z-index:2;
   top:28px;
+  right:33px;
+}
+#notify_text_bottom {
+  background-color:white;
+  border-radius:10px;
+  padding:0px 7px;
+  position:absolute;
+  z-index:2;
+  bottom:32px;
   right:33px;
 }
 .vote_box {

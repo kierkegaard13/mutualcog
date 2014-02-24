@@ -36,14 +36,18 @@ function processMessage(message){
 	var url_reg = /(\s)(https?:\/\/)?([\da-z-]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/g;
 	var url_reg2 = /^(https?:\/\/)?([\da-z-]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/g;
 	var url_reg3 = /(img)(\s)(src\=)/g;
+	var t_reg = /\/t\/([^\s]*)(\s*)/g; 
+	var p_reg = /\/p\/([^\s]*)(\s*)/g; 
 	var re1 = new RegExp('^<p>','g');
 	var re2 = new RegExp('</p>$','g');
 	message = hashHtml(message);
 	message = marked(message);
-	message = message.replace(/^\s+|\s+$/g,'');
-	message = message.replace(re1,'');
-	message = message.replace(re2,'');
-	if(message){
+	if(message.length){
+		message = message.replace(/^\s+|\s+$/g,'');
+		message = message.replace(re1,'');
+		message = message.replace(re2,'');
+		message = message.replace(p_reg,"<a class='chat_link' href='\/\/mutualcog.com/p/$1'>\/p\/$1</a>$2");
+		message = message.replace(t_reg,"<a class='chat_link' href='\/\/mutualcog.com/t/$1'>\/t\/$1</a>$2");
 		message = message.replace(url_reg,"$1<a class='chat_link' href='\/\/$3\.$4$5'>$3\.$4$5</a>");
 		message = message.replace(url_reg2,"<a class='chat_link' href='\/\/$2\.$3$4'>$2\.$3$4</a>");
 		message = message.replace(url_reg3,"$1$2style='max-width:300px;max-height:200px;margin-bottom:5px;' $3");
@@ -102,22 +106,21 @@ var prospect = io.on('connection', function(client) {
 					client.is_admin = 1;
 				}
 				client.memb_id = client.user_id;
-				conn.where({chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
-					if(err)console.log(err);
-					io.sockets.in(client.room).emit('displayMembers',rows);
-				});
-			}else{
+			}else{  //if not logged in
 				client.serial = client.user;
 				client.serial_id = sanitize(info.serial_id);  //sanitize
 				if(client.user == client.admin && client.serial_id == rows[0].admin_id){  //added in case a user logs in after creating a chat
 					client.is_admin = 1;
 				}
 				client.memb_id = client.serial_id;
-				conn.where({chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
+			}
+			conn.where({chat_id:client.chat_id,user:client.user}).update('members_to_chats',{active:1},function(err,info){
+				if(err)console.log(err);
+				conn.where({chat_id:client.chat_id,active:1}).get('members_to_chats',function(err,rows){
 					if(err)console.log(err);
 					io.sockets.in(client.room).emit('displayMembers',rows);
 				});
-			}
+			});
 		});
 	});
 
@@ -156,7 +159,7 @@ var prospect = io.on('connection', function(client) {
 		if(client.is_admin){
 			conn.where({user:info.user,chat_id:info.chat_id}).update('members_to_chats',{is_mod:1},function(err,info){
 				if(err)console.log(err);
-				conn.where({chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
+				conn.where({chat_id:client.chat_id,active:1}).get('members_to_chats',function(err,rows){
 					if(err)console.log(err);
 					io.sockets.in(client.room).emit('displayMembers',rows);
 					io.sockets.in(client.room + '_member_' + user).emit('add_mod_funcs');
@@ -170,7 +173,7 @@ var prospect = io.on('connection', function(client) {
 		if(client.is_admin){
 			conn.where({user:info.user,chat_id:info.chat_id}).update('members_to_chats',{is_mod:0},function(err,info){
 				if(err)console.log(err);
-				conn.where({chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
+				conn.where({chat_id:client.chat_id,active:1}).get('members_to_chats',function(err,rows){
 					if(err)console.log(err);
 					io.sockets.in(client.room).emit('displayMembers',rows);
 					io.sockets.in(client.room + '_member_' + user).emit('remove_mod_funcs');
@@ -242,8 +245,8 @@ var prospect = io.on('connection', function(client) {
 					conn.where({id:event.responseto}).update('messages',{responses:rows[0].responses + 1},function(err,info){
 						if(err)console.log(err);
 						io.sockets.in(client.room).emit('updateResponseCount',{count:rows[0].responses + 1,id:event.responseto});
-						if((rows[0].author != client.serial) && (rows[0].author != client.user)){
-							io.sockets.in(client.room + '_member_' + client.user).emit('alertUserToResponse',{mssg_id:event.responseto,resp_id:insert_id});
+						if(rows[0].author != client.serial || rows[0].author != client.user){
+							io.sockets.in(client.room + '_member_' + rows[0].author).emit('alertUserToResponse',{mssg_id:event.responseto,resp_id:insert_id,parent:event.parent});
 						}
 					});
 				});
@@ -274,7 +277,10 @@ var prospect = io.on('connection', function(client) {
 			//	if(err)console.log(err);
 			//	conn.where({chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
 			//		if(err)console.log(err);
-					conn.where({serial_id:client.user}).update('serials',{reserved:"0"},function(err,info){
+					conn.where({chat_id:client.chat_id,user:client.user}).update('members_to_chats',{active:0},function(err,info){
+						if(err)console.log(err);
+					});
+					conn.where({serial_id:client.user}).update('serials',{reserved:0},function(err,info){
 						if(err) console.log(err);
 					});
 			//		io.sockets.in(client.room).emit('displayMembers',rows);

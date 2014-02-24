@@ -207,8 +207,14 @@
 <div id="up_arr" style="display:none;">{{mssg_upvoted | json_encode()}}</div>
 <div id="down_arr" style="display:none;">{{mssg_downvoted | json_encode()}}</div>
 <div class="frame_cont">
-	<div class="notify_position"><div class="glyphicon glyphicon-map-marker rotate notify_bubble"></div></div>
-	<div class="notify_text">0</div>
+	<div id="notify_cont_top">
+		<div class="notify_position_top"><div class="glyphicon glyphicon-map-marker rotate notify_bubble"></div></div>
+		<div id="notify_text_top">0</div>
+	</div>
+	<div id="notify_cont_bottom">
+		<div class="notify_position_bottom"><div class="glyphicon glyphicon-map-marker notify_bubble"></div></div>
+		<div id="notify_text_bottom">0</div>
+	</div>
 	<div class="frame chat_main" id="chat_messages">
 		<div id="chat_display">
 		{% set init = 0 %}
