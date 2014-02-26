@@ -190,6 +190,10 @@ class Profile extends BaseController {
 				$user->last_login = date(DATE_ATOM);
 				$user->save();
 				Auth::login($user);
+				$elephant = new ElephantIO\Client('http://localhost:3000','socket.io',1,false,true,true);
+				$elephant->init();
+				$elephant->emit('login',json_encode(array('id' => Auth::user()->id,'user' => Auth::user()->name,'password' => Auth::user()->password,'key' => 'pyWTPC2pqMCsmTEy')));
+				$elephant->close();
 			}
 			return Redirect::to(Session::get('curr_page'));
 		}else{

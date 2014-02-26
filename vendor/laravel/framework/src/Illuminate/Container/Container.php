@@ -239,9 +239,18 @@ class Container implements ArrayAccess {
 			throw new \InvalidArgumentException("Type {$abstract} is not bound.");
 		}
 
-		$extender = $this->getExtender($abstract, $closure);
+		if (isset($this->instances[$abstract]))
+		{
+			$this->instances[$abstract] = $closure($this->instances[$abstract], $this);
 
-		$this->bind($abstract, $extender, $this->isShared($abstract));
+			$this->rebound($abstract);
+		}
+		else
+		{
+			$extender = $this->getExtender($abstract, $closure);
+
+			$this->bind($abstract, $extender, $this->isShared($abstract));
+		}
 	}
 
 	/**
@@ -523,7 +532,7 @@ class Container implements ArrayAccess {
 
 			// If the class is null, it means the dependency is a string or some other
 			// primitive type which we can not resolve since it is not a class and
-			// we'll just bomb out with an error since we have no-where to go.
+			// we will just bomb out with an error since we have no-where to go.
 			if (is_null($dependency))
 			{
 				$dependencies[] = $this->resolveNonClass($parameter);

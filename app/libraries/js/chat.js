@@ -346,7 +346,6 @@ $(document).ready(function(){
 		}
 		$('#message').attr('class','global');
 		$('.chat_mssg').css('background-color','');
-		$('.chat_resp').css('background-color','');
 		module.clicked_on = -1;
 		if($('#message').text() != ""){
 			$('#message').text("Press enter to send a message to all");
@@ -495,23 +494,19 @@ $(document).ready(function(){
 
 deleteIt = function(e){
 	e.stopPropagation();
-	var mssg_id = $(this).parents('.chat_mssg').first().attr('id') || $(this).parents('.chat_resp').first().attr('id');
+	var mssg_id = $(this).parents('.chat_mssg').first().attr('id').replace('message_','');
 	if($('#logged_in').text() == 1){
 		module.socket.emit('delete_message',{id:mssg_id,user:module.user_tracker,serial:module.serial_tracker,responses:$(this).parent().find('.response_count').text()});
 	}else{
-		module.socket.emit('delete_message',{id:mssg_id,user:serial_tracker,serial:module.serial_tracker,responses:$(this).parent().find('.response_count').text()});
+		module.socket.emit('delete_message',{id:mssg_id,user:module.serial_tracker,serial:module.serial_tracker,responses:$(this).parent().find('.response_count').text()});
 	}
 };
 
 module.socket.on('softDelete',function(mssg_info){
-	if($('#' + mssg_info.id + '.chat_mssg').length){
+	if($('#message_' + mssg_info.id + '.chat_mssg').length){
 		$('.mssg_icon').tooltip('hide');
 		$('.mssg_icon').tooltip();
-		$('#' + mssg_info.id + '.chat_mssg').find('.mssg_body').html("<strong class='mssg_op' id='" + mssg_info.user + "' style='color:" + module.color_arr[mssg_info.serial % 7] + ";'>" + mssg_info.user + " (<span class='response_count' id='" + mssg_info.id + "'>" + mssg_info.responses + "</span>)</strong> : <em>This message has been deleted</em>");
-	}else{
-		$('.mssg_icon').tooltip('hide');
-		$('.mssg_icon').tooltip();
-		$('#' + mssg_info.id + '.chat_resp').find('.mssg_body').html("<strong class='mssg_op' id='" + mssg_info.user + "' style='color:" + module.color_arr[mssg_info.serial % 7] + ";'>" + mssg_info.user + " (<span class='response_count' id='" + mssg_info.id + "'>" + mssg_info.responses + "</span>)</strong> : <em>This message has been deleted</em>");
+		$('#message_' + mssg_info.id + '.chat_mssg').find('.mssg_body').html("<strong class='mssg_op' id='" + mssg_info.user + "' style='color:" + module.color_arr[mssg_info.serial % 7] + ";'>" + mssg_info.user + " (<span class='response_count' id='" + mssg_info.id + "'>" + mssg_info.responses + "</span>)</strong> : <em>This message has been deleted</em>");
 	}
 });
 
@@ -519,9 +514,8 @@ setClicked = function(e){
 	e.stopPropagation();
 	module.clicked_on = $(this).attr('id');
 	$('.chat_mssg').css('background-color','');
-	$('.chat_resp').css('background-color','');
 	$(this).css('background-color','#eee');
-	$('#message').attr('class',$(this).attr('id'));
+	$('#message').attr('class',$(this).attr('id').replace('message_',''));
 	$('#chat_messages').off('scroll',scroll_mod);
 	module.scroll_attached = 0;
 	module.stop_scroll = 1;
@@ -542,11 +536,11 @@ getResponses = function(e){
 	if($(this).hasClass('dropup')){
 		$(this).removeClass('dropup');
 		$(this).find('.caret').attr('data-original-title','Hide Responses');
-		$('#resp_cont_' + mssg_id).show();	
+		$('#mssg_cont_' + mssg_id).children('.mssg_cont').show();	
 	}else{
 		$(this).addClass('dropup');
 		$(this).find('.caret').attr('data-original-title','Show Responses');
-		$('#resp_cont_' + mssg_id).hide();	
+		$('#mssg_cont_' + mssg_id).children('.mssg_cont').hide();	
 	}
 }
 
@@ -815,20 +809,18 @@ module.socket.on('check_live',function(live){
 	$('#notify_cont_top').on('click',find_top_notifications);
 	$('#notify_cont_bottom').on('click',find_bottom_notifications);
 	$('#chat_display').on('click','.mssg_icon',deleteIt);
-	$('#chat_display').on('click','.mssg_icon',deleteIt);
 	$('#chat_display').on('click','.mssg_upvote',upvoteMssg);
 	$('#chat_display').on('click','.mssg_downvote',downvoteMssg);
 	$('#chat_display').on('click','.chat_mssg',setClicked);
-	$('#chat_display').on('click','.chat_resp',setClicked);
 	$('#chat_display').on('click','.toggle_responses',getResponses);
 	$('#chat_display').on('click','.chat_link',function(e){e.stopPropagation();});
 });
 
 generateMssg = function(info,is_mssg){
 	if(is_mssg){
-		var tmp = "<div class='mssg_cont level_0 parent_0' id='mssg_cont_" + info.id + "'><div class='chat_mssg' id='" + info.id + "'>";
+		var tmp = "<div class='response_to_0 mssg_cont level_0 parent_0' id='mssg_cont_" + info.id + "'><div class='chat_mssg' id='message_" + info.id + "'>";
 	}else{
-		var tmp = "<div class='responses_to_" + info.responseto + " level_" + info.level + " parent_" + info.parent + " pad_l_20' id='mssg_cont_" + info.id + "'><div class='chat_resp' id='" + info.id + "'>";
+		var tmp = "<div class='response_to_" + info.responseto + " mssg_cont level_" + info.level + " parent_" + info.parent + " pad_l_20' id='mssg_cont_" + info.id + "'><div class='chat_mssg' id='message_" + info.id + "'>";
 	}
 	tmp += "<div class='row' style='margin:0;'> <div id='toggle_" + info.id + "' class='toggle_responses'> <span class='caret caret_tooltip' id='caret_" + info.id + "' data-toggle='tooltip' data-original-title='Hide Responses' data-container='body' data-placement='top'></span> </div> <div class='mssg_body_cont'><span class='vote_box'>";
 	tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + info.id + '">0</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>';
@@ -846,36 +838,14 @@ generateMssg = function(info,is_mssg){
 }
 
 module.socket.on('publishMessage',function(chat_info){
-	var tmp = generateMssg(chat_info,1);
-	$('.tmp_message').remove();
-	$('#chat_display').append(tmp);
-	$('.mssg_icon').tooltip();
-	$('.caret_tooltip').tooltip();
-	if(!module.focused && !module.title_blinking){
-		notifyMessage();
-	}
-	if(chat_info.clicked != "-1"){
-		$('#' + chat_info.clicked + '.chat_mssg').css('background-color','#eee');
-		$('#message').attr('class',chat_info.clicked);
-	}
-	if(!module.stop_scroll){
-		$('#chat_messages').off('scroll',scroll_mod);
-		module.scroll_attached = 0;
-		$('#chat_messages').scrollTop($('#chat_display').height());
-		window.setTimeout(function(){
-			$('#chat_messages').on('scroll',scroll_mod);
-			module.scroll_attached = 1;
-		},100);
-	}
-});
-
-module.socket.on('publishResponse',function(response){
-	var tmp = generateMssg(response,0);
-	$('.tmp_response').remove();
-	if($('#resp_cont_' + response.responseto).length){
-		$('#resp_cont_' + response.responseto).append(tmp);
+	if(chat_info.responseto == 0){
+		var tmp = generateMssg(chat_info,1);
+		$('.tmp_message').remove();
+		$('#chat_display').append(tmp);
 	}else{
-		$('#mssg_cont_' + response.responseto).append('<div id="resp_cont_' + response.responseto + '" class="resp_cont">' + tmp + '</div>');
+		var tmp = generateMssg(chat_info,0);
+		$('.tmp_message').remove();
+		$('#mssg_cont_' + chat_info.responseto).append(tmp);
 	}
 	$('.mssg_icon').tooltip();
 	$('.caret_tooltip').tooltip();
@@ -899,9 +869,13 @@ module.socket.on('disconnect',function() {
 });
 
 /* Sends a message to the server via module.sockets*/
-function sendMessageToServer(message) {
+function sendMessageToServer(message,clicked_on) {
 	module.socket.emit('message_sent',message);
-	var tmp = "<div id='mssg_cont' class='tmp_message'><div class='chat_mssg'><div class='row' style='margin:0;'> <div id='toggle_' class='toggle_responses'> <span class='caret caret_tooltip' id='caret_' data-toggle='tooltip' data-original-title='Hide Responses' data-container='body' data-placement='top'></span> </div> <div class='mssg_body_cont'><span class='vote_box'>";
+	if(message.responseto == 0){
+		var tmp = "<div id='mssg_cont' class='tmp_message response_to_0 level_0 parent_0'><div class='chat_mssg'><div class='row' style='margin:0;'> <div id='toggle_' class='toggle_responses'> <span class='caret caret_tooltip' id='caret_' data-toggle='tooltip' data-original-title='Hide Responses' data-container='body' data-placement='top'></span> </div> <div class='mssg_body_cont'><span class='vote_box'>";
+	}else{
+		var tmp = "<div id='mssg_cont' class='tmp_message response_to_" + message.responseto + " level_" + message.level + " parent_" + message.parent + " pad_l_20'><div class='chat_mssg'><div class='row' style='margin:0;'> <div id='toggle_' class='toggle_responses'> <span class='caret caret_tooltip' id='caret_' data-toggle='tooltip' data-original-title='Hide Responses' data-container='body' data-placement='top'></span> </div> <div class='mssg_body_cont'><span class='vote_box'>";
+	}
 	tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div class="upvote_count">0</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span></span><span class="mssg_body">';
 	if($('#logged_in').text() == 1){
 		tmp += "<span style='margin-right:4px;' class='glyphicon glyphicon-remove mssg_icon' data-toggle='tooltip' title='Delete post' data-container='body' data-placement='top'></span>";
@@ -912,23 +886,11 @@ function sendMessageToServer(message) {
 		tmp += "<span class='glyphicon glyphicon-tower'></span>";	
 	}
 	tmp += "<strong class='mssg_op' id='" + module.user_tracker + "' style='color:" + module.color_arr[module.serial_tracker % 7] + ";'> " + module.user_tracker + " (<span class='response_count'>0</span>)</strong> : " + message.message + "</span></div></div><div class='time_box'><div class='time'>a few seconds ago</div></div></div></div>";	
-	$('#chat_display').append(tmp);
-}
-
-function sendResponseToServer(response,clicked_on) {
-	module.socket.emit('response_sent',response);
-	var tmp = "<div class='tmp_response responses_to_" + response.responseto + " level_" + response.level + " parent_" + response.parent + " pad_l_20'><div class='chat_resp'><div class='row' style='margin:0;'> <div id='toggle_' class='toggle_responses'> <span class='caret caret_tooltip' id='caret_' data-toggle='tooltip' data-original-title='Hide Responses' data-container='body' data-placement='top'></span> </div> <div class='mssg_body_cont'><span class='vote_box'>";
-	tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div class="upvote_count">0</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span></span><span class="mssg_body">';
-	if($('#logged_in').text() == 1){
-		tmp += "<span style='margin-right:4px;' class='glyphicon glyphicon-remove mssg_icon' data-toggle='tooltip' title='Delete post' data-container='body' data-placement='top'></span>";
+	if(message.responseto == 0){
+		$('#chat_display').append(tmp);
+	}else{
+		$('#mssg_cont_' + clicked_on).append(tmp);
 	}
-	if(module.admin.indexOf(module.user_tracker) != -1){
-		tmp += "<span class='glyphicon glyphicon-star'></span>";
-	}else if(module.mods.indexOf(module.user_tracker) != -1){
-		tmp += "<span class='glyphicon glyphicon-tower'></span>";	
-	}
-	tmp += "<strong class='mssg_op' id='" + module.user_tracker + "' style='color:" + module.color_arr[module.serial_tracker % 7] + ";'> " + module.user_tracker + " (<span class='response_count'>0</span>)</strong> : " + response.message + "</span></div></div><div class='time_box'><div class='time'>a few seconds ago</div></div></div></div>";	
-	$('#mssg_cont_' + clicked_on).append(tmp);
 }
 
 $('#message').click(function(){
@@ -950,16 +912,16 @@ $('#message').keyup(function(e){
 				keys.splice(keys.indexOf(e.which),1);
 				if($('#message').val().trim() != ""){
 					if($('#message').attr('class') == 'global'){
-						sendMessageToServer({message:$('#message').val()});
+						sendMessageToServer({message:$('#message').val(),responseto:0,level:0,parent:0},module.clicked_on);
 					}else{
-						var responseto = $('#message').attr('class');
-						var level = parseInt($('#mssg_cont_' + responseto).attr('class').split(" ")[1].replace('level_','')) + 1;
-						if($('#mssg_cont_' + responseto).attr('class').split(" ")[2].replace('parent_','') == 0){
+						var responseto = $('#message').attr('class').replace('message_','');
+						var level = parseInt($('#mssg_cont_' + responseto).attr('class').split(" ")[2].replace('level_','')) + 1;
+						if($('#mssg_cont_' + responseto).attr('class').split(" ")[3].replace('parent_','') == 0){
 							var resp_parent = responseto;
 						}else{
 							var resp_parent = $('#mssg_cont_' + responseto).parents('.mssg_cont').last().attr('id').replace('mssg_cont_','');
 						}
-						sendResponseToServer({message:$('#message').val(),responseto:responseto,level:level,parent:resp_parent},module.clicked_on);	
+						sendMessageToServer({message:$('#message').val(),responseto:responseto,level:level,parent:resp_parent},module.clicked_on);	
 					}
 					$('#message').val("");
 				}

@@ -5,7 +5,8 @@
 	"require": {
 		"laravel/framework": "4.1.*",
 		"rcrowe/twigbridge": "0.5.*",
-		"erusev/parsedown": "0.8.*"
+		"erusev/parsedown": "0.8.*",
+		"wisembly/elephant.io": "dev-master"
 	},
 	"autoload": {
 		"classmap": [

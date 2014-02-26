@@ -217,21 +217,19 @@
 	</div>
 	<div class="frame chat_main" id="chat_messages">
 		<div id="chat_display">
-		{% set init = 0 %}
-		{% set resp_arr = [] %}
+		{% set prev_level = 0 %}
 		{% for message in chat.messages %}
-			{% if message.responseto == 0 %}
-			{% if init != 0 %}
-				</div>
-			{% endif %}
-			{% if prev_level > message.level %}
-				{% for i in message.level..prev_level - 1 %}
+			{% if not loop.first and prev_level >= message.level %}
+				{% for i in message.level..prev_level %}
 					</div>
 				{% endfor %}
 			{% endif %}
-			{% set prev_level = message.level %}
-			<div class="mssg_cont level_{{message.level}} parent_{{message.parent}}" id="mssg_cont_{{message.id}}">
-				<div class="chat_mssg" id="{{message.id}}">
+			{% if message.responseto == 0 %}
+			<div class="response_to_0 mssg_cont level_{{message.level}} parent_{{message.parent}}" id="mssg_cont_{{message.id}}">
+			{% else %}
+			<div class="response_to_{{message.responseto}} mssg_cont level_{{message.level}} parent_{{message.parent}} pad_l_20" id="mssg_cont_{{message.id}}">
+			{% endif %}
+				<div class="chat_mssg" id="message_{{message.id}}">
 					<div class="row" style="margin:0;">
 						<div id="toggle_{{message.id}}" class="toggle_responses">
 							<span class="caret caret_tooltip" id="caret_{{message.id}}" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span>
@@ -270,67 +268,15 @@
 						<div class="time" id="{{message.created_at}}"></div>
 					</div>
 				</div>
-			{% set init = 1 %}
-			{% else %}
-				{% if prev_level > message.level %}
-					{% for i in message.level..prev_level - 1 %}
-						</div>
-					{% endfor %}
-				{% endif %}
-				{% set prev_level = message.level %}
-				{% if message.responseto not in resp_arr %}
-				<div class="resp_cont" id="resp_cont_{{message.responseto}}">
-				{% set resp_arr = resp_arr|merge([message.responseto]) %}
-				{% endif %}
-					<div class="response_to_{{message.responseto}} level_{{message.level}} parent_{{message.parent}}" id="mssg_cont_{{message.id}}" style="padding-left:{{20*message.level}}px">
-						<div class="chat_resp" id="{{message.id}}">
-							<div class="row" style="margin:0;">
-								<div id="toggle_{{message.id}}" class="toggle_responses">
-									<span class="caret caret_tooltip" id="caret_{{message.id}}" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span>
-								</div>
-								<div class="mssg_body_cont">
-									<span class="vote_box">
-										{% if message.id in mssg_upvoted %}
-											<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
-											<div class="upvote_count" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
-											<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
-										{% elseif message.id in mssg_downvoted %}
-											<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
-											<div class="upvote_count" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
-											<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
-										{% else %}
-											<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
-											<div class="upvote_count" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
-											<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
-										{% endif %}
-									</span>
-									<span class="mssg_body">
-										{% if 'This message has been deleted' in message.message == 0 and (serial == message.author or user.name == message.author) %}
-											<span id="message.id" class="glyphicon glyphicon-remove mssg_icon" data-toggle="tooltip" title="Delete post" data-container="body" data-placement="top"></span>	
-										{% endif %}  
-										{% if message.author == chat.admin %}
-											<span class="glyphicon glyphicon-star"></span>	
-										{% endif %}
-										{% if message.author in mods %}
-											<span class="glyphicon glyphicon-tower"></span>	
-										{% endif %}
-										<strong class="mssg_op" id="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}} (<span class="response_count" id="{{message.id}}">{{message.responses}}</span>)</strong> : {{message.message | raw}}
-									</span>
-								</div>
-							</div>
-							<div class="time_box">
-								<div class="time" id="{{message.created_at}}"></div>
-							</div>
-						</div>
-					</div>
-			{% endif %}
+			{% set prev_level = message.level %}
 			{% if loop.last %}
-				{% if prev_level > 0 %}
-					{% for i in 0..prev_level - 1 %}
+				{% if message.level > 0 %}
+					{% for i in 0..message.level %}
 						</div>
 					{% endfor %}
+				{% else %}
+					</div>
 				{% endif %}
-				</div>
 			{% endif %}
 		{% else %}
 		{% endfor %}
