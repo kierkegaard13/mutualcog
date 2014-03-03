@@ -464,6 +464,9 @@ pre{
 .highlighted_dark {
   color:#0549b7;
 }
+.highlight_background {
+  background-color:#cfb !important;
+}
 a.chat_link {
   color:#075de9;
 }

@@ -19,7 +19,7 @@ marked.setOptions({
 process.env.TZ = 'UTC';
 var clients = new Array();
 var banned = new Array();
-var live = 1;
+var authorized = new Array();
 
 function hashHtml(text){
 	return text.replace(/#/,'&#035;');
@@ -67,10 +67,57 @@ function repeatString(x,n){
 }
 
 var io = require('socket.io').listen(3000);
-var prospect = io.on('connection', function(client) {
+
+io.set('authorization',function(handshake,cb){
+	handshake.sid = handshake.query.sid;
+	if(handshake.sid in authorized){
+		var user_data = authorized[handshake.sid];
+		handshake.authorized = 1;
+		handshake.user = user_data.user;
+		handshake.user_id = user_data.id;
+		handshake.memb_id = user_data.id;
+		handshake.serial = user_data.serial;
+		handshake.serial_id = user_data.serial_id;
+		delete authorized[handshake.sid];
+	}else{
+		handshake.authorized = 0;
+	}
+	cb(null,true);
+});
+
+io.sockets.on('connection', function(client) {
+
+	var handshake = client.handshake;
+	client.sid = handshake.sid;
+
+	if(handshake.authorized){
+		client.authorized = handshake.authorized;
+		client.user = handshake.user;
+		client.user_id = handshake.user_id;
+		client.memb_id = handshake.memb_id;
+		client.serial = handshake.serial;
+		client.serial_id = handshake.serial_id;
+	}else{
+		client.authorized = handshake.authorized;
+	}
+
+	client.on('login',function(message){
+		message = JSON.parse(message);
+		if(message.key == 'pyWTPC2pqMCsmTEy'){
+			authorized[message.sid] = message.user_data;
+		}
+	});
+
+	client.on('logoff',function(message){
+		message = JSON.parse(message);
+		if(message.key == 'pyWTPC2pqMCsmTEy'){
+			delete authorized[message.sid];
+		}
+	});
 
 	//client variable unique to user but globals apply to all
 	client.on('room',function(room){
+		var channel_var = this.manager.transports[this.id].socket;
 		client.room = 'chat_' + sanitize(room);  //sanitize
 		client.chat_id = sanitize(room);  //sanitize
 		client.join(client.room);
@@ -82,14 +129,16 @@ var prospect = io.on('connection', function(client) {
 		}
 		conn.where({id:client.chat_id}).get('chats',function(err,rows){
 			if(err)console.log(err);
-			live = rows[0].live;
-			client.emit('check_live',live);
+			channel_var.live = rows[0].live;
+			client.emit('check_live',rows[0].live);
 		});
 	});
 
 	client.on('add_member',function(info){
 		var members = new Array();
-		client.user = sanitize(info.new_member);  //sanitize
+		if(!client.authorized){
+			client.user = sanitize(info.new_member);  //sanitize
+		}
 		client.join(client.room + '_member_' + client.user);
 		clients.push(info.new_member); //is aware of all chat members 
 		console.log(client.user + ' has connected');
@@ -98,21 +147,17 @@ var prospect = io.on('connection', function(client) {
 			client.admin = rows[0].admin;
 			client.is_admin = 0;
 			client.is_mod = 0;
-			if(info.logged_in == 1){
-				client.serial = sanitize(info.serial);  //sanitize
-				client.serial_id = sanitize(info.serial_id);  //sanitize
-				client.user_id = sanitize(info.user_id);  //sanitize
+			if(client.authorized){
 				if((client.user == client.admin || client.serial == client.admin) && (client.user_id == rows[0].admin_id || client.serial_id == rows[0].admin_id)){  //added in case a user logs in after creating a chat
 					client.is_admin = 1;
 				}
-				client.memb_id = client.user_id;
 			}else{  //if not logged in
 				client.serial = client.user;
 				client.serial_id = sanitize(info.serial_id);  //sanitize
+				client.memb_id = client.serial_id;
 				if(client.user == client.admin && client.serial_id == rows[0].admin_id){  //added in case a user logs in after creating a chat
 					client.is_admin = 1;
 				}
-				client.memb_id = client.serial_id;
 			}
 			conn.where({chat_id:client.chat_id,user:client.user}).update('members_to_chats',{active:1},function(err,info){
 				if(err)console.log(err);
@@ -126,35 +171,25 @@ var prospect = io.on('connection', function(client) {
 
 	client.on('pause_all',function(){
 		if(client.is_admin){
+			this.manager.transports[this.id].socket.live = 0;
 			conn.where({id:client.chat_id}).update('chats',{live:0},function(err,info){
 				if(err)console.log(err);
-					io.sockets.in(client.room).emit('pause',{hash:'QcWd9JN5Wv7R3CB2'});
+				io.sockets.in(client.room).emit('pause',{hash:'QcWd9JN5Wv7R3CB2'});
 			});
 		}
 	});
 
 	client.on('play_all',function(){
 		if(client.is_admin){
+			this.manager.transports[this.id].socket.live = 1;
 			conn.where({id:client.chat_id}).update('chats',{live:1},function(err,info){
 				if(err)console.log(err);
-					io.sockets.in(client.room).emit('play',{hash:'b7vNPSsxNBCzJHAY'});
+				io.sockets.in(client.room).emit('play',{hash:'b7vNPSsxNBCzJHAY'});
 			});
 		}
 	});
 
-	client.on('pause',function(security){
-		if(security.hash == 'QcWd9JN5Wv7R3CB2'){
-			live = 0;
-		}
-	});
-
-	client.on('play',function(security){
-		if(security.hash == 'b7vNPSsxNBCzJHAY'){
-			live = 1;
-		}
-	});
-
-	client.on('make_mod',function(info){
+	client.on('make_mod',function(info){  //is mod isn't actually set here
 		var user = info.user;
 		if(client.is_admin){
 			conn.where({user:info.user,chat_id:info.chat_id}).update('members_to_chats',{is_mod:1},function(err,info){
@@ -188,7 +223,7 @@ var prospect = io.on('connection', function(client) {
 		}
 	});
 
-	client.on('kick',function(info){
+	client.on('kick',function(info){ //banned array applies to all chats
 		if(client.is_admin || client.is_mod){
 			if(banned.indexOf(info.member) == -1){
 				banned.push(info.member);
@@ -211,45 +246,35 @@ var prospect = io.on('connection', function(client) {
 
 	// Success!  Now listen to messages to be received
 	client.on('message_sent',function(event){ 
-		if(live && banned.indexOf(client.user) == -1 && event.message.replace(/^\s+|\s+$/g,'') != ''){
-			event.message = processMessage(event.message);
-			conn.insert('messages',{message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:"0",author:client.user,serial:client.serial},function(err,info){
-				if(err) console.log(err);
-				io.sockets.in(client.room).emit('publishMessage',{id:info.insertId,message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),responseto:"0",author:client.user,serial:client.serial,clicked:"-1"});
-				insert_id = info.insertId;
-				conn.where({id:info.insertId}).update('messages',{path:"0" + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id,readable:1},function(err,info){
-					if(err)console.log(err);
-				});
-				conn.where({serial_id:client.serial}).update('serials',{updated_at:moment.utc().format()},function(err,info){
-					if(err) console.log(err);
-				});
-			});
-		}
-	});
-
-	client.on('response_sent',function(event){ 
-		if(live && banned.indexOf(client.user) == -1 && event.message.replace(/^\s+|\s+$/g,'') != ''){
+		console.log('hello world');
+		if(this.manager.transports[this.id].socket.live && banned.indexOf(client.user) == -1 && event.message.replace(/^\s+|\s+$/g,'') != ''){
 			event.message = processMessage(event.message);
 			conn.insert('messages',{message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:event.responseto,level:event.level,parent:event.parent,author:client.user,serial:client.serial},function(err,info){
 				if(err) console.log(err);
-				io.sockets.in(client.room).emit('publishResponse',{id:info.insertId,message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),responseto:event.responseto,author:client.user,serial:client.serial,level:event.level,parent:event.parent});
+				io.sockets.in(client.room).emit('publishMessage',{id:info.insertId,message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),responseto:event.responseto,author:client.user,serial:client.serial,level:event.level,parent:event.parent});
 				var insert_id = info.insertId;
-				conn.where({id:event.responseto}).get('messages',function(err,rows){
-					if(err)console.log(err);
-					conn.where({id:insert_id}).update('messages',{path:rows[0].path + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id,readable:1},function(err,info){
+				if(event.responseto == 0){
+					conn.where({id:info.insertId}).update('messages',{path:"0" + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id,readable:1},function(err,info){
 						if(err)console.log(err);
 					});
-				});
-				conn.where({id:event.responseto}).get('messages',function(err,rows){
-					if(err)console.log(err);
-					conn.where({id:event.responseto}).update('messages',{responses:rows[0].responses + 1},function(err,info){
+				}else{
+					conn.where({id:event.responseto}).get('messages',function(err,rows){
 						if(err)console.log(err);
-						io.sockets.in(client.room).emit('updateResponseCount',{count:rows[0].responses + 1,id:event.responseto});
-						if(rows[0].author != client.serial || rows[0].author != client.user){
-							io.sockets.in(client.room + '_member_' + rows[0].author).emit('alertUserToResponse',{mssg_id:event.responseto,resp_id:insert_id,parent:event.parent});
-						}
+						conn.where({id:insert_id}).update('messages',{path:rows[0].path + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id,readable:1},function(err,info){
+							if(err)console.log(err);
+						});
 					});
-				});
+					conn.where({id:event.responseto}).get('messages',function(err,rows){
+						if(err)console.log(err);
+						conn.where({id:event.responseto}).update('messages',{responses:rows[0].responses + 1},function(err,info){
+							if(err)console.log(err);
+							io.sockets.in(client.room).emit('updateResponseCount',{count:rows[0].responses + 1,id:event.responseto,serial:rows[0].serial});
+							if(rows[0].author != client.serial || rows[0].author != client.user){
+								io.sockets.in(client.room + '_member_' + rows[0].author).emit('alertUserToResponse',{mssg_id:event.responseto,resp_id:insert_id,parent:event.parent});
+							}
+						});
+					});
+				}
 				conn.where({serial_id:client.serial}).update('serials',{updated_at:moment.utc().format()},function(err,info){
 					if(err) console.log(err);
 				});

@@ -18,6 +18,10 @@ class Chat extends BaseController {
 		$mssg_upvoted = array();
 		$mssg_downvoted = array();
 		if(Auth::check()){
+			$elephant = new ElephantIO\Client('http://localhost:3000');
+			$elephant->init();
+			$elephant->emit('login',json_encode(array('sid' => Session::getId(), 'user_data' => array('id' => Auth::user()->id,'user' => Auth::user()->name,'serial' => Auth::user()->serial->serial_id,'serial_id' => Auth::user()->serial->id),'key' => 'pyWTPC2pqMCsmTEy')));
+			$elephant->close();
 			foreach(Auth::user()->upvotedChats() as $upvote){
 				$upvoted[] = $upvote->chat_id;
 			}
@@ -122,6 +126,7 @@ class Chat extends BaseController {
 		}
 		Session::put('curr_page',URL::full());
 		$view['color_arr'] = array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#000');
+		$view['sid'] = Session::getId();
 		$view['tag_headers'] = $tags;
 		$view['tags'] = $tag_arr;
 		$view['curr_time'] = date('Y:m:d:H:i');

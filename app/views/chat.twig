@@ -70,7 +70,7 @@
 {% endblock %}
 
 {% block welcome %}
-<div style="display:none;" id="logged_in">{{logged_in}}</div>
+<div style="display:none;" id="sid" data-sid="{{sid}}"></div>
 <div style="margin-bottom:10px;">Welcome, 
 {% if not user %}
 	<div id="serial_id" style="display:none;">{{serial_id}}</div>

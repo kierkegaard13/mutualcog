@@ -5,8 +5,8 @@ module = function(){
 	var chat_id = $('.chat_id').attr('id');
 	var upvoted = jQuery.parseJSON($('#up_arr').text());
 	var downvoted = jQuery.parseJSON($('#down_arr').text());
-	var socket = io.connect('http://localhost:3000/');
-	var color_arr = new Array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#000');
+	var socket = io.connect('http://localhost:3000/',{query:"sid=" + $('#sid').attr('data-sid')});
+	var color_arr = new Array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#050a57');
 	var mems = new Array();
 	var mods = new Array();
 	var admin = new Array();
@@ -342,6 +342,7 @@ $(document).ready(function(){
 	$('#chat_messages').click(function(){
 		if(module.scroll_attached == 0){
 			$('#chat_messages').on('scroll',scroll_mod);
+			module.scroll_attached = 1;
 			module.stop_scroll = 0;
 		}
 		$('#message').attr('class','global');
@@ -552,7 +553,7 @@ scroll_mod = function(){
 		$('#stop_scroll').attr('data-original-title','Resume scrolling');
 	}	
 	window.setTimeout(function(){
-		if(module.scroll_button_clicked = 0){
+		if(module.scroll_button_clicked == 0){
 			$('#stop_scroll').removeClass('highlight_red');	
 			$('#stop_scroll').attr('data-original-title','Stop scrollbar');
 		}
@@ -566,7 +567,10 @@ find_top_notifications = function(){
 	module.notifications_top_ids.splice(module.notifications_top_positions.indexOf(min),1);
 	module.notifications_top_positions.splice(module.notifications_top_positions.indexOf(min),1);
 	$('#chat_messages').animate({scrollTop:min},'swing',function(){
-		
+		$('#message_' + min_id).addClass('highlight_background','800');
+		setTimeout(function(){
+			$('#message_' + min_id).removeClass('highlight_background','slow');
+		},800);
 	});
 	var text_top = parseInt($('#notify_text_top').text());
 	if(text_top > 1){
@@ -583,7 +587,10 @@ find_bottom_notifications = function(){
 	module.notifications_bottom_ids.splice(module.notifications_bottom_positions.indexOf(min),1);
 	module.notifications_bottom_positions.splice(module.notifications_bottom_positions.indexOf(min),1);
 	$('#chat_messages').animate({scrollTop:min},'swing',function(){
-		
+		$('#message_' + min_id).addClass('highlight_background','800');
+		setTimeout(function(){
+			$('#message_' + min_id).removeClass('highlight_background','slow');
+		},800);
 	});
 	var text_bottom = parseInt($('#notify_text_bottom').text());
 	if(text_bottom > 1){
@@ -666,9 +673,9 @@ notifyMessage = function(){
 module.socket.on('connect',function() {
 	module.socket.emit('room',$('.chat_id').attr('id'));
 	if($('#logged_in').text() == 1){
-		module.socket.emit('add_member',{new_member:module.user_tracker,user_id:module.user_id,serial_id:module.serial_id,serial:module.serial_tracker,logged_in:1});
+		module.socket.emit('add_member',{new_member:module.user_tracker,serial_id:module.serial_id});
 	}else{
-		module.socket.emit('add_member',{new_member:module.serial_tracker,serial_id:module.serial_id,logged_in:0});
+		module.socket.emit('add_member',{new_member:module.serial_tracker,serial_id:module.serial_id});
 	}
 });
 
@@ -677,7 +684,7 @@ module.socket.on('alertUserToResponse',function(info){
 	if($('#mssg_cont_' + info.mssg_id).parent().css('display') == 'none'){
 		var resp_pos = $('#mssg_cont_' + info.parent).position().top;
 	}else{
-		var resp_pos = $('#mssg_cont_' + info.mssg_id).position().top;
+		var resp_pos = $('#mssg_cont_' + info.resp_id).position().top;
 	}
 	var result_top = resp_pos - scrollTop + 12;
 	if(result_top > 0){}else{
@@ -721,7 +728,7 @@ module.socket.on('display_details',function(info){
 });
 
 module.socket.on('updateResponseCount',function(info){
-	$('#' + info.id + '.response_count').animate({color:'#57bf4b'},'slow');	
+	$('#' + info.id + '.response_count').animate({color:module.color_arr[info.serial % 7]},'slow');	
 	$('#' + info.id + '.response_count').animate({color:'black'},'slow');	
 	$('#' + info.id + '.response_count').text(info.count);
 });
@@ -757,7 +764,6 @@ module.socket.on('pause',function(security){
 	$('.chat_paused').remove();
 	$('#main').append('<div class="chat_paused" id="paused_message">Chat has been paused</div>');
 	$('#paused_message').show('fade','slow');
-	module.socket.emit('pause',{hash:security.hash});
 });
 
 module.socket.on('play',function(security){
@@ -765,7 +771,6 @@ module.socket.on('play',function(security){
 	$('#paused_message').hide('fade','slow',function(){
 		$('#paused_message').remove();
 	});
-	module.socket.emit('play',{hash:security.hash});
 });
 
 module.socket.on('warn',function(){

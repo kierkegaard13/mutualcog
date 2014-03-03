@@ -44,7 +44,7 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 	}
 
 	public function serial(){
-		return $this->hasOne('Serials','user_id');
+		return $this->belongsTo('Serials','serial_id');
 	}
 
 	public function messages(){

@@ -13,7 +13,7 @@
 
 function getUniqueSerialNumber($serial_number=null){
 	if(!$serial_number){
-		$serial_number = mt_rand(2,16777215);
+		$serial_number = mt_rand(2,268435455);
 		return getUniqueSerialNumber($serial_number);
 	}
 	$serial = new Serials();
@@ -25,12 +25,10 @@ function getUniqueSerialNumber($serial_number=null){
 		$temp_date = date('Y:m:d:H:i',strtotime($temp->updated_at));
 		list($t_year,$t_month,$t_day,$t_hour,$t_minute) = explode(':',$temp_date);
 		if(($year > $t_year || $month > $t_month || $day > $t_day || ($hour * 60 + $minute) > ($t_hour * 60 + $t_minute) + 481) && $temp->reserved == 0){
-			if(Auth::check()){
-				$temp->user_id = Auth::user()->id;
-			}else{
-				$temp->user_id = -1;
-			}
 			$temp->save();
+			if(Auth::check()){
+				Auth::user()->serial_id = $temp->id;
+			}
 			Session::put('unique_serial',$temp->serial_id);
 			Session::put('serial_id',$temp->id);
 			return true;
@@ -38,10 +36,10 @@ function getUniqueSerialNumber($serial_number=null){
 		$serial_number = mt_rand(0,16777215);
 		return getUniqueSerialNumber($serial_number);
 	}
-	if(Auth::check()){
-		$serial->user_id = Auth::user()->id;
-	}
 	$serial->save();
+	if(Auth::check()){
+		Auth::user()->serial_id = $serial->id;
+	}
 	Session::put('unique_serial',$serial->serial_id);
 	Session::put('serial_id',$serial->id);
 	return true;
@@ -54,12 +52,10 @@ Route::filter('assignSerial',function(){
 			$serial = Serials::whereserial_id(Session::get('unique_serial'))->first();
 			if($serial){
 				$serial->touch();
-				if(Auth::check()){
-					$serial->user_id = Auth::user()->id;
-				}else{
-					$serial->user_id = -1;
-				}
 				$serial->save();
+				if(Auth::check()){
+					Auth::user()->serial_id = $serial->id;
+				}
 			}else{
 				getUniqueSerialNumber();
 			}

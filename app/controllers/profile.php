@@ -154,6 +154,10 @@ class Profile extends BaseController {
 
 	public function getLogout(){
 		Auth::logout();
+		$elephant = new ElephantIO\Client('http://localhost:3000');
+		$elephant->init();
+		$elephant->emit('logoff',json_encode(array('sid' => Session::getId(),'key' => 'pyWTPC2pqMCsmTEy')));
+		$elephant->close();
 		return Redirect::to(Session::get('curr_page'));
 	}
 
@@ -188,12 +192,9 @@ class Profile extends BaseController {
 			$user = $user->findAll();
 			if(Crypt::decrypt($user->password) == $pass){
 				$user->last_login = date(DATE_ATOM);
+				$user->serial_id = Session::get('serial_id');
 				$user->save();
 				Auth::login($user);
-				$elephant = new ElephantIO\Client('http://localhost:3000','socket.io',1,false,true,true);
-				$elephant->init();
-				$elephant->emit('login',json_encode(array('id' => Auth::user()->id,'user' => Auth::user()->name,'password' => Auth::user()->password,'key' => 'pyWTPC2pqMCsmTEy')));
-				$elephant->close();
 			}
 			return Redirect::to(Session::get('curr_page'));
 		}else{
