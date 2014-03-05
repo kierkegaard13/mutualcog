@@ -10,6 +10,7 @@ return array(
     'Twig_' => array($vendorDir . '/twig/twig/lib'),
     'TwigBridgeTests' => array($vendorDir . '/rcrowe/twigbridge/tests'),
     'TwigBridge' => array($vendorDir . '/rcrowe/twigbridge/src'),
+    'System' => array($vendorDir . '/phpseclib/phpseclib/phpseclib'),
     'Symfony\\Component\\Translation\\' => array($vendorDir . '/symfony/translation'),
     'Symfony\\Component\\Routing\\' => array($vendorDir . '/symfony/routing'),
     'Symfony\\Component\\Process\\' => array($vendorDir . '/symfony/process'),

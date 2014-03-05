@@ -759,14 +759,14 @@ module.socket.on('remove_mod_funcs',function(){
 	$('.mod_power').remove();
 });
 
-module.socket.on('pause',function(security){
+module.socket.on('pause',function(){
 	module.live = 0;	
 	$('.chat_paused').remove();
 	$('#main').append('<div class="chat_paused" id="paused_message">Chat has been paused</div>');
 	$('#paused_message').show('fade','slow');
 });
 
-module.socket.on('play',function(security){
+module.socket.on('play',function(){
 	module.live = 1;
 	$('#paused_message').hide('fade','slow',function(){
 		$('#paused_message').remove();

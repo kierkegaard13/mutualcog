@@ -41,6 +41,11 @@ class Chat extends BaseController {
 			if(!$mem_to_chat->findAll()){  //getting into chat for the first time
 				if($chat->admin_id == Auth::user()->id){
 					$mem_to_chat->is_admin = 1;
+				}else if($chat->admin_id == Auth::user()->serial_id){
+					$mem_to_chat->is_admin = 1;
+					$chat->admin_id = Auth::user()->id;
+					$chat->admin = Auth::user()->name;
+					$chat->save();
 				}
 				$mem_to_chat->active = 1;
 				$mem_to_chat->save();
@@ -107,8 +112,8 @@ class Chat extends BaseController {
 			$mem_to_chat->chat_id = $chat_id;
 			$mem_to_chat->member_id = Session::get('serial_id');
 			$mem_to_chat->user = Session::get('unique_serial');
-			$mem_to_chat->active = 1;
 			if(!$mem_to_chat->findAll()){
+				$mem_to_chat->active = 1;
 				if($chat->admin_id == Session::get('serial_id')){
 					$mem_to_chat->is_admin = 1;
 				}

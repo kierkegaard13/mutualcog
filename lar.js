@@ -117,7 +117,6 @@ io.sockets.on('connection', function(client) {
 
 	//client variable unique to user but globals apply to all
 	client.on('room',function(room){
-		var channel_var = this.manager.transports[this.id].socket;
 		client.room = 'chat_' + sanitize(room);  //sanitize
 		client.chat_id = sanitize(room);  //sanitize
 		client.join(client.room);
@@ -129,7 +128,13 @@ io.sockets.on('connection', function(client) {
 		}
 		conn.where({id:client.chat_id}).get('chats',function(err,rows){
 			if(err)console.log(err);
-			channel_var.live = rows[0].live;
+			var all_clients = io.sockets.clients(client.room);
+			for(var i = 0;i < all_clients.length;i++){
+				if(all_clients[i].sid == client.sid && all_clients[i].room == client.room){
+					all_clients[i].live = rows[0].live;
+					client.arr_index = i;
+				}
+			}
 			client.emit('check_live',rows[0].live);
 		});
 	});
@@ -147,17 +152,10 @@ io.sockets.on('connection', function(client) {
 			client.admin = rows[0].admin;
 			client.is_admin = 0;
 			client.is_mod = 0;
-			if(client.authorized){
-				if((client.user == client.admin || client.serial == client.admin) && (client.user_id == rows[0].admin_id || client.serial_id == rows[0].admin_id)){  //added in case a user logs in after creating a chat
-					client.is_admin = 1;
-				}
-			}else{  //if not logged in
+			if(!client.authorized){
 				client.serial = client.user;
 				client.serial_id = sanitize(info.serial_id);  //sanitize
 				client.memb_id = client.serial_id;
-				if(client.user == client.admin && client.serial_id == rows[0].admin_id){  //added in case a user logs in after creating a chat
-					client.is_admin = 1;
-				}
 			}
 			conn.where({chat_id:client.chat_id,user:client.user}).update('members_to_chats',{active:1},function(err,info){
 				if(err)console.log(err);
@@ -166,25 +164,42 @@ io.sockets.on('connection', function(client) {
 					io.sockets.in(client.room).emit('displayMembers',rows);
 				});
 			});
+			conn.where({member_id:client.memb_id,chat_id:info.chat_id}).get('members_to_chats',function(err,rows){
+				if(err)console.log(err);
+				if(rows[0].is_mod){
+					client.is_mod = 1;
+				}
+				if(rows[0].is_admin){
+					client.is_admin = 1;
+				}
+			});
 		});
 	});
 
 	client.on('pause_all',function(){
 		if(client.is_admin){
-			this.manager.transports[this.id].socket.live = 0;
+			var all_clients = io.sockets.clients(client.room);
+			for(var i = 0;i < all_clients.length;i++){
+				all_clients[i].live = 0;
+			}
+			io.sockets.clients(client.room).live = 0;
 			conn.where({id:client.chat_id}).update('chats',{live:0},function(err,info){
 				if(err)console.log(err);
-				io.sockets.in(client.room).emit('pause',{hash:'QcWd9JN5Wv7R3CB2'});
+				io.sockets.in(client.room).emit('pause');
 			});
 		}
 	});
 
 	client.on('play_all',function(){
 		if(client.is_admin){
-			this.manager.transports[this.id].socket.live = 1;
+			var all_clients = io.sockets.clients(client.room);
+			for(var i = 0;i < all_clients.length;i++){
+				all_clients[i].live = 1;
+			}
+			io.sockets.clients(client.room).live = 1;
 			conn.where({id:client.chat_id}).update('chats',{live:1},function(err,info){
 				if(err)console.log(err);
-				io.sockets.in(client.room).emit('play',{hash:'b7vNPSsxNBCzJHAY'});
+				io.sockets.in(client.room).emit('play');
 			});
 		}
 	});
@@ -246,8 +261,7 @@ io.sockets.on('connection', function(client) {
 
 	// Success!  Now listen to messages to be received
 	client.on('message_sent',function(event){ 
-		console.log('hello world');
-		if(this.manager.transports[this.id].socket.live && banned.indexOf(client.user) == -1 && event.message.replace(/^\s+|\s+$/g,'') != ''){
+		if(io.sockets.clients(client.room)[client.arr_index].live && banned.indexOf(client.user) == -1 && event.message.replace(/^\s+|\s+$/g,'') != ''){
 			event.message = processMessage(event.message);
 			conn.insert('messages',{message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:event.responseto,level:event.level,parent:event.parent,author:client.user,serial:client.serial},function(err,info){
 				if(err) console.log(err);
