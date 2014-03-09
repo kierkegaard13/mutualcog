@@ -388,6 +388,7 @@ $(document).ready(function(){
 	$('.mssg_upvote').on('click',upvoteMssg);
 	$('.mssg_downvote').on('click',downvoteMssg);
 	$('.caret_tooltip').tooltip();
+	$('#permalink').tooltip();
 	$('#show_members').tooltip();
 	$('#stop_scroll').tooltip();
 	$('#pause_chat').tooltip();
@@ -438,7 +439,7 @@ $(document).ready(function(){
 		}
 	});
 	$('#mod_user').click(function(){
-		var user = $('#mssg_cont_' + module.clicked_on).find('.mssg_op').attr('id');
+		var user = $('#mssg_cont_' + module.clicked_on).find('.mssg_op').attr('data-author');
 		if(user == module.user_tracker || module.clicked_on == -1){
 			return false;
 		}else{
@@ -459,19 +460,19 @@ $(document).ready(function(){
 		}
 	});
 	$('#warn_user').click(function(){
-		var user = $('#mssg_cont_' + module.clicked_on).find('.mssg_op').attr('id');
+		var user = $('#mssg_cont_' + module.clicked_on).find('.mssg_op').attr('data-author');
 		if(user == module.user_tracker || module.clicked_on == -1){
 			return false;
 		}else{
-			module.socket.emit('warn',{member:$('#mssg_cont_' + module.clicked_on).find('.mssg_op').attr('id')});
+			module.socket.emit('warn',{member:user});
 		}
 	});
 	$('#kick_user').click(function(){
-		var user = $('#mssg_cont_' + module.clicked_on).find('.mssg_op').attr('id');
+		var user = $('#mssg_cont_' + module.clicked_on).find('.mssg_op').attr('data-author');
 		if(user == module.user_tracker || module.clicked_on == -1){
 			return false;
 		}else{
-			module.socket.emit('kick',{member:$('#mssg_cont_' + module.clicked_on).find('.mssg_op').attr('id')});
+			module.socket.emit('kick',{member:user});
 		}
 	});
 	$('#stop_scroll').click(function(){
@@ -513,7 +514,7 @@ module.socket.on('softDelete',function(mssg_info){
 
 setClicked = function(e){
 	e.stopPropagation();
-	module.clicked_on = $(this).attr('id');
+	module.clicked_on = $(this).attr('id').replace('message_','');
 	$('.chat_mssg').css('background-color','');
 	$(this).css('background-color','#eee');
 	$('#message').attr('class',$(this).attr('id').replace('message_',''));
@@ -521,9 +522,9 @@ setClicked = function(e){
 	module.scroll_attached = 0;
 	module.stop_scroll = 1;
 	if($('#message').text() != ""){
-		$('#message').text("Press enter to respond to " + $(this).find('.mssg_op').attr('id') + "\'s message");
+		$('#message').text("Press enter to respond to " + $(this).find('.mssg_op').attr('data-author') + "\'s message");
 	}else{
-		$('#message').val("Press enter to respond to " + $(this).find('.mssg_op').attr('id') + "\'s message");
+		$('#message').val("Press enter to respond to " + $(this).find('.mssg_op').attr('data-author') + "\'s message");
 		$('#message').on('click',function(){
 			$(this).val("");
 			$(this).off('click');
@@ -737,7 +738,15 @@ module.socket.on('displayMembers',function(info){
 	module.mems = new Array();
 	module.mods = new Array();
 	module.admin = new Array();
-	$.each(info,function(index,member){
+	if(info.add){
+		$.each($('.author_' + info.mod),function(index,element){
+			$('.author_' + info.mod).eq(index).html("<span class='glyphicon glyphicon-tower' style='margin-right:5px;'></span>" + $('.author_' + info.mod).eq(index).html());
+		});
+	}
+	if(info.remove){
+		$('.author_' + info.mod).find('.glyphicon-tower').remove();
+	}
+	$.each(info.members,function(index,member){
 		if(member.is_admin){
 			module.admin.push(member.user);
 			module.mems.push("<div style='color:white;'><span class='glyphicon glyphicon-star' style='margin-right:5px;'></span>" + member.user + "</div>");
@@ -753,10 +762,32 @@ module.socket.on('displayMembers',function(info){
 
 module.socket.on('add_mod_funcs',function(){
 	$('#user_toolbox').append('<span class="glyphicon glyphicon-warning-sign mod_power" id="warn_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Warn user"></span> <span class="glyphicon glyphicon-remove mod_power" id="kick_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Kick user"></span> ');
+	$('#warn_user').tooltip();
+	$('#kick_user').tooltip();
 });
 
 module.socket.on('remove_mod_funcs',function(){
 	$('.mod_power').remove();
+});
+
+module.socket.on('add_mod_confirm',function(user){
+	$('#modified_ident').text(user);
+	$('#modified_message').text('is now a mod');
+	$('#action_confirmed').show('blind',function(){	
+		window.setTimeout(function(){
+			$('#action_confirmed').hide('blind');
+		},1500);
+	});
+});
+
+module.socket.on('remove_mod_confirm',function(user){
+	$('#modified_ident').text(user);
+	$('#modified_message').text('is no longer a mod');
+	$('#action_confirmed').show('blind',function(){	
+		window.setTimeout(function(){
+			$('#action_confirmed').hide('blind');
+		},1500);
+	});
 });
 
 module.socket.on('pause',function(){
@@ -776,7 +807,21 @@ module.socket.on('play',function(){
 module.socket.on('warn',function(){
 	$('.chat_paused').remove();
 	$('#main').append('<div class="chat_paused" id="warned_user">You have been warned</div>');
-	$('#warned_user').show('fade','slow');
+	$('#warned_user').show('fade','slow',function(){
+		window.setTimeout(function(){
+			$('#warned_user').hide('fade','slow');	
+		},1500);	
+	});
+});
+
+module.socket.on('warn_confirm',function(user){
+	$('#modified_ident').text(user);
+	$('#modified_message').text('has been warned');
+	$('#action_confirmed').show('blind',function(){	
+		window.setTimeout(function(){
+			$('#action_confirmed').hide('blind');
+		},1500);
+	});
 });
 
 module.socket.on('kick',function(){
@@ -784,6 +829,16 @@ module.socket.on('kick',function(){
 	$('.chat_paused').remove();
 	$('#main').append('<div class="chat_paused" id="banned_user">You have been banned</div>');
 	$('#banned_user').show('fade','slow');
+});
+
+module.socket.on('kick_confirm',function(user){
+	$('#modified_ident').text(user);
+	$('#modified_message').text('is now banned');
+	$('#action_confirmed').show('blind',function(){	
+		window.setTimeout(function(){
+			$('#action_confirmed').hide('blind');
+		},1500);
+	});
 });
 
 module.socket.on('check_live',function(live){
@@ -829,7 +884,7 @@ generateMssg = function(info,is_mssg){
 	}
 	tmp += "<div class='row' style='margin:0;'> <div id='toggle_" + info.id + "' class='toggle_responses'> <span class='caret caret_tooltip' id='caret_" + info.id + "' data-toggle='tooltip' data-original-title='Hide Responses' data-container='body' data-placement='top'></span> </div> <div class='mssg_body_cont'><span class='vote_box'>";
 	tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + info.id + '">0</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>';
-	tmp += '</span><span class="mssg_body">'
+	tmp += '</span><span class="mssg_body author_' + info.author + '">'
 	if((module.serial_tracker == info.author || module.user_tracker == info.author) && info.message != '<i>This message has been deleted</i>'){
 		tmp += "<span id='" + info.id + "' style='margin-right:4px;' class='glyphicon glyphicon-remove mssg_icon' data-toggle='tooltip' title='Delete post' data-container='body' data-placement='top'></span>";
 	}
@@ -838,7 +893,7 @@ generateMssg = function(info,is_mssg){
 	}else if(module.mods.indexOf(info.author) != -1){
 		tmp += "<span class='glyphicon glyphicon-tower'></span>";	
 	}
-	tmp += "<strong class='mssg_op' id='" + info.author + "' style='color:" + module.color_arr[info.serial % 7] + ";'> " + info.author + " (<span class='response_count' id='" + info.id + "'>0</span>)</strong> : " + info.message + "</span></div></div><div class='time_box'><div class='time' id='" + info.created_at + "'>" + moment.utc(info.created_at).fromNow() + "</div></div></div></div>"	
+	tmp += "<strong class='mssg_op' data-author='" + info.author + "' style='color:" + module.color_arr[info.serial % 7] + ";'> " + info.author + " (<span class='response_count' id='" + info.id + "'>0</span>)</strong> : " + info.message + "</span></div></div><div class='time_box'><div class='time' id='" + info.created_at + "'>" + moment.utc(info.created_at).fromNow() + "</div></div></div></div>"	
 	return tmp;
 }
 

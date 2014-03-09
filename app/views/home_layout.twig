@@ -21,12 +21,7 @@
                         <div class="big_content_box">
 				<div class="content_right">
 				<div class="content_left">
-					<ul id="homeTabs" class="nav nav-tabs nav-justified">
-						<li class="active"><a href="#hot" data-toggle="tab" style="color:#075de9">Hot</a></li>
-						<li><a href="#new" data-toggle="tab" style="color:#075de9">New</a></li>
-						<li><a href="#rising" data-toggle="tab" style="color:#075de9">Rising</a></li>
-						<li><a href="#controversial" data-toggle="tab" style="color:#075de9">Controversial</a></li>
-					</ul>
+					{% block tabs %}{% endblock %}
 					<div class="main_content" id="main_cont">
 						{% block content %}{% endblock %}
 					</div>

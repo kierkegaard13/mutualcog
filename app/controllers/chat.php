@@ -76,6 +76,9 @@ class Chat extends BaseController {
 				}
 			}else{  //have been in chat before
 				$mem_to_chat = $mem_to_chat->findAll();
+				if($mem_to_chat->banned){
+					return Redirect::to('home');  //add you have been banned message
+				}
 				$mem_to_chat->active = 1;
 				$mem_to_chat->save();
 				$all_mems = MembersToChats::wherechat_id($chat_id)->get();
@@ -118,6 +121,11 @@ class Chat extends BaseController {
 					$mem_to_chat->is_admin = 1;
 				}
 				$mem_to_chat->save();
+			}else{
+				$mem_to_chat = $mem_to_chat->findAll();
+				if($mem_to_chat->banned){
+					return Redirect::to('home');  //add you have been banned message
+				}
 			}
 		}
 		$tags = Tags::take(20)->orderBy('popularity','desc')->get();

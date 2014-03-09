@@ -18,7 +18,6 @@ marked.setOptions({
 
 process.env.TZ = 'UTC';
 var clients = new Array();
-var banned = new Array();
 var authorized = new Array();
 
 function hashHtml(text){
@@ -150,8 +149,6 @@ io.sockets.on('connection', function(client) {
 		conn.where({id:client.chat_id}).get('chats',function(err,rows){
 			if(err)console.log(err);
 			client.admin = rows[0].admin;
-			client.is_admin = 0;
-			client.is_mod = 0;
 			if(!client.authorized){
 				client.serial = client.user;
 				client.serial_id = sanitize(info.serial_id);  //sanitize
@@ -161,17 +158,14 @@ io.sockets.on('connection', function(client) {
 				if(err)console.log(err);
 				conn.where({chat_id:client.chat_id,active:1}).get('members_to_chats',function(err,rows){
 					if(err)console.log(err);
-					io.sockets.in(client.room).emit('displayMembers',rows);
+					io.sockets.in(client.room).emit('displayMembers',{members:rows,mod:0,add:0,remove:0});
 				});
 			});
-			conn.where({member_id:client.memb_id,chat_id:info.chat_id}).get('members_to_chats',function(err,rows){
+			conn.where({member_id:client.memb_id,chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
 				if(err)console.log(err);
-				if(rows[0].is_mod){
-					client.is_mod = 1;
-				}
-				if(rows[0].is_admin){
-					client.is_admin = 1;
-				}
+				client.is_mod = rows[0].is_mod;
+				client.is_admin = rows[0].is_admin;
+				client.banned = rows[0].banned;
 			});
 		});
 	});
@@ -209,10 +203,11 @@ io.sockets.on('connection', function(client) {
 		if(client.is_admin){
 			conn.where({user:info.user,chat_id:info.chat_id}).update('members_to_chats',{is_mod:1},function(err,info){
 				if(err)console.log(err);
+				io.sockets.in(client.room + '_member_' + user).emit('add_mod_funcs');
+				client.emit('add_mod_confirm',user);
 				conn.where({chat_id:client.chat_id,active:1}).get('members_to_chats',function(err,rows){
 					if(err)console.log(err);
-					io.sockets.in(client.room).emit('displayMembers',rows);
-					io.sockets.in(client.room + '_member_' + user).emit('add_mod_funcs');
+					io.sockets.in(client.room).emit('displayMembers',{members:rows,mod:user,add:1,remove:0});
 				});
 			});
 		}
@@ -223,10 +218,11 @@ io.sockets.on('connection', function(client) {
 		if(client.is_admin){
 			conn.where({user:info.user,chat_id:info.chat_id}).update('members_to_chats',{is_mod:0},function(err,info){
 				if(err)console.log(err);
+				io.sockets.in(client.room + '_member_' + user).emit('remove_mod_funcs');
+				client.emit('remove_mod_confirm',user);
 				conn.where({chat_id:client.chat_id,active:1}).get('members_to_chats',function(err,rows){
 					if(err)console.log(err);
-					io.sockets.in(client.room).emit('displayMembers',rows);
-					io.sockets.in(client.room + '_member_' + user).emit('remove_mod_funcs');
+					io.sockets.in(client.room).emit('displayMembers',{members:rows,mod:user,add:0,remove:1});
 				});
 			});
 		}
@@ -235,15 +231,24 @@ io.sockets.on('connection', function(client) {
 	client.on('warn',function(info){
 		if(client.is_admin || client.is_mod){
 			io.sockets.in(client.room + '_member_' + info.member).emit('warn');
+			client.emit('warn_confirm',info.member);
 		}
 	});
 
 	client.on('kick',function(info){ //banned array applies to all chats
+		var user = info.member;
 		if(client.is_admin || client.is_mod){
-			if(banned.indexOf(info.member) == -1){
-				banned.push(info.member);
+			var all_clients = io.sockets.clients(client.room);
+			for(var i = 0;i < all_clients.length;i++){
+				if(all_clients[i].user == info.member && all_clients[i].room == client.room){
+					all_clients[i].banned = 1;
+				}
 			}
-			io.sockets.in(client.room + '_member_' + info.member).emit('kick');
+			conn.where({chat_id:client.chat_id,user:user}).update('members_to_chats',{banned:1},function(err,info){
+				if(err)console.log(err);
+				io.sockets.in(client.room + '_member_' + user).emit('kick');
+				client.emit('kick_confirm',user);
+			});
 		}
 	});
 
@@ -261,7 +266,7 @@ io.sockets.on('connection', function(client) {
 
 	// Success!  Now listen to messages to be received
 	client.on('message_sent',function(event){ 
-		if(io.sockets.clients(client.room)[client.arr_index].live && banned.indexOf(client.user) == -1 && event.message.replace(/^\s+|\s+$/g,'') != ''){
+		if(io.sockets.clients(client.room)[client.arr_index].live && !client.banned && event.message.replace(/^\s+|\s+$/g,'') != ''){
 			event.message = processMessage(event.message);
 			conn.insert('messages',{message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:event.responseto,level:event.level,parent:event.parent,author:client.user,serial:client.serial},function(err,info){
 				if(err) console.log(err);

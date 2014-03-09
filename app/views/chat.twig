@@ -56,6 +56,7 @@
 
 {% block tools %}
 <div id="user_toolbox">
+	<span class="glyphicon glyphicon-link" id="permalink" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Permalink"></span>
 	<span class="glyphicon glyphicon-list" id="show_members" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Show chat members"></span>
 	<span class="glyphicon glyphicon-stop" id="stop_scroll" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Stop scrollbar"></span>
 	<!--<span class="glyphicon glyphicon-list" id="show_members" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Show chat members"></span>-->
@@ -207,6 +208,7 @@
 <div id="up_arr" style="display:none;">{{mssg_upvoted | json_encode()}}</div>
 <div id="down_arr" style="display:none;">{{mssg_downvoted | json_encode()}}</div>
 <div class="frame_cont">
+<div class="confirmation_box" id="action_confirmed"><div class="confirmation_inner"><div class="glyphicon glyphicon-ok check_mark"></div> <span id="modified_ident"></span> <span id="modified_message"></span></div></div>
 	<div id="notify_cont_top">
 		<div class="notify_position_top"><div class="glyphicon glyphicon-map-marker rotate notify_bubble"></div></div>
 		<div id="notify_text_top">0</div>
@@ -250,7 +252,7 @@
 									<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
 								{% endif %}
 							</span>
-							<span class="mssg_body">
+							<span class="mssg_body author_{{message.author}}">
 								{% if 'This message has been deleted' in message.message == 0 and (serial == message.author or user.name == message.author) %}
 									<span id="message.id" class="glyphicon glyphicon-remove mssg_icon" data-toggle="tooltip" title="Delete post" data-container="body" data-placement="top"></span>	
 								{% endif %}  
@@ -260,7 +262,7 @@
 								{% if message.author in mods %}
 									<span class="glyphicon glyphicon-tower"></span>	
 								{% endif %}
-								<strong class="mssg_op" id="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}} (<span class="response_count" id="{{message.id}}">{{message.responses}}</span>)</strong> : {{message.message | raw}}
+								<strong class="mssg_op" data-author="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}} (<span class="response_count" id="{{message.id}}">{{message.responses}}</span>)</strong> : {{message.message | raw}}
 							</span>
 						</div>
 					</div>
