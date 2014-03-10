@@ -2,7 +2,7 @@
 
 class Chat extends BaseController {
 
-        public function getOpen($chat_id){
+        public function getLive($chat_id){
                 $view = View::make('chat');
 		$chat = Chats::find($chat_id);
 		if(!isset($chat_id) || !$chat){
@@ -123,6 +123,98 @@ class Chat extends BaseController {
 				$mem_to_chat->save();
 			}else{
 				$mem_to_chat = $mem_to_chat->findAll();
+				$mem_to_chat->active = 1;
+				if($mem_to_chat->banned){
+					return Redirect::to('home');  //add you have been banned message
+				}
+				$mem_to_chat->save();
+			}
+		}
+		$tags = Tags::take(20)->orderBy('popularity','desc')->get();
+		$tag_arr = array();
+		$mods = array();
+		foreach($chat->tags as $tag){
+			$tag_arr[] = $tag->name;
+		}
+		foreach($chat->moderators as $mod){
+			$mods[] = $mod->user;
+		}
+		Session::put('curr_page',URL::full());
+		$view['color_arr'] = array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#000');
+		$view['sid'] = Session::getId();
+		$view['tag_headers'] = $tags;
+		$view['tags'] = $tag_arr;
+		$view['curr_time'] = date('Y:m:d:H:i');
+		$view['upvoted'] = $upvoted;
+		$view['downvoted'] = $downvoted;
+		$view['mssg_upvoted'] = $mssg_upvoted;
+		$view['mssg_downvoted'] = $mssg_downvoted;
+		$view['chat'] = $chat;
+		$view['mods'] = $mods;
+                return $view;
+        }
+
+	public function getStatic($chat_id){
+                $view = View::make('static_chat');
+		$chat = Chats::find($chat_id);
+		if(!isset($chat_id) || !$chat){
+			return App::abort(404,'You seem to have entered an invalid URL');
+		}
+		$chat->views = $chat->views + 1;
+		$chat->save();
+		$user = Serials::whereserial_id(Session::get('unique_serial'))->first();
+		$user->reserved = 1;
+		$user->save();
+		$upvoted = array();
+		$downvoted = array();
+		$mssg_upvoted = array();
+		$mssg_downvoted = array();
+		if(Auth::check()){
+			foreach(Auth::user()->upvotedChats() as $upvote){
+				$upvoted[] = $upvote->chat_id;
+			}
+			foreach(Auth::user()->downvotedChats() as $downvote){
+				$downvoted[] = $downvote->chat_id;
+			}
+			foreach(Auth::user()->upvotedMessages() as $upvote){
+				$mssg_upvoted[] = $upvote->message_id;
+			}
+			foreach(Auth::user()->downvotedMessages() as $downvote){
+				$mssg_downvoted[] = $downvote->message_id;
+			}
+			$mem_to_chat = new MembersToChats();
+			$mem_to_chat->chat_id = $chat_id;
+			$mem_to_chat->member_id = Auth::user()->id;
+			$mem_to_chat->user = Auth::user()->name;
+			if(!$mem_to_chat->findAll()){  //getting into chat for the first time
+				if($chat->admin_id == Auth::user()->id){
+					$mem_to_chat->is_admin = 1;
+				}else if($chat->admin_id == Auth::user()->serial_id){
+					$mem_to_chat->is_admin = 1;
+					$chat->admin_id = Auth::user()->id;
+					$chat->admin = Auth::user()->name;
+					$chat->save();
+				}
+				$mem_to_chat->save();
+			}else{  //have been in chat before
+				$mem_to_chat = $mem_to_chat->findAll();
+				if($mem_to_chat->banned){
+					return Redirect::to('home');  //add you have been banned message
+				}
+				$mem_to_chat->save();
+			}
+		}else{  //not logged in
+			$mem_to_chat = new MembersToChats();
+			$mem_to_chat->chat_id = $chat_id;
+			$mem_to_chat->member_id = Session::get('serial_id');
+			$mem_to_chat->user = Session::get('unique_serial');
+			if(!$mem_to_chat->findAll()){
+				if($chat->admin_id == Session::get('serial_id')){
+					$mem_to_chat->is_admin = 1;
+				}
+				$mem_to_chat->save();
+			}else{
+				$mem_to_chat = $mem_to_chat->findAll();
 				if($mem_to_chat->banned){
 					return Redirect::to('home');  //add you have been banned message
 				}
@@ -150,7 +242,7 @@ class Chat extends BaseController {
 		$view['chat'] = $chat;
 		$view['mods'] = $mods;
                 return $view;
-        }
+	}
 
 	public function getAdmin(){
 		$chat = Chats::find(Input::get('id'));
@@ -266,7 +358,7 @@ class Chat extends BaseController {
 					$chat->site_name = $site_name;
 				}
 			}
-			$chat->type = 'open';
+			$chat->type = 'live';
 			if(Auth::check()){
 				$chat->admin = Auth::user()->name;
 				$chat->admin_id = Auth::user()->id;
@@ -314,7 +406,7 @@ class Chat extends BaseController {
 					}
 				}
 			}
-			return Redirect::to(action('chat@getOpen',$chat->id));
+			return Redirect::to(action('chat@getLive',$chat->id));
 		}
 		return Redirect::to(Session::get('curr_page'));
 	}

@@ -120,15 +120,15 @@
 <div class="vote_box">
 	{% if chat.id in upvoted %}
 		<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-		<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
+		<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
 		<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
 	{% elseif chat.id in downvoted %}
 		<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-		<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
+		<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
 		<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
 	{% else %}
 		<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-		<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
+		<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
 		<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
 	{% endif %}
 </div>

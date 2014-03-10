@@ -327,7 +327,7 @@ pre{
   margin-bottom:-5px;
 }
 .big_upvote {
-  margin-top:-4px;
+  margin-top:-6px;
   color:black;
   cursor:pointer; 
   display:block;
@@ -420,7 +420,7 @@ pre{
   float:right; 
 }
 .upvote_count {
-  margin-top:-5px;
+  margin-top:-4px;
   margin-bottom:-5px;
   text-align:center;
 }
@@ -771,22 +771,7 @@ select {
   transition:background-color .5s;
   -webkit-transition:background-color .5s;
 }
-.chat_resp {
-  position:relative;
-  background-color:#fff;
-  padding:10px;
-  box-shadow:2px 2px 2px #999;
-  margin-bottom:10px;
-  display:table;
-  cursor:pointer;
-  font-size:14px;
-  transition:background-color .5s;
-  -webkit-transition:background-color .5s;
-}
 .chat_mssg:hover {
-  background-color:#eee;
-}
-.chat_resp:hover {
   background-color:#eee;
 }
 .chat_title {

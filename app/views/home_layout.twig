@@ -22,12 +22,11 @@
 				<div class="content_right">
 				<div class="content_left">
 					{% block tabs %}{% endblock %}
-					<div class="main_content" id="main_cont">
-						{% block content %}{% endblock %}
-					</div>
+					{% block content %}{% endblock %}
                                 </div>
 				</div>
                         </div>
+			{% block chat_content %}{% endblock %}
                 </div>
         </div>
         <div class="col-sm-5 col-md-4 col-lg-3" id="side">
@@ -42,15 +41,7 @@
 				</div>
                         </div>
 			{% block subscription %}{% endblock %}
-                        <div class="small_content_box">
-				<div class="content_right">
-				<div class="content_left">
-					<div class="content side_content" id="create_cont">
-						{% block create %}{% endblock %}
-					</div>
-                                </div>
-				</div>
-                        </div>
+			{% block create %}{% endblock %}
 			{% block description %}{% endblock %}
 			{% block rules %}{% endblock %}
                 </div>

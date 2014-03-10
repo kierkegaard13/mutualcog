@@ -72,7 +72,7 @@
 							{% if post.link %}
 								<a href="{{chat.link}}" style="color:#032f75;">{{post.title}}</a> <span class="site_name">from {{post.site_name}}</span>
 							{% else %}
-								<a href="{{site}}/chat/{{post.type}}/{{post.id}}" style="color:#032f75;">{{post.title}}</a>
+								<a href="{{site}}/chat/{% if post.live %}live{% else %}static{% endif %}/{{post.id}}" style="color:#032f75;">{{post.title}}</a>
 							{% endif %}
 							{% if post.admin_id != -1 %}
 								<div class="chat_info">Created by <a href="{{site}}/p/{{post.admin}}" style="color:gray;"><strong>{{post.admin}}</strong></a>, 
@@ -84,7 +84,7 @@
 								{% for tag in post.tags %}
 									<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}" style="color:#075de9;">#{{tag.name}}</a> </span>
 								{% endfor %}
-								and <a href="{{site}}/chat/{{post.type}}/{{post.id}}" style="color:gray;"><strong>{{post.messages | length }} comments</strong></a>
+								and <a href="{{site}}/chat/{% if post.live %}live{% else %}static{% endif %}/{{post.id}}" style="color:gray;"><strong>{{post.messages | length }} comments</strong></a>
 							</div>
 						</div>
 					</div>
