@@ -157,58 +157,7 @@
 <div class="tab-pane fade active in" id="hot">
 	<div id="chat_list">
 		{% for chat in chats %} 
-			<div class="chat_title_box">
-				<div class="row">
-					<div class="number_box"> {{loop.index}}. </div>
-					<div class="vote_box">
-						{% if chat.id in upvoted %}
-							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-							<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
-						{% elseif chat.id in downvoted %}
-							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-							<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
-						{% else %}
-							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-							<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
-						{% endif %}
-					</div>
-					{% if chat.image %}
-						<a class="pull-left link_thumbnail" href="{{chat.link}}">
-							<img src="{{chat.image}}" alt="Image Error" width="80" height="80">
-						</a>
-					{% endif %}
-					<div class="chat_title">
-						{% if chat.seen %}
-							{% if chat.link %}
-								<a href="{{chat.link}}" style="color:purple;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
-							{% else %}
-								<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:purple;">{{chat.title}}</a>
-							{% endif %}
-						{% else %}
-							{% if chat.link %}
-								<a href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
-							{% else %}
-								<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
-							{% endif %}
-						{% endif %}
-						{% if chat.admin % 16777259 == 0 %}
-							<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><strong>{{chat.admin}}</strong></a>, 
-						{% else %}
-							<div class="chat_info">Created by <strong>{{chat.admin}}</strong>, 
-						{% endif %}
-							<span class="chat_time" id="{{chat.created_at}}"></span>
-							with Tags:
-							{% for tag in chat.tags %}
-								<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}" style="color:#075de9;">#{{tag.name}}</a> </span>
-							{% endfor %}
-							and <a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:gray;"><strong>{{chat.messages | length }} comments</strong></a>
-						</div>
-					</div>
-				</div>
-			</div>
+			{{ block('chat_box') }}
 		{% endfor %}
 	</div>
 	<div class="page_links">
@@ -223,58 +172,7 @@
 <div class="tab-pane fade in" id="new">
 	<div id="chat_list">
 		{% for chat in chats_new %} 
-			<div class="chat_title_box">
-				<div class="row">
-					<div class="number_box"> {{loop.index}}. </div>
-					<div class="vote_box">
-						{% if chat.id in upvoted %}
-							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-							<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
-						{% elseif chat.id in downvoted %}
-							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-							<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
-						{% else %}
-							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-							<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
-						{% endif %}
-					</div>
-					{% if chat.image %}
-						<a class="pull-left link_thumbnail" href="{{chat.link}}">
-							<img src="{{chat.image}}" alt="Image Error" width="80" height="80">
-						</a>
-					{% endif %}
-					<div class="chat_title">
-						{% if chat.seen %}
-							{% if chat.link %}
-								<a href="{{chat.link}}" style="color:purple;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
-							{% else %}
-								<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:purple;">{{chat.title}}</a>
-							{% endif %}
-						{% else %}
-							{% if chat.link %}
-								<a href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
-							{% else %}
-								<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
-							{% endif %}
-						{% endif %}
-						{% if chat.admin % 16777259 == 0 %}
-							<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><strong>{{chat.admin}}</strong></a>, 
-						{% else %}
-							<div class="chat_info">Created by <strong>{{chat.admin}}</strong>, 
-						{% endif %}
-							<span class="chat_time" id="{{chat.created_at}}"></span>
-							with Tags:
-							{% for tag in chat.tags %}
-								<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}" style="color:#075de9;">#{{tag.name}}</a> </span>
-							{% endfor %}
-							and <a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:gray;"><strong>{{chat.messages | length }} comments</strong></a>
-						</div>
-					</div>
-				</div>
-			</div>
+			{{ block('chat_box') }}
 		{% endfor %}
 	</div>
 	<div class="page_links">
@@ -289,58 +187,7 @@
 <div class="tab-pane fade in" id="rising">
 	<div id="chat_list">
 		{% for chat in chats_rising %} 
-			<div class="chat_title_box">
-				<div class="row">
-					<div class="number_box"> {{loop.index}}. </div>
-					<div class="vote_box">
-						{% if chat.id in upvoted %}
-							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-							<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
-						{% elseif chat.id in downvoted %}
-							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-							<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
-						{% else %}
-							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-							<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
-						{% endif %}
-					</div>
-					{% if chat.image %}
-						<a class="pull-left link_thumbnail" href="{{chat.link}}">
-							<img src="{{chat.image}}" alt="Image Error" width="80" height="80">
-						</a>
-					{% endif %}
-					<div class="chat_title">
-						{% if chat.seen %}
-							{% if chat.link %}
-								<a href="{{chat.link}}" style="color:purple;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
-							{% else %}
-								<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:purple;">{{chat.title}}</a>
-							{% endif %}
-						{% else %}
-							{% if chat.link %}
-								<a href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
-							{% else %}
-								<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
-							{% endif %}
-						{% endif %}
-						{% if chat.admin % 16777259 == 0 %}
-							<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><strong>{{chat.admin}}</strong></a>, 
-						{% else %}
-							<div class="chat_info">Created by <strong>{{chat.admin}}</strong>, 
-						{% endif %}
-							<span class="chat_time" id="{{chat.created_at}}"></span>
-							with Tags:
-							{% for tag in chat.tags %}
-								<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}" style="color:#075de9;">#{{tag.name}}</a> </span>
-							{% endfor %}
-							and <a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:gray;"><strong>{{chat.messages | length }} comments</strong></a>
-						</div>
-					</div>
-				</div>
-			</div>
+			{{ block('chat_box') }}
 		{% endfor %}
 	</div>
 	<div class="page_links">
@@ -355,58 +202,7 @@
 <div class="tab-pane fade in" id="controversial">
 	<div id="chat_list">
 		{% for chat in chats_contr %} 
-			<div class="chat_title_box">
-				<div class="row">
-					<div class="number_box"> {{loop.index}}. </div>
-					<div class="vote_box">
-						{% if chat.id in upvoted %}
-							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-							<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
-						{% elseif chat.id in downvoted %}
-							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-							<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
-						{% else %}
-							<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-							<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-							<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
-						{% endif %}
-					</div>
-					{% if chat.image %}
-						<a class="pull-left link_thumbnail" href="{{chat.link}}">
-							<img src="{{chat.image}}" alt="Image Error" width="80" height="80">
-						</a>
-					{% endif %}
-					<div class="chat_title">
-						{% if chat.seen %}
-							{% if chat.link %}
-								<a href="{{chat.link}}" style="color:purple;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
-							{% else %}
-								<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:purple;">{{chat.title}}</a>
-							{% endif %}
-						{% else %}
-							{% if chat.link %}
-								<a href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
-							{% else %}
-								<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
-							{% endif %}
-						{% endif %}
-						{% if chat.admin % 16777259 == 0 %}
-							<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><strong>{{chat.admin}}</strong></a>, 
-						{% else %}
-							<div class="chat_info">Created by <strong>{{chat.admin}}</strong>, 
-						{% endif %}
-							<span class="chat_time" id="{{chat.created_at}}"></span>
-							with Tags:
-							{% for tag in chat.tags %}
-								<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}" style="color:#075de9;">#{{tag.name}}</a> </span>
-							{% endfor %}
-							and <a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:gray;"><strong>{{chat.messages | length }} comments</strong></a>
-						</div>
-					</div>
-				</div>
-			</div>
+			{{ block('chat_box') }}
 		{% endfor %}
 	</div>
 	<div class="page_links">
@@ -421,3 +217,62 @@
 </div>
 {% endblock %}
 
+{% block chat_box %}
+<div class="chat_title_box">
+	<div class="row">
+		<div class="number_box"> {{loop.index}}. </div>
+		<div class="vote_box">
+			{% if chat.id in upvoted %}
+				<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+				<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
+				<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+			{% elseif chat.id in downvoted %}
+				<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+				<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
+				<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+			{% else %}
+				<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+				<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
+				<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+			{% endif %}
+		</div>
+		{% if chat.image %}
+			<a class="pull-left link_thumbnail" href="{{chat.link}}">
+				<img src="{{chat.image}}" alt="Image Error" width="80" height="80">
+			</a>
+		{% endif %}
+		{% if chat.live %}
+			<div class="pull-right big_green_ball chat_status_indicator" data-toggle="tooltip" data-original-title="Live Chat" data-container="body" data-placement="top"></div>
+		{% else %}
+			<div class="pull-right big_yellow_ball chat_status_indicator" data-toggle="tooltip" data-original-title="Static Chat" data-container="body" data-placement="top"></div>
+		{% endif %}
+		<div class="chat_title">
+			{% if chat.seen %}
+				{% if chat.link %}
+					<a href="{{chat.link}}" style="color:purple;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+				{% else %}
+					<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:purple;">{{chat.title}}</a>
+				{% endif %}
+			{% else %}
+				{% if chat.link %}
+					<a href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+				{% else %}
+					<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
+				{% endif %}
+			{% endif %}
+			{% if chat.admin % 16777259 == 0 %}
+				<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><strong>{{chat.admin}}</strong></a>, 
+			{% else %}
+				<div class="chat_info">Created by <strong>{{chat.admin}}</strong>, 
+			{% endif %}
+				<span class="chat_time" id="{{chat.created_at}}" title="{{chat.created_at}} UTC"></span>
+				with Tags:
+				{% for tag in chat.tags %}
+					<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}" style="color:#075de9;">#{{tag.name}}</a> </span>
+				{% endfor %}
+				and <a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:gray;"><strong>{{chat.messages | length }} comments</strong></a>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

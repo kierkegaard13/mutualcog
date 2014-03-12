@@ -6,7 +6,8 @@ p{
   margin:0;
 }
 blockquote{
-  margin:5px 25px;
+  margin:5px 0px;
+  border-left-color:#075de9;
   padding:0;
 }
 blockquote:before,blockquote:after {
@@ -17,7 +18,21 @@ blockquote p{
   margin-left:5px;
 }
 pre{
-  margin:5px 0 5px 25px;
+  margin:5px 0 5px 0px;
+}
+pre code{
+  white-space:normal;
+}
+pre>code{
+  border:none;
+}
+code{
+  background-color:#f5f5f5;
+  border:1px solid #ccc;
+  border-radius:4px;
+}
+.form-group {
+  margin-bottom:10px;
 }
 @media screen and (min-width:768px) and (min-height:0px){
 	.main_content {
@@ -321,10 +336,14 @@ pre{
 }
 .vote_box {
   position:relative;
-  float:left;
+  display:inline-block;
+  vertical-align:top;
   margin-top:1px;
   margin-right:10px;
   margin-bottom:-5px;
+}
+.chat_title_cont {
+  display:inline-block;
 }
 .big_upvote {
   margin-top:-6px;
@@ -751,13 +770,10 @@ select {
   position:relative;
 }
 .time_box {
-  position:absolute;
-  right:10px;
-  bottom:10px;
+  margin-top:10px;
 }
-.mssg_body_cont {
-  margin-right:30px;
-  margin-bottom:10px;
+.mssg_body {
+  display:inline-block;
 }
 .chat_mssg {
   position:relative;

@@ -31,6 +31,7 @@
         </div>
         <div class="col-sm-5 col-md-4 col-lg-3" id="side">
                 <div style="position:relative;">
+			{% block tools %}{% endblock %}
                         <div class="small_content_box">
 				<div class="content_right">
 				<div class="content_left">
@@ -42,6 +43,7 @@
                         </div>
 			{% block subscription %}{% endblock %}
 			{% block create %}{% endblock %}
+			{% block new_message %}{% endblock %}
 			{% block description %}{% endblock %}
 			{% block rules %}{% endblock %}
                 </div>

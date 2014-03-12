@@ -9,9 +9,38 @@ updateChatTimes = function(){
 	}
 }
 
+updateTimes = function(){
+	$.each($('.time'),function(index,value){
+		$(this).text(moment.utc($(this).attr('id')).fromNow());
+	});
+}
+
 $(document).ready(function(){
 	updateChatTimes();
+	updateTimes();
+	setInterval(updateTimes,60000);
 	setInterval(updateChatTimes,60000);
+	$('.chat_status_indicator').tooltip();
+	$('.mssg_upvote').on('click',upvoteMssg);
+	$('.mssg_downvote').on('click',downvoteMssg);
+	var reply_form = $('#reply_form').clone();;
+	$('.reply_link').on('click',function(){
+		if(!$('#message_' + $(this).attr('data-mssg-id')).find('#reply_form_' + $(this).attr('data-mssg-id')).length){
+			$(this).html('<strong>Cancel</strong>');
+			$('#message_' + $(this).attr('data-mssg-id')).append(reply_form);	
+			$('#message_' + $(this).attr('data-mssg-id')).find('#reply_form').attr('id','reply_form_' + $(this).attr('data-mssg-id'));	
+			$('#reply_form_' + $(this).attr('data-mssg-id')).children('#reply_to').val($(this).attr('data-mssg-id'));
+			reply_form = $('#reply_form').clone();
+		}else{
+			$('#message_' + $(this).attr('data-mssg-id')).find('#reply_form_' + $(this).attr('data-mssg-id')).toggle();	
+			if($(this).children().text() == 'Reply'){
+				$(this).children().text('Cancel');
+			}else{
+				$(this).children().text('Reply');
+			}
+		}
+		return false;
+	});
 });
 
 $('#login_form').submit(function(){
@@ -206,6 +235,56 @@ $('.big_downvote').click(function(e){
 		error:function(){ }
 	});
 });
+
+upvoteMssg = function(e){
+	e.stopPropagation();
+	var message_id = $(this).attr('id').replace('mssg_upvote_','');
+	var url = '//mutualcog.com/chat/message-upvote';
+	$.ajax({
+		type:'POST',
+		data:{id:message_id},
+		url:url,
+		success:function(hresp){
+			if(hresp.status == 1 || hresp.status == 3){
+				$('#mssg_upvote_' + message_id).css('color','#57bf4b');
+				$('#mssg_downvote_' + message_id).css('color','');
+				$('#mssg_votes_' + message_id).text(hresp.upvotes);
+			}else if(hresp.status == 2){
+				$('#mssg_upvote_' + message_id).css('color','');
+				$('#mssg_downvote_' + message_id).css('color','');
+				$('#mssg_votes_' + message_id).text(hresp.upvotes);
+			}else{
+				$('#mssg_upvote_' + message_id).tooltip('show');
+			}
+		},
+		error:function(){}
+	});
+};
+
+downvoteMssg = function(e){
+	e.stopPropagation();
+	var message_id = $(this).attr('id').replace('mssg_downvote_','');
+	var url = '//mutualcog.com/chat/message-downvote';
+	$.ajax({
+		type:'POST',
+		data:{id:message_id},
+		url:url,
+		success:function(hresp){
+			if(hresp.status == 1 || hresp.status == 3){
+				$('#mssg_downvote_' + message_id).css('color','red');
+				$('#mssg_upvote_' + message_id).css('color','');
+				$('#mssg_votes_' + message_id).text(hresp.upvotes);
+			}else if(hresp.status == 2){
+				$('#mssg_upvote_' + message_id).css('color','');
+				$('#mssg_downvote_' + message_id).css('color','');
+				$('#mssg_votes_' + message_id).text(hresp.upvotes);
+			}else{
+				$('#mssg_downvote_' + message_id).tooltip('show');
+			}
+		},
+		error:function(){ }
+	});
+};
 
 $('#tag_dropdown').on('click',function(e){
 	e.stopPropagation();

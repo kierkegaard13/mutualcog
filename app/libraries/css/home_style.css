@@ -2,6 +2,29 @@ body{
   background-color:#0f131a;
   font-size:18px;
 }
+p{
+  margin:0;
+}
+blockquote{
+  margin:5px 25px;
+  padding:0;
+}
+blockquote:before,blockquote:after {
+  content:none;
+}
+blockquote p{
+  font-size:14px;
+  margin-left:5px;
+}
+pre{
+  margin:5px 0 5px 0px;
+}
+pre code{
+  white-space:normal;
+}
+.form-group {
+  margin-bottom:10px;
+}
 .mutual_form>.row {
   margin:10px;
 }
@@ -237,6 +260,26 @@ select {
   background-color:#5cb85c;
   border-radius:8px;
 }
+.big_green_ball {
+  margin-right:5px;
+  margin-left:5px;
+  height:10px;
+  display:inline-block;
+  width:10px;
+  cursor:pointer;
+  background-color:#5cb85c;
+  border-radius:8px;
+}
+.big_yellow_ball {
+  margin-right:5px;
+  margin-left:5px;
+  height:10px;
+  display:inline-block;
+  width:10px;
+  cursor:pointer;
+  background-color:#f8b92d;
+  border-radius:8px;
+}
 #homeTabs {
   background-color:#fff;
   opacity:.95;
@@ -335,9 +378,16 @@ select {
   margin-top:0px;
   margin-bottom:-5px;
 }
-.chat_vote_box {
+.chat_title_vote_box {
   position:relative;
   float:left;
+  margin-top:0px;
+  margin-bottom:-5px;
+}
+.chat_vote_box {
+  position:relative;
+  vertical-align:top;
+  display:inline-block;
   margin: 1px 8px -5px 5px;
 }
 .upvote_count {
@@ -496,6 +546,7 @@ a.chat_link {
   font-size:16px;
 }
 .toggle_responses {
+  cursor:pointer;
   padding-left:5px;
   width:20px;
   float:right; 
@@ -505,13 +556,13 @@ a.chat_link {
   padding:10px;
   padding-bottom:12px;
   display:table;
-  cursor:pointer;
   font-size:14px;
 }
-.mssg_body_cont {
-  margin-right:30px;
+.mssg_body {
+  display:inline-block;
 }
 .mssg_icon, .resp_icon {
+  cursor:pointer;
   font-size:12px;
   transition:color .8s;
   -webkit-transition:color .8s;
@@ -534,12 +585,21 @@ a.chat_link {
 .response_count {
   color:black;
 }
-.time {
-  float:right;
+.time_box {
   color:#777;
-  margin-bottom:-5px;
-  margin-top:-2px;
   font-size:12px;
+  width:100%;
+}
+.time{
+  display:inline;
+  float:right;
+}
+.reply{
+  display:inline;
+  float:left;
+}
+.reply>a{
+  color:#777;
 }
 .content1 {
         margin: 20px;
@@ -584,5 +644,142 @@ a.chat_link {
   white-space:pre-line;
 }
 textarea {
+  width:100%;
   resize:none;
+  border-radius:5px;
+  margin-bottom:0px;
+  padding:10px;
+  margin-top:5px;
+  font-size:16px;
+  border-bottom-color: rgb(238,238,238);
+  border-bottom-style: inset;
+  border-bottom-width: 2px;
+  border-right-color: rgb(238,238,238);
+  border-right-style: inset;
+  border-right-width: 2px;
+  border-top-color: rgb(238,238,238);
+  border-top-style: inset;
+  border-top-width: 2px;
+  border-left-color: rgb(238,238,238);
+  border-left-style: inset;
+  border-left-width: 2px;
+}
+.hljs {
+	  display: block; padding: 0.5em;
+	    color: #333;
+	      background: #f8f8f8
+}
+
+.hljs-comment,
+.hljs-template_comment,
+.diff .hljs-header,
+.hljs-javadoc {
+	  color: #998;
+	    font-style: italic
+}
+
+.hljs-keyword,
+.css .rule .hljs-keyword,
+.hljs-winutils,
+.javascript .hljs-title,
+.nginx .hljs-title,
+.hljs-subst,
+.hljs-request,
+.hljs-status {
+	  color: #333;
+	    font-weight: bold
+}
+
+.hljs-number,
+.hljs-hexcolor,
+.ruby .hljs-constant {
+	  color: #099;
+}
+
+.hljs-string,
+.hljs-tag .hljs-value,
+.hljs-phpdoc,
+.tex .hljs-formula {
+	  color: #d14
+}
+
+.hljs-title,
+.hljs-id,
+.coffeescript .hljs-params,
+.scss .hljs-preprocessor {
+	  color: #900;
+	    font-weight: bold
+}
+
+.javascript .hljs-title,
+.lisp .hljs-title,
+.clojure .hljs-title,
+.hljs-subst {
+	  font-weight: normal
+}
+
+.hljs-class .hljs-title,
+.haskell .hljs-type,
+.vhdl .hljs-literal,
+.tex .hljs-command {
+	  color: #458;
+	    font-weight: bold
+}
+
+.hljs-tag,
+.hljs-tag .hljs-title,
+.hljs-rules .hljs-property,
+.django .hljs-tag .hljs-keyword {
+	  color: #000080;
+	    font-weight: normal
+}
+
+.hljs-attribute,
+.hljs-variable,
+.lisp .hljs-body {
+	  color: #008080
+}
+
+.hljs-regexp {
+	  color: #009926
+}
+
+.hljs-symbol,
+.ruby .hljs-symbol .hljs-string,
+.lisp .hljs-keyword,
+.tex .hljs-special,
+.hljs-prompt {
+	  color: #990073
+}
+
+.hljs-built_in,
+.lisp .hljs-title,
+.clojure .hljs-built_in {
+	  color: #0086b3
+}
+
+.hljs-preprocessor,
+.hljs-pragma,
+.hljs-pi,
+.hljs-doctype,
+.hljs-shebang,
+.hljs-cdata {
+	  color: #999;
+	    font-weight: bold
+}
+
+.hljs-deletion {
+	  background: #fdd
+}
+
+.hljs-addition {
+	  background: #dfd
+}
+
+.diff .hljs-change {
+	  background: #0086b3
+}
+
+.hljs-chunk {
+	  color: #aaa
 }

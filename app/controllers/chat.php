@@ -154,7 +154,7 @@ class Chat extends BaseController {
                 return $view;
         }
 
-	public function getStatic($chat_id){
+	public function getStatic($chat_id,$mssg_id = null){
                 $view = View::make('static_chat');
 		$chat = Chats::find($chat_id);
 		if(!isset($chat_id) || !$chat){
@@ -162,9 +162,6 @@ class Chat extends BaseController {
 		}
 		$chat->views = $chat->views + 1;
 		$chat->save();
-		$user = Serials::whereserial_id(Session::get('unique_serial'))->first();
-		$user->reserved = 1;
-		$user->save();
 		$upvoted = array();
 		$downvoted = array();
 		$mssg_upvoted = array();
@@ -241,7 +238,73 @@ class Chat extends BaseController {
 		$view['mssg_downvoted'] = $mssg_downvoted;
 		$view['chat'] = $chat;
 		$view['mods'] = $mods;
+		if($mssg_id){
+			$message = Messages::find($mssg_id);
+			$view['messages'] = Messages::where('path','LIKE',"$message->path%")->orderBy('path')->get();
+		}
                 return $view;
+	}
+
+	public function postMessage($chat_id){
+		$chat = Chats::find($chat_id);
+		if(!$chat->live){
+			$message = new Messages();
+			$message->chat_id = htmlentities($chat_id);
+			$mssg_content = htmlentities(Input::get('mssg_content'));
+			$mssg_content = Parsedown::instance()->set_breaks_enabled(true)->parse($mssg_content);
+			$reg1 = '/(\s)(https?:\/\/)?([\da-z-\.]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/';
+			$reg2 = '/>(https?:\/\/)?([\da-z-\.]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/';
+			$reg3 = '/(img)(\s)(alt)/';
+			$mssg_content = preg_replace('/^<p>/','',$mssg_content);
+			$mssg_content = preg_replace('/<\/p>$/','',$mssg_content);
+			$mssg_content = preg_replace($reg1,"$1<a class='chat_link' href='\/\/$3.$4$5'>$3.$4$5</a>",$mssg_content);
+			$mssg_content = preg_replace($reg2,"><a class='chat_link' href='\/\/$2.$3$4'>$2.$3$4</a>",$mssg_content);
+			$mssg_content = preg_replace($reg3,"$1$2style='max-width:300px;max-height:200px;margin-bottom:5px;' $3",$mssg_content);
+			if(preg_match("/\/p\/([^\s]*)(<)/",$mssg_content)){
+				$mssg_content = preg_replace("/\/p\/([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/p/$1'>/p/$1</a>$2",$mssg_content);
+			}else{
+				$mssg_content = preg_replace("/\/p\/([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/p/$1'>/p/$1</a>$2",$mssg_content);
+			}
+			if(preg_match("/\/t\/([^\s]*)(<)/",$mssg_content)){
+				$mssg_content = preg_replace("/\/t\/([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/t/$1'>/t/$1</a>$2",$mssg_content);
+			}else{
+				$mssg_content = preg_replace("/\/t\/([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/t/$1'>/t/$1</a>$2",$mssg_content);
+			}
+			$message->message = $mssg_content;
+			if(Auth::check()){
+				$message->member_id = Auth::user()->id;
+				$message->author = Auth::user()->name;
+				$message->serial = Auth::user()->serial->serial_id;
+			}else{
+				$message->member_id = Session::get('serial_id');
+				$message->author = Session::get('unique_serial');
+				$message->serial = Session::get('unique_serial');
+
+			}
+			if(Input::get('reply_to')){
+				$parent_mssg = Messages::find(Input::get('reply_to'));
+				$message->responseto = $parent_mssg->id;
+				if($parent_mssg->level == 0){
+					$message->parent = $parent_mssg->id;
+				}else{
+					$message->parent = $parent_mssg->parent;	
+				}
+				$message->level = $parent_mssg->level + 1;
+				$message->save();
+				$message->path = $parent_mssg->path . '.' . str_repeat('0', 8 - strlen((string)$message->id)) . $message->id;
+				$message->readable = 1;
+				$message->save();
+				$parent_mssg->responses = $parent_mssg->responses + 1;
+				$parent_mssg->save();
+			}else{
+				$message->save();
+				$message->path = '0.' . str_repeat('0', 8 - strlen((string)$message->id)) . $message->id;
+				$message->readable = 1;
+				$message->save();
+			}
+			return Redirect::to(Session::get('curr_page'));
+		}
+		return Redirect::to('chat/live/' . $chat_id);
 	}
 
 	public function getAdmin(){
@@ -468,7 +531,7 @@ class Chat extends BaseController {
 						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
 						$user->cognizance = $user->next_level - 1;
 					}else if($user->level == 0){
-						$user->cognizance = ($user->cognizance - 1 > -1) ? $user->cognizance : $user->cognizance - 1;
+						$user->cognizance = ($user->cognizance - 1 < 0) ? $user->cognizance : $user->cognizance - 1;
 					}else{
 						$user->cognizance = $user->cognizance - 1;
 					}
@@ -609,7 +672,7 @@ class Chat extends BaseController {
 						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
 						$user->cognizance = $user->next_level - 1;
 					}else if($user->level == 0){
-						$user->cognizance = ($user->cognizance - 1 > -1) ? $user->cognizance : $user->cognizance - 1;
+						$user->cognizance = ($user->cognizance - 1 < 0) ? $user->cognizance : $user->cognizance - 1;
 					}else{
 						$user->cognizance = $user->cognizance - 1;
 					}
@@ -683,7 +746,7 @@ class Chat extends BaseController {
 						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
 						$user->cognizance = $user->next_level - 1;
 					}else if($user->level == 0){
-						$user->cognizance = ($user->cognizance - 1 > -1) ? $user->cognizance : $user->cognizance - 1;
+						$user->cognizance = ($user->cognizance - 1 < 0) ? $user->cognizance : $user->cognizance - 1;
 					}else{
 						$user->cognizance = $user->cognizance - 1;
 					}
@@ -788,7 +851,7 @@ class Chat extends BaseController {
 						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
 						$user->cognizance = $user->next_level - 1;
 					}else if($user->level == 0){
-						$user->cognizance = ($user->cognizance - 1 > -1) ? $user->cognizance : $user->cognizance - 1;
+						$user->cognizance = ($user->cognizance - 1 < 0) ? $user->cognizance : $user->cognizance - 1;
 					}else{
 						$user->cognizance = $user->cognizance - 1;
 					}

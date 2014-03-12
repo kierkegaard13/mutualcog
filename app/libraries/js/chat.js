@@ -323,17 +323,15 @@ updateChatTimes = function(){
 	$.each($('.chat_time'),function(index,value){
 		$(this).text(moment.utc($(this).attr('id')).fromNow());
 	});
-}
+}();
 
 updateTimes = function(){
 	$.each($('.time'),function(index,value){
 		$(this).text(moment.utc($(this).attr('id')).fromNow());
 	});
-}
+}();
 
 $(document).ready(function(){
-	updateChatTimes();
-	updateTimes();
 	setInterval(updateTimes,60000);
 	setInterval(updateChatTimes,60000);
 	$('#chat_messages').on('scroll',scroll_mod);
@@ -347,6 +345,12 @@ $(document).ready(function(){
 		}
 		$('#message').attr('class','global');
 		$('.chat_mssg').css('background-color','');
+		var permalink = $('#permalink').attr('data-page-link');
+		if(permalink.split('/').length - 1 == 5){
+		}else{
+			permalink = permalink.substring(0,permalink.lastIndexOf('/'));
+			$('#permalink').attr('data-page-link',permalink);
+		}
 		module.clicked_on = -1;
 		if($('#message').text() != ""){
 			$('#message').text("Press enter to send a message to all");
@@ -395,6 +399,9 @@ $(document).ready(function(){
 	$('#mod_user').tooltip();
 	$('#warn_user').tooltip();
 	$('#kick_user').tooltip();
+	$('#permalink').click(function(e){
+		window.location.href = $(this).attr('data-page-link'); 
+	});
 	$('#show_members').click(function(e){
 		if(hovering == 0){
 			$('#members_box').toggle('blind');
@@ -515,8 +522,15 @@ module.socket.on('softDelete',function(mssg_info){
 setClicked = function(e){
 	e.stopPropagation();
 	module.clicked_on = $(this).attr('id').replace('message_','');
+	var permalink = $('#permalink').attr('data-page-link');
+	if(permalink.split('/').length - 1 == 5){
+		$('#permalink').attr('data-page-link',permalink + '/' + module.clicked_on);
+	}else{
+		permalink = permalink.substring(0,permalink.lastIndexOf('/'));
+		$('#permalink').attr('data-page-link',permalink + '/' + module.clicked_on);
+	}
 	$('.chat_mssg').css('background-color','');
-	$(this).css('background-color','#eee');
+	$(this).css('background-color','#ddd');
 	$('#message').attr('class',$(this).attr('id').replace('message_',''));
 	$('#chat_messages').off('scroll',scroll_mod);
 	module.scroll_attached = 0;
@@ -622,7 +636,7 @@ blinkRed = function(message){
 			blinkRed(message);
 		}else{
 			message.off('click');
-			message.css('background-color','#eee');
+			message.css('background-color','#ddd');
 		}
 	},1000);
 }
@@ -649,7 +663,7 @@ blinkRedv2 = function(message){
 		}else{
 			message.off('click');
 			message.on('click',getNestedResponse);
-			message.css('background-color','#eee');
+			message.css('background-color','#ddd');
 		}
 	},1000);
 }
@@ -882,9 +896,9 @@ generateMssg = function(info,is_mssg){
 	}else{
 		var tmp = "<div class='response_to_" + info.responseto + " mssg_cont level_" + info.level + " parent_" + info.parent + " pad_l_20' id='mssg_cont_" + info.id + "'><div class='chat_mssg' id='message_" + info.id + "'>";
 	}
-	tmp += "<div class='row' style='margin:0;'> <div id='toggle_" + info.id + "' class='toggle_responses'> <span class='caret caret_tooltip' id='caret_" + info.id + "' data-toggle='tooltip' data-original-title='Hide Responses' data-container='body' data-placement='top'></span> </div> <div class='mssg_body_cont'><span class='vote_box'>";
+	tmp += "<div class='row' style='margin:0;'> <div class='mssg_body_cont'><div class='vote_box'>";
 	tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + info.id + '">0</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>';
-	tmp += '</span><span class="mssg_body author_' + info.author + '">'
+	tmp += '</div><div class="mssg_body author_' + info.author + '"><div id="toggle_' + info.id + '" class="toggle_responses"> <span class="caret caret_tooltip" id="caret_' + info.id + '" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span> </div> ';
 	if((module.serial_tracker == info.author || module.user_tracker == info.author) && info.message != '<i>This message has been deleted</i>'){
 		tmp += "<span id='" + info.id + "' style='margin-right:4px;' class='glyphicon glyphicon-remove mssg_icon' data-toggle='tooltip' title='Delete post' data-container='body' data-placement='top'></span>";
 	}
@@ -893,7 +907,7 @@ generateMssg = function(info,is_mssg){
 	}else if(module.mods.indexOf(info.author) != -1){
 		tmp += "<span class='glyphicon glyphicon-tower'></span>";	
 	}
-	tmp += "<strong class='mssg_op' data-author='" + info.author + "' style='color:" + module.color_arr[info.serial % 7] + ";'> " + info.author + " (<span class='response_count' id='" + info.id + "'>0</span>)</strong> : " + info.message + "</span></div></div><div class='time_box'><div class='time' id='" + info.created_at + "'>" + moment.utc(info.created_at).fromNow() + "</div></div></div></div>"	
+	tmp += "<strong class='mssg_op' data-author='" + info.author + "' style='color:" + module.color_arr[info.serial % 7] + ";'> " + info.author + " (<span class='response_count' id='" + info.id + "'>0</span>)</strong> : " + info.message + "<div class='time_box'><div class='time' id='" + info.created_at + "'>" + moment.utc(info.created_at).fromNow() + "</div></div></div></div></div></div></div>"	
 	return tmp;
 }
 
@@ -931,12 +945,12 @@ module.socket.on('disconnect',function() {
 /* Sends a message to the server via module.sockets*/
 function sendMessageToServer(message,clicked_on) {
 	module.socket.emit('message_sent',message);
-	if(message.responseto == 0){
-		var tmp = "<div id='mssg_cont' class='tmp_message response_to_0 level_0 parent_0'><div class='chat_mssg'><div class='row' style='margin:0;'> <div id='toggle_' class='toggle_responses'> <span class='caret caret_tooltip' id='caret_' data-toggle='tooltip' data-original-title='Hide Responses' data-container='body' data-placement='top'></span> </div> <div class='mssg_body_cont'><span class='vote_box'>";
+	/*if(message.responseto == 0){
+		var tmp = "<div id='mssg_cont' class='tmp_message response_to_0 level_0 parent_0'><div class='chat_mssg'><div class='row' style='margin:0;'> <div id='toggle_' class='toggle_responses'> <span class='caret caret_tooltip' id='caret_' data-toggle='tooltip' data-original-title='Hide Responses' data-container='body' data-placement='top'></span> </div> <div class='mssg_body_cont'><div class='vote_box'>";
 	}else{
-		var tmp = "<div id='mssg_cont' class='tmp_message response_to_" + message.responseto + " level_" + message.level + " parent_" + message.parent + " pad_l_20'><div class='chat_mssg'><div class='row' style='margin:0;'> <div id='toggle_' class='toggle_responses'> <span class='caret caret_tooltip' id='caret_' data-toggle='tooltip' data-original-title='Hide Responses' data-container='body' data-placement='top'></span> </div> <div class='mssg_body_cont'><span class='vote_box'>";
+		var tmp = "<div id='mssg_cont' class='tmp_message response_to_" + message.responseto + " level_" + message.level + " parent_" + message.parent + " pad_l_20'><div class='chat_mssg'><div class='row' style='margin:0;'> <div class='mssg_body_cont'><div class='vote_box'>";
 	}
-	tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div class="upvote_count">0</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span></span><span class="mssg_body">';
+	tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div class="upvote_count">0</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span></div><div class="mssg_body"><div id="toggle_" class="toggle_responses"> <span class="caret caret_tooltip" id="caret_" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span> </div> ';
 	if($('#logged_in').text() == 1){
 		tmp += "<span style='margin-right:4px;' class='glyphicon glyphicon-remove mssg_icon' data-toggle='tooltip' title='Delete post' data-container='body' data-placement='top'></span>";
 	}
@@ -945,12 +959,12 @@ function sendMessageToServer(message,clicked_on) {
 	}else if(module.mods.indexOf(module.user_tracker) != -1){
 		tmp += "<span class='glyphicon glyphicon-tower'></span>";	
 	}
-	tmp += "<strong class='mssg_op' id='" + module.user_tracker + "' style='color:" + module.color_arr[module.serial_tracker % 7] + ";'> " + module.user_tracker + " (<span class='response_count'>0</span>)</strong> : " + message.message + "</span></div></div><div class='time_box'><div class='time'>a few seconds ago</div></div></div></div>";	
+	tmp += "<strong class='mssg_op' id='" + module.user_tracker + "' style='color:" + module.color_arr[module.serial_tracker % 7] + ";'> " + module.user_tracker + " (<span class='response_count'>0</span>)</strong> : " + message.message + "<div class='time_box'><div class='time'>a few seconds ago</div></div></div></div></div></div></div>";	
 	if(message.responseto == 0){
 		$('#chat_display').append(tmp);
 	}else{
 		$('#mssg_cont_' + clicked_on).append(tmp);
-	}
+	}*/
 }
 
 $('#message').click(function(){

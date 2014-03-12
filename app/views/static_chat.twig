@@ -1,4 +1,4 @@
-{% extends 'chat_layout.twig' %}
+{% extends 'home_layout.twig' %}
 
 {% block header %}
 <nav class="navbar">
@@ -54,35 +54,8 @@
 </nav>
 {% endblock %}
 
-{% block tools %}
-<div id="user_toolbox">
-	<span class="glyphicon glyphicon-link" id="permalink" data-page-link="{{site}}/chat/static/{{chat.id}}" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Permalink"></span>
-	<span class="glyphicon glyphicon-list" id="show_members" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Show chat members"></span>
-	<span class="glyphicon glyphicon-stop" id="stop_scroll" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Stop scrollbar"></span>
-	<!--<span class="glyphicon glyphicon-list" id="show_members" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Show chat members"></span>-->
-	{% if user.name == chat.admin or serial == chat.admin %}
-	<span class="glyphicon glyphicon-pause pause mod_power" id="pause_chat" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Pause chat"></span>
-	<span class="glyphicon glyphicon-tower mod_power" id="mod_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Grant holy moderation powers"></span>
-	<span class="glyphicon glyphicon-warning-sign mod_power" id="warn_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Warn user"></span>
-	<span class="glyphicon glyphicon-remove mod_power" id="kick_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Kick user"></span>
-	{% endif %}
-</div>
-<div id="members_box"><div id="members_list"></div></div>
-{% endblock %}
-
 {% block welcome %}
-<div style="display:none;" id="sid" data-sid="{{sid}}"></div>
-<div style="margin-bottom:10px;">Welcome, 
-{% if not user %}
-	<div id="serial_id" style="display:none;">{{serial_id}}</div>
-	<span id="serial_tracker">{{serial}}</span>
-{% else %}
-	<div id="serial_id" style="display:none;">{{serial_id}}</div>
-	<div id="serial_tracker" style="display:none;">{{serial}}</div>
-	<div id="user_id" style="display:none;">{{user.id}}</div>
-	<span id="user_tracker">{{user.name}}</span>
-	{% endif %}
-</div>
+<div style="margin-bottom:10px;">Welcome, {% if not user %}<span id="serial_tracker">{{serial}}</span>{% else %}<span id="user_tracker">{{user.name}}</span>{% endif %}</div>
 {% if not logged_in %}
 	<form method="post" action="{{site}}/profile/new-user" class="mutual_form" id="login_form">
 	<fieldset>
@@ -99,10 +72,10 @@
 	</fieldset>
 	</form>
 {% else %}
-	<div class="last_login" id="{{user.last_login}}"></div>
-	<div>Cognizance: {{user.cognizance}}/{{100 + 20*user.level }} (Level: {{user.level}})</div>
+	<div class="last_login" id="{{user.last_login}}"><strong>Last login:</strong></div>
+	<div>Cognizance: {{user.cognizance}}/{{user.next_level}} (Level: {{user.level}})</div>
 	<div class="progress progress-striped active">
-		<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{user.cognizance}}" aria-valuemin="0" aria-valuemax="{{100 + 20*user.level}}" style="width:{{user.cognizance}}%;">
+		<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{user.cognizance}}" aria-valuemin="0" aria-valuemax="{{user.next_level}}" style="width:{{user.cognizance}}%;">
 			<span class="sr-only">Only {{user.cognizance}}% Complete</span>
 		</div>
 	</div>
@@ -116,8 +89,53 @@
 {% endif %}
 {% endblock %}
 
-{% block details %}
-<div class="vote_box">
+{% block create %}
+                        <div class="small_content_box">
+				<div class="content_right">
+				<div class="content_left">
+					<div class="content side_content" id="create_cont">
+<form method="post" action="{{site}}/chat/new-chat" class="mutual_form" id="home_form">
+<fieldset>
+	<legend>Create a new Chat</legend>
+	<div id="title_group" class="form-group">
+		<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Title must be longer than 2 characters but less than 180" data-trigger="focus" data-container="body" type="text" name="title" id="Title" placeholder="What's this chat about?">
+	</div>
+	<div id="link_group" class="form-group">
+		<input class="form-control" type="text" name="link" id="Link" placeholder="Add a link (optional)">
+	</div>
+	<div id="tags_group" class="form-group">
+		<input class="form-control" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Tags" data-container="body" data-placement="bottom" type="text" name="tags" id="Tags" placeholder="Use spaces to separate tags (max: 5)" autocomplete="off">
+	</div>
+	<button class="btn btn-primary" type="Submit" style="width:100%;">Create</button>
+</fieldset>
+</form>
+					</div>
+                                </div>
+				</div>
+                        </div>
+{% endblock %}
+
+{% block new_message %}
+{% if not chat.live %}
+                        <div class="small_content_box hidden-xs">
+				<div class="content_right">
+				<div class="content_left">
+					<div class="content side_content" id="create_new_mssg">
+<form method="post" action="{{site}}/chat/message/{{chat.id}}">
+	<legend>Submit a new Message</legend>
+	<textarea rows="4" name="mssg_content"></textarea>
+	<button type="submit" class="btn btn-sm btn-primary">Send Message</button>
+</form>
+					</div>
+                                </div>
+				</div>
+                        </div>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="chat_content">
+<div class="chat_title_vote_box">
 	{% if chat.id in upvoted %}
 		<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
 		<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
@@ -132,111 +150,86 @@
 		<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
 	{% endif %}
 </div>
-<div class="chat_title_cont">
-<div class="chat_id" id="{{chat.id}}">{{chat.title}}</div>
-<div style="color:#777;font-size:12px;"><strong>Created by </strong> <span id="chat_admin">{{chat.admin}}</span>, 
-	<span class="chat_time" id="{{chat.created_at}}"></span>
-	with Tags:
-	{% for tag in chat.tags %}
-		<span class="chat_tags"><a class="chat_link" href="{{site}}/t/{{tag.name}}">#{{tag.name}}</a> </span>
-	{% endfor %}
-</div>
-</div>
-<div class="top_5 {% if user.name == chat.admin or serial == chat.admin %} edit_details {% endif %}" id="curr_details" data-toggle="tooltip" data-placement="top" data-original-title="Click to edit description" data-container="body">
-{% if chat.details %}{{chat.details | slice(0,510) | raw}}{% if chat.details | length > 400 %}...<a id="continue_description" data-toggle="modal" data-target="#continue_modal" href="#" style="color:#075de9;word-break:break-all;">Continue</a>{% endif %}{% endif %}
-</div>
-<div class="modal fade" id="continue_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="continue_modalLabel">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Chat Description</h4>
-			</div>
-			<div class="modal-body">
-				<div id="curr_details">
-					{{chat.details | raw}}
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn" data-dismiss="modal">Close</button>
-			</div>
-		</div>
-	</div>	
-</div>
-{% if user.name == chat.admin or serial == chat.admin %}
-	<div class="modal fade" id="description_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="description_modalLabel">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title">Edit Chat Description</h4>
-				</div>
-				<div class="modal-body">
-					<textarea rows="7" id="detail_text">{{chat.raw_details | raw}}</textarea>
-				</div>
-				<div class="modal-footer">
-					<button class="btn btn-success" id="save_details">Save Details</button>
-				</div>
-			</div>
-		</div>	
-	</div>
+{% if chat.image %}
+	<a class="pull-left link_thumbnail" href="{{chat.link}}">
+		<img src="{{chat.image}}" alt="Image Error" width="80" height="80">
+	</a>
 {% endif %}
-{% endblock %}
-
-{% block members %}
-<div class="frame" style="height:550px;">
-	<div class="chat_title">
-		<div><strong>Chat Admin</strong></div>
-		<div id="display_admin">
-		
-		</div>
+<div class="static_chat_title">
+	{% if chat.seen %}
+		{% if chat.link %}
+			<a href="{{chat.link}}" style="color:purple;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+		{% else %}
+			<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:purple;">{{chat.title}}</a>
+		{% endif %}
+	{% else %}
+		{% if chat.link %}
+			<a href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+		{% else %}
+			<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
+		{% endif %}
+	{% endif %}
+	{% if chat.admin % 16777259 == 0 %}
+		<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><strong>{{chat.admin}}</strong></a>, 
+	{% else %}
+		<div class="chat_info">Created by <strong>{{chat.admin}}</strong>, 
+	{% endif %}
+		<span class="chat_time" id="{{chat.created_at}}"></span>
+		with Tags:
+		{% for tag in chat.tags %}
+			<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}" style="color:#075de9;">#{{tag.name}}</a> </span>
+		{% endfor %}
+		and <a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:gray;"><strong>{{chat.messages | length }} comments</strong></a>
 	</div>
-	<div class="chat_title">
-		<div><strong>Chat Moderators</strong></div>
-		<div id="display_mods">
-		
-		</div>
+	<div class="chat_details">
+		{{chat.details | raw}}
 	</div>
-	<div class="chat_title">
-		<div><strong>Chat Members</strong></div>
-		<div id="display_members">
-		
-		</div>
-	</div>
+</div>
+{% if not chat.live %}
+<form method="post" class="visible-xs" action="{{site}}/chat/message/{{chat.id}}">
+	<textarea rows="4" name="mssg_content"></textarea>
+	<button type="submit" class="btn btn-sm btn-primary">Send Message</button>
+</form>
+{% endif %}
 </div>
 {% endblock %}
 
-{% block content %}
-<div id="up_arr" style="display:none;">{{mssg_upvoted | json_encode()}}</div>
-<div id="down_arr" style="display:none;">{{mssg_downvoted | json_encode()}}</div>
-<div class="frame_cont">
-<div class="confirmation_box" id="action_confirmed"><div class="confirmation_inner"><div class="glyphicon glyphicon-ok check_mark"></div> <span id="modified_ident"></span> <span id="modified_message"></span></div></div>
-	<div id="notify_cont_top">
-		<div class="notify_position_top"><div class="glyphicon glyphicon-map-marker rotate notify_bubble"></div></div>
-		<div id="notify_text_top">0</div>
-	</div>
-	<div id="notify_cont_bottom">
-		<div class="notify_position_bottom"><div class="glyphicon glyphicon-map-marker notify_bubble"></div></div>
-		<div id="notify_text_bottom">0</div>
-	</div>
-	<div class="frame chat_main" id="chat_messages">
-		<div id="chat_display">
-		{% set prev_level = 0 %}
-		{% for message in chat.messages %}
+{% block chat_content %}
+<div id="reply_form_box" style="display:none;">
+<form method="post" id="reply_form" class="reply_forms" action="{{site}}/chat/message/{{chat.id}}">
+	<input type="hidden" name="reply_to" id="reply_to">
+	<textarea rows="3" name="mssg_content"></textarea>
+	<button type="submit" class="btn btn-sm btn-primary">Send Message</button>
+</form>
+</div>
+<div class="big_content_box" style="margin-top:15px;margin-bottom:15px;">
+	<div class="content_right">
+	<div class="content_left">
+		<div class="chat_content">
+		{% if messages %}
+		{% else %}
+			{% set messages = chat.messages %}
+		{% endif %}
+		{% for message in messages %}
+			{% if loop.first %}
+				{% set init_level = message.level %}
+			{% endif %}
 			{% if not loop.first and prev_level >= message.level %}
 				{% for i in message.level..prev_level %}
 					</div>
+					</div>
 				{% endfor %}
 			{% endif %}
-			{% if message.responseto == 0 %}
-			<div class="response_to_0 mssg_cont level_{{message.level}} parent_{{message.parent}}" id="mssg_cont_{{message.id}}">
+			{% if message.level == init_level %}
+			<div class="response_to_{{message.responseto}} mssg_cont level_{{message.level}} parent_{{message.parent}}" id="mssg_cont_{{message.id}}">
 			{% else %}
 			<div class="response_to_{{message.responseto}} mssg_cont level_{{message.level}} parent_{{message.parent}} pad_l_20" id="mssg_cont_{{message.id}}">
 			{% endif %}
+			<div class="mssg_cont_inner">
 				<div class="chat_mssg" id="message_{{message.id}}">
 					<div class="row" style="margin:0;">
 						<div class="mssg_body_cont">
-							<div class="vote_box">
+							<div class="chat_vote_box">
 								{% if message.id in mssg_upvoted %}
 									<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
 									<div class="upvote_count" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
@@ -266,6 +259,7 @@
 								{% endif %}
 								<strong class="mssg_op" data-author="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}} (<span class="response_count" id="{{message.id}}">{{message.responses}}</span>)</strong> : {{message.message | raw}}
 								<div class="time_box">
+									{% if not chat.live %}<div class="reply"><a href="#" class="reply_link" data-mssg-id="{{message.id}}"><strong>Reply</strong></a></div>{% endif %}
 									<div class="time" id="{{message.created_at}}" title="{{message.created_at}} UTC"></div>
 								</div>
 							</div>
@@ -274,11 +268,13 @@
 				</div>
 			{% set prev_level = message.level %}
 			{% if loop.last %}
-				{% if message.level > 0 %}
-					{% for i in 0..message.level %}
+				{% if message.level > init_level %}
+					{% for i in init_level..message.level %}
+						</div>
 						</div>
 					{% endfor %}
 				{% else %}
+					</div>
 					</div>
 				{% endif %}
 			{% endif %}
@@ -286,12 +282,6 @@
 		{% endfor %}
 		</div>
 	</div>
+	</div>
 </div>
-
-<textarea class="global" id="message" style="height:23%;">
-Press enter to send a message to all 
-</textarea>
-
-<div class="response_hint">Click on a message to respond to it</div>
-<div class="enter_hint">Press Shift+Enter for new line</div>
 {% endblock %}
