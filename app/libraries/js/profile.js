@@ -49,7 +49,7 @@ $(document).ready(function(){
 		});
 	}
 	$('.chat_mssg').click(function(){
-		window.location.href = "//mutualcog.com/chat/open/" + $('.chat_id_' + $(this).attr('id')).attr('id');
+		window.location.href = "//mutualcog.com/chat/live/" + $('.chat_id_' + $(this).attr('id')).attr('id');
 	});
 });
 

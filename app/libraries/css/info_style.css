@@ -268,6 +268,11 @@ select {
   padding-right:10px !important;
   padding-left:10px !important;
 }
+.advanced_create {
+  position:absolute;
+  top:15px;
+  right:15px;
+}
 .top_5 {
   margin-top:5px;
 }

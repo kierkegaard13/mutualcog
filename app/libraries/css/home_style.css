@@ -22,6 +22,9 @@ pre{
 pre code{
   white-space:normal;
 }
+.modal{
+  overflow-y:auto;
+}
 .form-group {
   margin-bottom:10px;
 }
@@ -246,10 +249,14 @@ select {
   transition:background-color .5s;
   -webkit-transition:background-color .5s;
 }
-.btn-primary:hover {
+.btn-primary:hover,.btn-primary:focus {
   background-color:#0549b7;
 }
 .btn-success {
+  transition:background-color .5s;
+  -webkit-transition:background-color .5s;
+}
+.btn-default {
   transition:background-color .5s;
   -webkit-transition:background-color .5s;
 }
@@ -365,6 +372,11 @@ select {
 .static_chat_title {
   padding-left:40px;
 }
+.advanced_create {
+  position:absolute;
+  top:15px;
+  right:15px;
+}
 .top_5 {
   margin-top:5px;
 }
@@ -408,6 +420,9 @@ select {
   color:#777;
   margin-top:-10px; 
   font-size:12px;
+}
+.request_glyph {
+  font-size:14px;
 }
 .content {
   padding:15px;
@@ -458,10 +473,6 @@ select {
 }
 .btn_btm_l {
   float:left;
-}
-.welcome_btn_cont {
-  height:25px;
-  margin-top:10px;
 }
 .suggested_tags {
   cursor:pointer;

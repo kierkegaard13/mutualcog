@@ -35,6 +35,7 @@ class T extends BaseController {
 		}
 		Session::put('curr_page',URL::full());
 		$view['home_active'] = '';
+		$view['sid'] = Session::getId();
 		$view['curr_tag'] = $curr_tag;
 		$view['upvoted'] = $upvoted;
 		$view['downvoted'] = $downvoted;

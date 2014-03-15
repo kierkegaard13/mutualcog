@@ -7,9 +7,9 @@
         <title>Mutual Cognizance</title>
 	<link rel="icon" href="{{base}}/GavinWeb.ico" type="image/x-icon">
         <link rel="stylesheet" href="{{base}}/app/libraries/css/dist/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="{{base}}/app/libraries/css/info_style.min.css" />
+        <link rel="stylesheet" href="{{base}}/app/libraries/css/info_style.min.css?{{version}}" />
         {% block styles %}{% endblock %}
-	<script src='{{base}}/app/libraries/js/common_alt.min.js'></script>
+	<script src='//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
 </head>
 <body>
 {% block header %}
@@ -25,9 +25,11 @@
 	</div>
 </div>
 </div>
+<script src='//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js'></script>
+<script src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js'></script>
 <script type="text/javascript">
 	document.writeln("<script type='text/javascript' src='{{base}}/app/libraries/css/dist/js/bootstrap.min.js'><" + "/script>");
-	document.writeln("<script type='text/javascript' src='{{base}}/app/libraries/js/info.min.js'><" + "/script>");
+	document.writeln("<script type='text/javascript' src='{{base}}/app/libraries/js/info.min.js?{{version}}'><" + "/script>");
 	  var _gaq = _gaq || [];
 	  _gaq.push(['_setAccount', 'UA-24332662-1']);
 	  _gaq.push(['_trackPageview']);

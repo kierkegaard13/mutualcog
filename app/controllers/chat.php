@@ -18,10 +18,13 @@ class Chat extends BaseController {
 		$mssg_upvoted = array();
 		$mssg_downvoted = array();
 		if(Auth::check()){
-			$elephant = new ElephantIO\Client('http://localhost:3000');
-			$elephant->init();
-			$elephant->emit('login',json_encode(array('sid' => Session::getId(), 'user_data' => array('id' => Auth::user()->id,'user' => Auth::user()->name,'serial' => Auth::user()->serial->serial_id,'serial_id' => Auth::user()->serial->id),'key' => 'pyWTPC2pqMCsmTEy')));
-			$elephant->close();
+			try{
+				$elephant = new ElephantIO\Client('http://localhost:3000');
+				$elephant->init();
+				$elephant->emit('login',json_encode(array('sid' => Session::getId(), 'user_data' => array('id' => Auth::user()->id,'user' => Auth::user()->name,'serial' => Auth::user()->serial->serial_id,'serial_id' => Auth::user()->serial->id),'key' => 'pyWTPC2pqMCsmTEy')));
+				$elephant->close();
+			}catch(Exception $e){
+			}
 			foreach(Auth::user()->upvotedChats() as $upvote){
 				$upvoted[] = $upvote->chat_id;
 			}
@@ -240,7 +243,11 @@ class Chat extends BaseController {
 		$view['mods'] = $mods;
 		if($mssg_id){
 			$message = Messages::find($mssg_id);
-			$view['messages'] = Messages::where('path','LIKE',"$message->path%")->orderBy('path')->get();
+			$view['messages'] = Messages::where('path','LIKE',"$message->path%")->where('h_level','<=','11')->where('level','<=','13')->orderBy('path')->get();
+			$view['recursive'] = 0;
+		}else{
+			$view['messages'] = $chat->messagesPaginate();
+			$view['recursive'] = 1;
 		}
                 return $view;
 	}
@@ -292,6 +299,7 @@ class Chat extends BaseController {
 				$message->level = $parent_mssg->level + 1;
 				$message->save();
 				$message->path = $parent_mssg->path . '.' . str_repeat('0', 8 - strlen((string)$message->id)) . $message->id;
+				$message->h_level = $parent_mssg->responses + 1;
 				$message->readable = 1;
 				$message->save();
 				$parent_mssg->responses = $parent_mssg->responses + 1;
@@ -302,9 +310,16 @@ class Chat extends BaseController {
 				$message->readable = 1;
 				$message->save();
 			}
+			if(Auth::check()){	
+				$mssg_voted = new MessagesVoted();
+				$mssg_voted->message_id = $message->id;
+				$mssg_voted->member_id = Auth::user()->id;
+				$mssg_voted->status = 1;
+				$mssg_voted->save();
+			}
 			return Redirect::to(Session::get('curr_page'));
 		}
-		return Redirect::to('chat/live/' . $chat_id);
+		return Redirect::to(action('chat@getLive',$chat_id));
 	}
 
 	public function getAdmin(){
@@ -421,7 +436,32 @@ class Chat extends BaseController {
 					$chat->site_name = $site_name;
 				}
 			}
-			$chat->type = 'live';
+			if(htmlentities(Input::get('description'))){
+				$details = htmlentities(Input::get('description'));
+				$chat->raw_details = $details;
+				$details = Parsedown::instance()->set_breaks_enabled(true)->parse($details);
+				$reg1 = '/(\s)(https?:\/\/)?([\da-z-\.]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/';
+				$reg2 = '/>(https?:\/\/)?([\da-z-\.]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/';
+				$reg3 = '/(img)(\s)(alt)/';
+				$details = preg_replace($reg1,"$1<a class='chat_link' href='\/\/$3.$4$5'>$3.$4$5</a>",$details);
+				$details = preg_replace($reg2,"><a class='chat_link' href='\/\/$2.$3$4'>$2.$3$4</a>",$details);
+				$details = preg_replace($reg3,"$1$2style='max-width:300px;max-height:200px;margin-bottom:5px;' $3",$details);
+				if(preg_match("/\/p\/([^\s]*)(<)/",$details)){
+					$details = preg_replace("/\/p\/([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/p/$1'>/p/$1</a>$2",$details);
+				}else{
+					$details = preg_replace("/\/p\/([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/p/$1'>/p/$1</a>$2",$details);
+				}
+				if(preg_match("/\/t\/([^\s]*)(<)/",$details)){
+					$details = preg_replace("/\/t\/([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/t/$1'>/t/$1</a>$2",$details);
+				}else{
+					$details = preg_replace("/\/t\/([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/t/$1'>/t/$1</a>$2",$details);
+				}
+				$chat->details = $details;
+			}
+			if(htmlentities(Input::get('live_status')) == 1 || htmlentities(Input::get('live_status')) == 0){
+				$chat->live = htmlentities(Input::get('live_status'));
+			}
+			$chat->type = 'open';
 			if(Auth::check()){
 				$chat->admin = Auth::user()->name;
 				$chat->admin_id = Auth::user()->id;
@@ -469,7 +509,11 @@ class Chat extends BaseController {
 					}
 				}
 			}
-			return Redirect::to(action('chat@getLive',$chat->id));
+			if($chat->live){
+				return Redirect::to(action('chat@getLive',$chat->id));
+			}else{
+				return Redirect::to(action('chat@getStatic',$chat->id));
+			}
 		}
 		return Redirect::to(Session::get('curr_page'));
 	}

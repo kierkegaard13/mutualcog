@@ -20,6 +20,8 @@ class BaseController extends Controller {
 		}
 		View::share('base',$this->base_url);
 		View::share('site',$this->site_url);
+		View::share('version','v=.1');
+		View::share('server_time',date(DATE_ATOM));
 		View::share('serial',Session::get('unique_serial'));
 		View::share('serial_id',Session::get('serial_id'));
 	}

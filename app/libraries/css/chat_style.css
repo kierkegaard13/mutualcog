@@ -342,8 +342,12 @@ code{
   margin-right:10px;
   margin-bottom:-5px;
 }
-.chat_title_cont {
-  display:inline-block;
+.chat_title_vote_box {
+  position:relative;
+  float:left;
+  margin-top:1px;
+  margin-right:10px;
+  margin-bottom:-5px;
 }
 .big_upvote {
   margin-top:-6px;
@@ -426,10 +430,14 @@ code{
   transition:background-color .5s;
   -webkit-transition:background-color .5s;
 }
-.btn-primary:hover {
+.btn-primary:hover,.btn-primary:focus {
   background-color:#0549b7;
 }
 .btn-success {
+  transition:background-color .5s;
+  -webkit-transition:background-color .5s;
+}
+.btn-default {
   transition:background-color .5s;
   -webkit-transition:background-color .5s;
 }
@@ -480,6 +488,11 @@ code{
   padding-bottom:10px;
   padding-right:10px !important;
   padding-left:10px !important;
+}
+.advanced_create {
+  position:absolute;
+  top:15px;
+  right:15px;
 }
 .top_5 {
   margin-top:5px;
@@ -663,6 +676,14 @@ select {
   position:relative;
   margin:0px auto;
 }
+.last_login {
+  color:#777;
+  margin-top:-10px; 
+  font-size:12px;
+}
+.request_glyph {
+  font-size:14px;
+}
 .content {
   padding:15px;
   position:relative;
@@ -738,10 +759,6 @@ select {
 }
 .btn_btm_l {
   float:left;
-}
-.welcome_btn_cont {
-  height:25px;
-  margin-top:10px;
 }
 .chat_id {
   margin-top:-5px;

@@ -79,7 +79,42 @@
 							{% else %}
 								<div class="chat_info">Created by <strong>{{post.admin}}</strong>, 
 							{% endif %}
-								<span class="chat_time" id="{{post.created_at}}"></span>
+								{% set time_passed = server_time|date('U') - post.created_at|date('U') %}
+								<span class="chat_time" id="{{post.created_at}}">
+									{% if time_passed < 45 %}
+										seconds ago
+									{% elseif time_passed < 2700 %}
+										{% if time_passed < 90 %}
+											a minute ago
+										{% else %}
+											{{(time_passed/60)|round}} minutes ago
+										{% endif %}
+									{% elseif time_passed < 79200%}
+										{% if time_passed < 5400 %}
+											an hour ago
+										{% else %}
+											{{(time_passed/3600)|round}} hours ago
+										{% endif %}
+									{% elseif time_passed < 2160000 %}
+										{% if time_passed < 129600 %}
+											a day ago
+										{% else %}
+											{{(time_passed/86400)|round}} days ago
+										{% endif %}
+									{% elseif time_passed < 29808000 %}
+										{% if time_passed < 3888000 %}
+											a month ago
+										{% else %}
+											{{(time_passed/2592000)|round}} months ago
+										{% endif %}
+									{% else %}
+										{% if time_passed < 47260800 %}
+											a year ago
+										{% else %}
+											{{(time_passed/31536000)|round}} years ago
+										{% endif %}
+									{% endif %}
+								</span>
 								with Tags:
 								{% for tag in post.tags %}
 									<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}" style="color:#075de9;">#{{tag.name}}</a> </span>
@@ -118,7 +153,42 @@
 						<strong class='mssg_op' id="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}} (<span class='response_count' id="{{message.id}}">{{message.responses}}</span>)</strong> : {{message.message | raw}}
 					</span>
 					<div>
-						<div class='time' id="{{message.created_at}}"></div>
+						{% set time_passed = server_time|date('U') - message.created_at|date('U') %}
+						<div class='time' id="{{message.created_at}}">
+							{% if time_passed < 45 %}
+								seconds ago
+							{% elseif time_passed < 2700 %}
+								{% if time_passed < 90 %}
+									a minute ago
+								{% else %}
+									{{(time_passed/60)|round}} minutes ago
+								{% endif %}
+							{% elseif time_passed < 79200%}
+								{% if time_passed < 5400 %}
+									an hour ago
+								{% else %}
+									{{(time_passed/3600)|round}} hours ago
+								{% endif %}
+							{% elseif time_passed < 2160000 %}
+								{% if time_passed < 129600 %}
+									a day ago
+								{% else %}
+									{{(time_passed/86400)|round}} days ago
+								{% endif %}
+							{% elseif time_passed < 29808000 %}
+								{% if time_passed < 3888000 %}
+									a month ago
+								{% else %}
+									{{(time_passed/2592000)|round}} months ago
+								{% endif %}
+							{% else %}
+								{% if time_passed < 47260800 %}
+									a year ago
+								{% else %}
+									{{(time_passed/31536000)|round}} years ago
+								{% endif %}
+							{% endif %}
+						</div>
 					</div>
 				</div>
 			{% endfor %}
@@ -148,5 +218,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{base}}/app/libraries/js/profile.min.js"></script>
+<script src="{{base}}/app/libraries/js/profile.min.js?{{version}}"></script>
 {% endblock %}

@@ -7,9 +7,9 @@
         <title>Mutual Cognizance</title>
 	<link rel="icon" href="{{base}}/GavinWeb.ico" type="image/x-icon">
         <link rel="stylesheet" href="{{base}}/app/libraries/css/dist/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="{{base}}/app/libraries/css/home_style.min.css" />
+        <link rel="stylesheet" href="{{base}}/app/libraries/css/home_style.min.css?{{version}}" />
         {% block styles %}{% endblock %}
-	<script src='{{base}}/app/libraries/js/common_alt.min.js'></script>
+	<script src='//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
 </head>
 <body>
 {% block header %}{% endblock %}
@@ -41,19 +41,22 @@
                                 </div>
 				</div>
                         </div>
-			{% block subscription %}{% endblock %}
-			{% block create %}{% endblock %}
-			{% block new_message %}{% endblock %}
-			{% block description %}{% endblock %}
-			{% block rules %}{% endblock %}
+			{% block side_1 %}{% endblock %}
+			{% block side_2 %}{% endblock %}
+			{% block side_3 %}{% endblock %}
+			{% block side_4 %}{% endblock %}
+			{% block side_5 %}{% endblock %}
                 </div>
         </div>
 </div>
 </div>
 </div>
+<script src="//localhost:3000/socket.io/socket.io.js"></script>
+<script src='//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js'></script>
+<script src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js'></script>
 <script type="text/javascript">
 	document.writeln("<script type='text/javascript' src='{{base}}/app/libraries/css/dist/js/bootstrap.min.js'><" + "/script>");
-	document.writeln("<script type='text/javascript' src='{{base}}/app/libraries/js/common.min.js'><" + "/script>");
+	document.writeln("<script type='text/javascript' src='{{base}}/app/libraries/js/common.min.js?{{version}}'><" + "/script>");
 	  var _gaq = _gaq || [];
 	  _gaq.push(['_setAccount', 'UA-24332662-1']);
 	  _gaq.push(['_trackPageview']);

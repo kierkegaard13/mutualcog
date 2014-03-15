@@ -276,15 +276,12 @@ io.sockets.on('connection', function(client) {
 					conn.where({id:info.insertId}).update('messages',{path:"0" + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id,readable:1},function(err,info){
 						if(err)console.log(err);
 					});
-				}else{
-					conn.where({id:event.responseto}).get('messages',function(err,rows){
+				}else{  //if it is a response
+					conn.where({id:event.responseto}).get('messages',function(err,rows){  //update response count, message path, and he_level and alert user to response
 						if(err)console.log(err);
-						conn.where({id:insert_id}).update('messages',{path:rows[0].path + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id,readable:1},function(err,info){
+						conn.where({id:insert_id}).update('messages',{path:rows[0].path + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id,h_level:rows[0].responses + 1,readable:1},function(err,info){
 							if(err)console.log(err);
 						});
-					});
-					conn.where({id:event.responseto}).get('messages',function(err,rows){
-						if(err)console.log(err);
 						conn.where({id:event.responseto}).update('messages',{responses:rows[0].responses + 1},function(err,info){
 							if(err)console.log(err);
 							io.sockets.in(client.room).emit('updateResponseCount',{count:rows[0].responses + 1,id:event.responseto,serial:rows[0].serial});
@@ -292,6 +289,11 @@ io.sockets.on('connection', function(client) {
 								io.sockets.in(client.room + '_member_' + rows[0].author).emit('alertUserToResponse',{mssg_id:event.responseto,resp_id:insert_id,parent:event.parent});
 							}
 						});
+					});
+				}
+				if(client.authorized){
+					conn.insert('messages_voted',{message_id:insert_id,member_id:client.memb_id,status:1},function(err,info){
+						if(err)console.log(err);
 					});
 				}
 				conn.where({serial_id:client.serial}).update('serials',{updated_at:moment.utc().format()},function(err,info){

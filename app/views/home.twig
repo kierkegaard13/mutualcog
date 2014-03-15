@@ -55,7 +55,18 @@
 {% endblock %}
 
 {% block welcome %}
-<div style="margin-bottom:10px;">Welcome, {% if not user %}<span id="serial_tracker">{{serial}}</span>{% else %}<span id="user_tracker">{{user.name}}</span>{% endif %}</div>
+<div style="display:none;" id="sid" data-sid="{{sid}}"></div>
+<div style="margin-bottom:10px;">Welcome, 
+{% if not user %}
+	<div id="serial_id" style="display:none;">{{serial_id}}</div>
+	<span id="serial_tracker">{{serial}}</span>
+{% else %}
+	<div id="serial_id" style="display:none;">{{serial_id}}</div>
+	<div id="serial_tracker" style="display:none;">{{serial}}</div>
+	<div id="user_id" style="display:none;">{{user.id}}</div>
+	<span id="user_tracker">{{user.name}}</span>
+{% endif %}
+</div>
 {% if not logged_in %}
 	<form method="post" action="{{site}}/profile/new-user" class="mutual_form" id="login_form">
 	<fieldset>
@@ -82,20 +93,26 @@
 	<select class="form-control">
 		<option value="">Visible and Evaluated</option>
 	</select>
-	<div class="welcome_btn_cont">
-		<a class="btn btn-success btn_btm_l btn-sm" href="{{site}}/p/{{user.name}}">My Profile</a>
-		<a class="btn btn-primary btn_btm_r btn-sm" href="{{site}}/profile/logout">Logout</a>
+	<div class="row" style="margin:10px 0 0 0;">
+		<button class="btn btn-sm col-xs-3 btn-default"><div class="glyphicon glyphicon-user request_glyph {% if user.friend_notes > 0 %}pull-left{% endif %}"></div><span class="badge pull-right">{% if user.friend_notes > 0 %}{{user.friend_notes}}{% endif %}</span></button>
+		<button class="btn btn-sm col-xs-offset-1 col-xs-4 btn-default"><div class="glyphicon glyphicon-comment request_glyph {% if user.mssg_notes > 0 %}pull-left{% endif %}"></div><span class="badge pull-right">{% if user.mssg_notes > 0 %}{{user.mssg_notes}}{% endif %}</span></button>
+		<button class="btn btn-sm col-xs-offset-1 col-xs-3 btn-default"><div class="glyphicon glyphicon-globe request_glyph {% if user.global_notes > 0 %}pull-left{% endif %}"></div><span class="badge pull-right">{% if user.global_notes > 0 %}{{user.global_notes}}{% endif %}</span></button>
+	</div>
+	<div class="row" style="margin:10px 0 0 0;">
+		<a class="btn btn-success col-xs-3 btn-sm" href="{{site}}/p/{{user.name}}">My Profile</a>
+		<a class="btn btn-primary col-xs-offset-6 col-xs-3 btn-sm" href="{{site}}/profile/logout">Logout</a>
 	</div>
 {% endif %}
 {% endblock %}
 
-{% block create %}
+{% block side_2 %}
                         <div class="small_content_box">
 				<div class="content_right">
 				<div class="content_left">
 					<div class="content side_content" id="create_cont">
 <form method="post" action="{{site}}/chat/new-chat" class="mutual_form" id="home_form">
 <fieldset>
+	<a class="btn btn-default btn-xs advanced_create" id="advanced_create" href="#" data-toggle="modal" data-target="advanced_modal"><div class="glyphicon glyphicon-cog advanced_cog" data-toggle="tooltip" data-original-title="Advanced options" data-container="body" data-placement="top"></div></a>
 	<legend>Create a new Chat</legend>
 	<div id="title_group" class="form-group">
 		<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Title must be longer than 2 characters but less than 180" data-trigger="focus" data-container="body" type="text" name="title" id="Title" placeholder="What's this chat about?">
@@ -104,7 +121,7 @@
 		<input class="form-control" type="text" name="link" id="Link" placeholder="Add a link (optional)">
 	</div>
 	<div id="tags_group" class="form-group">
-		<input class="form-control" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Tags" data-container="body" data-placement="bottom" type="text" name="tags" id="Tags" placeholder="Use spaces to separate tags (max: 5)" autocomplete="off">
+		<input class="form-control tags_input" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Tags" data-container="body" data-placement="bottom" type="text" name="tags" id="Tags" placeholder="Use spaces to separate tags (max: 5)" autocomplete="off">
 	</div>
 	<button class="btn btn-primary" type="Submit" style="width:100%;">Create</button>
 </fieldset>
@@ -113,9 +130,48 @@
                                 </div>
 				</div>
                         </div>
+<div class="modal fade" id="advanced_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="continue_modalLabel">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Advanced Chat Options</h4>
+			</div>
+			<div class="modal-body">
+				<form method="post" action="{{site}}/chat/new-chat" class="mutual_form" id="home_form_v2">
+				<fieldset>
+					<div id="title_group_v2" class="form-group">
+						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Title must be longer than 2 characters but less than 180" data-trigger="focus" type="text" name="title" id="Title_v2" placeholder="What's this chat about?">
+					</div>
+					<div id="link_group_v2" class="form-group">
+						<input class="form-control" type="text" name="link" id="Link_v2" placeholder="Add a link (optional)">
+					</div>
+					<div id="tags_group_v2" class="form-group">
+						<input class="form-control tags_input" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Tags" data-placement="bottom" type="text" name="tags" id="Tags_v2" placeholder="Use spaces to separate tags (max: 5)" autocomplete="off">
+					</div>
+					<div id="description_group" class="form-group">
+						<label for="description">Description</label>
+						<textarea name="description" class="form-control" id="description" rows="5"></textarea>
+					</div>
+					<div id="live_group" class="form-group">
+						<select class="form-control" name="live_status">
+							<option value="1">Live</option>
+							<option value="0">Static</option>
+						</select>
+					</div>
+				</fieldset>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" type="Submit">Create</button>
+				<button type="button" class="btn" data-dismiss="modal">Close</button>
+				</form>
+			</div>
+		</div>
+	</div>	
+</div>
 {% endblock %}
 
-{% block subscription %}
+{% block side_1 %}
 {% if not home_active %}
 	<div class="content_right">
 	<div class="content_left">
@@ -265,7 +321,42 @@
 			{% else %}
 				<div class="chat_info">Created by <strong>{{chat.admin}}</strong>, 
 			{% endif %}
-				<span class="chat_time" id="{{chat.created_at}}" title="{{chat.created_at}} UTC"></span>
+				{% set time_passed = server_time|date('U') - chat.created_at|date('U') %}
+				<span class="chat_time" id="{{chat.created_at}}" title="{{chat.created_at}} UTC">
+					{% if time_passed < 45 %}
+						seconds ago
+					{% elseif time_passed < 2700 %}
+						{% if time_passed < 90 %}
+							a minute ago
+						{% else %}
+							{{(time_passed/60)|round}} minutes ago
+						{% endif %}
+					{% elseif time_passed < 79200%}
+						{% if time_passed < 5400 %}
+							an hour ago
+						{% else %}
+							{{(time_passed/3600)|round}} hours ago
+						{% endif %}
+					{% elseif time_passed < 2160000 %}
+						{% if time_passed < 129600 %}
+							a day ago
+						{% else %}
+							{{(time_passed/86400)|round}} days ago
+						{% endif %}
+					{% elseif time_passed < 29808000 %}
+						{% if time_passed < 3888000 %}
+							a month ago
+						{% else %}
+							{{(time_passed/2592000)|round}} months ago
+						{% endif %}
+					{% else %}
+						{% if time_passed < 47260800 %}
+							a year ago
+						{% else %}
+							{{(time_passed/31536000)|round}} years ago
+						{% endif %}
+					{% endif %}
+				</span>
 				with Tags:
 				{% for tag in chat.tags %}
 					<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}" style="color:#075de9;">#{{tag.name}}</a> </span>

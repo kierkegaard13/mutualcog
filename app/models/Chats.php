@@ -13,6 +13,10 @@ class Chats extends EloquentBridge
 		return $this->hasMany('Messages','chat_id')->wherereadable('1')->whereresponseto('0')->orderBy('path');
 	}
 
+	public function messagesPaginate(){
+		return $this->hasMany('Messages','chat_id')->wherereadable('1')->whereresponseto('0')->with('descendants')->orderBy('path')->paginate(50);
+	}
+
 	public function tags(){
 		return $this->belongsToMany('Tags','chats_to_tags','chat_id','tag_id');
 	}
