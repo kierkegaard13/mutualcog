@@ -4,6 +4,7 @@ class BaseController extends Controller {
 
 	protected $base_url = 'http://localhost/laravel';
 	protected $site_url = 'http://mutualcog.com';
+	protected $io_url = 'http://localhost:3000';
 	protected $file_url = '/var/www/laravel';
 
 	/**
@@ -18,12 +19,47 @@ class BaseController extends Controller {
 		}else{
 			View::share('logged_in','0');
 		}
+		$this->sid = Session::getId();
+		View::share('sid',$this->sid);
 		View::share('base',$this->base_url);
 		View::share('site',$this->site_url);
 		View::share('version','v=.1');
 		View::share('server_time',date(DATE_ATOM));
 		View::share('serial',Session::get('unique_serial'));
 		View::share('serial_id',Session::get('serial_id'));
+	}
+
+	public function parseText($text){
+		$text = Parsedown::instance()->set_breaks_enabled(true)->parse($text);
+		$reg1 = '/(\s)(https?:\/\/)?([\da-z-\.]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/';
+		$reg2 = '/>(https?:\/\/)?([\da-z-\.]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/';
+		$reg3 = '/(img)(\s)(alt)/';
+		$text = preg_replace('/^<p>/','',$text);
+		$text = preg_replace('/<\/p>$/','',$text);
+		$text = preg_replace($reg1,"$1<a class='chat_link' href='\/\/$3.$4$5'>$3.$4$5</a>",$text);
+		$text = preg_replace($reg2,"><a class='chat_link' href='\/\/$2.$3$4'>$2.$3$4</a>",$text);
+		$text = preg_replace($reg3,"$1$2style='max-width:300px;max-height:200px;margin-bottom:5px;' $3",$text);
+		if(preg_match("/\/p\/([^\s]*)(<)/",$text)){
+			$text = preg_replace("/\/p\/([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/p/$1'>/p/$1</a>$2",$text);
+		}else{
+			$text = preg_replace("/\/p\/([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/p/$1'>/p/$1</a>$2",$text);
+		}
+		if(preg_match("/\/t\/([^\s]*)(<)/",$text)){
+			$text = preg_replace("/\/t\/([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/t/$1'>/t/$1</a>$2",$text);
+		}else{
+			$text = preg_replace("/\/t\/([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/t/$1'>/t/$1</a>$2",$text);
+		}
+		if(preg_match("/\@([^\s]*)(<)/",$text)){
+			$text = preg_replace("/\@([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/p/$1'>@$1</a>$2",$text);
+		}else{
+			$text = preg_replace("/\@([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/p/$1'>@$1</a>$2",$text);
+		}
+		if(preg_match("/\#([^\s]*)(<)/",$text)){
+			$text = preg_replace("/\#([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/t/$1'>#$1</a>$2",$text);
+		}else{
+			$text = preg_replace("/\#([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/t/$1'>#$1</a>$2",$text);
+		}
+		return $text;
 	}
 
 	protected function setupLayout()

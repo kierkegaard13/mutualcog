@@ -94,9 +94,9 @@
 		<option value="">Visible and Evaluated</option>
 	</select>
 	<div class="row" style="margin:10px 0 0 0;">
-		<button class="btn btn-sm col-xs-3 btn-default"><div class="glyphicon glyphicon-user request_glyph {% if user.friend_notes > 0 %}pull-left{% endif %}"></div><span class="badge pull-right">{% if user.friend_notes > 0 %}{{user.friend_notes}}{% endif %}</span></button>
-		<button class="btn btn-sm col-xs-offset-1 col-xs-4 btn-default"><div class="glyphicon glyphicon-comment request_glyph {% if user.mssg_notes > 0 %}pull-left{% endif %}"></div><span class="badge pull-right">{% if user.mssg_notes > 0 %}{{user.mssg_notes}}{% endif %}</span></button>
-		<button class="btn btn-sm col-xs-offset-1 col-xs-3 btn-default"><div class="glyphicon glyphicon-globe request_glyph {% if user.global_notes > 0 %}pull-left{% endif %}"></div><span class="badge pull-right">{% if user.global_notes > 0 %}{{user.global_notes}}{% endif %}</span></button>
+		<button class="btn btn-sm col-xs-3 btn-default"><div class="glyphicon glyphicon-user request_glyph {% if user.friend_notes > 0 %}pull-left{% endif %}"></div><span class="badge pull-right">{% if user.friend_requests > 0 %}{{user.friend_requests}}{% endif %}</span></button>
+		<button class="btn btn-sm col-xs-offset-1 col-xs-4 btn-default"><div class="glyphicon glyphicon-comment request_glyph {% if user.mssg_notes > 0 %}pull-left{% endif %}"></div><span class="badge pull-right">{% if user.mssg_requests > 0 %}{{user.mssg_requests}}{% endif %}</span></button>
+		<button class="btn btn-sm col-xs-offset-1 col-xs-3 btn-default"><div class="glyphicon glyphicon-globe request_glyph {% if user.global_notes > 0 %}pull-left{% endif %}"></div><span class="badge pull-right">{% if user.global_requests > 0 %}{{user.global_requests}}{% endif %}</span></button>
 	</div>
 	<div class="row" style="margin:10px 0 0 0;">
 		<a class="btn btn-success col-xs-3 btn-sm" href="{{site}}/p/{{user.name}}">My Profile</a>

@@ -11,20 +11,12 @@ class Chat extends BaseController {
 		$chat->views = $chat->views + 1;
 		$chat->save();
 		$user = Serials::whereserial_id(Session::get('unique_serial'))->first();
-		$user->reserved = 1;
 		$user->save();
 		$upvoted = array();
 		$downvoted = array();
 		$mssg_upvoted = array();
 		$mssg_downvoted = array();
 		if(Auth::check()){
-			try{
-				$elephant = new ElephantIO\Client('http://localhost:3000');
-				$elephant->init();
-				$elephant->emit('login',json_encode(array('sid' => Session::getId(), 'user_data' => array('id' => Auth::user()->id,'user' => Auth::user()->name,'serial' => Auth::user()->serial->serial_id,'serial_id' => Auth::user()->serial->id),'key' => 'pyWTPC2pqMCsmTEy')));
-				$elephant->close();
-			}catch(Exception $e){
-			}
 			foreach(Auth::user()->upvotedChats() as $upvote){
 				$upvoted[] = $upvote->chat_id;
 			}
@@ -144,7 +136,6 @@ class Chat extends BaseController {
 		}
 		Session::put('curr_page',URL::full());
 		$view['color_arr'] = array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#000');
-		$view['sid'] = Session::getId();
 		$view['tag_headers'] = $tags;
 		$view['tags'] = $tag_arr;
 		$view['curr_time'] = date('Y:m:d:H:i');
@@ -231,7 +222,6 @@ class Chat extends BaseController {
 		}
 		Session::put('curr_page',URL::full());
 		$view['color_arr'] = array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#000');
-		$view['sid'] = Session::getId();
 		$view['tag_headers'] = $tags;
 		$view['tags'] = $tag_arr;
 		$view['curr_time'] = date('Y:m:d:H:i');
@@ -258,26 +248,7 @@ class Chat extends BaseController {
 			$message = new Messages();
 			$message->chat_id = htmlentities($chat_id);
 			$mssg_content = htmlentities(Input::get('mssg_content'));
-			$mssg_content = Parsedown::instance()->set_breaks_enabled(true)->parse($mssg_content);
-			$reg1 = '/(\s)(https?:\/\/)?([\da-z-\.]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/';
-			$reg2 = '/>(https?:\/\/)?([\da-z-\.]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/';
-			$reg3 = '/(img)(\s)(alt)/';
-			$mssg_content = preg_replace('/^<p>/','',$mssg_content);
-			$mssg_content = preg_replace('/<\/p>$/','',$mssg_content);
-			$mssg_content = preg_replace($reg1,"$1<a class='chat_link' href='\/\/$3.$4$5'>$3.$4$5</a>",$mssg_content);
-			$mssg_content = preg_replace($reg2,"><a class='chat_link' href='\/\/$2.$3$4'>$2.$3$4</a>",$mssg_content);
-			$mssg_content = preg_replace($reg3,"$1$2style='max-width:300px;max-height:200px;margin-bottom:5px;' $3",$mssg_content);
-			if(preg_match("/\/p\/([^\s]*)(<)/",$mssg_content)){
-				$mssg_content = preg_replace("/\/p\/([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/p/$1'>/p/$1</a>$2",$mssg_content);
-			}else{
-				$mssg_content = preg_replace("/\/p\/([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/p/$1'>/p/$1</a>$2",$mssg_content);
-			}
-			if(preg_match("/\/t\/([^\s]*)(<)/",$mssg_content)){
-				$mssg_content = preg_replace("/\/t\/([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/t/$1'>/t/$1</a>$2",$mssg_content);
-			}else{
-				$mssg_content = preg_replace("/\/t\/([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/t/$1'>/t/$1</a>$2",$mssg_content);
-			}
-			$message->message = $mssg_content;
+			$message->message = $this->parseText($mssg_content);
 			if(Auth::check()){
 				$message->member_id = Auth::user()->id;
 				$message->author = Auth::user()->name;
@@ -322,6 +293,46 @@ class Chat extends BaseController {
 		return Redirect::to(action('chat@getLive',$chat_id));
 	}
 
+	public function getPauseChat($chat_id){
+		$chat = Chats::find($chat_id);
+		if(Auth::check()){
+			if(Auth::user()->name == $chat->admin){
+				$chat->live = 0;
+				$chat->save();
+			}else{
+				return Redirect::to(Session::get('curr_page'));
+			}	
+		}else{
+			if(Session::get('unique_serial') == $chat->admin){
+				$chat->live = 0;
+				$chat->save();
+			}else{
+				return Redirect::to(Session::get('curr_page'));
+			}
+		}	
+		return Redirect::to(action('chat@getStatic',$chat_id));
+	}
+
+	public function getPlayChat($chat_id){
+		$chat = Chats::find($chat_id);
+		if(Auth::check()){
+			if(Auth::user()->name == $chat->admin){
+				$chat->live = 1;
+				$chat->save();
+			}else{
+				return Redirect::to(Session::get('curr_page'));
+			}	
+		}else{
+			if(Session::get('unique_serial') == $chat->admin){
+				$chat->live = 1;
+				$chat->save();
+			}else{
+				return Redirect::to(Session::get('curr_page'));
+			}
+		}	
+		return Redirect::to(action('chat@getLive',$chat_id));
+	}
+
 	public function getAdmin(){
 		$chat = Chats::find(Input::get('id'));
 		return $chat->admin;
@@ -348,24 +359,7 @@ class Chat extends BaseController {
 			if(Session::get('unique_serial') == $chat->admin || Auth::user()->name == $chat->admin){
 				$details = htmlentities(Input::get('details'));
 				$chat->raw_details = $details;
-				$details = Parsedown::instance()->set_breaks_enabled(true)->parse($details);
-				$reg1 = '/(\s)(https?:\/\/)?([\da-z-\.]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/';
-				$reg2 = '/>(https?:\/\/)?([\da-z-\.]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/';
-				$reg3 = '/(img)(\s)(alt)/';
-				$details = preg_replace($reg1,"$1<a class='chat_link' href='\/\/$3.$4$5'>$3.$4$5</a>",$details);
-				$details = preg_replace($reg2,"><a class='chat_link' href='\/\/$2.$3$4'>$2.$3$4</a>",$details);
-				$details = preg_replace($reg3,"$1$2style='max-width:300px;max-height:200px;margin-bottom:5px;' $3",$details);
-				if(preg_match("/\/p\/([^\s]*)(<)/",$details)){
-					$details = preg_replace("/\/p\/([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/p/$1'>/p/$1</a>$2",$details);
-				}else{
-					$details = preg_replace("/\/p\/([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/p/$1'>/p/$1</a>$2",$details);
-				}
-				if(preg_match("/\/t\/([^\s]*)(<)/",$details)){
-					$details = preg_replace("/\/t\/([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/t/$1'>/t/$1</a>$2",$details);
-				}else{
-					$details = preg_replace("/\/t\/([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/t/$1'>/t/$1</a>$2",$details);
-				}
-				$chat->details = $details;
+				$chat->details = $this->parseText($details);
 				$chat->save();
 				return $chat->details;	
 			}
@@ -439,24 +433,7 @@ class Chat extends BaseController {
 			if(htmlentities(Input::get('description'))){
 				$details = htmlentities(Input::get('description'));
 				$chat->raw_details = $details;
-				$details = Parsedown::instance()->set_breaks_enabled(true)->parse($details);
-				$reg1 = '/(\s)(https?:\/\/)?([\da-z-\.]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/';
-				$reg2 = '/>(https?:\/\/)?([\da-z-\.]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/';
-				$reg3 = '/(img)(\s)(alt)/';
-				$details = preg_replace($reg1,"$1<a class='chat_link' href='\/\/$3.$4$5'>$3.$4$5</a>",$details);
-				$details = preg_replace($reg2,"><a class='chat_link' href='\/\/$2.$3$4'>$2.$3$4</a>",$details);
-				$details = preg_replace($reg3,"$1$2style='max-width:300px;max-height:200px;margin-bottom:5px;' $3",$details);
-				if(preg_match("/\/p\/([^\s]*)(<)/",$details)){
-					$details = preg_replace("/\/p\/([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/p/$1'>/p/$1</a>$2",$details);
-				}else{
-					$details = preg_replace("/\/p\/([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/p/$1'>/p/$1</a>$2",$details);
-				}
-				if(preg_match("/\/t\/([^\s]*)(<)/",$details)){
-					$details = preg_replace("/\/t\/([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/t/$1'>/t/$1</a>$2",$details);
-				}else{
-					$details = preg_replace("/\/t\/([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/t/$1'>/t/$1</a>$2",$details);
-				}
-				$chat->details = $details;
+				$chat->details = $this->parseText($details);
 			}
 			if(htmlentities(Input::get('live_status')) == 1 || htmlentities(Input::get('live_status')) == 0){
 				$chat->live = htmlentities(Input::get('live_status'));

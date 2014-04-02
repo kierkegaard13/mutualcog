@@ -1,6 +1,19 @@
 <?php
 
 class Profile extends BaseController {
+
+	public function getRequestFriend($friend_id){
+		if(Auth::check()){
+			try{
+				$elephant = new ElephantIO\Client($this->io_url);
+				$elephant->init();
+				$elephant->emit('login',json_encode(array('sid' => Session::getId(), 'user_data' => array('id' => Auth::user()->id,'user' => Auth::user()->name,'serial' => Auth::user()->serial->serial_id,'serial_id' => Auth::user()->serial->id),'key' => 'pyWTPC2pqMCsmTEy')));
+				$elephant->close();
+			}catch(Exception $e){
+			}
+		}
+		return Redirect::to(Session::get('curr_page'));
+	}
 	
 	public function getFriend($friend_id){
 		if(!isset($friend_id)){
@@ -46,8 +59,8 @@ class Profile extends BaseController {
 					->wheretype('friendship')
 					->first();
 				if($interaction){
-					$interaction->friended = 1;
-					$interaction->bond = $interaction->bond + 50;
+					$interaction->friended = 0;
+					$interaction->bond = $interaction->bond - 50;
 					$interaction->save();
 				}
 			}
@@ -90,23 +103,7 @@ class Profile extends BaseController {
 			if(Auth::user()->name == $profile->name){
 				$about = htmlentities(Input::get('about'));
 				$about_raw = $about;
-				$about = Parsedown::instance()->set_breaks_enabled(true)->parse($about);
-				$reg1 = '/(\s)(https?:\/\/)?([\da-z-\.]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/';
-				$reg2 = '/>(https?:\/\/)?([\da-z-\.]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/';
-				$reg3 = '/(img)(\s)(alt)/';
-				$about = preg_replace($reg1,"$1<a class='chat_link' href='\/\/$3.$4$5'>$3.$4$5</a>",$about);
-				$about = preg_replace($reg2,"><a class='chat_link' href='\/\/$2.$3$4'>$2.$3$4</a>",$about);
-				$about = preg_replace($reg3,"$1$2style='max-width:300px;max-height:200px;margin-bottom:5px;' $3",$about);
-				if(preg_match("/\/p\/([^\s]*)(<)/",$about)){
-					$about = preg_replace("/\/p\/([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/p/$1'>/p/$1</a>$2",$about);
-				}else{
-					$about = preg_replace("/\/p\/([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/p/$1'>/p/$1</a>$2",$about);
-				}
-				if(preg_match("/\/t\/([^\s]*)(<)/",$about)){
-					$about = preg_replace("/\/t\/([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/t/$1'>/t/$1</a>$2",$about);
-				}else{
-					$about = preg_replace("/\/t\/([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/t/$1'>/t/$1</a>$2",$about);
-				}
+				$about = $this->parseText($about);
 				$about = str_replace('[comment]','<!--',$about);
 				$about = str_replace('[/comment]','-->',$about);
 				$profile->about_raw = $about_raw;
@@ -153,11 +150,13 @@ class Profile extends BaseController {
 	}
 
 	public function getLogout(){
+		$node = new NodeAuth();
+		$node->user_id = Auth::user()->id;
+		$node->user = Auth::user()->name;
+		$node = $node->findAll();
+		$node->authorized = 0;
+		$node->save();
 		Auth::logout();
-		$elephant = new ElephantIO\Client('http://localhost:3000');
-		$elephant->init();
-		$elephant->emit('logoff',json_encode(array('sid' => Session::getId(),'key' => 'pyWTPC2pqMCsmTEy')));
-		$elephant->close();
 		return Redirect::to(Session::get('curr_page'));
 	}
 
@@ -175,9 +174,26 @@ class Profile extends BaseController {
 			if($user->findAll()){
 				$user = $user->findAll();
 				if(Crypt::decrypt($user->password) == $pass && $pass == $pass2){
+					Auth::login($user);
 					$user->last_login = date(DATE_ATOM);
 					$user->save();
-					Auth::login($user);
+					$node = new NodeAuth();
+					$node->user_id = $user->id;
+					$node->user = $user->name;
+					if($node->findAll()){
+						$node = $node->findAll();
+						$node->serial = Session::get('unique_serial');
+						$node->serial_id = Session::get('serial_id');
+						$node->sid = Session::getId();
+						$node->authorized = 1;
+						$node->save();
+					}else{
+						$node->serial = Session::get('unique_serial');
+						$node->serial_id = Session::get('serial_id');
+						$node->sid = Session::getId();
+						$node->authorized = 1;
+						$node->save();
+					}
 				}
 				return Redirect::to(Session::get('curr_page'));
 			}
@@ -195,6 +211,23 @@ class Profile extends BaseController {
 				$user->serial_id = Session::get('serial_id');
 				$user->save();
 				Auth::login($user);
+				$node = new NodeAuth();
+				$node->user_id = $user->id;
+				$node->user = $user->name;
+				if($node->findAll()){
+					$node = $node->findAll();
+					$node->serial = Session::get('unique_serial');
+					$node->serial_id = Session::get('serial_id');
+					$node->sid = Session::getId();
+					$node->authorized = 1;
+					$node->save();
+				}else{
+					$node->serial = Session::get('unique_serial');
+					$node->serial_id = Session::get('serial_id');
+					$node->sid = Session::getId();
+					$node->authorized = 1;
+					$node->save();
+				}
 			}
 			return Redirect::to(Session::get('curr_page'));
 		}else{

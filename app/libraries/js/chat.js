@@ -5,7 +5,7 @@ module = function(){
 	var chat_id = $('.chat_id').attr('id');
 	var upvoted = jQuery.parseJSON($('#up_arr').text());
 	var downvoted = jQuery.parseJSON($('#down_arr').text());
-	var socket = io.connect('http://localhost:3000/',{query:"sid=" + $('#sid').attr('data-sid')});
+	var socket = io.connect('http://localhost:3000/',{query:"sid=" + $('#sid').attr('data-sid') + "&serial=" + $('#serial_tracker').text()});
 	var color_arr = new Array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#050a57');
 	var mems = new Array();
 	var mods = new Array();
@@ -811,24 +811,10 @@ module.socket.on('check_live',function(live){
 		$('#paused_message').hide('fade','show',function(){
 			$('#paused_message').remove();
 		});
-		if(!$('#pause_chat').hasClass('pause')){
-			$('#pause_chat').removeClass('play');
-			$('#pause_chat').removeClass('glyphicon-play');	
-			$('#pause_chat').addClass('glyphicon-pause');
-			$('#pause_chat').addClass('pause');
-			$('#pause_chat').attr('data-original-title','Pause chat');
-		}
 	}else{
 		module.live = 0;
 		$('#main').append('<div class="chat_paused" id="paused_message">Chat has been paused</div>');
 		$('#paused_message').show('fade','show');
-		if($('#pause_chat').hasClass('pause')){
-			$('#pause_chat').removeClass('pause');
-			$('#pause_chat').removeClass('glyphicon-pause');
-			$('#pause_chat').addClass('glyphicon-play');	
-			$('#pause_chat').addClass('play');
-			$('#pause_chat').attr('data-original-title','Play chat');
-		}
 	}
 	$('.mssg_icon').tooltip();
 	$('#notify_cont_top').on('click',find_top_notifications);

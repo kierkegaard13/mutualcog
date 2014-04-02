@@ -480,6 +480,31 @@ select {
 .suggested_tags:hover {
   color:#57bf4b;
 }
+.tool_box {
+  z-index:5;
+}
+a.mod_power {
+  text-decoration:none;
+  display:inline;
+}
+.pause {
+  color:black;
+  transition:color .5s;
+  -webkit-transition:color .5s;
+}
+.pause:hover {
+  cursor:pointer;
+  color:#E8DA00;
+}
+.play {
+  color:black;
+  transition:color .5s;
+  -webkit-transition:color .5s;
+}
+.play:hover {
+  cursor:pointer;
+  color:#3FE81F;
+}
 .box_r_0 {
   height:55px !important;
   text-align:center !important;

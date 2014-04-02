@@ -18,7 +18,6 @@ marked.setOptions({
 
 process.env.TZ = 'UTC';
 var clients = new Array();
-var authorized = new Array();
 
 function hashHtml(text){
 	return text.replace(/#/,'&#035;');
@@ -37,6 +36,8 @@ function processMessage(message){
 	var url_reg3 = /(img)(\s)(src\=)/g;
 	var t_reg = /\/t\/([^\s]*)(\s*)/g; 
 	var p_reg = /\/p\/([^\s]*)(\s*)/g; 
+	var at_reg = /\@([^\s]*)(\s*)/g;
+	var hash_reg = /\&\#035\;([^\s]*)(\s*)/g; 
 	var re1 = new RegExp('^<p>','g');
 	var re2 = new RegExp('</p>$','g');
 	message = hashHtml(message);
@@ -47,6 +48,8 @@ function processMessage(message){
 		message = message.replace(re2,'');
 		message = message.replace(p_reg,"<a class='chat_link' href='\/\/mutualcog.com/p/$1'>\/p\/$1</a>$2");
 		message = message.replace(t_reg,"<a class='chat_link' href='\/\/mutualcog.com/t/$1'>\/t\/$1</a>$2");
+		message = message.replace(at_reg,"<a class='chat_link' href='\/\/mutualcog.com/p/$1'>@$1</a>$2");
+		message = message.replace(hash_reg,"<a class='chat_link' href='\/\/mutualcog.com/t/$1'>#$1</a>$2");
 		message = message.replace(url_reg,"$1<a class='chat_link' href='\/\/$3\.$4$5'>$3\.$4$5</a>");
 		message = message.replace(url_reg2,"<a class='chat_link' href='\/\/$2\.$3$4'>$2\.$3$4</a>");
 		message = message.replace(url_reg3,"$1$2style='max-width:300px;max-height:200px;margin-bottom:5px;' $3");
@@ -67,21 +70,23 @@ function repeatString(x,n){
 
 var io = require('socket.io').listen(3000);
 
-io.set('authorization',function(handshake,cb){
+io.set('authorization',function(handshake,cb){  //find out if user is logged in
 	handshake.sid = handshake.query.sid;
-	if(handshake.sid in authorized){
-		var user_data = authorized[handshake.sid];
-		handshake.authorized = 1;
-		handshake.user = user_data.user;
-		handshake.user_id = user_data.id;
-		handshake.memb_id = user_data.id;
-		handshake.serial = user_data.serial;
-		handshake.serial_id = user_data.serial_id;
-		delete authorized[handshake.sid];
-	}else{
-		handshake.authorized = 0;
-	}
-	cb(null,true);
+	handshake.serial = handshake.query.serial;
+	conn.where({sid:handshake.sid,serial:handshake.serial,authorized:1}).get('node_auth',function(err,rows){
+		if(err)console.log(err);
+		if(rows.length > 0){
+			handshake.authorized = 1;
+			handshake.user = rows[0].user;
+			handshake.user_id = rows[0].user_id;
+			handshake.memb_id = rows[0].user_id;
+			handshake.serial = rows[0].serial;
+			handshake.serial_id = rows[0].serial_id;
+		}else{
+			handshake.authorized = 0;
+		}
+		cb(null,true);
+	});
 });
 
 io.sockets.on('connection', function(client) {
@@ -99,20 +104,6 @@ io.sockets.on('connection', function(client) {
 	}else{
 		client.authorized = handshake.authorized;
 	}
-
-	client.on('login',function(message){
-		message = JSON.parse(message);
-		if(message.key == 'pyWTPC2pqMCsmTEy'){
-			authorized[message.sid] = message.user_data;
-		}
-	});
-
-	client.on('logoff',function(message){
-		message = JSON.parse(message);
-		if(message.key == 'pyWTPC2pqMCsmTEy'){
-			delete authorized[message.sid];
-		}
-	});
 
 	//client variable unique to user but globals apply to all
 	client.on('room',function(room){
@@ -161,7 +152,7 @@ io.sockets.on('connection', function(client) {
 					io.sockets.in(client.room).emit('displayMembers',{members:rows,mod:0,add:0,remove:0});
 				});
 			});
-			conn.where({member_id:client.memb_id,chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
+			conn.where({member_id:client.memb_id,chat_id:client.chat_id,user:client.user}).get('members_to_chats',function(err,rows){
 				if(err)console.log(err);
 				client.is_mod = rows[0].is_mod;
 				client.is_admin = rows[0].is_admin;

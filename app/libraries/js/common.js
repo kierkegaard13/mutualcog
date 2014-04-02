@@ -27,6 +27,7 @@ $(document).ready(function(){
 	setInterval(updateChatTimes,60000);
 	$('.chat_status_indicator').tooltip();
 	$('.advanced_cog').tooltip();
+	$('#pause_chat').tooltip();
 	$('.mssg_upvote').on('click',upvoteMssg);
 	$('.mssg_downvote').on('click',downvoteMssg);
 	var reply_form = $('#reply_form').clone();;

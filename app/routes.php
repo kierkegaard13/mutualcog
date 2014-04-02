@@ -24,7 +24,7 @@ function getUniqueSerialNumber($serial_number=null){
 		list($year,$month,$day,$hour,$minute) = explode(':',$curr_date);
 		$temp_date = date('Y:m:d:H:i',strtotime($temp->updated_at));
 		list($t_year,$t_month,$t_day,$t_hour,$t_minute) = explode(':',$temp_date);
-		if(($year > $t_year || $month > $t_month || $day > $t_day || ($hour * 60 + $minute) > ($t_hour * 60 + $t_minute) + 481) && $temp->reserved == 0){
+		if(($year > $t_year || $month > $t_month || $day > $t_day || ($hour * 60 + $minute) > ($t_hour * 60 + $t_minute) + 481)){
 			$temp->save();
 			if(Auth::check()){
 				Auth::user()->serial_id = $temp->id;

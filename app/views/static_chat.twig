@@ -54,6 +54,29 @@
 </nav>
 {% endblock %}
 
+{% block tools %}
+{% if user.name == chat.admin or serial == chat.admin %}
+                        <div class="small_content_box tool_box">
+				<div class="content_right">
+				<div class="content_left">
+					<div class="content box_r_0">
+<div id="user_toolbox">
+	{% if chat.live %}
+		<a href="{{site}}/chat/pause-chat/{{chat.id}}" class="glyphicon glyphicon-pause pause mod_power" id="pause_chat" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Pause chat"></a>
+	{% else %}
+		<a href="{{site}}/chat/play-chat/{{chat.id}}" class="glyphicon glyphicon-play play mod_power" id="pause_chat" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Play chat"></a>
+	{% endif %}
+	<!--<span class="glyphicon glyphicon-tower mod_power" id="mod_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Grant holy moderation powers"></span>
+	<span class="glyphicon glyphicon-warning-sign mod_power" id="warn_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Warn user"></span>
+	<span class="glyphicon glyphicon-remove mod_power" id="kick_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Kick user"></span>-->
+</div>
+					</div>
+                                </div>
+				</div>
+                        </div>
+{% endif %}
+{% endblock %}
+
 {% block welcome %}
 <div style="display:none;" id="sid" data-sid="{{sid}}"></div>
 <div style="margin-bottom:10px;">Welcome, 
@@ -210,6 +233,11 @@
 	<a class="pull-left link_thumbnail" href="{{chat.link}}">
 		<img src="{{chat.image}}" alt="Image Error" width="80" height="80">
 	</a>
+{% endif %}
+{% if chat.live %}
+	<div class="pull-right big_green_ball chat_status_indicator" data-toggle="tooltip" data-original-title="Live Chat" data-container="body" data-placement="top"></div>
+{% else %}
+	<div class="pull-right big_yellow_ball chat_status_indicator" data-toggle="tooltip" data-original-title="Static Chat" data-container="body" data-placement="top"></div>
 {% endif %}
 <div class="static_chat_title">
 	{% if chat.seen %}
@@ -526,6 +554,13 @@
 			{% endif %}
 		{% else %}
 		{% endfor %}
+		<div class="page_links">
+			{{messages.links|raw}}
+		</div>
+		<div class="policy">
+			<span style="margin-left:-104px;"><a href="{{site}}/privacy">Privacy Policy</a></span> |
+			<span><a href="{{site}}/terms">Terms of Use</a></span>
+		</div>
 		</div>
 	</div>
 	</div>

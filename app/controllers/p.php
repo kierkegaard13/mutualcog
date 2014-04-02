@@ -13,7 +13,9 @@ class P extends BaseController {
 		$user = new User();
 		$user->name = $username;
 		$user = $user->findAll();
+		$requested = 0;
 		if(Auth::check()){
+			$requested = count(Requests::wheresender_id(Auth::user()->id)->whereuser_id($user->id)->wheretype(2)->first());
 			foreach(Auth::user()->upvotedChats() as $upvote){
 				$upvoted[] = $upvote->chat_id;
 			}
@@ -37,6 +39,7 @@ class P extends BaseController {
 			}
 		}
 		Session::put('curr_page',URL::full());
+		$view['requested'] = $requested;
 		$view['friendships'] = $user->friendships;
 		$view['color_arr'] = array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#000');
 		$view['upvoted'] = $upvoted;

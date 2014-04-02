@@ -61,7 +61,11 @@
 	<span class="glyphicon glyphicon-stop" id="stop_scroll" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Stop scrollbar"></span>
 	<!--<span class="glyphicon glyphicon-list" id="show_members" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Show chat members"></span>-->
 	{% if user.name == chat.admin or serial == chat.admin %}
-	<span class="glyphicon glyphicon-pause pause mod_power" id="pause_chat" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Pause chat"></span>
+	{% if chat.live %}
+		<span class="glyphicon glyphicon-pause pause mod_power" id="pause_chat" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Pause chat"></span>
+	{% else %}
+		<span class="glyphicon glyphicon-play play mod_power" id="pause_chat" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Play chat"></span>
+	{% endif %}
 	<span class="glyphicon glyphicon-tower mod_power" id="mod_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Grant holy moderation powers"></span>
 	<span class="glyphicon glyphicon-warning-sign mod_power" id="warn_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Warn user"></span>
 	<span class="glyphicon glyphicon-remove mod_power" id="kick_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Kick user"></span>
