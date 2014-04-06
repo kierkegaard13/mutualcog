@@ -51,16 +51,16 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 		return $this->hasMany('Messages','member_id');
 	}
 
-	public function posts(){
+	public function chats(){
 		return $this->hasMany('Chats','admin_id');
 	}
 
-	public function chats(){
+	public function rooms(){
 		return $this->belongsToMany('Chats','members_to_chats','member_id','chat_id');
 	}
 
 	public function friendships(){
-		return $this->belongsToMany('Interactions','interaction_users','user_id','interaction_id')->orderBy(DB::raw('bond + bond * timestampdiff(minute,"2013-1-1 12:00:00",interactions.updated_at)/45000'));
+		return $this->belongsToMany('Interactions','interaction_users','user_id','interaction_id')->wherefriended(1)->orderBy(DB::raw('bond + bond * timestampdiff(minute,"2013-1-1 12:00:00",interactions.updated_at)/45000'),'desc');
 	}
 
 	public function subscriptions(){
@@ -91,15 +91,15 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 		return $this->hasMany('Requests','user_id');
 	}
 
-	public function global_requests(){
+	public function globalRequests(){
 		return $this->hasMany('Requests','user_id')->wheretype(0);
 	}
 
-	public function mssg_requests(){
+	public function mssgRequests(){
 		return $this->hasMany('Requests','user_id')->wheretype(1);
 	}
 
-	public function friend_requests(){
+	public function friendRequests(){
 		return $this->hasMany('Requests','user_id')->wheretype(2);
 	}
 

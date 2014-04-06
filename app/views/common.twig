@@ -1,0 +1,208 @@
+{% block header %}
+<nav class="navbar">
+	<div class="navbar-header">
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mutual_navbar">
+		<span class="sr-only">Toggle navigation</span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+		</button>
+		<a class="{{home_active}} navbar-brand" href="{{site}}">Home</a>
+	</div>
+	<div class="collapse navbar-collapse" id="mutual_navbar" style="position:relative;">
+		<form class="navbar-form tag_search" role="search">
+			<div class="form-group dropdown">
+				<input class="form-control tag_input" id="search_input" type="text" placeholder="Search Tags" autocomplete="off">
+				<ul class="dropdown-menu" id="tag_dropdown" role="menu" aria-labelledby="search_input">
+				</ul>
+			</div>
+		</form>
+		{% if logged_in %}
+		<ul class="nav navbar-nav nav_left">
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Subscriptions <strong class="caret" style="color:white;"></strong></a>
+				<ul class="dropdown-menu" role="menu">
+					{% for sub in user.subscriptions %}
+						<li><a href="{{site}}/t/{{sub.name}}">{{sub.name}}</a></li>
+					{% endfor %}
+				</ul>
+			</li>
+		</ul>
+		<ul class="nav navbar-nav nav_right nav_margin">
+			{% for tag in tags %}
+				{% if curr_tag.name == tag.name %}
+					<li><a class="highlight_light_blue" href="{{site}}/t/{{tag}}">{{tag}}</a></li>
+				{% else %}
+					<li><a href="{{site}}/t/{{tag}}">{{tag}}</a></li>
+				{% endif %}
+			{% endfor %}
+		</ul>
+		{% else %}
+		<ul class="nav navbar-nav nav_right">
+			{% for tag in tags %}
+				{% if curr_tag.name == tag.name %}
+					<li><a class="highlight_light_blue" href="{{site}}/t/{{tag}}">{{tag}}</a></li>
+				{% else %}
+					<li><a href="{{site}}/t/{{tag}}">{{tag}}</a></li>
+				{% endif %}
+			{% endfor %}
+		</ul>
+		{% endif %}
+	</div>
+</nav>
+{% endblock %}
+
+{% block welcome %}
+<div style="display:none;" id="sid" data-sid="{{sid}}"></div>
+<div style="margin-bottom:10px;">Welcome, 
+{% if not user %}
+	<div id="serial_id" style="display:none;">{{serial_id}}</div>
+	<span id="serial_tracker">{{serial}}</span>
+{% else %}
+	<div id="serial_id" style="display:none;">{{serial_id}}</div>
+	<div id="serial_tracker" style="display:none;">{{serial}}</div>
+	<div id="user_id" style="display:none;">{{user.id}}</div>
+	<span id="user_tracker">{{user.name}}</span>
+{% endif %}
+</div>
+{% if not logged_in %}
+	<form method="post" action="{{site}}/profile/new-user" class="mutual_form" id="login_form">
+	<fieldset>
+		<div id="user_group" class="form-group">
+			<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Username must be longer than 2 characters but less than 15" data-trigger="focus" data-container="body" type="text" name="username" id="username" placeholder="Enter your actual or preferred username">
+		</div>
+		<div id="pass1_group" class="form-group">
+			<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Password must be longer than 6 characters but less than 30" data-trigger="focus" data-container="body" type="password" name="pass" id="pass" placeholder="Enter your password">
+		</div>
+		<div id="pass2_group" class="form-group">
+			<input class="form-control" data-toggle="popover" data-original-title="Passwords don't match" data-container="body" data-placement="left" data-trigger="focus" type="password" name="pass2" id="pass2" placeholder="Enter password again to register">
+		</div>
+		<button class="btn btn-primary" type="Submit" style="width:100%;">Login/Register</button>
+	</fieldset>
+	</form>
+{% else %}
+	<div class="last_login" id="{{user.last_login}}"><strong>Last login:</strong></div>
+	<div>Cognizance: {{user.cognizance}}/{{user.next_level}} (Level: {{user.level}})</div>
+	<div class="progress progress-striped active">
+		<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{user.cognizance}}" aria-valuemin="0" aria-valuemax="{{user.next_level}}" style="width:{{user.cognizance}}%;">
+			<span class="sr-only">Only {{user.cognizance}}% Complete</span>
+		</div>
+	</div>
+	<select class="form-control">
+		<option value="">Visible and Evaluated</option>
+	</select>
+	<div class="row" style="margin:10px 0 0 0;">
+		<button class="btn btn-sm col-xs-3 btn-default" id="friend_requests" data-toggle="popover" data-content="Hello" data-container="body" data-placement="bottom">
+			<div class="glyphicon glyphicon-user request_glyph {% if user.friendRequests|length > 0 %}pull-left{% endif %}" id="friend_request_glyph"></div>
+			<span class="badge pull-right" id="friend_requests_count">{% if user.friendRequests|length > 0 %}{{user.friendRequests|length}}{% endif %}</span>
+		</button>
+		<button class="btn btn-sm col-xs-offset-1 col-xs-4 btn-default" id="mssg_requests" data-toggle="popover" data-content="Hello" data-container="body" data-placement="bottom">
+			<div class="glyphicon glyphicon-comment request_glyph {% if user.mssgRequests|length > 0 %}pull-left{% endif %}" id="global_request_glyph"></div>
+			<span class="badge pull-right" id="mssg_requests_count">{% if user.mssgRequests|length > 0 %}{{user.mssgRequests|length}}{% endif %}</span>
+		</button>
+		<button class="btn btn-sm col-xs-offset-1 col-xs-3 btn-default" id="global_requests" data-toggle="popover" data-content="Hello" data-container="body" data-placement="bottom">
+			<div class="glyphicon glyphicon-globe request_glyph {% if user.globalRequests|length > 0 %}pull-left{% endif %}" id="global_request_glyph"></div>
+			<span class="badge pull-right" id="global_requests_count">{% if user.globalRequests|length > 0 %}{{user.globalRequests|length}}{% endif %}</span>
+		</button>
+	</div>
+	<div class="row" style="margin:10px 0 0 0;">
+		<a class="btn btn-success col-xs-3 btn-sm" href="{{site}}/p/{{user.name}}">My Profile</a>
+		<a class="btn btn-primary col-xs-offset-6 col-xs-3 btn-sm" href="{{site}}/profile/logout">Logout</a>
+	</div>
+{% endif %}
+{% endblock %}
+
+{% block chat_box %}
+<div class="chat_title_box">
+	<div class="row">
+		<div class="number_box"> {{loop.index}}. </div>
+		<div class="vote_box">
+			{% if chat.id in upvoted %}
+				<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+				<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
+				<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+			{% elseif chat.id in downvoted %}
+				<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+				<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
+				<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+			{% else %}
+				<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+				<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
+				<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+			{% endif %}
+		</div>
+		{% if chat.image %}
+			<a class="pull-left link_thumbnail" href="{{chat.link}}">
+				<img src="{{chat.image}}" alt="Image Error" width="80" height="80">
+			</a>
+		{% endif %}
+		{% if chat.live %}
+			<div class="pull-right big_green_ball chat_status_indicator" data-toggle="tooltip" data-original-title="Live Chat" data-container="body" data-placement="top"></div>
+		{% else %}
+			<div class="pull-right big_yellow_ball chat_status_indicator" data-toggle="tooltip" data-original-title="Static Chat" data-container="body" data-placement="top"></div>
+		{% endif %}
+		<div class="chat_title">
+			{% if chat.seen %}
+				{% if chat.link %}
+					<a href="{{chat.link}}" style="color:purple;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+				{% else %}
+					<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:purple;">{{chat.title}}</a>
+				{% endif %}
+			{% else %}
+				{% if chat.link %}
+					<a href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+				{% else %}
+					<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
+				{% endif %}
+			{% endif %}
+			{% if chat.admin % 16777259 == 0 %}
+				<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><strong>{{chat.admin}}</strong></a>, 
+			{% else %}
+				<div class="chat_info">Created by <strong>{{chat.admin}}</strong>, 
+			{% endif %}
+				{% set time_passed = server_time|date('U') - chat.created_at|date('U') %}
+				<span class="chat_time" id="{{chat.created_at}}" title="{{chat.created_at}} UTC">
+					{% if time_passed < 45 %}
+						seconds ago
+					{% elseif time_passed < 2700 %}
+						{% if time_passed < 90 %}
+							a minute ago
+						{% else %}
+							{{(time_passed/60)|round}} minutes ago
+						{% endif %}
+					{% elseif time_passed < 79200%}
+						{% if time_passed < 5400 %}
+							an hour ago
+						{% else %}
+							{{(time_passed/3600)|round}} hours ago
+						{% endif %}
+					{% elseif time_passed < 2160000 %}
+						{% if time_passed < 129600 %}
+							a day ago
+						{% else %}
+							{{(time_passed/86400)|round}} days ago
+						{% endif %}
+					{% elseif time_passed < 29808000 %}
+						{% if time_passed < 3888000 %}
+							a month ago
+						{% else %}
+							{{(time_passed/2592000)|round}} months ago
+						{% endif %}
+					{% else %}
+						{% if time_passed < 47260800 %}
+							a year ago
+						{% else %}
+							{{(time_passed/31536000)|round}} years ago
+						{% endif %}
+					{% endif %}
+				</span>
+				with Tags:
+				{% for tag in chat.tags %}
+					<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}" style="color:#075de9;">#{{tag.name}}</a> </span>
+				{% endfor %}
+				and <a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:gray;"><strong>{{chat.messages | length }} comments</strong></a>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

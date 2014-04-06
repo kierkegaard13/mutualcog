@@ -1,6 +1,10 @@
 module = function(){
-	var socket = io.connect('http://localhost:3000/',{query:"sid=" + $('#sid').attr('data-sid')});
-	return {socket:socket};
+	var socket = io.connect('http://localhost:3000/',{query:"sid=" + $('#sid').attr('data-sid') + "&serial=" + $('#serial_tracker').text()});
+	var serial_id = $('#serial_id').text();
+	var serial_tracker = $('#serial_tracker').text();
+	var user_id = $('#user_id').text();
+	var user_tracker = $('#user_tracker').text();
+	return {socket:socket,serial_id:serial_id,serial_tracker:serial_tracker,user_id:user_id,user_tracker:user_tracker};
 }(); 
 
 var selected_tag = -1;
@@ -30,7 +34,17 @@ $(document).ready(function(){
 	$('#pause_chat').tooltip();
 	$('.mssg_upvote').on('click',upvoteMssg);
 	$('.mssg_downvote').on('click',downvoteMssg);
+	$('#mssg_requests').popover({html:true});
+	$('#global_requests').popover({html:true});
+	$('#friend_requests').popover({html:true});
 	var reply_form = $('#reply_form').clone();;
+	$('#request_friend').click(function(){
+		module.socket.emit('request_friend',{user_id:$(this).attr('data-user-id'),user:$(this).attr('data-user-name'),sender_id:module.user_id,sender:module.user_tracker});
+		$(this).removeClass('btn-primary');
+		$(this).addClass('btn-success');
+		$(this).html('<div class="glyphicon glyphicon-check" id="request_glyph"></div> Request Sent');
+		$(this).off('click');
+	});
 	$('a#advanced_create').click(function(e){
 		$('#advanced_modal').modal();
 		return false;
@@ -52,6 +66,27 @@ $(document).ready(function(){
 		}
 		return false;
 	});
+	$('#mssg_requests').blur(function(){
+		$(this).popover('hide');
+	});
+	$('#global_requests').blur(function(){
+		$(this).popover('hide');
+	});
+	$('#friend_requests').blur(function(){
+		$(this).popover('hide');
+	});
+});
+
+
+module.socket.on('displayFriendRequests',function(request_info){
+	var friend_count = $('#friend_requests_count');
+	if(friend_count.text().length > 0){
+		friend_count.text(parseInt(friend_count.text()) + 1);
+	}else{
+		$('#friend_request_glyph').addClass('pull-left');
+		friend_count.text('1');
+	}
+	$('#friend_requests').attr('data-content','Hey sexy');
 });
 
 $('#login_form').submit(function(){

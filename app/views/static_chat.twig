@@ -1,57 +1,8 @@
 {% extends 'home_layout.twig' %}
+{% use 'common.twig' %}
 
 {% block header %}
-<nav class="navbar">
-	<div class="navbar-header">
-		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mutual_navbar">
-		<span class="sr-only">Toggle navigation</span>
-		<span class="icon-bar"></span>
-		<span class="icon-bar"></span>
-		<span class="icon-bar"></span>
-		</button>
-		<a class="navbar-brand" href="{{site}}">Home</a>
-	</div>
-	<div class="collapse navbar-collapse" id="mutual_navbar" style="position:relative;">
-		<form class="navbar-form tag_search" role="search">
-			<div class="form-group dropdown">
-				<input class="form-control tag_input" id="search_input" type="text" placeholder="Search Tags" autocomplete="off">
-				<ul class="dropdown-menu" id="tag_dropdown" role="menu" aria-labelledby="search_input">
-				</ul>
-			</div>
-		</form>
-		{% if logged_in %}
-		<ul class="nav navbar-nav nav_left">
-			<li class="dropdown">
-				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Subscriptions <strong class="caret" style="color:white;"></strong></a>
-				<ul class="dropdown-menu" role="menu">
-					{% for sub in user.subscriptions %}
-						<li><a href="{{site}}/t/{{sub.name}}">{{sub.name}}</a></li>
-					{% endfor %}
-				</ul>
-			</li>
-		</ul>
-		<ul class="nav navbar-nav nav_right nav_margin">
-			{% for tag in tag_headers %}
-				{% if curr_tag == tag.name %}
-					<li><a class="highlight_light_blue" href="{{site}}/t/{{tag}}">{{tag}}</a></li>
-				{% else %}
-					<li><a href="{{site}}/t/{{tag}}">{{tag}}</a></li>
-				{% endif %}
-			{% endfor %}
-		</ul>
-		{% else %}
-		<ul class="nav navbar-nav nav_right">
-			{% for tag in tag_headers %}
-				{% if curr_tag == tag.name %}
-					<li><a class="highlight_light_blue" href="{{site}}/t/{{tag}}">{{tag}}</a></li>
-				{% else %}
-					<li><a href="{{site}}/t/{{tag}}">{{tag}}</a></li>
-				{% endif %}
-			{% endfor %}
-		</ul>
-		{% endif %}
-	</div>
-</nav>
+	{{parent()}}
 {% endblock %}
 
 {% block tools %}
@@ -78,54 +29,7 @@
 {% endblock %}
 
 {% block welcome %}
-<div style="display:none;" id="sid" data-sid="{{sid}}"></div>
-<div style="margin-bottom:10px;">Welcome, 
-{% if not user %}
-	<div id="serial_id" style="display:none;">{{serial_id}}</div>
-	<span id="serial_tracker">{{serial}}</span>
-{% else %}
-	<div id="serial_id" style="display:none;">{{serial_id}}</div>
-	<div id="serial_tracker" style="display:none;">{{serial}}</div>
-	<div id="user_id" style="display:none;">{{user.id}}</div>
-	<span id="user_tracker">{{user.name}}</span>
-{% endif %}
-</div>
-{% if not logged_in %}
-	<form method="post" action="{{site}}/profile/new-user" class="mutual_form" id="login_form">
-	<fieldset>
-		<div id="user_group" class="form-group">
-			<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Username must be longer than 2 characters but less than 15" data-trigger="focus" data-container="body" type="text" name="username" id="username" placeholder="Enter your actual or preferred username">
-		</div>
-		<div id="pass1_group" class="form-group">
-			<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Password must be longer than 6 characters but less than 30" data-trigger="focus" data-container="body" type="password" name="pass" id="pass" placeholder="Enter your password">
-		</div>
-		<div id="pass2_group" class="form-group">
-			<input class="form-control" data-toggle="popover" data-original-title="Passwords don't match" data-container="body" data-placement="left" data-trigger="focus" type="password" name="pass2" id="pass2" placeholder="Enter password again to register">
-		</div>
-		<button class="btn btn-primary" type="Submit" style="width:100%;">Login/Register</button>
-	</fieldset>
-	</form>
-{% else %}
-	<div class="last_login" id="{{user.last_login}}"><strong>Last login:</strong></div>
-	<div>Cognizance: {{user.cognizance}}/{{user.next_level}} (Level: {{user.level}})</div>
-	<div class="progress progress-striped active">
-		<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{user.cognizance}}" aria-valuemin="0" aria-valuemax="{{user.next_level}}" style="width:{{user.cognizance}}%;">
-			<span class="sr-only">Only {{user.cognizance}}% Complete</span>
-		</div>
-	</div>
-	<select class="form-control">
-		<option value="">Visible and Evaluated</option>
-	</select>
-	<div class="row" style="margin:10px 0 0 0;">
-		<button class="btn btn-sm col-xs-3 btn-default"><div class="glyphicon glyphicon-user request_glyph {% if user.friend_notes > 0 %}pull-left{% endif %}"></div><span class="badge pull-right">{% if user.friend_notes > 0 %}{{user.friend_notes}}{% endif %}</span></button>
-		<button class="btn btn-sm col-xs-offset-1 col-xs-4 btn-default"><div class="glyphicon glyphicon-comment request_glyph {% if user.mssg_notes > 0 %}pull-left{% endif %}"></div><span class="badge pull-right">{% if user.mssg_notes > 0 %}{{user.mssg_notes}}{% endif %}</span></button>
-		<button class="btn btn-sm col-xs-offset-1 col-xs-3 btn-default"><div class="glyphicon glyphicon-globe request_glyph {% if user.global_notes > 0 %}pull-left{% endif %}"></div><span class="badge pull-right">{% if user.global_notes > 0 %}{{user.global_notes}}{% endif %}</span></button>
-	</div>
-	<div class="row" style="margin:10px 0 0 0;">
-		<a class="btn btn-success col-xs-3 btn-sm" href="{{site}}/p/{{user.name}}">My Profile</a>
-		<a class="btn btn-primary col-xs-offset-6 col-xs-3 btn-sm" href="{{site}}/profile/logout">Logout</a>
-	</div>
-{% endif %}
+	{{parent()}}
 {% endblock %}
 
 {% block side_2 %}
@@ -146,6 +50,7 @@
 	<div id="tags_group" class="form-group">
 		<input class="form-control tags_input" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Tags" data-container="body" data-placement="bottom" type="text" name="tags" id="Tags" placeholder="Use spaces to separate tags (max: 5)" autocomplete="off">
 	</div>
+	<input class="form-control" type="hidden" name="live_status" value="1">
 	<button class="btn btn-primary" type="Submit" style="width:100%;">Create</button>
 </fieldset>
 </form>

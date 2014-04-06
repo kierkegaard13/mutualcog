@@ -260,6 +260,21 @@ select {
   transition:background-color .5s;
   -webkit-transition:background-color .5s;
 }
+.add_friend {
+  position:absolute;
+  top:10px;
+  right:15px; 
+}
+.edit_about {
+  transition:background-color .5s;
+  -webkit-transition:background-color .5s;
+  height:100%;
+  width:100%;
+  cursor:pointer;
+}
+.edit_about:hover {
+  background-color:#ccc;
+}
 .green_ball {
   height:8px;
   display:inline-block;
@@ -365,13 +380,6 @@ select {
   margin-top:-1px;
   width:80px;
 }
-.chat_title {
-  padding-left:85px;
-  margin-top:-6px;
-}
-.static_chat_title {
-  padding-left:40px;
-}
 .advanced_create {
   position:absolute;
   top:15px;
@@ -382,6 +390,13 @@ select {
 }
 .top_10 {
   margin-top:10px;
+}
+.mssg_vote_box {
+  position:relative;
+  float:left;
+  margin-top:0px;
+  margin-bottom:-5px;
+  margin-right:10px;
 }
 .vote_box {
   position:relative;
@@ -441,6 +456,17 @@ select {
   height:auto;
   position:relative;
 }
+.p_main_content {
+  min-height:600px
+  margin-bottom:20px;
+  padding:10px;
+  background-color:#fff;
+  opacity:.95;
+  margin:0px auto;
+  text-align:left;
+  height:auto;
+  position:relative;
+}
 .chat_content {
   background-color:#fff;
   opacity:.95;
@@ -455,18 +481,25 @@ select {
   margin-right:550px;
   margin-left:1%;
 }
+.chat_title {
+  padding-left:85px;
+  margin-top:-6px;
+}
+.static_chat_title {
+  padding-left:40px;
+}
 .chat_title_box {
   padding:20px;
   border-bottom:1px solid #ddd; 
   transition:background-color .8s;
   -webkit-transition:background-color .8s;
 }
+.chat_title_box:hover {
+  background-color: #eee;
+}
 .chat_info {
   color:#777;
   font-size:12px; 
-}
-.chat_title_box:hover {
-  background-color: #eee;
 }
 .btn_btm_r {
   float:right;
@@ -587,6 +620,20 @@ a.chat_link {
   width:20px;
   float:right; 
 }
+.p_chat_mssg {
+  cursor:pointer;
+  background-color:#fff;
+  padding:10px;
+  box-shadow:2px 2px 2px #999;
+  margin-bottom:10px;
+  display:table;
+  font-size:14px;
+  transition:background-color .5s;
+  -webkit-transition:background-color .5s;
+}
+.p_chat_mssg:hover {
+  background-color:#eee;
+}
 .chat_mssg {
   position:relative;
   padding:10px;
@@ -626,6 +673,16 @@ a.chat_link {
   font-size:12px;
   width:100%;
 }
+.p_time_box {
+  margin-top:10px;
+}
+.p_time {
+  float:right;
+  color:#777;
+  margin-bottom:-5px;
+  margin-top:-5px;
+  font-size:12px;
+}
 .time{
   display:inline;
   float:right;
@@ -639,6 +696,22 @@ a.chat_link {
 }
 .content1 {
         margin: 20px;
+}
+.interaction {
+  background-color:#eee;
+  margin-right:10px;
+  padding:10px;
+  border-radius:5px; 
+}
+#chat_messages {
+  background-color:#bbb;
+  position:relative; 
+}
+#chat_display {
+  position:absolute;
+  top:10px;
+  left:10px;
+  right:10px; 
 }
 #chat_list {
   top:0px;
@@ -665,6 +738,21 @@ a.chat_link {
   display:inline-block;
   vertical-align:top;
   width:220px;
+}
+#main ::-webkit-scrollbar-track
+{
+  background-color: transparent;
+}
+#main ::-webkit-scrollbar
+{
+  width: 8px;
+  height:8px;
+}
+#main ::-webkit-scrollbar-thumb
+{
+  background-color: #333;
+  border-radius:10px;
+  opacity:.5;
 }
 .frame {
   overflow:auto;
