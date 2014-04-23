@@ -2,23 +2,12 @@
 
 class Profile extends BaseController {
 
-	public function getRequestFriend($friend_id){
-		if(Auth::check()){
-			try{
-				$elephant = new ElephantIO\Client($this->io_url);
-				$elephant->init();
-				$elephant->emit('login',json_encode(array('sid' => Session::getId(), 'user_data' => array('id' => Auth::user()->id,'user' => Auth::user()->name,'serial' => Auth::user()->serial->serial_id,'serial_id' => Auth::user()->serial->id),'key' => 'pyWTPC2pqMCsmTEy')));
-				$elephant->close();
-			}catch(Exception $e){
-			}
-		}
-		return Redirect::to(Session::get('curr_page'));
-	}
-	
-	public function getFriend($friend_id){
-		if(!isset($friend_id)){
+	public function getAccept($request_id){
+		if(!isset($request_id)){
 			return App::abort(404,'You seem to have entered an invalid URL');
 		}
+		$request = Requests::find($request_id);
+		$friend_id = $request->sender_id;
 		if(Auth::check()){
 			if(Auth::user()->id != $friend_id){
 				$interaction = Interactions::whereHas('users',function($q){$q->where('interaction_users.user_id',Auth::user()->id);})
@@ -44,6 +33,18 @@ class Profile extends BaseController {
 					$inter_user->save();
 				}
 			}
+			$request->delete();
+		}
+		return Redirect::to(Session::get('curr_page'));
+	}
+
+	public function getDecline($request_id){
+		if(!isset($request_id)){
+			return App::abort(404,'You seem to have entered an invalid URL');
+		}
+		if(Auth::check()){
+			$request = Requests::find($request_id);
+			$request->delete();
 		}
 		return Redirect::to(Session::get('curr_page'));
 	}

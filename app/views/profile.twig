@@ -79,7 +79,7 @@
 {% block content %}
 <div class="p_main_content" id="main_cont">
 <h1 class="profile_name" id="{{profile.id}}" style="margin-top:0px;">{{profile.name}}</h1>
-{% if logged_in and profile.id != user.id and not friended %}
+{% if logged_in and profile.id != user.id and not friended and not requested%}
 	<button class="btn btn-primary add_friend" id="request_friend" data-user-id="{{profile.id}}" data-user-name="{{profile.name}}"><div class="glyphicon glyphicon-plus" id="request_glyph"></div> Send Friend Request</button>
 {% elseif requested %}
 	<button class="btn btn-success add_friend"><div class="glyphicon glyphicon-check" id="request_glyph"></div> Request Sent</button>

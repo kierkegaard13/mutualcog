@@ -80,13 +80,18 @@ $(document).ready(function(){
 
 module.socket.on('displayFriendRequests',function(request_info){
 	var friend_count = $('#friend_requests_count');
+	var f_content = "";
 	if(friend_count.text().length > 0){
 		friend_count.text(parseInt(friend_count.text()) + 1);
 	}else{
 		$('#friend_request_glyph').addClass('pull-left');
 		friend_count.text('1');
 	}
-	$('#friend_requests').attr('data-content','Hey sexy');
+	if($('#friend_requests').attr('data-content').indexOf('No friend requests') >= 0){
+		$('#friend_requests').attr('data-content',"<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/p/" + request_info.sender + "'>" + request_info.sender + "</a> has requested your friendship </div> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/profile/accept/" + request_info.id + "'>Accept</a> / <a class='chat_link' href='//mutualcog.com/profile/decline/" + request_info.id + "'>Decline</a> </div> </div>");
+	}else{
+		$('#friend_requests').attr('data-content',$('#friend_requests').attr('data-content').prepend("<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/p/" + request_info.sender + "'>" + request_info.sender + "</a> has requested your friendship </div> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/profile/accept/" + request_info.id + "'>Accept</a> / <a class='chat_link' href='//mutualcog.com/profile/decline/" + request_info.id + "'>Decline</a> </div> </div>"));
+	}
 });
 
 $('#login_form').submit(function(){

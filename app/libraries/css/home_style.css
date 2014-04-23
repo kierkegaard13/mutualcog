@@ -1,3 +1,6 @@
+html,body{
+  height:100%;
+}
 body{
   background-color:#0f131a;
   font-size:18px;
@@ -52,6 +55,7 @@ pre code{
 @media screen and (min-width:768px){
 	.wrapper {
 	  width:100%;
+	  height:100%;
 	  padding-left:10px;
 	  padding-right:15px;
 	  margin-top:55px;
@@ -609,7 +613,26 @@ a.mod_power {
   color:red;
 }
 a.chat_link {
+  color:black;
+  font-weight:bold;
+  transition:color .5s;
+  -webkit-transition:color .5s;
+}
+a.chat_link:hover {
   color:#075de9;
+  text-decoration:none;
+}
+.request_cont {
+  margin:-5px -15px -5px -15px;
+  padding:10px;
+  transition:background-color .5s;
+  -webkit-transition:background-color .5s;
+}
+.request_cont:hover {
+  background-color:#eee;
+}
+.request_text {
+  font-size:12px;
 }
 .chat_details {
   font-size:16px;

@@ -4,7 +4,7 @@ class BaseController extends Controller {
 
 	protected $base_url = 'http://localhost/laravel';
 	protected $site_url = 'http://mutualcog.com';
-	protected $io_url = 'http://localhost:3000';
+	protected $io_url = 'localhost:3000';
 	protected $file_url = '/var/www/laravel';
 
 	/**
@@ -23,6 +23,7 @@ class BaseController extends Controller {
 		View::share('sid',$this->sid);
 		View::share('base',$this->base_url);
 		View::share('site',$this->site_url);
+		View::share('io_url',$this->io_url);
 		View::share('version','v=.1');
 		View::share('server_time',date(DATE_ATOM));
 		View::share('serial',Session::get('unique_serial'));

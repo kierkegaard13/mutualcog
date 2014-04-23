@@ -338,6 +338,18 @@ $(document).ready(function(){
 	setInterval(updateTimes,60000);
 	setInterval(updateChatTimes,60000);
 	$('#chat_messages').on('scroll',scroll_mod);
+	$('#mssg_requests').popover({html:true});
+	$('#global_requests').popover({html:true});
+	$('#friend_requests').popover({html:true});
+	$('#mssg_requests').blur(function(){
+		$(this).popover('hide');
+	});
+	$('#global_requests').blur(function(){
+		$(this).popover('hide');
+	});
+	$('#friend_requests').blur(function(){
+		$(this).popover('hide');
+	});
 	module.scroll_attached = 1;
 	module.stop_scroll = 0;
 	$('#chat_messages').click(function(){
@@ -635,6 +647,22 @@ notifyMessage = function(){
 		}
 	},800);
 }
+
+module.socket.on('displayFriendRequests',function(request_info){
+	var friend_count = $('#friend_requests_count');
+	var f_content = "";
+	if(friend_count.text().length > 0){
+		friend_count.text(parseInt(friend_count.text()) + 1);
+	}else{
+		$('#friend_request_glyph').addClass('pull-left');
+		friend_count.text('1');
+	}
+	if($('#friend_requests').attr('data-content').indexOf('No friend requests') >= 0){
+		$('#friend_requests').attr('data-content',"<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/p/" + request_info.sender + "'>" + request_info.sender + "</a> has requested your friendship </div> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/profile/accept/" + request_info.id + "'>Accept</a> / <a class='chat_link' href='//mutualcog.com/profile/decline/" + request_info.id + "'>Decline</a> </div> </div>");
+	}else{
+		$('#friend_requests').attr('data-content',$('#friend_requests').attr('data-content').prepend("<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/p/" + request_info.sender + "'>" + request_info.sender + "</a> has requested your friendship </div> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/profile/accept/" + request_info.id + "'>Accept</a> / <a class='chat_link' href='//mutualcog.com/profile/decline/" + request_info.id + "'>Decline</a> </div> </div>"));
+	}
+});
 
 module.socket.on('connect',function() {
 	module.socket.emit('room',$('.chat_id').attr('id'));

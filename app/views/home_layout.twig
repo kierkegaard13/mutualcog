@@ -13,45 +13,51 @@
 </head>
 <body>
 {% block header %}{% endblock %}
-<div id="body">
 <div class="wrapper">
-<div class="row">
-        <div class="col-sm-7 col-md-8 col-lg-9" id="main">
-                <div style="position:relative;">
-                        <div class="big_content_box">
-				<div class="content_right">
-				<div class="content_left">
-					{% block tabs %}{% endblock %}
-					{% block content %}{% endblock %}
-                                </div>
-				</div>
-                        </div>
-			{% block chat_content %}{% endblock %}
-                </div>
-        </div>
-        <div class="col-sm-5 col-md-4 col-lg-3" id="side">
-                <div style="position:relative;">
-			{% block tools %}{% endblock %}
-                        <div class="small_content_box">
-				<div class="content_right">
-				<div class="content_left">
-					<div class="content side_content" id="welcome_user">
-						{% block welcome %}{% endblock %}
+	<div class="row" style="height:100%;">
+		<div class="col-lg-1" style="height:100%;background-color:white;margin-top:-20px;">
+		</div>
+		<div class="col-sm-7 col-md-8 col-lg-8" id="main">
+			<div style="position:relative;">
+				<div class="big_content_box">
+					<div class="content_right">
+					<div class="content_left">
+						{% block tabs %}{% endblock %}
+						{% block content %}{% endblock %}
 					</div>
-                                </div>
+					</div>
 				</div>
-                        </div>
-			{% block side_1 %}{% endblock %}
-			{% block side_2 %}{% endblock %}
-			{% block side_3 %}{% endblock %}
-			{% block side_4 %}{% endblock %}
-			{% block side_5 %}{% endblock %}
-                </div>
-        </div>
+				{% block chat_content %}{% endblock %}
+			</div>
+		</div>
+		<div class="col-sm-5 col-md-4 col-lg-3" id="side">
+			<div style="position:relative;">
+				{% block tools %}{% endblock %}
+				<div class="small_content_box">
+					<div class="content_right">
+					<div class="content_left">
+						<div class="content side_content" id="welcome_user">
+							{% block welcome %}{% endblock %}
+						</div>
+					</div>
+					</div>
+				</div>
+				{% block side_1 %}{% endblock %}
+				{% block side_2 %}{% endblock %}
+				{% block side_3 %}{% endblock %}
+				{% block side_4 %}{% endblock %}
+				{% block side_5 %}{% endblock %}
+			</div>
+		</div>
+	</div>
+	<div style="position:fixed;bottom:0px;right:0px;">
+		<div style="width:240px;height:300px;background-color:white;border:solid 2px #bbb;">
+		</div>
+		<div style="width:240px;height:30px;background-color:#bbb;cursor:pointer;overflow:hidden;margin-right:5px;">
+		</div>
+	</div>
 </div>
-</div>
-</div>
-<script src="//localhost:3000/socket.io/socket.io.js"></script>
+<script src="//{{io_url}}/socket.io/socket.io.js"></script>
 <script src='//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js'></script>
 <script src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js'></script>
 <script type="text/javascript">
