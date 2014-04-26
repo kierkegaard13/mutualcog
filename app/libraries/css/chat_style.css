@@ -1,3 +1,6 @@
+html,body{
+  height:100%;
+}
 body{
   background-color:#0f131a;
   font-size:18px;
@@ -34,7 +37,7 @@ code{
 .form-group {
   margin-bottom:10px;
 }
-@media screen and (min-width:768px) and (min-height:0px){
+/*@media screen and (min-width:768px) and (min-height:0px){
 	.main_content {
 	  height:460px !important;
 	}
@@ -98,14 +101,14 @@ code{
 	.main_content {
 	  height:4328px !important;
 	}
-}
+}*/
 @media screen and (min-width:768px){
 	.wrapper {
 	  width:100%;
 	  height:100%;
 	  padding-left:10px;
 	  padding-right:15px;
-	  margin-top:55px;
+	  padding-top:55px;
 	  margin-left:0px;
 	}
 	.modal-dialog {
@@ -177,7 +180,7 @@ code{
 	}
 	.content_right {
 	  border-width:0px;
-	  border-right:10px solid transparent;
+	  border-right:5px solid transparent;
 	  -webkit-border-image:-webkit-linear-gradient(left,#f2f2f2,#0f131a) 1 100%;
 	  -o-border-image:linear-gradient(to right,#f2f2f2,#0f131a) 1 100%;
 	  -o-border-image:-o-linear-gradient(right,#f2f2f2,#0f131a) 1 100%;
@@ -186,7 +189,7 @@ code{
 	}
 	.content_left {
 	  border-width:0px;
-	  border-left:10px solid transparent;
+	  border-left:5px solid transparent;
 	  -webkit-border-image:-webkit-linear-gradient(right,#f2f2f2,#0f131a) 1 100%;
 	  -o-border-image:linear-gradient(to left,#f2f2f2,#0f131a) 1 100%;
 	  -o-border-image:-o-linear-gradient(left,#f2f2f2,#0f131a) 1 100%;
@@ -199,12 +202,15 @@ code{
 	#side {
 	  padding-left:5px !important;
 	}
+	.big_content_box {
+	  height:98%;
+	}
 }
 @media screen and (max-width:767px){
 	.wrapper {
 	  width:100%;
 	  height:100%;
-	  margin-top:60px;
+	  padding-top:55px;
 	  margin-left:0px;
 	}
 	.row {
@@ -258,10 +264,19 @@ code{
 	.navbar-collapse.in {
 	  overflow-y:hidden !important;
 	}
-	.main_content {
+	/*.main_content {
 	  height:460px !important;
 	  margin-bottom:20px !important;
+	}*/
+	.big_content_box {
+	  height:100%;
+	} 
+	.tool_box {
+	  margin-top:15px !important;
 	}
+}
+.main_content {
+  height:100% !important;
 }
 .confirmation_box {
   display:none;
@@ -869,8 +884,8 @@ textarea {
   resize:none;
   border-radius:5px;
   margin-bottom:0px;
+  margin-top:.3%;
   padding:10px;
-  margin-top:5px;
   font-size:16px;
   border-bottom-color: rgb(238,238,238);
   border-bottom-style: inset;
@@ -897,7 +912,7 @@ textarea#message {
 }
 .response_hint{
   position:absolute;
-  bottom:50px;
+  bottom:45px;
   right:25px;
   color:#777;
   font-size:14px; 

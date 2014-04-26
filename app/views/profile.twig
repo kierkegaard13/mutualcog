@@ -209,14 +209,12 @@
 	<div class="frame" style="height:620px;white-space:normal;">
 		{% for friendship in friendships %}
 			{% for friend in friendship.users %}
-			{% if friend.name != profile.name %}
 				<div class="col-lg-3 interaction">
 					<a href="{{site}}/p/{{friend.name}}" style="color:black;"><strong>{{friend.name}}</strong></a>
 					<div style="font-size:14px;">
 						<div>Last Interaction : <span class="interaction_time" id="{{friendship.updated_at}}"></span></div>
 					</div>
 				</div>
-			{% endif %}
 			{% endfor %}
 		{% endfor %}
 	</div>

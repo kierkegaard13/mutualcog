@@ -60,7 +60,7 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 	}
 
 	public function friendships(){
-		return $this->belongsToMany('Interactions','interaction_users','user_id','interaction_id')->wherefriended(1)->orderBy(DB::raw('bond + bond * timestampdiff(minute,"2013-1-1 12:00:00",interactions.updated_at)/45000'),'desc');
+		return $this->belongsToMany('Interactions','interaction_users','user_id','interaction_id')->wheretype('friendship')->wherefriended(1)->orderBy(DB::raw('bond + bond * timestampdiff(minute,"2013-1-1 12:00:00",interactions.updated_at)/45000'),'desc');
 	}
 
 	public function subscriptions(){

@@ -52,6 +52,18 @@
 </nav>
 {% endblock %}
 
+{% block friend_list %}
+<div class="hidden-xs hidden-sm content_right" style="position:fixed;height:100%;background-color:white;margin-top:0;padding:0;padding-top:40px;width:190px;">
+{% for friendship in user.friendships %}
+	<div class="friend_box">
+		{% for friend in friendship.friend %}
+			{{friend.name}}
+		{% endfor %}
+	</div>
+{% endfor %}
+</div>
+{% endblock %}
+
 {% block welcome %}
 <div style="display:none;" id="sid" data-sid="{{sid}}"></div>
 <div style="margin-bottom:10px;">Welcome, 
@@ -164,18 +176,10 @@
 			<div class="pull-right big_yellow_ball chat_status_indicator" data-toggle="tooltip" data-original-title="Static Chat" data-container="body" data-placement="top"></div>
 		{% endif %}
 		<div class="chat_title">
-			{% if chat.seen %}
-				{% if chat.link %}
-					<a href="{{chat.link}}" style="color:purple;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
-				{% else %}
-					<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:purple;">{{chat.title}}</a>
-				{% endif %}
+			{% if chat.link %}
+				<a href="{{chat.link}}" style="color:{% if chat.seen %}purple{% else %}#032f75{% endif %};">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
 			{% else %}
-				{% if chat.link %}
-					<a href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
-				{% else %}
-					<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
-				{% endif %}
+				<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="{% if chat.seen %}purple{% else %}color:#032f75{% endif %};">{{chat.title}}</a>
 			{% endif %}
 			{% if chat.admin % 16777259 == 0 %}
 				<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><strong>{{chat.admin}}</strong></a>, 
