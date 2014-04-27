@@ -37,6 +37,14 @@ $(document).ready(function(){
 	$('#mssg_requests').popover({html:true});
 	$('#global_requests').popover({html:true});
 	$('#friend_requests').popover({html:true});
+	$('.pm_cont').resizable({handles:"nw",ghost:true,maxHeight:450,maxWidth:400,minHeight:330,minWidth:240,resize:function(e,ui){
+		var ui_height = ui.size.height;
+		var ui_width = ui.size.width;
+		$('.pm_header').width(ui_width);
+		$('.pm_body').height(ui_height - 64);
+		$('.pm_body').width($('.pm_header').width() - 4);
+		$('.pm_text').width($('.pm_header').width() - 10);
+	}});
 	var reply_form = $('#reply_form').clone();;
 	$('#request_friend').click(function(){
 		module.socket.emit('request_friend',{user_id:$(this).attr('data-user-id'),user:$(this).attr('data-user-name'),sender_id:module.user_id,sender:module.user_tracker});

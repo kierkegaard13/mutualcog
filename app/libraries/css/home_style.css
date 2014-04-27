@@ -298,6 +298,7 @@ select {
   right:15px; 
 }
 .friend_box {
+  position:relative;
   padding:10px;
   padding-left:15px;
   border-bottom:solid 1px #aaa;
@@ -346,6 +347,20 @@ select {
   width:10px;
   cursor:pointer;
   background-color:#f8b92d;
+  border-radius:8px;
+}
+.yellow_ball {
+  height:8px;
+  display:inline-block;
+  width:8px;
+  background-color:#f8b92d;
+  border-radius:8px;
+}
+.red_ball {
+  height:8px;
+  display:inline-block;
+  width:8px;
+  background-color:red;
   border-radius:8px;
 }
 #homeTabs {
@@ -654,15 +669,11 @@ a.mod_power {
 .mssg_downvote:hover {
   color:red;
 }
-a.chat_link {
-  color:black;
-  font-weight:bold;
-  transition:color .5s;
-  -webkit-transition:color .5s;
-}
-a.chat_link:hover {
+.chat_tags>a {
   color:#075de9;
-  text-decoration:none;
+}
+a.chat_link {
+  color:#075de9;
 }
 .request_cont {
   margin:-5px -15px -5px -15px;
@@ -832,6 +843,30 @@ a.chat_link:hover {
   position:relative;
   white-space:pre-line;
 }
+.pm_cont {
+  margin-right:5px;
+}
+.pm_header {
+  width:240px;
+  height:30px;
+  background-color:#022254;	
+}
+.pm_body {
+  width:240px;
+  height:270px;
+  background-color:#bbb;
+  border:solid 2px #bbb;
+}
+.pm_text {
+  border:none;
+  font-size:14px;
+  padding:5px;
+  margin:0;
+  border-radius:0;
+  width:240px;
+  height:30px;
+  margin-bottom:-7px;
+}
 textarea {
   width:100%;
   resize:none;
@@ -972,3 +1007,14 @@ textarea {
 .hljs-chunk {
 	  color: #aaa
 }
+.ui-resizable { position: relative;}
+.ui-resizable-handle { position: absolute;font-size: 0.1px; display: block; }
+.ui-resizable-disabled .ui-resizable-handle, .ui-resizable-autohide .ui-resizable-handle { display: none; }
+.ui-resizable-n { cursor: n-resize; height: 7px; width: 100%; top: -5px; left: 0; }
+.ui-resizable-s { cursor: s-resize; height: 7px; width: 100%; bottom: -5px; left: 0; }
+.ui-resizable-e { cursor: e-resize; width: 7px; right: -5px; top: 0; height: 100%; }
+.ui-resizable-w { cursor: w-resize; width: 7px; left: -5px; top: 0; height: 100%; }
+.ui-resizable-se { cursor: se-resize; width: 12px; height: 12px; right: 1px; bottom: 1px; }
+.ui-resizable-sw { cursor: sw-resize; width: 9px; height: 9px; left: -5px; bottom: -5px; }
+.ui-resizable-nw { cursor: nw-resize; width: 9px; height: 9px; left: -5px; top: -5px; }
+.ui-resizable-ne { cursor: ne-resize; width: 9px; height: 9px; right: -5px; top: -5px;}

@@ -6,6 +6,7 @@ use Illuminate\Auth\Reminders\RemindableInterface;
 class User extends EloquentBridge implements UserInterface, RemindableInterface 
 {
 	protected $table = "users";
+	public $timestamps = true;
 
 	protected $hidden = array('password');
 
@@ -55,6 +56,10 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 		return $this->hasMany('Chats','admin_id');
 	}
 
+	public function chat_room(){
+		return $this->hasOne('Chats','chat_id');
+	}
+
 	public function rooms(){
 		return $this->belongsToMany('Chats','members_to_chats','member_id','chat_id');
 	}
@@ -101,6 +106,57 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 
 	public function friendRequests(){
 		return $this->hasMany('Requests','user_id')->wheretype(2);
+	}
+
+	public function online_score(){
+		$d1 = new Datetime($this->updated_at);
+		$d2 = new Datetime(date(DATE_ATOM));
+		$diff = $d1->diff($d2);
+		$online = $diff->d*60*60*24 + $diff->h*60*60 + $diff->i*60 + $diff->s;
+		return $online;
+	}
+
+	public function online(){
+		$d1 = new Datetime($this->updated_at);
+		$d2 = new Datetime(date(DATE_ATOM));
+		$diff = $d1->diff($d2);
+		$online_mssg = "Most recent activity ";
+		if($diff->y > 0){
+			$online_mssg = $online_mssg . "more than a year ago";	
+		}else{
+			if($diff->m > 0){
+				if($diff->m == 1){
+					$online_mssg = $online_mssg . "1 month ago";
+				}else{
+					$online_mssg = $online_mssg . $diff->m . " months ago";
+				}	
+			}else if($diff->d > 0){
+				if($diff->d == 1){
+					$online_mssg = $online_mssg . "1 day ago";
+				}else{
+					$online_mssg = $online_mssg . $diff->d . " days ago";
+				}	
+			}else if($diff->h > 0){
+				if($diff->h == 1){
+					$online_mssg = $online_mssg . "1 hour ago";
+				}else{
+					$online_mssg = $online_mssg . $diff->h . " hours ago";
+				}	
+			}else if($diff->i > 0){
+				if($diff->i == 1){
+					$online_mssg = $online_mssg . "1 minute ago";
+				}else{
+					$online_mssg = $online_mssg . $diff->i . " minutes ago";
+				}	
+			}else{
+				if($diff->s == 1){
+					$online_mssg = $online_mssg . "1 second ago";
+				}else{
+					$online_mssg = $online_mssg . $diff->s . " seconds ago";
+				}	
+			}
+		}
+		return $online_mssg;
 	}
 
 }

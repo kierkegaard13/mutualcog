@@ -17,6 +17,8 @@ class Chat extends BaseController {
 		$mssg_upvoted = array();
 		$mssg_downvoted = array();
 		if(Auth::check()){
+			Auth::user()->chat_id = $chat_id;
+			Auth::user()->save();
 			foreach(Auth::user()->upvotedChats() as $upvote){
 				$upvoted[] = $upvote->chat_id;
 			}
@@ -161,6 +163,8 @@ class Chat extends BaseController {
 		$mssg_upvoted = array();
 		$mssg_downvoted = array();
 		if(Auth::check()){
+			Auth::user()->chat_id = $chat_id;
+			Auth::user()->save();
 			foreach(Auth::user()->upvotedChats() as $upvote){
 				$upvoted[] = $upvote->chat_id;
 			}

@@ -533,15 +533,11 @@ code{
 .highlight_background {
   background-color:#cfb !important;
 }
-a.chat_link {
-  color:black;
-  font-weight:bold;
-  transition:color .5s;
-  -webkit-transition:color .5s;
-}
-a.chat_link:hover {
+.chat_tags>a {
   color:#075de9;
-  text-decoration:none;
+}
+a.chat_link {
+  color:#075de9;
 }
 .request_cont {
   margin:-5px -15px -5px -15px;

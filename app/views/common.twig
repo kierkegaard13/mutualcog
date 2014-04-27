@@ -55,11 +55,23 @@
 {% block friend_list %}
 <div class="hidden-xs hidden-sm content_right" style="position:fixed;height:100%;background-color:white;margin-top:0;padding:0;padding-top:40px;width:190px;">
 {% for friendship in user.friendships %}
-	<div class="friend_box">
-		{% for friend in friendship.friend %}
+	{% for friend in friendship.friend %}
+		<div class="friend_box" title="{{friend.online}}">
+			{% if friend.online_score < 3600 %}
+			<div class="green_ball" style="position:absolute;top:5px;right:5px;"></div>
+			{% elseif friend.online_score < 86400%}
+			<div class="yellow_ball" style="position:absolute;top:5px;right:5px;"></div>
+			{% else %}
+			<div class="red_ball" style="position:absolute;top:5px;right:5px;"></div>
+			{% endif %}
 			{{friend.name}}
-		{% endfor %}
-	</div>
+			{% if not friend.chat_id or friend.anonymous %}
+				<div style="color:gray;font-size:13px;margin-top:-5px;">Just browsing</div>
+			{% else %}
+				<div style="color:gray;font-size:13px;margin-top:-5px;">In a <a class="chat_link" href="{{site}}/chat/{% if friend.chat_room.live %}live{% else %}static{% endif %}/{{friend.chat_id}}">chat</a></div>
+			{% endif %}
+		</div>
+	{% endfor %}
 {% endfor %}
 </div>
 {% endblock %}
@@ -101,7 +113,8 @@
 		</div>
 	</div>
 	<select class="form-control">
-		<option value="">Visible and Evaluated</option>
+		<option value="0">Visible and Evaluated</option>
+		<option value="1">Anonymous and Evaluated</option>
 	</select>
 	<div class="row" style="margin:10px 0 0 0;">
 		<button class="btn btn-sm col-xs-3 btn-default" id="friend_requests" data-toggle="popover" data-content="
@@ -224,7 +237,7 @@
 				</span>
 				with Tags:
 				{% for tag in chat.tags %}
-					<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}" style="color:#075de9;">#{{tag.name}}</a> </span>
+					<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}">#{{tag.name}}</a> </span>
 				{% endfor %}
 				and <a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:gray;"><strong>{{chat.messages | length }} comments</strong></a>
 			</div>
