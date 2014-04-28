@@ -68,7 +68,7 @@
 			{% if not friend.chat_id or friend.anonymous %}
 				<div style="color:gray;font-size:13px;margin-top:-5px;">Just browsing</div>
 			{% else %}
-				<div style="color:gray;font-size:13px;margin-top:-5px;">In a <a class="chat_link" href="{{site}}/chat/{% if friend.chat_room.live %}live{% else %}static{% endif %}/{{friend.chat_id}}">chat</a></div>
+				<div style="color:gray;font-size:13px;margin-top:-5px;">In a <a class="chat_link" href="{{site}}/chat/{% if friend.chatRoom.live %}live{% else %}static{% endif %}/{{friend.chat_id}}">chat</a></div>
 			{% endif %}
 		</div>
 	{% endfor %}

@@ -56,8 +56,8 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 		return $this->hasMany('Chats','admin_id');
 	}
 
-	public function chat_room(){
-		return $this->hasOne('Chats','chat_id');
+	public function chatRoom(){
+		return $this->belongsTo('Chats','chat_id');
 	}
 
 	public function rooms(){

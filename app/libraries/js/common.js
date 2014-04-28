@@ -37,14 +37,31 @@ $(document).ready(function(){
 	$('#mssg_requests').popover({html:true});
 	$('#global_requests').popover({html:true});
 	$('#friend_requests').popover({html:true});
-	$('.pm_cont').resizable({handles:"nw",ghost:true,maxHeight:450,maxWidth:400,minHeight:330,minWidth:240,resize:function(e,ui){
+	$('.pm_cont').resizable({handles:"nw",ghost:false,maxHeight:450,maxWidth:400,minHeight:330,minWidth:240,resize:function(e,ui){
 		var ui_height = ui.size.height;
 		var ui_width = ui.size.width;
-		$('.pm_header').width(ui_width);
-		$('.pm_body').height(ui_height - 64);
-		$('.pm_body').width($('.pm_header').width() - 4);
-		$('.pm_text').width($('.pm_header').width() - 10);
+		$(this).css('left','0');
+		$(this).css('top','0');
+		$(this).find('.pm_header').width(ui_width);
+		$(this).find('.pm_body').height(ui_height - 64);
+		$(this).find('.pm_body').width($(this).find('.pm_header').width() - 4);
+		$(this).find('.pm_text').width($(this).find('.pm_header').width() - 10);
 	}});
+	$('body').on('click','.pm_header',function(){
+		if($(this).parent().find('.pm_body').css('display') == 'none'){
+			$(this).parent().resizable('enable');
+			$(this).parent().find('.pm_body').css('display','');
+			$(this).parent().find('.pm_text').css('display','');
+		}else{
+			if($(this).parent().css('height') != ''){
+				$(this).parent().attr('data-expanded-height',$(this).parent().css('height'));
+				$(this).parent().css('height','');
+			}
+			$(this).parent().resizable('disable');
+			$(this).parent().find('.pm_body').css('display','none');
+			$(this).parent().find('.pm_text').css('display','none');
+		}
+	});
 	var reply_form = $('#reply_form').clone();;
 	$('#request_friend').click(function(){
 		module.socket.emit('request_friend',{user_id:$(this).attr('data-user-id'),user:$(this).attr('data-user-name'),sender_id:module.user_id,sender:module.user_tracker});

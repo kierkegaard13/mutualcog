@@ -845,11 +845,13 @@ a.chat_link {
 }
 .pm_cont {
   margin-right:5px;
+  display:inline-block;
 }
 .pm_header {
   width:240px;
   height:30px;
   background-color:#022254;	
+  cursor:pointer;
 }
 .pm_body {
   width:240px;
@@ -865,7 +867,6 @@ a.chat_link {
   border-radius:0;
   width:240px;
   height:30px;
-  margin-bottom:-7px;
 }
 textarea {
   width:100%;
