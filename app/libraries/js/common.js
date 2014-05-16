@@ -37,15 +37,44 @@ $(document).ready(function(){
 	$('#mssg_requests').popover({html:true});
 	$('#global_requests').popover({html:true});
 	$('#friend_requests').popover({html:true});
+	$('#user_props').change(function(){
+		module.socket.emit('change_user_props',{props:$(this).val()});
+	});
+	$('body').on('click','.pm_remove',function(){
+		$(this).parent().parent().remove();
+		return false;
+	});
+	$('body').on('click','.friend_box',function(){
+		var friend_name = $(this).attr('id').replace('friend_box_for_','');
+		var friend_status_class = $(this).find('#' + friend_name + '_status').attr('class').replace('friend_status','');
+		if($('#pm_' + friend_name).length == 0){
+			var chat_box = '<div class="pm_cont" id="' + 'pm_' + friend_name + '">';
+			chat_box += '<div class="pm_header"><div class="' + friend_status_class + ' pm_status"></div><div class="glyphicon glyphicon-remove pm_remove"></div><div class="pm_name">' + friend_name + '</div></div>';
+			chat_box += '<div class="pm_body"></div>';
+			chat_box += '<textarea class="pm_text"></textarea>';
+			chat_box += '</div>'; 
+			$('.pm_bar').append(chat_box);
+			$('.pm_cont').resizable({handles:"nw",ghost:false,maxHeight:450,maxWidth:400,minHeight:330,minWidth:240,resize:function(e,ui){
+				var ui_height = ui.size.height;
+				var ui_width = ui.size.width - 10;
+				$(this).css('left','0');
+				$(this).css('top','0');
+				$(this).find('.pm_header').width(ui_width);
+				$(this).find('.pm_body').height(ui_height - 64);
+				$(this).find('.pm_body').width($(this).find('.pm_header').width() + 6);
+				$(this).find('.pm_text').width($(this).find('.pm_header').width() - 2);
+			}});
+		}
+	});
 	$('.pm_cont').resizable({handles:"nw",ghost:false,maxHeight:450,maxWidth:400,minHeight:330,minWidth:240,resize:function(e,ui){
 		var ui_height = ui.size.height;
-		var ui_width = ui.size.width;
+		var ui_width = ui.size.width - 10;
 		$(this).css('left','0');
 		$(this).css('top','0');
 		$(this).find('.pm_header').width(ui_width);
 		$(this).find('.pm_body').height(ui_height - 64);
-		$(this).find('.pm_body').width($(this).find('.pm_header').width() - 4);
-		$(this).find('.pm_text').width($(this).find('.pm_header').width() - 10);
+		$(this).find('.pm_body').width($(this).find('.pm_header').width() + 6);
+		$(this).find('.pm_text').width($(this).find('.pm_header').width() - 2);
 	}});
 	$('body').on('click','.pm_header',function(){
 		if($(this).parent().find('.pm_body').css('display') == 'none'){

@@ -101,6 +101,7 @@ io.sockets.on('connection', function(client) {
 		client.memb_id = handshake.memb_id;
 		client.serial = handshake.serial;
 		client.serial_id = handshake.serial_id;
+		client.join('user_' + client.user + '_' + client.user_id);
 	}else{
 		client.authorized = handshake.authorized;
 	}
@@ -158,6 +159,33 @@ io.sockets.on('connection', function(client) {
 				client.is_admin = rows[0].is_admin;
 				client.banned = rows[0].banned;
 			});
+		});
+	});
+
+	client.on('change_user_props',function(info){
+		if(client.authorized){
+			var anon = 0;
+			var eval = 0;
+			switch(info.props){
+				case '0':
+					eval = 1;
+					break;	
+				case '1':
+					eval = 1;
+					anon = 1;
+					break;
+			}
+			conn.where({id:client.user_id}).update('users',{anonymous:anon,evaluated:eval},function(err,info){
+				if(err)console.log(err);
+			});
+		}
+	});
+
+	client.on('request_friend',function(info){
+		var request_info = info;
+		conn.insert('requests',{type:2,user_id:info.user_id,sender_id:info.sender_id,sender:info.sender,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
+			if(err)console.log(err);
+			io.sockets.in('user_' + request_info.user + '_' + request_info.user_id).emit('displayFriendRequests',{id:info.insert_id,sender:request_info.sender,sender_id:request_info.sender_id});
 		});
 	});
 
@@ -244,11 +272,7 @@ io.sockets.on('connection', function(client) {
 	});
 
 	client.on('update_votes',function(info){
-		if(info.responseto == 'global'){
-			io.sockets.in(client.room).emit('updateVotes',{message_id:info.id,response:info.response});
-		}else{
-			io.sockets.in(client.room + '_response_' + info.responseto).emit('updateVotes',{message_id:info.id,response:info.response});
-		}
+		io.sockets.in(client.room).emit('updateVotes',{message_id:info.id,response:info.response});
 	});
 
 	client.on('update_details',function(info){
@@ -286,6 +310,9 @@ io.sockets.on('connection', function(client) {
 					conn.insert('messages_voted',{message_id:insert_id,member_id:client.memb_id,status:1},function(err,info){
 						if(err)console.log(err);
 					});
+					conn.where({id:client.user_id}).update('users',{updated_at:moment.utc().format()},function(err,info){
+						if(err) console.log(err);
+					});
 				}
 				conn.where({serial_id:client.serial}).update('serials',{updated_at:moment.utc().format()},function(err,info){
 					if(err) console.log(err);
@@ -316,9 +343,6 @@ io.sockets.on('connection', function(client) {
 			//		if(err)console.log(err);
 					conn.where({chat_id:client.chat_id,user:client.user}).update('members_to_chats',{active:0},function(err,info){
 						if(err)console.log(err);
-					});
-					conn.where({serial_id:client.user}).update('serials',{reserved:0},function(err,info){
-						if(err) console.log(err);
 					});
 			//		io.sockets.in(client.room).emit('displayMembers',rows);
 			//	});

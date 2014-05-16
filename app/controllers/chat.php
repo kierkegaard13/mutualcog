@@ -434,7 +434,6 @@ class Chat extends BaseController {
 			if(htmlentities(Input::get('live_status')) == 1 || htmlentities(Input::get('live_status')) == 0){
 				$chat->live = htmlentities(Input::get('live_status'));
 			}
-			$chat->type = 'open';
 			if(Auth::check()){
 				$chat->admin = Auth::user()->name;
 				$chat->admin_id = Auth::user()->id;

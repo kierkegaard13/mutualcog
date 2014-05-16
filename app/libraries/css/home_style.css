@@ -297,6 +297,11 @@ select {
   top:10px;
   right:15px; 
 }
+.friend_status{
+  position:absolute;
+  top:5px;
+  right:5px;
+}
 .friend_box {
   position:relative;
   padding:10px;
@@ -843,6 +848,20 @@ a.chat_link {
   position:relative;
   white-space:pre-line;
 }
+.pm_name {
+  position:absolute;
+  left:20px;
+  top:5px;
+}
+.pm_remove {
+  float:right;
+  color:white;
+}
+.pm_status{
+  position:absolute;
+  left:5px;
+  top:10px;
+}
 .pm_cont {
   margin-right:5px;
   display:inline-block;
@@ -850,6 +869,9 @@ a.chat_link {
 .pm_header {
   width:240px;
   height:30px;
+  color:white;
+  padding:5px;
+  line-height:20px;
   background-color:#022254;	
   cursor:pointer;
 }
@@ -861,12 +883,20 @@ a.chat_link {
 }
 .pm_text {
   border:none;
+  border-left:1px solid #bbb;
+  border-right:1px solid #bbb;
   font-size:14px;
   padding:5px;
   margin:0;
   border-radius:0;
   width:240px;
   height:30px;
+}
+.pm_bar {
+  position:fixed !important;
+  bottom:0px;
+  right:0px;
+  margin-bottom:-7px; 
 }
 textarea {
   width:100%;

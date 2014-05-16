@@ -49,7 +49,11 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 	}
 
 	public function messages(){
-		return $this->hasMany('Messages','member_id');
+		return $this->hasMany('Messages','member_id')->wheretype('public');
+	}
+
+	public function private_chats(){
+		return $this->belongsToMany('PrivateChats','users_to_private_chats','user_id','chat_id')->wheretype('public');
 	}
 
 	public function chats(){
@@ -57,7 +61,7 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 	}
 
 	public function chatRoom(){
-		return $this->belongsTo('Chats','chat_id');
+		return $this->belongsTo('Chats','chat_id')->wheretype('public')->take(1);
 	}
 
 	public function rooms(){

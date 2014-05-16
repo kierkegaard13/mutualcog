@@ -56,13 +56,13 @@
 <div class="hidden-xs hidden-sm content_right" style="position:fixed;height:100%;background-color:white;margin-top:0;padding:0;padding-top:40px;width:190px;">
 {% for friendship in user.friendships %}
 	{% for friend in friendship.friend %}
-		<div class="friend_box" title="{{friend.online}}">
-			{% if friend.online_score < 3600 %}
-			<div class="green_ball" style="position:absolute;top:5px;right:5px;"></div>
-			{% elseif friend.online_score < 86400%}
-			<div class="yellow_ball" style="position:absolute;top:5px;right:5px;"></div>
+		<div class="friend_box" id="friend_box_for_{{friend.name}}" title="{{friend.online}}">
+			{% if friend.online_score < 600 %}
+			<div class="green_ball friend_status" id="{{friend.name}}_status"></div>
+			{% elseif friend.online_score < 7200%}
+			<div class="yellow_ball friend_status" id="{{friend.name}}_status"></div>
 			{% else %}
-			<div class="red_ball" style="position:absolute;top:5px;right:5px;"></div>
+			<div class="red_ball friend_status" id="{{friend.name}}_status"></div>
 			{% endif %}
 			{{friend.name}}
 			{% if not friend.chat_id or friend.anonymous %}
@@ -112,9 +112,9 @@
 			<span class="sr-only">Only {{user.cognizance}}% Complete</span>
 		</div>
 	</div>
-	<select class="form-control">
-		<option value="0">Visible and Evaluated</option>
-		<option value="1">Anonymous and Evaluated</option>
+	<select class="form-control" id="user_props">
+		<option value="0" {% if user.anonymous == 0 and user.evaluated == 1 %}selected{% endif %}>Visible and Evaluated</option>
+		<option value="1" {% if user.anonymous == 1 and user.evaluated == 1 %}selected{% endif %}>Anonymous and Evaluated</option>
 	</select>
 	<div class="row" style="margin:10px 0 0 0;">
 		<button class="btn btn-sm col-xs-3 btn-default" id="friend_requests" data-toggle="popover" data-content="
