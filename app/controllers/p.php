@@ -29,10 +29,7 @@ class P extends BaseController {
 				$mssg_downvoted[] = $downvote->message_id;
 			}
 			if($username != Auth::user()->name){
-				$interaction = Interactions::whereHas('users',function($q){$q->where('interaction_users.user_id',Auth::user()->id);})
-					->whereHas('users',function($q)use($user){$q->where('interaction_users.user_id',$user->id);})
-					->wheretype('friendship')
-					->first();
+				$interaction = InteractionUsers::whereuser_id(Auth::user()->id)->whereentity_id($user->id)->wheretype(0)->first();
 				if($interaction){
 					if($interaction->friended == 1) $view['friended'] = 1;		
 				}

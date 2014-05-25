@@ -46,8 +46,11 @@ $(document).ready(function(){
 	});
 	$('body').on('click','.friend_box',function(){
 		var friend_name = $(this).attr('id').replace('friend_box_for_','');
+		var friend_id = $(this).attr('data-friend-id');
+		var pm_id = $(this).attr('data-pm-chat-id');
 		var friend_status_class = $(this).find('#' + friend_name + '_status').attr('class').replace('friend_status','');
 		if($('#pm_' + friend_name).length == 0){
+			module.socket.emit('join_pm',{friend_id:friend_id,pm_id:pm_id});
 			var chat_box = '<div class="pm_cont" id="' + 'pm_' + friend_name + '">';
 			chat_box += '<div class="pm_header"><div class="' + friend_status_class + ' pm_status"></div><div class="glyphicon glyphicon-remove pm_remove"></div><div class="pm_name">' + friend_name + '</div></div>';
 			chat_box += '<div class="pm_body"></div>';

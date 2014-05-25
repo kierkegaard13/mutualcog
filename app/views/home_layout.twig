@@ -57,13 +57,32 @@
 			{% block side_5 %}{% endblock %}
 		</div>
 	</div>
-	<div class="pm_bar">
-		<div class="pm_cont">
-			<div class="pm_header"></div>
-			<div class="pm_body" style="display:none;"></div>
-			<textarea class="pm_text" style="display:none;"></textarea>
+	{% if logged_in %}
+		<div class="pm_bar">
+			{% for pm in user.privateChats %}
+				<div class="pm_cont" id="pm_{{ pm.friends[0].name}}">
+					<div class="pm_header">
+						{% if pm.friends[0].online_score < 600 %}
+						<div class="green_ball pm_status"></div>
+						{% elseif pm.friends[0].online_score < 7200%}
+						<div class="yellow_ball pm_status"></div>
+						{% else %}
+						<div class="red_ball pm_status"></div>
+						{% endif %}
+						<div class="glyphicon glyphicon-remove pm_remove"></div>
+						<div class="pm_name">{{pm.friends[0].name}}</div>
+					</div>
+					<div class="pm_body"></div>
+					<textarea class="pm_text"></textarea>
+				</div>
+			{% endfor %}
+			<div class="pm_cont">
+				<div class="pm_header"></div>
+				<div class="pm_body" style="display:none;"></div>
+				<textarea class="pm_text" style="display:none;"></textarea>
+			</div>
 		</div>
-	</div>
+	{% endif %}
 </div>
 <script src="//{{io_url}}/socket.io/socket.io.js"></script>
 <script src='//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js'></script>

@@ -55,23 +55,21 @@
 {% block friend_list %}
 <div class="hidden-xs hidden-sm content_right" style="position:fixed;height:100%;background-color:white;margin-top:0;padding:0;padding-top:40px;width:190px;">
 {% for friendship in user.friendships %}
-	{% for friend in friendship.friend %}
-		<div class="friend_box" id="friend_box_for_{{friend.name}}" title="{{friend.online}}">
-			{% if friend.online_score < 600 %}
-			<div class="green_ball friend_status" id="{{friend.name}}_status"></div>
-			{% elseif friend.online_score < 7200%}
-			<div class="yellow_ball friend_status" id="{{friend.name}}_status"></div>
-			{% else %}
-			<div class="red_ball friend_status" id="{{friend.name}}_status"></div>
-			{% endif %}
-			{{friend.name}}
-			{% if not friend.chat_id or friend.anonymous %}
-				<div style="color:gray;font-size:13px;margin-top:-5px;">Just browsing</div>
-			{% else %}
-				<div style="color:gray;font-size:13px;margin-top:-5px;">In a <a class="chat_link" href="{{site}}/chat/{% if friend.chatRoom.live %}live{% else %}static{% endif %}/{{friend.chat_id}}">chat</a></div>
-			{% endif %}
-		</div>
-	{% endfor %}
+	<div class="friend_box" id="friend_box_for_{{friendship.entity.name}}" data-friend-id="{{friendship.entity.id}}" data-pm-chat-id="{% if friendship.entity.privateChatF %}{{friendship.entity.privateChatF[0].id}}{% else %}0{% endif %}" title="{{friendship.entity.online}}">
+		{% if friend.online_score < 600 %}
+		<div class="green_ball friend_status" id="{{friendship.entity.name}}_status"></div>
+		{% elseif friend.online_score < 7200%}
+		<div class="yellow_ball friend_status" id="{{friendship.entity.name}}_status"></div>
+		{% else %}
+		<div class="red_ball friend_status" id="{{friendship.entity.name}}_status"></div>
+		{% endif %}
+		{{friendship.entity.name}}
+		{% if not friendship.entity.chat_id or friendship.entity.anonymous %}
+			<div style="color:gray;font-size:13px;margin-top:-5px;">Just browsing</div>
+		{% else %}
+			<div style="color:gray;font-size:13px;margin-top:-5px;">In a <a class="chat_link" href="{{site}}/chat/{% if friendship.entity.chatRoom.live %}live{% else %}static{% endif %}/{{friendship.entity.chat_id}}">chat</a></div>
+		{% endif %}
+	</div>
 {% endfor %}
 </div>
 {% endblock %}

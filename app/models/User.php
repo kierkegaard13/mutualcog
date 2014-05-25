@@ -52,8 +52,12 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 		return $this->hasMany('Messages','member_id')->wheretype('public');
 	}
 
-	public function private_chats(){
-		return $this->belongsToMany('PrivateChats','users_to_private_chats','user_id','chat_id')->wheretype('public');
+	public function privateChats(){
+		return $this->belongsToMany('PrivateChats','users_to_private_chats','user_id','chat_id')->wherevisible('1');
+	}
+
+	public function privateChatF(){
+		return $this->belongsToMany('PrivateChats','users_to_private_chats','entity_id','chat_id')->whereuser_id(Auth::user()->id)->whereentity_type(0);
 	}
 
 	public function chats(){
@@ -69,7 +73,7 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 	}
 
 	public function friendships(){
-		return $this->belongsToMany('Interactions','interaction_users','user_id','interaction_id')->wheretype('friendship')->wherefriended(1)->orderBy(DB::raw('bond + bond * timestampdiff(minute,"2013-1-1 12:00:00",interactions.updated_at)/45000'),'desc');
+		return $this->hasMany('InteractionUsers','user_id')->wheretype(0)->wherefriended(1)->orderBy(DB::raw('bond + bond * timestampdiff(minute,"2013-1-1 12:00:00",interaction_users.updated_at)/45000'),'desc');
 	}
 
 	public function subscriptions(){
