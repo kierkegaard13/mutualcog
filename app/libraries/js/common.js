@@ -50,13 +50,13 @@ $(document).ready(function(){
 		var pm_id = $(this).attr('data-pm-chat-id');
 		var friend_status_class = $(this).find('#' + friend_name + '_status').attr('class').replace('friend_status','');
 		if($('#pm_' + friend_name).length == 0){
-			module.socket.emit('join_pm',{friend_id:friend_id,pm_id:pm_id});
-			var chat_box = '<div class="pm_cont" id="' + 'pm_' + friend_name + '">';
+			module.socket.emit('join_pm',{friend_id:friend_id,friend_name:friend_name,pm_id:pm_id});
+			var chat_box = '<div class="pm_cont" id="pm_' + friend_name + '">';
 			chat_box += '<div class="pm_header"><div class="' + friend_status_class + ' pm_status"></div><div class="glyphicon glyphicon-remove pm_remove"></div><div class="pm_name">' + friend_name + '</div></div>';
 			chat_box += '<div class="pm_body"></div>';
 			chat_box += '<textarea class="pm_text"></textarea>';
 			chat_box += '</div>'; 
-			$('.pm_bar').append(chat_box);
+			$('.pm_bar').prepend(chat_box);
 			$('.pm_cont').resizable({handles:"nw",ghost:false,maxHeight:450,maxWidth:400,minHeight:330,minWidth:240,resize:function(e,ui){
 				var ui_height = ui.size.height;
 				var ui_width = ui.size.width - 10;
@@ -134,6 +134,13 @@ $(document).ready(function(){
 	});
 });
 
+module.socket.on('update_pm_id',function(info){
+	$('#pm_' + info.friend_name).attr('id','pm_' + info.friend_id + '_' + info.pm_id);
+});
+
+module.socket.on('receive_pm',function(info){
+	$('#pm_' + info.friend_id + '_' + info.pm_id).find('.pm_body').append(info.message);
+});
 
 module.socket.on('displayFriendRequests',function(request_info){
 	var friend_count = $('#friend_requests_count');
@@ -637,5 +644,30 @@ $('.tags_input').on('keyup',function(e){
 			selected_tag = -1;
 		}
 	}
+});
+
+var keys = new Array();
+
+$('.pm_text').keydown(function(e){
+	keys.push(e.which);
+});
+
+$('.pm_text').keyup(function(e){
+	if(e.which == 13){  /*enter key*/
+		if(keys.indexOf(16) == -1){  /*shift key not pressed*/
+			keys.splice(keys.indexOf(e.which),1);
+			if($(this).val().trim() != ""){
+				var pm_info = $(this).parent().attr('id').split('_');
+				module.socket.emit('send_pm',{message:$(this).val(),pm_id:pm_info[2],friend_id:pm_info[1],user_id:module.user_id});
+				$(this).val("");
+			}
+		}else{
+			keys.splice(keys.indexOf(e.which),1);
+			return true;
+		}
+	}else{
+		keys.splice(keys.indexOf(e.which),1);
+	}
+	return true;
 });
 
