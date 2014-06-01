@@ -58,25 +58,7 @@
 		</div>
 	</div>
 	{% if logged_in %}
-		<div class="pm_bar">
-			{% for pm in user.privateChats %}
-				<div class="pm_cont" id="pm_{{pm.friends[0].id}}_{{pm.id}}">
-					<div class="pm_header">
-						{% if pm.friends[0].online_score < 600 %}
-						<div class="green_ball pm_status"></div>
-						{% elseif pm.friends[0].online_score < 7200%}
-						<div class="yellow_ball pm_status"></div>
-						{% else %}
-						<div class="red_ball pm_status"></div>
-						{% endif %}
-						<div class="glyphicon glyphicon-remove pm_remove"></div>
-						<div class="pm_name">{{pm.friends[0].name}}</div>
-					</div>
-					<div class="pm_body"></div>
-					<textarea class="pm_text"></textarea>
-				</div>
-			{% endfor %}
-		</div>
+		{% block pm_bar %}{% endblock %}
 	{% endif %}
 </div>
 <script src="//{{io_url}}/socket.io/socket.io.js"></script>
