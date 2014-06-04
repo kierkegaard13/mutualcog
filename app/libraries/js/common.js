@@ -153,16 +153,25 @@ module.socket.on('receive_pm',function(info){
 			chat_box += '<textarea class="pm_text"></textarea>';
 			chat_box += '</div>'; 
 			$('.pm_bar').prepend(chat_box);
-			$('#pm_' + info.friend_id + '_' + info.pm_id).find('.pm_body').append(info.message);
+			var mssg = '<div class="pm_mssg_cont">';
+			mssg += '<div class="pm_message" style="background-color:#7badfc;margin-right:30px;margin-left:5px;" title="' + info.time + ' UTC">' + info.message + '</div>';
+			mssg += '</div>'; 
+			$('#pm_' + info.friend_id + '_' + info.pm_id).find('.pm_body').append(mssg);
 		}else{
 			$('#pm_' + info.friend_id + '_' + info.pm_id).resizable('enable');
 			$('#pm_' + info.friend_id + '_' + info.pm_id).parent().find('.pm_body').css('display','');
 			$('#pm_' + info.friend_id + '_' + info.pm_id).parent().find('.pm_text').css('display','');
-			$('#pm_' + info.friend_id + '_' + info.pm_id).find('.pm_body').append(info.message);
+			var mssg = '<div class="pm_mssg_cont">';
+			mssg += '<div class="pm_message" style="background-color:#7badfc;margin-right:30px;margin-left:5px;" title="' + info.time + ' UTC">' + info.message + '</div>';
+			mssg += '</div>'; 
+			$('#pm_' + info.friend_id + '_' + info.pm_id).find('.pm_body').append(mssg);
 		}
 
 	}else{
-		$('#pm_' + info.friend_id + '_' + info.pm_id).find('.pm_body').append(info.message);
+		var mssg = '<div class="pm_mssg_cont">';
+		mssg += '<div class="pm_message" style="background-color:#7badfc;margin-right:30px;margin-left:5px;" title="' + info.time + ' UTC">' + info.message + '</div>';
+		mssg += '</div>'; 
+		$('#pm_' + info.friend_id + '_' + info.pm_id).find('.pm_body').append(mssg);
 	}
 });
 
@@ -672,18 +681,21 @@ $('.tags_input').on('keyup',function(e){
 
 var keys = new Array();
 
-$('.pm_text').keydown(function(e){
+$('body').on('keydown','.pm_text',function(e){
 	keys.push(e.which);
 });
 
-$('.pm_text').keyup(function(e){
+$('body').on('keyup','.pm_text',function(e){
 	if(e.which == 13){  /*enter key*/
 		if(keys.indexOf(16) == -1){  /*shift key not pressed*/
 			keys.splice(keys.indexOf(e.which),1);
 			if($(this).val().trim() != ""){
 				var pm_info = $(this).parent().attr('id').split('_');
 				module.socket.emit('send_pm',{message:$(this).val(),pm_id:pm_info[2],friend_id:pm_info[1],user_id:module.user_id});
-				$('#pm_' + pm_info[1] + '_' + pm_info[2]).find('.pm_body').append($(this).val());
+				var mssg = '<div class="pm_mssg_cont">';
+				mssg += '<div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment.utc().format() + ' UTC">' + $(this).val() + '</div>';
+				mssg += '</div>'; 
+				$('#pm_' + pm_info[1] + '_' + pm_info[2]).find('.pm_body').append(mssg);
 				$(this).val("");
 			}
 		}else{

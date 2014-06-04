@@ -876,12 +876,14 @@ a.chat_link {
   cursor:pointer;
 }
 .pm_body {
+  overflow:auto;
   width:240px;
   height:270px;
   background-color:#222;
   border:solid 2px #222;
 }
 .pm_mssg_cont {
+  overflow:hidden;
   margin-top:8px;
   margin-bottom:8px;
 }

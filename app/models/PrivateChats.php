@@ -6,7 +6,7 @@ class PrivateChats extends EloquentBridge
 	public $timestamps = true;
 
 	public function messages(){
-		return $this->hasMany('PrivateMessages','chat_id')->take(25);
+		return $this->hasMany('PrivateMessages','chat_id')->take(25)->orderBy('created_at');
 	}
 
 	public function friends(){
