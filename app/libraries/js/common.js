@@ -144,7 +144,11 @@ module.socket.on('update_pm_id',function(info){
 });
 
 module.socket.on('receive_pm',function(info){
-	if(info.maximize){
+	if(info.update){
+		var tmp_message = $('#pm_' + info.friend_id + '_' + info.pm_id).find('.tmp_message');
+		tmp_message.find('.pm_message').html(info.message);
+		tmp_message.attr('class',tmp_message.attr('class').replace('tmp_message',''));
+	}else if(info.maximize){
 		if(info.state == 0){
 			var friend_status_class = $('#friend_' + info.friend_id + '_status').attr('class').replace('friend_status','');
 			var chat_box = '<div class="pm_cont" id="pm_' + info.friend_id + '_' + info.pm_id + '">';
@@ -692,7 +696,7 @@ $('body').on('keyup','.pm_text',function(e){
 			if($(this).val().trim() != ""){
 				var pm_info = $(this).parent().attr('id').split('_');
 				module.socket.emit('send_pm',{message:$(this).val(),pm_id:pm_info[2],friend_id:pm_info[1],user_id:module.user_id});
-				var mssg = '<div class="pm_mssg_cont">';
+				var mssg = '<div class="pm_mssg_cont tmp_message">';
 				mssg += '<div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment.utc().format() + ' UTC">' + $(this).val() + '</div>';
 				mssg += '</div>'; 
 				$('#pm_' + pm_info[1] + '_' + pm_info[2]).find('.pm_body').append(mssg);

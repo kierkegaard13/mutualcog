@@ -30,6 +30,29 @@ function sanitize(text) {
 		replace(/'/g, '&#039;');
 }
 
+function emoji(text){
+	var mapArr = ['\\&lt\\;3',':\\)',':\\(',':D',":\\&\\#39\\;\\(",'spec_face_angr',':\\/',':\\|',':O',':P','T_T'];
+
+	var mapObj = {
+		'&lt;3':'<img style="height:18px;" src="//localhost/laravel/app/emoji/heart.png"></img>',
+		':D':'<img style="height:18px;" src="//localhost/laravel/app/emoji/smile.png"></img>',
+		':)':'<img style="height:18px;" src="//localhost/laravel/app/emoji/smiley.png"></img>',
+		':|':'<img style="height:18px;" src="//localhost/laravel/app/emoji/neutral_face.png"></img>',
+		":&#39;(":'<img style="height:18px;" src="//localhost/laravel/app/emoji/cry.png"></img>',
+		':O':'<img style="height:18px;" src="//localhost/laravel/app/emoji/open_mouth.png"></img>',
+		':P':'<img style="height:18px;" src="//localhost/laravel/app/emoji/stuck_out_tongue_closed_eyes.png"></img>',
+		'T_T':'<img style="height:18px;" src="//localhost/laravel/app/emoji/sob.png"></img>',
+		'spec_face_angr':'<img style="height:18px;" src="//localhost/laravel/app/emoji/rage.png"></img>'
+	};
+
+	var re = new RegExp(mapArr.join("|"),"gi");
+	text = text.replace(re, function(matched){
+		console.log(matched);
+		  return mapObj[matched];
+	});
+	return text;
+}
+
 function processMessage(message){
 	var url_reg = /(\s)(https?:\/\/)?([\da-z-]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/g;
 	var url_reg2 = /^(https?:\/\/)?([\da-z-]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/g;
@@ -41,6 +64,8 @@ function processMessage(message){
 	var re1 = new RegExp('^<p>','g');
 	var re2 = new RegExp('</p>$','g');
 	message = hashHtml(message);
+	message = message.replace('>:|','spec_face_angr');
+	message = message.replace('>:(','spec_face_angr');
 	message = marked(message);
 	if(message.length){
 		message = message.replace(/^\s+|\s+$/g,'');
@@ -54,6 +79,7 @@ function processMessage(message){
 		message = message.replace(url_reg2,"<a class='chat_link' href='\/\/$2\.$3$4'>$2\.$3$4</a>");
 		message = message.replace(url_reg3,"$1$2style='max-width:300px;max-height:200px;margin-bottom:5px;' $3");
 	}
+	message = emoji(message);
 	return message;
 }
 
@@ -101,7 +127,14 @@ io.sockets.on('connection', function(client) {
 		client.memb_id = handshake.memb_id;
 		client.serial = handshake.serial;
 		client.serial_id = handshake.serial_id;
-		client.join('user_' + client.user + '_' + client.user_id);
+		client.join('user_' + client.user_id);
+		client.pm_obj = {};
+		conn.where({user_id:client.user_id}).get('users_to_private_chats',function(err,rows){
+			if(err)console.log(err);
+			for(var row in rows){
+				client.pm_obj[row.friend_id] = row.id;
+			}
+		});
 	}else{
 		client.authorized = handshake.authorized;
 	}
@@ -113,7 +146,7 @@ io.sockets.on('connection', function(client) {
 		client.join(client.room);
 		var rooms_joined = io.sockets.manager.roomClients[client.id];
 		client.rooms = new Array();
-		for(var prop in rooms_joined){
+		for(var prop in rooms_joined){  //currently not used
 			prop = prop.substr(1);
 			client.rooms.push(prop);
 		}
@@ -150,7 +183,7 @@ io.sockets.on('connection', function(client) {
 				if(err)console.log(err);
 				conn.where({chat_id:client.chat_id,active:1}).get('members_to_chats',function(err,rows){
 					if(err)console.log(err);
-					io.sockets.in(client.room).emit('displayMembers',{members:rows,mod:0,add:0,remove:0});
+					io.sockets.in(client.room).emit('displayMembers',{members:rows,mod:0,add:0,remove:0});  //the other parameters help to add mods to the list
 				});
 			});
 			conn.where({member_id:client.memb_id,chat_id:client.chat_id,user:client.user}).get('members_to_chats',function(err,rows){
@@ -160,6 +193,85 @@ io.sockets.on('connection', function(client) {
 				client.banned = rows[0].banned;
 			});
 		});
+	});
+
+	client.on('join_pm',function(pm_info){
+		if(client.authorized){
+			if(pm_info.pm_id != 0){
+				conn.where({user_id:client.user_id,entity_id:pm_info.friend_id,entity_type:0}).update('users_to_private_chats',{visible:1},function(err,info){
+					if(err)console.log(err);
+					conn.where({id:pm_info.pm_id}).get('private_chats',function(err,rows){
+						if(err)console.log(err);
+						client.pm_obj[pm_info.friend_id] = pm_info.pm_id;
+						client.emit('update_pm_id',{pm_id:pm_info.pm_id,friend_name:pm_info.friend_name,friend_id:pm_info.friend_id});
+					});
+				});
+			}else{
+				conn.insert('private_chats',{created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
+					if(err)console.log(err);
+					client.pm_obj[pm_info.friend_id] = info.insertId;
+					client.emit('update_pm_id',{pm_id:info.insertId,friend_name:pm_info.friend_name,friend_id:pm_info.friend_id});
+					conn.insert('users_to_private_chats',{chat_id:info.insertId,user_id:client.user_id,entity_id:pm_info.friend_id},function(err,info){
+						if(err)console.log(err);
+					});
+					conn.insert('users_to_private_chats',{chat_id:info.insertId,user_id:pm_info.friend_id,entity_id:client.user_id,visible:0},function(err,info){
+						if(err)console.log(err);
+					});
+				});
+			}
+		}
+	});
+
+	client.on('leave_pm',function(pm_info){
+		if(client.authorized){
+			conn.where({user_id:client.user_id,entity_id:pm_info.friend_id,chat_id:pm_info.pm_id,entity_type:0}).update('users_to_private_chats',{visible:0},function(err,rows){
+				if(err)console.log(err);
+			});	
+		}
+	});
+
+	client.on('minimize_pm',function(pm_info){
+		if(client.authorized){
+			conn.where({user_id:client.user_id,entity_id:pm_info.friend_id,chat_id:pm_info.pm_id,entity_type:0}).update('users_to_private_chats',{visible:2},function(err,rows){
+				if(err)console.log(err);
+			});	
+		}
+	});
+
+	client.on('maximize_pm',function(pm_info){
+		if(client.authorized){
+			conn.where({user_id:client.user_id,entity_id:pm_info.friend_id,chat_id:pm_info.pm_id,entity_type:0}).update('users_to_private_chats',{visible:1},function(err,rows){
+				if(err)console.log(err);
+			});	
+		}
+	});
+
+	client.on('send_pm',function(pm_info){
+		if(client.authorized){
+			pm_info.message = processMessage(pm_info.message);
+			var mssg_id = 0;
+			conn.where({user_id:pm_info.friend_id,entity_id:client.user_id,entity_type:0}).get('users_to_private_chats',function(err,rows){
+				if(err)console.log(err);
+				if(rows[0].visible == 1){
+					conn.insert('private_messages',{message:pm_info.message,author:client.user,author_id:client.user_id,chat_id:pm_info.pm_id,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
+						if(err)console.log(err);
+						mssg_id = info.insertId;
+					});
+					client.emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.user_id,friend_id:pm_info.friend_id,friend_name:0,maximize:0,state:1,time:moment.utc().format(),update:1,mssg_id:mssg_id});
+					io.sockets.in('user_' + pm_info.friend_id).emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.friend_id,friend_id:pm_info.user_id,friend_name:client.user,maximize:0,state:rows[0].visible,time:moment.utc().format(),update:0,mssg_id:mssg_id});
+				}else{
+					conn.insert('private_messages',{message:pm_info.message,author:client.user,author_id:client.user_id,chat_id:pm_info.pm_id,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
+						if(err)console.log(err);
+						mssg_id = info.insertId;
+					});
+					conn.where({user_id:pm_info.friend_id,entity_id:client.user_id,entity_type:0}).update('users_to_private_chats',{visible:1},function(err,rows){
+						if(err)console.log(err);
+					});
+					client.emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.user_id,friend_id:pm_info.friend_id,friend_name:0,maximize:0,state:1,time:moment.utc().format(),update:1,mssg_id:mssg_id});
+					io.sockets.in('user_' + pm_info.friend_id).emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.friend_id,friend_id:pm_info.user_id,friend_name:client.user,maximize:1,state:rows[0].visible,time:moment.utc().format(),update:0,mssg_id:mssg_id});
+				}
+			});
+		}
 	});
 
 	client.on('change_user_props',function(info){
@@ -185,7 +297,7 @@ io.sockets.on('connection', function(client) {
 		var request_info = info;
 		conn.insert('requests',{type:2,user_id:info.user_id,sender_id:info.sender_id,sender:info.sender,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
 			if(err)console.log(err);
-			io.sockets.in('user_' + request_info.user + '_' + request_info.user_id).emit('displayFriendRequests',{id:info.insert_id,sender:request_info.sender,sender_id:request_info.sender_id});
+			io.sockets.in('user_' + request_info.user_id).emit('displayFriendRequests',{id:info.insert_id,sender:request_info.sender,sender_id:request_info.sender_id});
 		});
 	});
 

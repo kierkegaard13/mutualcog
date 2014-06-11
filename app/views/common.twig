@@ -93,7 +93,7 @@
 					{% for message in pm.messages %}
 						<div class="pm_mssg_cont">
 							<div class="pm_message {% if message.author_id == user.id %}pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;"{% else %}" style="background-color:#7badfc;margin-right:30px;margin-left:5px;"{% endif %} title="{{message.created_at}} UTC">
-								{{message.message}}
+								{{message.message|raw}}
 							</div>	
 						</div>
 					{% endfor %} 
