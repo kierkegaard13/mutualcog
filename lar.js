@@ -17,7 +17,6 @@ marked.setOptions({
 });
 
 process.env.TZ = 'UTC';
-var clients = new Array();
 
 function hashHtml(text){
 	return text.replace(/#/,'&#035;');
@@ -169,7 +168,6 @@ io.sockets.on('connection', function(client) {
 			client.user = sanitize(info.new_member);  //sanitize
 		}
 		client.join(client.room + '_member_' + client.user);
-		clients.push(info.new_member); //is aware of all chat members 
 		console.log(client.user + ' has connected');
 		conn.where({id:client.chat_id}).get('chats',function(err,rows){
 			if(err)console.log(err);
@@ -447,20 +445,9 @@ io.sockets.on('connection', function(client) {
 	});
 
 	client.on('disconnect',function(){
-		clients.splice(clients.indexOf(client.user),1);
-		if(clients.indexOf(client.user) == -1){
-			//conn.where({member_id:client.memb_id,chat_id:client.chat_id}).delete('members_to_chats',function(err,info){
-			//	if(err)console.log(err);
-			//	conn.where({chat_id:client.chat_id}).get('members_to_chats',function(err,rows){
-			//		if(err)console.log(err);
-					conn.where({chat_id:client.chat_id,user:client.user}).update('members_to_chats',{active:0},function(err,info){
-						if(err)console.log(err);
-					});
-			//		io.sockets.in(client.room).emit('displayMembers',rows);
-			//	});
-			//	console.log(client.user + ' has been deleted');
-			//});
-		}
+		conn.where({chat_id:client.chat_id,user:client.user}).update('members_to_chats',{active:0},function(err,info){
+			if(err)console.log(err);
+		});
 		console.log(client.user + ' has disconnected');
 	});
 });

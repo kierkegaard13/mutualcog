@@ -867,7 +867,7 @@ a.chat_link {
   display:inline-block;
 }
 .pm_header {
-  width:240px;
+  width:250px;
   height:30px;
   color:white;
   padding:5px;
@@ -877,7 +877,7 @@ a.chat_link {
 }
 .pm_body {
   overflow:auto;
-  width:240px;
+  width:250px;
   height:270px;
   background-color:#222;
   border:solid 2px #222;
@@ -900,7 +900,7 @@ a.chat_link {
   padding:5px;
   margin:0;
   border-radius:0;
-  width:240px;
+  width:250px;
   height:30px;
 }
 .pm_bar {

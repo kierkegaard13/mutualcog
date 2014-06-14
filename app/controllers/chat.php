@@ -51,7 +51,7 @@ class Chat extends BaseController {
 					if(preg_match('/[a-zA-Z]/',$mem->user) && $mem->member_id != Auth::user()->id){
 						$interaction_user = InteractionUsers::whereuser_id(Auth::user()->id)->whereentity_id($mem->member_id)->wheretype(0)->first();
 						if($interaction_user){
-							$interaction_user->bond = $interaction->bond + 1;
+							$interaction_user->bond = $interaction_user->bond + 1;
 							$interaction_user->save();
 							$interaction_friend = InteractionUsers::whereentity_id(Auth::user()->id)->whereuser_id($mem->member_id)->wheretype(0)->first();
 							$interaction_friend->bond = $interaction->bond + 1;
