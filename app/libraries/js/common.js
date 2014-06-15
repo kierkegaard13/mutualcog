@@ -26,7 +26,7 @@ updateTimes = function(){
 	});
 }
 
-scroll_mod = function(){
+pm_scroll_mod = function(){
 	var $this = $(this);
 	$this.parent().attr('data-stop-scroll','1');
 	window.setTimeout(function(){
@@ -204,10 +204,10 @@ module.socket.on('receive_pm',function(info){
 	}*/
 	if(!parseInt(chat_cont.attr('data-stop-scroll'))){
 		var pm_body = chat_cont.find('.pm_body');
-		pm_body.off('scroll',scroll_mod);
+		pm_body.off('scroll',pm_scroll_mod);
 		pm_body.scrollTop(1E8);
 		window.setTimeout(function(){
-			pm_body.on('scroll',scroll_mod);
+			pm_body.on('scroll',pm_scroll_mod);
 		},100);
 	}
 });
@@ -715,16 +715,16 @@ $('.tags_input').on('keyup',function(e){
 	}
 });
 
-var keys = new Array();
+var pm_keys = new Array();
 
 $('body').on('keydown','.pm_text',function(e){
-	keys.push(e.which);
+	pm_keys.push(e.which);
 });
 
 $('body').on('keyup','.pm_text',function(e){
 	if(e.which == 13){  /*enter key*/
-		if(keys.indexOf(16) == -1){  /*shift key not pressed*/
-			keys.splice(keys.indexOf(e.which),1);
+		if(pm_keys.indexOf(16) == -1){  /*shift key not pressed*/
+			pm_keys.splice(keys.indexOf(e.which),1);
 			if($(this).val().trim() != ""){
 				var pm_info = $(this).parent().attr('id').split('_');
 				module.socket.emit('send_pm',{message:$(this).val(),pm_id:pm_info[2],friend_id:pm_info[1],user_id:module.user_id});
@@ -735,11 +735,11 @@ $('body').on('keyup','.pm_text',function(e){
 				$(this).val("");
 			}
 		}else{
-			keys.splice(keys.indexOf(e.which),1);
+			pm_keys.splice(keys.indexOf(e.which),1);
 			return true;
 		}
 	}else{
-		keys.splice(keys.indexOf(e.which),1);
+		pm_keys.splice(keys.indexOf(e.which),1);
 	}
 	return true;
 });

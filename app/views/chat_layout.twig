@@ -14,9 +14,18 @@
 <body>
 {% block header %}
 {% endblock %}
-<div class="wrapper">
+{% if logged_in %}
+	{% block friend_list %}{% endblock %}
+	<div class="wrapper_list_active">
+{% else %}
+	<div class="wrapper">
+{% endif %}
 	<div class="row" style="height:100%;">
+		{% if logged_in %}
+		<div class="chat_content col-sm-7 col-md-7 col-lg-9" id="main" style="height:100%;">
+		{% else %}
 		<div class="chat_content col-sm-7 col-md-8 col-lg-9" id="main" style="height:100%;">
+		{% endif %}
 			<div class="big_content_box">
 				<div class="content_right" style="height:100%;">
 				<div class="content_left" style="height:100%;">
@@ -27,7 +36,11 @@
 				</div>
 			</div>
 		</div>
+		{% if logged_in %}
+		<div class="col-sm-5 col-md-5 col-lg-3" id="side">
+		{% else %}
 		<div class="col-sm-5 col-md-4 col-lg-3" id="side">
+		{% endif %}
 			<div class="small_content_box tool_box">
 				<div class="content_right">
 				<div class="content_left">
@@ -57,6 +70,9 @@
 			</div>
 		</div>
 	</div>
+	{% if logged_in %}
+		{% block pm_bar %}{% endblock %}
+	{% endif %}
 </div>
 <script src="//{{io_url}}/socket.io/socket.io.js"></script>
 <script src='//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js'></script>
