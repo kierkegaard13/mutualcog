@@ -724,7 +724,7 @@ $('body').on('keydown','.pm_text',function(e){
 $('body').on('keyup','.pm_text',function(e){
 	if(e.which == 13){  /*enter key*/
 		if(pm_keys.indexOf(16) == -1){  /*shift key not pressed*/
-			pm_keys.splice(keys.indexOf(e.which),1);
+			pm_keys.splice(pm_keys.indexOf(e.which),1);
 			if($(this).val().trim() != ""){
 				var pm_info = $(this).parent().attr('id').split('_');
 				module.socket.emit('send_pm',{message:$(this).val(),pm_id:pm_info[2],friend_id:pm_info[1],user_id:module.user_id});
@@ -739,7 +739,7 @@ $('body').on('keyup','.pm_text',function(e){
 			return true;
 		}
 	}else{
-		pm_keys.splice(keys.indexOf(e.which),1);
+		pm_keys.splice(pm_keys.indexOf(e.which),1);
 	}
 	return true;
 });
