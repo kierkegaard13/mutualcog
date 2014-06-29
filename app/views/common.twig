@@ -12,7 +12,7 @@
 	<div class="collapse navbar-collapse" id="mutual_navbar" style="position:relative;">
 		<form class="navbar-form tag_search" role="search">
 			<div class="form-group dropdown">
-				<input class="form-control tag_input" id="search_input" type="text" placeholder="Search Tags" autocomplete="off">
+				<input class="form-control tag_input" id="search_input" type="text" placeholder="Search" autocomplete="off">
 				<ul class="dropdown-menu" id="tag_dropdown" role="menu" aria-labelledby="search_input">
 				</ul>
 			</div>
@@ -77,7 +77,7 @@
 {% block pm_bar %}
 	<div class="pm_bar">
 		{% for pm in user.privateChats %}
-			<div class="pm_cont" id="pm_{{pm.friends[0].id}}_{{pm.id}}" data-stop-scroll="0">
+			<div class="pm_cont {% if pm.pivot.visible == 1 %}pm_visible{% endif %}" id="pm_{{pm.friends[0].id}}_{{pm.id}}" data-stop-scroll="0" style="visibility:hidden;">
 				<div class="pm_header">
 					{% if pm.friends[0].online_score < 600 %}
 					<div class="green_ball pm_status"></div>
@@ -89,7 +89,7 @@
 					<div class="glyphicon glyphicon-remove pm_remove"></div>
 					<div class="pm_name">{{pm.friends[0].name}}</div>
 				</div>
-				<div class="pm_body" {% if pm.pivot.visible == 2 %}style="display:none;"{% endif %}>
+				<div class="pm_body {% if pm.pivot.visible == 2 %}style="display:none;"{% else %}"{% endif %}>
 					{% for message in pm.messages %}
 						<div class="pm_mssg_cont">
 							<div class="pm_message {% if message.author_id == user.id %}pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;"{% else %} pull-left" style="background-color:#7badfc;margin-right:30px;margin-left:5px;"{% endif %} title="{{message.created_at}}">
@@ -98,7 +98,7 @@
 						</div>
 					{% endfor %} 
 				</div>
-				<textarea class="pm_text" {% if pm.pivot.visible == 2 %}style="display:none;"{% endif %}></textarea>
+				<textarea class="pm_text" rows=1 {% if pm.pivot.visible == 2 %}style="display:none;"{% endif %}></textarea>
 			</div>
 		{% endfor %}
 	</div>

@@ -261,15 +261,15 @@ $('#search_input').on('keydown',function(e){
 		if(selected_term != 0){
 			selected_term--;
 			$('.tag_results').css('background-color','');
-			$('li#search_' + selected_term).css('background-color','#f5f5f5');
+			$('li#search_' + selected_term).css('background-color','#ddd');
 			
 		}
 		return false;
 	}else if(e.keyCode == 40){  /*down arrow*/
-		if(selected_term != $('#tag_dropdown').length){
+		if(selected_term != $('#tag_dropdown').length - 1){
 			selected_term++;
 			$('.tag_results').css('background-color','');
-			$('li#search_' + selected_term).css('background-color','#f5f5f5');
+			$('li#search_' + selected_term).css('background-color','#ddd');
 		}
 		return false;
 	}
@@ -289,7 +289,11 @@ $('#search_input').on('keyup',function(e){
 				success:function(hresp){
 					var content = '';
 					$.each(hresp,function(index,value){
-						content += '<li id="search_' + index + '" class="tag_results"><a href="//mutualcog.com/t/' + value.name + '">' + value.name + '</a></li>';
+						if(value.type == 'tag'){
+							content += '<li id="search_' + index + '" class="tag_results"><a href="//mutualcog.com/t/' + value.name + '">' + value.name + '</a></li>';
+						}else{
+							content += '<li id="search_' + index + '" class="tag_results"><a href="//mutualcog.com/p/' + value.name + '">' + value.name + '</a></li>';
+						}
 					});
 					if(content){
 						$('#tag_dropdown').show();
@@ -335,7 +339,9 @@ updateTimes = function(){
 }();
 
 $(document).ready(function(){
-	$('.pm_body').animate({scrollTop:1E8},'fast');
+	$('.pm_body').animate({scrollTop:1E8},'fast',function(){
+		$('.pm_visible').css('visibility','');	
+	});
 	setInterval(updateTimes,60000);
 	setInterval(updateChatTimes,60000);
 	$.each($('.pm_message'),function(index,val){
@@ -1110,12 +1116,16 @@ $('body').on('keydown','.pm_text',function(e){
 });
 
 $('body').on('keyup','.pm_text',function(e){
+	while($(this).outerHeight() < this.scrollHeight + parseFloat($(this).css("borderTopWidth")) + parseFloat($(this).css("borderBottomWidth"))) {
+		$(this).height($(this).height()+1);
+	};
 	if(e.which == 13){  /*enter key*/
 		if(pm_keys.indexOf(16) == -1){  /*shift key not pressed*/
 			pm_keys.splice(pm_keys.indexOf(e.which),1);
 			if($(this).val().trim() != ""){
 				var pm_info = $(this).parent().attr('id').split('_');
 				module.socket.emit('send_pm',{message:$(this).val(),pm_id:pm_info[2],friend_id:pm_info[1],user_id:module.user_id});
+				$(this).css('height','');
 				var mssg = '<div class="pm_mssg_cont tmp_message">';
 				mssg += '<div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment().format("hh:mma") + '">' + $(this).val() + '</div>';
 				mssg += '</div>'; 

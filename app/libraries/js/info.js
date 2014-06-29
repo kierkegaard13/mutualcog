@@ -49,15 +49,15 @@ $('#search_input').on('keydown',function(e){
 		if(selected_term != 0){
 			selected_term--;
 			$('.tag_results').css('background-color','');
-			$('li#search_' + selected_term).css('background-color','#f5f5f5');
+			$('li#search_' + selected_term).css('background-color','#ddd');
 			
 		}
 		return false;
 	}else if(e.keyCode == 40){  /*down arrow*/
-		if(selected_term != $('#tag_dropdown').length){
+		if(selected_term != $('#tag_dropdown').length - 1){
 			selected_term++;
 			$('.tag_results').css('background-color','');
-			$('li#search_' + selected_term).css('background-color','#f5f5f5');
+			$('li#search_' + selected_term).css('background-color','#ddd');
 		}
 		return false;
 	}

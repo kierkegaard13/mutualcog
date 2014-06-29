@@ -21,7 +21,7 @@ body{
 	#tag_dropdown {
 	  box-shadow:0 3px 10px -2px #9ecaed;
 	  border-color:#9acaed;
-	  width:200px;
+	  width:196px;
 	  margin-top:-3px;
 	  border-top:none;
 	  border-top-right-radius:0px;
@@ -71,6 +71,7 @@ body{
 	  height:40px;
 	}
 	.navbar-brand {
+	  margin-top:-1px;
 	  padding-top:10px;
 	  padding-right:10px;
 	  padding-bottom:10px;
@@ -84,7 +85,7 @@ body{
 	.navbar-nav.nav {
 	  position:absolute;
 	  left:0px;
-	  top:0px;
+	  top:-1px;
 	  padding-right:233px;
 	  height:40px;
 	}
@@ -394,3 +395,14 @@ textarea {
   border-left-style: inset;
   border-left-width: 2px;
 }
+.ui-resizable { position: relative;}
+.ui-resizable-handle { position: absolute;font-size: 0.1px; display: block; }
+.ui-resizable-disabled .ui-resizable-handle, .ui-resizable-autohide .ui-resizable-handle { display: none; }
+.ui-resizable-n { cursor: n-resize; height: 7px; width: 100%; top: -5px; left: 0; }
+.ui-resizable-s { cursor: s-resize; height: 7px; width: 100%; bottom: -5px; left: 0; }
+.ui-resizable-e { cursor: e-resize; width: 7px; right: -5px; top: 0; height: 100%; }
+.ui-resizable-w { cursor: w-resize; width: 7px; left: -5px; top: 0; height: 100%; }
+.ui-resizable-se { cursor: se-resize; width: 12px; height: 12px; right: 1px; bottom: 1px; }
+.ui-resizable-sw { cursor: sw-resize; width: 9px; height: 9px; left: -5px; bottom: -5px; }
+.ui-resizable-nw { cursor: nw-resize; width: 9px; height: 9px; left: -5px; top: -5px; }
+.ui-resizable-ne { cursor: ne-resize; width: 9px; height: 9px; right: -5px; top: -5px;}

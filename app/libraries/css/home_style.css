@@ -96,7 +96,7 @@ pre code{
 	#tag_dropdown {
 	  box-shadow:0 3px 10px -2px #9ecaed;
 	  border-color:#9acaed;
-	  width:200px;
+	  width:196px;
 	  margin-top:-3px;
 	  border-top:none;
 	  border-top-right-radius:0px;
@@ -128,6 +128,7 @@ pre code{
 	  height:40px;
 	}
 	.navbar-brand {
+	  margin-top:-1px;
 	  padding-top:10px;
 	  padding-right:10px;
 	  padding-bottom:10px;
@@ -141,7 +142,7 @@ pre code{
 	.navbar-nav.nav {
 	  position:absolute;
 	  left:0px;
-	  top:0px;
+	  top:-1px;
 	  padding-right:233px;
 	  height:40px;
 	}
@@ -896,12 +897,12 @@ a.chat_link {
   border:none;
   border-left:1px solid #bbb;
   border-right:1px solid #bbb;
+  overflow:hidden;
   font-size:14px;
   padding:5px;
   margin:0;
   border-radius:0;
   width:250px;
-  height:30px;
 }
 .pm_bar {
   position:fixed !important;

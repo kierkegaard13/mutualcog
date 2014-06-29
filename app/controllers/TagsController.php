@@ -4,13 +4,18 @@ class TagsController extends BaseController {
 
 	public function getSimilarTag(){
 		$input = htmlentities(Input::get('tag'));
-		$tag_arr = array();
+		$res_arr = array();
 		$tag = new Tags();
 		$tag = $tag->where('name','LIKE','%' . $input . '%')->take(5)->get();
 		foreach($tag as $t){
-			$tag_arr[] = array('id' => $t->id,'name' => $t->name,'chat_id' => $t->chat_id);
+			$res_arr[] = array('id' => $t->id,'name' => $t->name,'type' => 'tag');
 		}
-		return $tag_arr;
+		$people = new User();
+		$people = $people->where('name','LIKE','%' . $input . '%')->take(5)->get();
+		foreach($people as $person){
+			$res_arr[] = array('id' => $person->id,'name' => $person->name,'type' => 'person');
+		}
+		return $res_arr;
 	}
 
 	public function getSubscribe($tag_id){
