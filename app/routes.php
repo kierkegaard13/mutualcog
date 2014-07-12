@@ -56,6 +56,8 @@ Route::filter('assignSerial',function(){
 				$serial->save();
 				if(Auth::check()){
 					Auth::user()->serial_id = $serial->id;
+					Auth::user()->disconnecting = 0;
+					Auth::user()->online = 1;
 					Auth::user()->save();
 					Auth::user()->touch();
 				}

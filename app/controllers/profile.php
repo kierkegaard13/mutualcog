@@ -2,6 +2,16 @@
 
 class Profile extends BaseController {
 
+	public function postUpdateOnlineStatus(){
+		if(Auth::check()){
+			$user_id = Input::get('user_id');
+			$user = User::find($user_id);
+			$user->online = 0;
+			$user->save();
+			return 1;
+		}
+	}
+
 	public function getAccept($request_id){
 		if(!isset($request_id)){
 			return App::abort(404,'You seem to have entered an invalid URL');

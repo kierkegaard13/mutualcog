@@ -90,6 +90,7 @@
 					<div class="pm_name">{{pm.friends[0].name}}</div>
 				</div>
 				<div class="pm_body {% if pm.pivot.visible == 2 %}style="display:none;"{% else %}"{% endif %}>
+					<div class="pm_body_mssgs">
 					{% for message in pm.messages %}
 						<div class="pm_mssg_cont">
 							<div class="pm_message {% if message.author_id == user.id %}pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;"{% else %} pull-left" style="background-color:#7badfc;margin-right:30px;margin-left:5px;"{% endif %} title="{{message.created_at}}">
@@ -97,6 +98,11 @@
 							</div>	
 						</div>
 					{% endfor %} 
+					</div>
+					<div class="pm_body_alerts">
+						<div class="pm_mssg_alert pm_unseen" style="display:none;">Not seen</div>
+						<div class="pm_mssg_alert pm_typing" style="display:none;">{{pm.friends[0].name}} is typing...</div>
+					</div>
 				</div>
 				<textarea class="pm_text" rows=1 {% if pm.pivot.visible == 2 %}style="display:none;"{% endif %}></textarea>
 			</div>
@@ -140,7 +146,7 @@
 			<span class="sr-only">Only {{user.cognizance}}% Complete</span>
 		</div>
 	</div>
-	<select class="form-control" id="user_props">
+	<select class="form-control input-sm" id="user_props">
 		<option value="0" {% if user.anonymous == 0 and user.evaluated == 1 %}selected{% endif %}>Visible and Evaluated</option>
 		<option value="1" {% if user.anonymous == 1 and user.evaluated == 1 %}selected{% endif %}>Anonymous and Evaluated</option>
 	</select>

@@ -193,7 +193,7 @@ io.sockets.on('connection', function(client) {
 		});
 	});
 
-	client.on('join_pm',function(pm_info){
+	client.on('join_pm',function(pm_info,fn){
 		if(client.authorized){
 			if(pm_info.pm_id != 0){
 				conn.where({user_id:client.user_id,entity_id:pm_info.friend_id,entity_type:0}).update('users_to_private_chats',{visible:1},function(err,info){
@@ -201,14 +201,14 @@ io.sockets.on('connection', function(client) {
 					conn.where({id:pm_info.pm_id}).get('private_chats',function(err,rows){
 						if(err)console.log(err);
 						client.pm_obj[pm_info.friend_id] = pm_info.pm_id;
-						client.emit('update_pm_id',{pm_id:pm_info.pm_id,friend_name:pm_info.friend_name,friend_id:pm_info.friend_id});
+						fn({pm_id:pm_info.pm_id,friend_name:pm_info.friend_name,friend_id:pm_info.friend_id});
 					});
 				});
 			}else{
 				conn.insert('private_chats',{created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
 					if(err)console.log(err);
 					client.pm_obj[pm_info.friend_id] = info.insertId;
-					client.emit('update_pm_id',{pm_id:info.insertId,friend_name:pm_info.friend_name,friend_id:pm_info.friend_id});
+					fn({pm_id:info.insertId,friend_name:pm_info.friend_name,friend_id:pm_info.friend_id});
 					conn.insert('users_to_private_chats',{chat_id:info.insertId,user_id:client.user_id,entity_id:pm_info.friend_id},function(err,info){
 						if(err)console.log(err);
 					});
@@ -244,29 +244,63 @@ io.sockets.on('connection', function(client) {
 		}
 	});
 
-	client.on('send_pm',function(pm_info){
+	client.on('send_pm',function(pm_info,fn){
 		if(client.authorized){
 			pm_info.message = processMessage(pm_info.message);
 			var mssg_id = 0;
+			/* Find out if recipient has chat maximized, minimized, or closed */
 			conn.where({user_id:pm_info.friend_id,entity_id:client.user_id,entity_type:0}).get('users_to_private_chats',function(err,rows){
 				if(err)console.log(err);
 				if(rows[0].visible == 1){
 					conn.insert('private_messages',{message:pm_info.message,author:client.user,author_id:client.user_id,chat_id:pm_info.pm_id,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
 						if(err)console.log(err);
 						mssg_id = info.insertId;
+						/* Check whether recipient is online */
+						conn.where({id:pm_info.friend_id}).get('users',function(err,rows){
+							if(err)console.log(err);
+							if(rows[0].online){
+								io.sockets.in('user_' + pm_info.friend_id).emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.friend_id,friend_id:pm_info.user_id,friend_name:client.user,state:rows[0].visible,time:moment.utc().format(),mssg_id:mssg_id});
+								fn({message:pm_info.message,unseen:0});
+							}else{
+								io.sockets.in('user_' + pm_info.friend_id).emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.friend_id,friend_id:pm_info.user_id,friend_name:client.user,state:rows[0].visible,time:moment.utc().format(),mssg_id:mssg_id});
+								fn({message:pm_info.message,unseen:1});
+								/* You need to set unseen for the recipient for when they come back online and need to emit chats seen */
+								conn.where({user_id:pm_info.friend_id,entity_id:client.user_id,entity_type:0}).update('users_to_private_chats',{unseen:1},function(err,rows){
+									if(err)console.log(err);
+								});
+							}
+						});
 					});
-					client.emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.user_id,friend_id:pm_info.friend_id,friend_name:0,maximize:0,state:1,time:moment.utc().format(),update:1,mssg_id:mssg_id});
-					io.sockets.in('user_' + pm_info.friend_id).emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.friend_id,friend_id:pm_info.user_id,friend_name:client.user,maximize:0,state:rows[0].visible,time:moment.utc().format(),update:0,mssg_id:mssg_id});
 				}else{
 					conn.insert('private_messages',{message:pm_info.message,author:client.user,author_id:client.user_id,chat_id:pm_info.pm_id,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
 						if(err)console.log(err);
 						mssg_id = info.insertId;
+						conn.where({id:pm_info.friend_id}).get('users',function(err,rows){
+							if(err)console.log(err);
+							if(rows[0].online){
+								io.sockets.in('user_' + pm_info.friend_id).emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.friend_id,friend_id:pm_info.user_id,friend_name:client.user,state:rows[0].visible,time:moment.utc().format(),mssg_id:mssg_id});
+								fn({message:pm_info.message,unseen:0});
+							}else{
+								io.sockets.in('user_' + pm_info.friend_id).emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.friend_id,friend_id:pm_info.user_id,friend_name:client.user,state:rows[0].visible,time:moment.utc().format(),mssg_id:mssg_id});
+								fn({message:pm_info.message,unseen:1});
+								/* You need to set unseen for the recipient for when they come back online and need to emit chats seen */
+								conn.where({user_id:pm_info.friend_id,entity_id:client.user_id,entity_type:0}).update('users_to_private_chats',{unseen:1,visible:1},function(err,rows){
+									if(err)console.log(err);
+								});
+							}
+						});
 					});
-					conn.where({user_id:pm_info.friend_id,entity_id:client.user_id,entity_type:0}).update('users_to_private_chats',{visible:1},function(err,rows){
-						if(err)console.log(err);
-					});
-					client.emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.user_id,friend_id:pm_info.friend_id,friend_name:0,maximize:0,state:1,time:moment.utc().format(),update:1,mssg_id:mssg_id});
-					io.sockets.in('user_' + pm_info.friend_id).emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.friend_id,friend_id:pm_info.user_id,friend_name:client.user,maximize:1,state:rows[0].visible,time:moment.utc().format(),update:0,mssg_id:mssg_id});
+				}
+			});
+		}
+	});
+
+	client.on('chats_seen',function(){
+		if(client.authorized){
+			conn.where({user_id:client.user_id,unseen:1}).get('users_to_private_chats',function(err,rows){
+				if(err)console.log(err);
+				for(row in rows){
+					io.sockets.in('user_' + row.entity_id).emit('chat_seen',{pm_id:row.chat_id,friend_id:client.user_id});
 				}
 			});
 		}
