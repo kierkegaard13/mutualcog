@@ -2,7 +2,7 @@ html,body{
   height:100%;
 }
 body{
-  background-color:#0f131a;
+  background-color:#bbb;
   font-size:18px;
 }
 p{
@@ -81,6 +81,19 @@ pre code{
 	  padding-top:55px;
 	  margin-left:0px;
 	}
+	#homeTabs {
+	  border-width:0 1px 0;
+	  border-style:solid;
+	  border-color:#bbb #aaa #bbb;
+	  border-top-right-radius:2px;
+	  border-top-left-radius:2px;
+	}
+	.side_content {
+	  border-width:0 1px 2px;
+	  border-style:solid;
+	  border-color:#bbb #aaa #999; 
+	  border-radius:2px;
+	}
 	.tag_input {
 	  width:200px;
 	}
@@ -146,26 +159,16 @@ pre code{
 	  padding-right:233px;
 	  height:40px;
 	}
-	.content_right {
-	  border-width:0px;
-	  border-right:5px solid transparent;
-	  -webkit-border-image:-webkit-linear-gradient(left,#f2f2f2,#0f131a) 1 100%;
-	  -o-border-image:linear-gradient(to right,#f2f2f2,#0f131a) 1 100%;
-	  -o-border-image:-o-linear-gradient(right,#f2f2f2,#0f131a) 1 100%;
-	  -moz-border-image:linear-gradient(to right,#f2f2f2,#0f131a) 1 100%;
-	  -moz-border-image:-moz-linear-gradient(right,#f2f2f2,#0f131a) 1 100%;
-	}
-	.content_left {
-	  border-width:0px;
-	  border-left:5px solid transparent;
-	  -webkit-border-image:-webkit-linear-gradient(right,#f2f2f2,#0f131a) 1 100%;
-	  -o-border-image:linear-gradient(to left,#f2f2f2,#0f131a) 1 100%;
-	  -o-border-image:-o-linear-gradient(left,#f2f2f2,#0f131a) 1 100%;
-	  -moz-border-image:linear-gradient(to left,#f2f2f2,#0f131a) 1 100%;
-	  -moz-border-image:-moz-linear-gradient(left,#f2f2f2,#0f131a) 1 100%;
-	}
 	.main_content {
 	  min-height:1000px !important;
+	  margin-bottom:20px !important;
+	  border-width:0 1px 2px;
+	  border-style:solid;
+	  border-color:#bbb #aaa #999;
+	  border-bottom-right-radius:2px;
+	  border-bottom-left-radius:2px;
+	}
+	.p_main_content {
 	  margin-bottom:20px !important;
 	}
 	#main {
@@ -225,7 +228,10 @@ pre code{
 	}
 	.main_content {
 	  min-height:500px !important;
-	  margin-bottom:20px !important;
+	  margin-bottom:10px !important;
+	}
+	.p_main_content {
+	  margin-bottom:10px !important;
 	}
 	.navbar-header {
 	  transition:background-color .5s;
@@ -317,6 +323,16 @@ select {
 .friend_box:hover {
   background-color:#ddd;
   cursor:pointer;
+}
+.friend_list {
+  position:fixed;
+  height:100%;
+  background-color:white;
+  margin-top:0;
+  padding:0;
+  padding-top:40px;
+  width:190px;
+  border-right:1px solid #aaa; 
 }
 .edit_about {
   transition:background-color .5s;
@@ -492,7 +508,7 @@ select {
 .small_content_box {
   position:relative;
   margin:0px auto;
-  margin-bottom:15px;
+  margin-bottom:10px;
 }
 .big_content_box {
   position:relative;
@@ -524,8 +540,7 @@ select {
   position:relative;
 }
 .p_main_content {
-  min-height:600px
-  margin-bottom:20px;
+  min-height:600px;
   padding:10px;
   background-color:#fff;
   opacity:.95;

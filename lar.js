@@ -307,6 +307,14 @@ io.sockets.on('connection', function(client) {
 		}
 	});
 
+	client.on('is_typing',function(info){
+		io.sockets.in('user_' + info.friend_id).emit('is_typing',{pm_id:info.pm_id,friend_id:info.user_id});
+	});
+
+	client.on('not_typing',function(info){
+		io.sockets.in('user_' + info.friend_id).emit('not_typing',{pm_id:info.pm_id,friend_id:info.user_id});
+	});
+
 	client.on('change_user_props',function(info){
 		if(client.authorized){
 			var anon = 0;

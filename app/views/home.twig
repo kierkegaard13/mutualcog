@@ -19,9 +19,7 @@
 
 {% block side_2 %}
                         <div class="small_content_box">
-				<div class="content_right">
-				<div class="content_left">
-					<div class="content side_content" id="create_cont">
+				<div class="content side_content" id="create_cont">
 <form method="post" action="{{site}}/chat/new-chat" class="mutual_form" id="home_form">
 <fieldset>
 	<a class="btn btn-default btn-xs advanced_create" id="advanced_create" href="#" data-toggle="modal" data-target="advanced_modal"><div class="glyphicon glyphicon-cog advanced_cog" data-toggle="tooltip" data-original-title="Advanced options" data-container="body" data-placement="top"></div></a>
@@ -39,8 +37,6 @@
 	<button class="btn btn-primary" type="Submit" style="width:100%;">Create</button>
 </fieldset>
 </form>
-					</div>
-                                </div>
 				</div>
                         </div>
 <div class="modal fade" id="advanced_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="continue_modalLabel">
@@ -86,26 +82,22 @@
 
 {% block side_1 %}
 {% if not home_active %}
-	<div class="content_right">
-	<div class="content_left">
-		<div class="small_content_box">
-			<div class="content_left grad4"></div>
-			<div class="content_right grad4"></div>
-			<div class="content side_content" id="subscribe">
-				<div><a href="{{site}}/t/{{curr_tag.name}}" style="font-size:22px;color:#333;"><strong>{{curr_tag.name}}</strong>{% if curr_tag.admin == user.name %} (Admin) {% endif %}</a></div>
-				{% if logged_in %}
-					{% if user_subscribed %}
-						<span><a href="{{site}}/tags/unsubscribe/{{curr_tag.id}}" class="btn btn-danger btn-xs">Unsubscribe</a></span>
-					{% else %}
-						<span><a href="{{site}}/tags/subscribe/{{curr_tag.id}}" class="btn btn-success btn-xs">Subscribe</a></span>
-					{% endif %}
+	<div class="small_content_box">
+		<div class="content_left grad4"></div>
+		<div class="content_right grad4"></div>
+		<div class="content side_content" id="subscribe">
+			<div><a href="{{site}}/t/{{curr_tag.name}}" style="font-size:22px;color:#333;"><strong>{{curr_tag.name}}</strong>{% if curr_tag.admin == user.name %} (Admin) {% endif %}</a></div>
+			{% if logged_in %}
+				{% if user_subscribed %}
+					<span><a href="{{site}}/tags/unsubscribe/{{curr_tag.id}}" class="btn btn-danger btn-xs">Unsubscribe</a></span>
+				{% else %}
+					<span><a href="{{site}}/tags/subscribe/{{curr_tag.id}}" class="btn btn-success btn-xs">Subscribe</a></span>
 				{% endif %}
-				{% set tag_subscribers = curr_tag.subscribers | length %}
-				<span>{{tag_subscribers}} Subscriber{% if tag_subscribers != 1 %}s{% endif %}</span>
-				<div style="font-size:14px;"><div class="green_ball"></div> {{curr_tag.online}} online</div>
-			</div>
+			{% endif %}
+			{% set tag_subscribers = curr_tag.subscribers | length %}
+			<span>{{tag_subscribers}} Subscriber{% if tag_subscribers != 1 %}s{% endif %}</span>
+			<div style="font-size:14px;"><div class="green_ball"></div> {{curr_tag.online}} online</div>
 		</div>
-	</div>
 	</div>
 {% endif %}
 {% endblock %}

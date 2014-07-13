@@ -53,7 +53,7 @@
 {% endblock %}
 
 {% block friend_list %}
-<div class="hidden-xs hidden-sm content_right" style="position:fixed;height:100%;background-color:white;margin-top:0;padding:0;padding-top:40px;width:190px;">
+<div class="hidden-xs hidden-sm friend_list">
 {% for friendship in user.friendships %}
 	<div class="friend_box" id="friend_box_for_{{friendship.entity.name}}" data-friend-id="{{friendship.entity.id}}" data-pm-chat-id="{% if friendship.entity.privateChatF[0] %}{{friendship.entity.privateChatF[0].id}}{% else %}0{% endif %}" title="{{friendship.entity.online}}">
 	{% if friendship.entity.online_score < 600 %}

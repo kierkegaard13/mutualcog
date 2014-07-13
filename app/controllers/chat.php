@@ -233,6 +233,13 @@ class Chat extends BaseController {
                 return $view;
 	}
 
+	public function getPmLog(){
+		$pm_id = Input::get('pm_id');
+		$chat = PrivateChats::find($pm_id);
+		$messages = $chat->messages;
+		return $messages;
+	}
+
 	public function postMessage($chat_id){
 		$chat = Chats::find($chat_id);
 		if(!$chat->live){

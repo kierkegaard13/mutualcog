@@ -11,7 +11,7 @@
         {% block styles %}{% endblock %}
 	<script src='//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
 </head>
-<body>
+<body style="background-color:#bbb;">
 {% block header %}{% endblock %}
 {% if logged_in %}
 	{% block friend_list %}{% endblock %}
@@ -26,12 +26,8 @@
 		<div class="col-sm-7 col-md-8 col-lg-9" id="main">
 		{% endif %}
 			<div class="big_content_box">
-				<div class="content_right">
-				<div class="content_left">
-					{% block tabs %}{% endblock %}
-					{% block content %}{% endblock %}
-				</div>
-				</div>
+				{% block tabs %}{% endblock %}
+				{% block content %}{% endblock %}
 			</div>
 			{% block chat_content %}{% endblock %}
 		</div>
@@ -42,12 +38,8 @@
 		{% endif %}
 			{% block tools %}{% endblock %}
 			<div class="small_content_box">
-				<div class="content_right">
-				<div class="content_left">
-					<div class="content side_content" id="welcome_user">
-						{% block welcome %}{% endblock %}
-					</div>
-				</div>
+				<div class="content side_content" id="welcome_user">
+					{% block welcome %}{% endblock %}
 				</div>
 			</div>
 			{% block side_1 %}{% endblock %}
