@@ -248,61 +248,62 @@ io.sockets.on('connection', function(client) {
 		if(client.authorized){
 			pm_info.message = processMessage(pm_info.message);
 			var mssg_id = 0;
+			/* Figure out if recipient has disconnected */
+			conn.where({id:pm_info.friend_id}).get('users',function(err,rows){
+				if(rows[0].disconnecting){
+					conn.where({id:pm_info.friend_id}).update('users',{online:0,disconnecting:0},function(err,info){
+						if(err)console.log(err);
+					});
+				}
+			});
 			/* Find out if recipient has chat maximized, minimized, or closed */
 			conn.where({user_id:pm_info.friend_id,entity_id:client.user_id,entity_type:0}).get('users_to_private_chats',function(err,rows){
 				if(err)console.log(err);
-				if(rows[0].visible == 1){
+				var visibility = rows[0].visible;
+				conn.where({id:pm_info.friend_id}).get('users',function(err,rows){
+					if(err)console.log(err);
+					var friend_online = rows[0].online;
 					conn.insert('private_messages',{message:pm_info.message,author:client.user,author_id:client.user_id,chat_id:pm_info.pm_id,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
 						if(err)console.log(err);
 						mssg_id = info.insertId;
 						/* Check whether recipient is online */
-						conn.where({id:pm_info.friend_id}).get('users',function(err,rows){
-							if(err)console.log(err);
-							if(rows[0].online){
-								io.sockets.in('user_' + pm_info.friend_id).emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.friend_id,friend_id:pm_info.user_id,friend_name:client.user,state:rows[0].visible,time:moment.utc().format(),mssg_id:mssg_id});
-								fn({message:pm_info.message,unseen:0});
-							}else{
-								io.sockets.in('user_' + pm_info.friend_id).emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.friend_id,friend_id:pm_info.user_id,friend_name:client.user,state:rows[0].visible,time:moment.utc().format(),mssg_id:mssg_id});
-								fn({message:pm_info.message,unseen:1});
-								/* You need to set unseen for the recipient for when they come back online and need to emit chats seen */
-								conn.where({user_id:pm_info.friend_id,entity_id:client.user_id,entity_type:0}).update('users_to_private_chats',{unseen:1},function(err,rows){
-									if(err)console.log(err);
-								});
-							}
-						});
+						if(friend_online){
+							io.sockets.in('user_' + pm_info.friend_id).emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.friend_id,friend_id:pm_info.user_id,friend_name:client.user,state:visibility,time:moment.utc().format(),mssg_id:mssg_id});
+							fn({message:pm_info.message,unseen:0,pm_id:pm_info.pm_id,friend_id:pm_info.friend_id});
+						}else{
+							io.sockets.in('user_' + pm_info.friend_id).emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.friend_id,friend_id:pm_info.user_id,friend_name:client.user,state:visibility,time:moment.utc().format(),mssg_id:mssg_id});
+							fn({message:pm_info.message,unseen:1,pm_id:pm_info.pm_id,friend_id:pm_info.friend_id});
+							/* You need to set unseen for the recipient for when they come back online and need to emit chats seen */
+							conn.where({user_id:pm_info.friend_id,entity_id:client.user_id,entity_type:0}).update('users_to_private_chats',{unseen:1,visible:1},function(err,rows){
+								if(err)console.log(err);
+							});
+							conn.where({id:pm_info.pm_id}).update('private_chats',{seen:0},function(err,info){
+								if(err)console.log(err);
+							});
+						}
 					});
-				}else{
-					conn.insert('private_messages',{message:pm_info.message,author:client.user,author_id:client.user_id,chat_id:pm_info.pm_id,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
-						if(err)console.log(err);
-						mssg_id = info.insertId;
-						conn.where({id:pm_info.friend_id}).get('users',function(err,rows){
-							if(err)console.log(err);
-							if(rows[0].online){
-								io.sockets.in('user_' + pm_info.friend_id).emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.friend_id,friend_id:pm_info.user_id,friend_name:client.user,state:rows[0].visible,time:moment.utc().format(),mssg_id:mssg_id});
-								fn({message:pm_info.message,unseen:0});
-							}else{
-								io.sockets.in('user_' + pm_info.friend_id).emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.friend_id,friend_id:pm_info.user_id,friend_name:client.user,state:rows[0].visible,time:moment.utc().format(),mssg_id:mssg_id});
-								fn({message:pm_info.message,unseen:1});
-								/* You need to set unseen for the recipient for when they come back online and need to emit chats seen */
-								conn.where({user_id:pm_info.friend_id,entity_id:client.user_id,entity_type:0}).update('users_to_private_chats',{unseen:1,visible:1},function(err,rows){
-									if(err)console.log(err);
-								});
-							}
-						});
-					});
-				}
+				});
 			});
 		}
 	});
 
-	client.on('chats_seen',function(){
+	client.on('seen_chats',function(){
 		if(client.authorized){
 			conn.where({user_id:client.user_id,unseen:1}).get('users_to_private_chats',function(err,rows){
 				if(err)console.log(err);
-				for(row in rows){
-					io.sockets.in('user_' + row.entity_id).emit('chat_seen',{pm_id:row.chat_id,friend_id:client.user_id});
+				for(var i = 0; i < rows.length; i++){
+					io.sockets.in('user_' + rows[i].entity_id).emit('chat_seen',{pm_id:rows[i].chat_id,friend_id:client.user_id});
+					conn.where({id:rows[i].chat_id}).update('private_chats',{seen:1},function(err,info){
+						if(err)console.log(err);
+					});
 				}
+				conn.where({user_id:client.user_id,unseen:1}).update('users_to_private_chats',{unseen:0},function(err,info){
+					if(err)console.log(err);
+				});
 			});
+			conn.where({id:client.user_id}).update('users',{online:1},function(err,info){
+				if(err)console.log(err);
+			})
 		}
 	});
 
@@ -480,6 +481,9 @@ io.sockets.on('connection', function(client) {
 
 	client.on('disconnect',function(){
 		conn.where({chat_id:client.chat_id,user:client.user}).update('members_to_chats',{active:0},function(err,info){
+			if(err)console.log(err);
+		});
+		conn.where({id:client.user_id}).update('users',{disconnecting:1,disconnect_time:moment.utc().format()},function(err,info){
 			if(err)console.log(err);
 		});
 		console.log(client.user + ' has disconnected');

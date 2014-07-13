@@ -39,6 +39,8 @@ function getUniqueSerialNumber($serial_number=null){
 	$serial->save();
 	if(Auth::check()){
 		Auth::user()->serial_id = $serial->id;
+		Auth::user()->disconnecting = 0;
+		Auth::user()->online = 1;
 		Auth::user()->save();
 	}
 	Session::put('unique_serial',$serial->serial_id);
@@ -52,14 +54,12 @@ Route::filter('assignSerial',function(){
 		}else{
 			$serial = Serials::whereserial_id(Session::get('unique_serial'))->first();
 			if($serial){
-				$serial->touch();
 				$serial->save();
 				if(Auth::check()){
 					Auth::user()->serial_id = $serial->id;
 					Auth::user()->disconnecting = 0;
 					Auth::user()->online = 1;
 					Auth::user()->save();
-					Auth::user()->touch();
 				}
 			}else{
 				getUniqueSerialNumber();

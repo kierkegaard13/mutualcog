@@ -100,7 +100,7 @@
 					{% endfor %} 
 					</div>
 					<div class="pm_body_alerts">
-						<div class="pm_mssg_alert pm_unseen" style="display:none;">Not seen</div>
+						<div class="pm_mssg_alert pm_unseen" {% if pm.seen %}style="display:none;"{% endif %}>Not seen</div>
 						<div class="pm_mssg_alert pm_typing" style="display:none;">{{pm.friends[0].name}} is typing...</div>
 					</div>
 				</div>

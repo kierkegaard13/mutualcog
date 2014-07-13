@@ -36,14 +36,14 @@ pm_scroll_mod = function(){
 
 $(window).on('blur',function(){
 	module.focused = 0;
-	if(user_id.length){
+	if(module.user_id.length){
 		module.recent += 110;
 	}
 });
 
 $(window).on('focus',function(){
 	module.focused = 1;
-	if(user_id.length){
+	if(module.user_id.length){
 		if(module.recent > 120){
 			module.socket.emit('seen_chats');
 		}
@@ -52,12 +52,12 @@ $(window).on('focus',function(){
 });
 
 $(document).ready(function(){
-	if(user_id.length){
+	if(module.user_id.length){
 		window.setInterval(function(){
 			if(module.recent > 120){
 				$.ajax({
 					type:'POST',
-					data:{user_id:user_id},
+					data:{user_id:module.user_id},
 					url:'//mutualcog.com/profile/update-online-status',
 					success:function(){},
 					error:function(){}	
@@ -73,9 +73,11 @@ $(document).ready(function(){
 			module.recent = 0;
 		});
 	}
-	$('.pm_body').animate({scrollTop:$('.pm_body')[0].scrollHeight},'fast',function(){
-		$('.pm_visible').css('visibility','');	
-	});
+	if($('.pm_body').length){
+		$('.pm_body').animate({scrollTop:$('.pm_body')[0].scrollHeight},'fast',function(){
+			$('.pm_visible').css('visibility','');	
+		});
+	}
 	updateChatTimes();
 	updateTimes();
 	setInterval(updateTimes,60000);
@@ -776,17 +778,25 @@ $('body').on('keydown','.pm_text',function(e){
 });
 
 $('body').on('keyup','.pm_text',function(e){
+	if(module.user_id.length){
+		if(module.recent > 120){
+			module.socket.emit('seen_chats');
+		}
+		module.recent = 0;
+	}
 	if(e.which == 13){  /*enter key*/
 		if(pm_keys.indexOf(16) == -1){  /*shift key not pressed*/
 			pm_keys.splice(pm_keys.indexOf(e.which),1);
 			if($(this).val().trim() != ""){
 				var pm_info = $(this).parent().attr('id').split('_');
+				var chat_cont = $(this).parents('.pm_cont');
 				module.socket.emit('send_pm',{message:$(this).val(),pm_id:pm_info[2],friend_id:pm_info[1],user_id:module.user_id},function(info){
+					var chat_cont = $('#pm_' + info.friend_id + '_' + info.pm_id);
 					var tmp_message = chat_cont.find('.tmp_message');
 					tmp_message.find('.pm_message').html(info.message);
 					tmp_message.attr('class',tmp_message.attr('class').replace('tmp_message',''));
 					if(info.unseen){
-						tmp_message.find('.pm_unseen').show();
+						chat_cont.find('.pm_unseen').show();
 					}
 				});
 				$(this).css('height','');
@@ -795,6 +805,14 @@ $('body').on('keyup','.pm_text',function(e){
 				mssg += '</div>'; 
 				$('#pm_' + pm_info[1] + '_' + pm_info[2]).find('.pm_body_mssgs').append(mssg);
 				$(this).val("");
+				if(!parseInt(chat_cont.attr('data-stop-scroll'))){
+					var pm_body = chat_cont.find('.pm_body');
+					pm_body.off('scroll',pm_scroll_mod);
+					pm_body.scrollTop(pm_body[0].scrollHeight);
+					window.setTimeout(function(){
+						pm_body.on('scroll',pm_scroll_mod);
+					},100);
+				}
 			}
 		}else{
 			pm_keys.splice(keys.indexOf(e.which),1);
