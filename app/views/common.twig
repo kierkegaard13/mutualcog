@@ -70,6 +70,10 @@
 		<div style="color:gray;font-size:13px;margin-top:-5px;">In a <a class="chat_link" href="{{site}}/chat/{% if friendship.entity.chatRoom.live %}live{% else %}static{% endif %}/{{friendship.entity.chat_id}}">chat</a></div>
 	{% endif %}
 	</div>
+{% else %}
+<div style="color:gray;font-size:12px;margin-top:10px;margin-left:5px;">
+        You don't have any friends yet
+</div>
 {% endfor %}
 </div>
 {% endblock %}

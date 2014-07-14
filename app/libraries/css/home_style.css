@@ -159,6 +159,12 @@ pre code{
 	  padding-right:233px;
 	  height:40px;
 	}
+	.chat_content {
+	  border-width:0 1px 2px;
+	  border-style:solid;
+	  border-color:#bbb #aaa #999;
+	  border-radius:2px;
+	}
 	.main_content {
 	  min-height:1000px !important;
 	  margin-bottom:20px !important;

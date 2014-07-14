@@ -27,12 +27,8 @@
 		<div class="chat_content col-sm-7 col-md-8 col-lg-9" id="main" style="height:100%;">
 		{% endif %}
 			<div class="big_content_box">
-				<div class="content_right" style="height:100%;">
-				<div class="content_left" style="height:100%;">
-					<div class="content main_content" id="main_cont">
-						{% block content %}{% endblock %}
-					</div>
-				</div>
+				<div class="content main_content" id="main_cont">
+					{% block content %}{% endblock %}
 				</div>
 			</div>
 		</div>
@@ -42,30 +38,18 @@
 		<div class="col-sm-5 col-md-4 col-lg-3" id="side">
 		{% endif %}
 			<div class="small_content_box tool_box">
-				<div class="content_right">
-				<div class="content_left">
-					<div class="content box_r_0">
-						{% block tools %}{% endblock %}
-					</div>
-				</div>
+				<div class="content box_r_0 side_content">
+					{% block tools %}{% endblock %}
 				</div>
 			</div>
 			<div class="small_content_box">
-				<div class="content_right">
-				<div class="content_left">
-					<div class="content">
-						{% block welcome %}{% endblock %}
-					</div>
-				</div>
+				<div class="content side_content">
+					{% block welcome %}{% endblock %}
 				</div>
 			</div>
 			<div class="small_content_box">
-				<div class="content_right">
-				<div class="content_left">
-					<div class="content box_r_2">
-						{% block details %}{% endblock %}
-					</div>
-				</div>
+				<div class="content box_r_2 side_content">
+					{% block details %}{% endblock %}
 				</div>
 			</div>
 		</div>
