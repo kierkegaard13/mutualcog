@@ -8,7 +8,10 @@ module = function(){
 	var user_id = $('#user_id').text();
 	var user_tracker = $('#user_tracker').text();
 	var pm_info = '';
-	return {typ_cnt:typ_cnt,pm_info:pm_info,recent:recent,focused:focused,title_blinking:title_blinking,socket:socket,serial_id:serial_id,serial_tracker:serial_tracker,user_id:user_id,user_tracker:user_tracker};
+	var user_validated = 0;
+	var pass1_validated = 0;
+	var pass2_validated = 0;
+	return {user_validated:user_validated,pass1_validated:pass1_validated,pass2_validated:pass2_validated,typ_cnt:typ_cnt,pm_info:pm_info,recent:recent,focused:focused,title_blinking:title_blinking,socket:socket,serial_id:serial_id,serial_tracker:serial_tracker,user_id:user_id,user_tracker:user_tracker};
 }(); 
 
 var selected_tag = -1;
@@ -327,75 +330,151 @@ module.socket.on('displayFriendRequests',function(request_info){
 	}
 });
 
+function validateUser(username){
+	if(username.length < 3 || username.length > 20){
+		$('#user_group').attr('class','form-group has-error');
+		$('#username').attr('data-original-title','Username must be longer than 2 characters but less than 15');
+		$('#username').tooltip('show');
+	}
+	var response = $.ajax({
+		type:'GET',
+		data:{username:username},
+		url:'//mutualcog.com/profile/validate-username',
+		async:false,
+	}).responseText;
+	if(response == 2 && $('#pass2').val() != ""){
+		$('#user_group').attr('class','form-group has-error');
+		$('#username').attr('data-original-title','That username already exists');
+		$('#username').tooltip('show');
+		module.user_validated = 0;
+	}else if(response == 3){
+		$('#user_group').attr('class','form-group has-error');
+		$('#username').attr('data-original-title','Your username must contain at least one character');
+		$('#username').tooltip('show');
+		module.user_validated = 0;
+	}else{
+		if($('#pass2').val() != ""){
+			$('#user_group').attr('class','form-group');
+			$('#username').tooltip('destroy');
+		}
+		module.user_validated = 1;
+	}
+}
+
+function validateLogin(username,password){
+	var response = $.ajax({
+		type:'GET',
+		data:{username:username,pass:password},
+		url:'//mutualcog.com/profile/validate-login',
+		async:false,
+	}).responseText;
+	if(response == 1){
+		module.pass1_validated = 1;
+		$('#user_group').attr('class','form-group');
+		$('#pass1_group').attr('class','form-group');
+		$('#username').tooltip('destroy');
+	}else{
+		module.pass1_validated = 0;
+		$('#user_group').attr('class','form-group has-error');
+		$('#pass1_group').attr('class','form-group has-error');
+		$('#username').attr('data-original-title','Your username or password is incorrect');
+		$('#username').tooltip('show');
+	}
+}
+
+function validatePasswords(pass1,pass2){
+	if(pass1 != pass2 && pass2 != ""){
+		$('#pass1_group').attr('class','form-group has-error');
+		$('#pass2_group').attr('class','form-group has-error');
+		$('#pass2').tooltip('show');
+		module.pass2_validated = 0;
+		module.pass1_validated = 0;
+	}else if((pass1.length < 6 || pass1.length > 30) && pass2 != ""){
+		$('#pass1_group').attr('class','form-group has-error');
+		$('#pass2_group').attr('class','form-group has-error');
+		$('#pass').tooltip('show');
+		module.pass2_validated = 0;
+		module.pass1_validated = 0;
+	}else{
+		$('#pass1_group').attr('class','form-group');
+		$('#pass2_group').attr('class','form-group');
+		$('#pass2').tooltip('destroy');
+		$('#pass').tooltip('destroy');
+		module.pass2_validated = 1;
+		module.pass1_validated = 1;
+	}
+}
+
+$('#username').blur(function(){
+	var username = $('#username').val();
+	var pass = $('#pass').val();
+	if(username.length > 0){
+		validateUser(username);
+	}
+	if(username.length > 0 && pass.length > 0 && pass2 == ""){
+		validateLogin(username,pass);
+	}
+});
+
+$('#pass').blur(function(){
+	var username = $('#username').val();
+	var pass = $('#pass').val();
+	var pass2 = $('#pass2').val();
+	if(username.length > 0 && pass.length > 0 && pass2 == ""){
+		validateLogin(username,pass);
+	}
+});
+
+$('#pass2').blur(function(){
+	var username = $('#username').val();
+	var pass = $('#pass').val();
+	var pass2 = $('#pass2').val();
+	if(pass.length > 0 && pass2.length > 0){
+		validatePasswords(pass,pass2);
+	}
+	if(username.length > 0){
+		validateUser(username);
+	}
+});
+
 $('#login_form').submit(function(){
 	var submit = 1;
 	var username = $('#username').val();
 	var pass = $('#pass').val();
 	var pass2 = $('#pass2').val();
-	$('.form-group').attr('class','form-group');
-	if(username.length < 3 || username.length > 20){
-		$('#user_group').attr('class','form-group has-error');
-		$('#username').attr('data-original-title','Username must be longer than 2 characters but less than 15');
-		$('#username').tooltip('show');
-		submit = 0;
-	}else if(pass2 != ""){
-		var response = $.ajax({
-                        type:'GET',
-                        data:{username:username},
-                        url:'//mutualcog.com/profile/check-user',
-                        async:false,
-                }).responseText;
-		if(response == 1){
-			var response = $.ajax({
-				type:'GET',
-				data:{username:username},
-				url:'//mutualcog.com/profile/check-alpha',
-				async:false,
-			}).responseText;
-			if(response == 1){
-			}else{
-				$('#user_group').attr('class','form-group has-error');
-				$('#username').attr('data-original-title','Your username must contain at least one character');
-				$('#username').tooltip('show');
+	if(!module.user_validated){
+		if(username.length > 0){
+			validateUser(username);
+		}
+		if(!module.user_validated){
+			submit = 0;
+		}
+	}
+	if(!module.pass1_validated){
+		if(pass2 == ""){
+			if(username.length > 0 && pass.length > 0){
+				validateLogin(username,pass);
+			}
+			if(!module.pass1_validated){
 				submit = 0;
 			}
 		}else{
-			$('#user_group').attr('class','form-group has-error');
-			$('#username').attr('data-original-title','That username already exists');
-			$('#username').tooltip('show');
-			submit = 0;
-		}
-	}else{
-		var response = $.ajax({
-			type:'GET',
-			data:{username:username,pass:pass},
-			url:'//mutualcog.com/profile/check-credentials',
-			async:false,
-		}).responseText;
-		if(response == 1){
-		}else{
-			$('#user_group').attr('class','form-group has-error');
-			$('#pass1_group').attr('class','form-group has-error');
-			$('#username').attr('data-original-title','Your username or password is incorrect');
-			$('#username').tooltip('show');
 			submit = 0;
 		}
 	}
-	if(pass.length < 6 || pass.length > 30){
-		$('#pass1_group').attr('class','form-group has-error');
-		$('#pass2_group').attr('class','form-group has-error');
-		$('#pass').tooltip('show');
-		submit = 0;
-	}
-	if(pass != pass2 && pass2 != ""){
-		$('#pass1_group').attr('class','form-group has-error');
-		$('#pass2_group').attr('class','form-group has-error');
-		$('#pass2').tooltip('show');
-		submit = 0;
+	if(pass2 != "" && !module.pass2_validated){
+		if(pass.length > 0 && pass2.length > 0){
+			validatePasswords(pass,pass2);
+		}
+		if(!module.pass2_validated){
+			submit = 0;
+		}
 	}
 	if(submit){
 		return true;
 	}else{
+		console.log(module.user_validated);
+		console.log(module.pass1_validated);
 		return false;
 	} 
 });

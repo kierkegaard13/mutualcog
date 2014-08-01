@@ -2,7 +2,7 @@ html,body{
   height:100%;
 }
 body{
-  background-color:#bbb;
+  background-color:#ddd;
   font-size:18px;
 }
 p{
@@ -392,7 +392,7 @@ select {
   border-radius:8px;
 }
 #homeTabs {
-  background-color:#fff;
+  background-color:#f5f5f5;
   opacity:.95;
   width:auto;
 }

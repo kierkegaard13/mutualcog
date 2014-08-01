@@ -22,6 +22,7 @@ blockquote p{
 }
 pre{
   margin:5px 0 5px 0px;
+  display:block;
 }
 pre code{
   white-space:normal;
@@ -300,7 +301,7 @@ code{
 }
 .vote_box {
   position:relative;
-  display:inline-block;
+  float:left;
   vertical-align:top;
   margin-top:1px;
   margin-right:10px;
@@ -766,10 +767,11 @@ select {
   position:relative;
 }
 .time_box {
-  margin-top:10px;
+  margin-top:2px;
 }
 .mssg_body {
-  display:inline-block;
+  display:block;
+  margin-left:25px;
 }
 .chat_mssg {
   position:relative;

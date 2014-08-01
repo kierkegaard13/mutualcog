@@ -46,7 +46,10 @@ class Profile extends BaseController {
 			}
 			$request->delete();
 		}
-		return Redirect::to(Session::get('curr_page'));
+		if(Session::has('curr_page')){
+			return Redirect::to(Session::get('curr_page'));
+		}
+		return Redirect::to('home');
 	}
 
 	public function getDecline($request_id){
@@ -57,7 +60,10 @@ class Profile extends BaseController {
 			$request = Requests::find($request_id);
 			$request->delete();
 		}
-		return Redirect::to(Session::get('curr_page'));
+		if(Session::has('curr_page')){
+			return Redirect::to(Session::get('curr_page'));
+		}
+		return Redirect::to('home');
 	}
 
 	public function getUnfriend($friend_id){
@@ -78,7 +84,10 @@ class Profile extends BaseController {
 				}
 			}
 		}
-		return Redirect::to(Session::get('curr_page'));
+		if(Session::has('curr_page')){
+			return Redirect::to(Session::get('curr_page'));
+		}
+		return Redirect::to('home');
 	}
 
 	public function getProfileVisit(){
@@ -124,27 +133,20 @@ class Profile extends BaseController {
 		return false;
 	}
 
-	public function getCheckUser(){
+	public function getValidateUsername(){
 		$username = htmlentities(Input::get('username'));
 		$user = new User();
 		$user->name = ucfirst($username);
 		if($user->findAll()){
-			return 0;
-		}else{
-			return 1;
+			return 2;
 		}
+		if(!preg_match('/[a-zA-Z]/',$username)){
+			return 3;
+		}
+		return 1;
 	}
 
-	public function getCheckAlpha(){
-		$username = htmlentities(Input::get('username'));
-		if(preg_match('/[a-zA-Z]/',$username)){
-			return 1;
-		}else{
-			return 0;
-		}
-	}
-
-	public function getCheckCredentials(){
+	public function getValidateLogin(){
 		$username = ucfirst(htmlentities(Input::get('username')));
 		$pass = htmlentities(Input::get('pass'));
 		$user = new User();
@@ -162,11 +164,16 @@ class Profile extends BaseController {
 		$node = new NodeAuth();
 		$node->user_id = Auth::user()->id;
 		$node->user = Auth::user()->name;
-		$node = $node->findAll();
+		if($node->findAll()){
+			$node = $node->findAll();
+		}
 		$node->authorized = 0;
 		$node->save();
 		Auth::logout();
-		return Redirect::to(Session::get('curr_page'));
+		if(Session::has('curr_page')){
+			return Redirect::to(Session::get('curr_page'));
+		}
+		return Redirect::to('home');
 	}
 
 	public function postNewUser(){
@@ -208,6 +215,7 @@ class Profile extends BaseController {
 			}
 			$user->password = Crypt::encrypt($pass);
 			$user->last_login = date(DATE_ATOM);
+			$user->ip_address = Request::getClientIp();
 			$user->save();
 			Auth::login($user);
 			return Redirect::to(Session::get('curr_page'));
@@ -238,9 +246,15 @@ class Profile extends BaseController {
 					$node->save();
 				}
 			}
-			return Redirect::to(Session::get('curr_page'));
+			if(Session::has('curr_page')){
+				return Redirect::to(Session::get('curr_page'));
+			}
+			return Redirect::to('home');
 		}else{
-			return Redirect::to(Session::get('curr_page'));
+			if(Session::has('curr_page')){
+				return Redirect::to(Session::get('curr_page'));
+			}
+			return Redirect::to('home');
 		}
 	}
 
