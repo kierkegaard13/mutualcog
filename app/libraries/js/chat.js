@@ -1,13 +1,16 @@
 module = function(){
 	var focused = live = 1;
-	var typ_cnt = 0;
 	var pm_info = '';
-	var title_blinking = recent = banned = stop_scroll = scroll_attached = scroll_button_clicked = 0;
+	var title_blinking = typ_cnt = connected = recent = banned = stop_scroll = scroll_attached = scroll_button_clicked = 0;
 	var clicked_on = -1;
 	var chat_id = $('.chat_id').attr('id');
 	var upvoted = jQuery.parseJSON($('#up_arr').text());
 	var downvoted = jQuery.parseJSON($('#down_arr').text());
-	var socket = io.connect('http://localhost:3000/',{query:"sid=" + $('#sid').attr('data-sid') + "&serial=" + $('#serial_tracker').text()});
+	if(typeof io !== 'undefined'){
+		var socket = io.connect('http://localhost:3000/',{query:"sid=" + $('#sid').attr('data-sid') + "&serial=" + $('#serial_tracker').text()});
+	}else{
+		var socket = $('body');
+	}
 	var color_arr = new Array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#050a57');
 	var mems = new Array();
 	var mods = new Array();
@@ -21,7 +24,7 @@ module = function(){
 	var user_id = $('#user_id').text();
 	var user_tracker = $('#user_tracker').text();
 
-	return {recent:recent,typ_cnt:typ_cnt,pm_info:pm_info,focused:focused,live:live,title_blinking:title_blinking,banned:banned,stop_scroll:stop_scroll,scroll_attached:scroll_attached,scroll_button_clicked:scroll_button_clicked,clicked_on:clicked_on,chat_id:chat_id,upvoted:upvoted,downvoted:downvoted,socket:socket,color_arr:color_arr,mems:mems,mods:mods,admin:admin,notifications_top_positions:notifications_top_positions,notifications_bottom_positions:notifications_bottom_positions,notifications_top_ids:notifications_top_ids,notifications_bottom_ids:notifications_bottom_ids,serial_id:serial_id,serial_tracker:serial_tracker,user_id:user_id,user_tracker:user_tracker};
+	return {connected:connected,recent:recent,typ_cnt:typ_cnt,pm_info:pm_info,focused:focused,live:live,title_blinking:title_blinking,banned:banned,stop_scroll:stop_scroll,scroll_attached:scroll_attached,scroll_button_clicked:scroll_button_clicked,clicked_on:clicked_on,chat_id:chat_id,upvoted:upvoted,downvoted:downvoted,socket:socket,color_arr:color_arr,mems:mems,mods:mods,admin:admin,notifications_top_positions:notifications_top_positions,notifications_bottom_positions:notifications_bottom_positions,notifications_top_ids:notifications_top_ids,notifications_bottom_ids:notifications_bottom_ids,serial_id:serial_id,serial_tracker:serial_tracker,user_id:user_id,user_tracker:user_tracker};
 }();
 
 $('.big_upvote').click(function(e){
@@ -350,6 +353,8 @@ updateTimes = function(){
 }();
 
 $(document).ready(function(){
+	$('.chat_main').mCustomScrollbar({theme:'minimal'});	
+	$('.mssg_cont').show();
 	if(module.user_id.length){
 		window.setInterval(function(){
 			if(module.typ_cnt > 1){
@@ -378,9 +383,11 @@ $(document).ready(function(){
 		});
 	}
 	if($('.pm_body').length){
-		$('.pm_body').animate({scrollTop:$('.pm_body')[0].scrollHeight},'fast',function(){
+		$('.pm_body').mCustomScrollbar({theme:'light-2'});	
+		$('.pm_body').mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
+		window.setTimeout(function(){
 			$('.pm_visible').css('visibility','');	
-		});
+		},50);
 	}
 	setInterval(updateTimes,60000);
 	setInterval(updateChatTimes,60000);
@@ -413,7 +420,7 @@ $(document).ready(function(){
 		var friend_id = $(this).attr('data-friend-id');
 		var pm_id = $(this).attr('data-pm-chat-id');
 		var friend_status_class = $(this).find('#friend_' + friend_id + '_status').attr('class').replace('friend_status','');
-		if($('#pm_' + friend_name).length == 0){
+		if($('#pm_' + friend_id + '_' + pm_id).length == 0){
 			module.socket.emit('join_pm',{friend_id:friend_id,friend_name:friend_name,pm_id:pm_id},function(info){
 				$('#pm_' + info.friend_name).attr('id','pm_' + info.friend_id + '_' + info.pm_id);
 			});
@@ -477,6 +484,11 @@ $(document).ready(function(){
 			$(this).parent().resizable('enable');
 			$(this).parent().find('.pm_body').css('display','');
 			$(this).parent().find('.pm_text').css('display','');
+			$(this).parent().find('.pm_body').css('visibility','hidden');
+			$('.pm_body').mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
+			window.setTimeout(function(){
+				$('.pm_body').css('visibility','');	
+			},50);
 		}else{
 			module.socket.emit('minimize_pm',{friend_id:pm_info[1],pm_id:pm_info[2]});
 			if($(this).parent().css('height') != ''){
@@ -890,7 +902,15 @@ module.socket.on('displayFriendRequests',function(request_info){
 });
 
 module.socket.on('connect',function() {
+	console.log('Client has connected');
+	module.connected = 1;
 	module.socket.emit('room',$('.chat_id').attr('id'));
+	if($('.enter_hint').text() == 'You are disconnected'){
+		$('.enter_hint').text("Press Shift+Enter for new line");
+		$('.response_hint').text("Click on a message to respond to it");
+		$('.pm_unseen').text("");
+		$('.pm_unseen').hide();
+	}
 	if($('#logged_in').text() == 1){
 		module.socket.emit('add_member',{new_member:module.user_tracker,serial_id:module.serial_id});
 	}else{
@@ -1133,34 +1153,16 @@ module.socket.on('publishMessage',function(chat_info){
 
 /* Add a disconnect listener*/
 module.socket.on('disconnect',function() {
+	module.connected = 0;
+	$('.enter_hint').text("");
+	$('.response_hint').text("");
+	$('.enter_hint').text('You are disconnected');
+	$('.pm_unseen').text('You are disconnected');
+	$('.pm_unseen').show();
 	console.log('The client has disconnected!');
 });
 
 /* Sends a message to the server via module.sockets*/
-function sendMessageToServer(message,clicked_on) {
-	module.socket.emit('message_sent',message);
-	/*if(message.responseto == 0){
-		var tmp = "<div id='mssg_cont' class='tmp_message response_to_0 level_0 parent_0'><div class='chat_mssg'><div class='row' style='margin:0;'> <div id='toggle_' class='toggle_responses'> <span class='caret caret_tooltip' id='caret_' data-toggle='tooltip' data-original-title='Hide Responses' data-container='body' data-placement='top'></span> </div> <div class='mssg_body_cont'><div class='vote_box'>";
-	}else{
-		var tmp = "<div id='mssg_cont' class='tmp_message response_to_" + message.responseto + " level_" + message.level + " parent_" + message.parent + " pad_l_20'><div class='chat_mssg'><div class='row' style='margin:0;'> <div class='mssg_body_cont'><div class='vote_box'>";
-	}
-	tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div class="upvote_count">0</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span></div><div class="mssg_body"><div id="toggle_" class="toggle_responses"> <span class="caret caret_tooltip" id="caret_" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span> </div> ';
-	if($('#logged_in').text() == 1){
-		tmp += "<span style='margin-right:4px;' class='glyphicon glyphicon-remove mssg_icon' data-toggle='tooltip' title='Delete post' data-container='body' data-placement='top'></span>";
-	}
-	if(module.admin.indexOf(module.user_tracker) != -1){
-		tmp += "<span class='glyphicon glyphicon-star'></span>";
-	}else if(module.mods.indexOf(module.user_tracker) != -1){
-		tmp += "<span class='glyphicon glyphicon-tower'></span>";	
-	}
-	tmp += "<strong class='mssg_op' id='" + module.user_tracker + "' style='color:" + module.color_arr[module.serial_tracker % 7] + ";'> " + module.user_tracker + " (<span class='response_count'>0</span>)</strong> : " + message.message + "<div class='time_box'><div class='time'>a few seconds ago</div></div></div></div></div></div></div>";	
-	if(message.responseto == 0){
-		$('#chat_display').append(tmp);
-	}else{
-		$('#mssg_cont_' + clicked_on).append(tmp);
-	}*/
-}
-
 $('#message').click(function(){
 	$('.enter_hint').text("");
 	$('.response_hint').text("");
@@ -1179,28 +1181,30 @@ $('#message').keyup(function(e){
 			if(keys.indexOf(16) == -1){  /*shift key not pressed*/
 				keys.splice(keys.indexOf(e.which),1);
 				if($('#message').val().trim() != ""){
-					if($('#message').attr('class') == 'global'){
-						sendMessageToServer({message:$('#message').val(),responseto:0,level:0,parent:0},module.clicked_on);
-					}else{
-						var responseto = $('#message').attr('class').replace('message_','');
-						var level = parseInt($('#mssg_cont_' + responseto).attr('class').split(" ")[2].replace('level_','')) + 1;
-						if($('#mssg_cont_' + responseto).attr('class').split(" ")[3].replace('parent_','') == 0){
-							var resp_parent = responseto;
+					if(module.connected){
+						if($('#message').attr('class') == 'global'){
+							module.socket.emit('message_sent',{message:$('#message').val(),responseto:0,level:0,parent:0});
 						}else{
-							var resp_parent = $('#mssg_cont_' + responseto).parents('.mssg_cont').last().attr('id').replace('mssg_cont_','');
+							var responseto = $('#message').attr('class').replace('message_','');
+							var level = parseInt($('#mssg_cont_' + responseto).attr('class').split(" ")[2].replace('level_','')) + 1;
+							if($('#mssg_cont_' + responseto).attr('class').split(" ")[3].replace('parent_','') == 0){
+								var resp_parent = responseto;
+							}else{
+								var resp_parent = $('#mssg_cont_' + responseto).parents('.mssg_cont').last().attr('id').replace('mssg_cont_','');
+							}
+							module.socket.emit('message_sent',{message:$('#message').val(),responseto:responseto,level:level,parent:resp_parent});	
 						}
-						sendMessageToServer({message:$('#message').val(),responseto:responseto,level:level,parent:resp_parent},module.clicked_on);	
+						$('#message').val("");
+					}else{
+						$('.enter_hint').text('You are disconnected');
 					}
-					$('#message').val("");
 				}
 			}else{
 				keys.splice(keys.indexOf(e.which),1);
-				return true;
 			}
 		}else{
 			keys.splice(keys.indexOf(e.which),1);
 		}
-		return true;
 	}else{
 		keys.splice(keys.indexOf(e.which),1);
 	}
@@ -1262,11 +1266,11 @@ $('body').on('keyup','.pm_text',function(e){
 					}
 				});
 				$(this).css('height','');
+				$(this).val("");
 				var mssg = '<div class="pm_mssg_cont tmp_message">';
 				mssg += '<div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment().format("hh:mma") + '">' + $(this).val() + '</div>';
 				mssg += '</div>'; 
 				$('#pm_' + module.pm_info[1] + '_' + module.pm_info[2]).find('.pm_body_mssgs').append(mssg);
-				$(this).val("");
 				if(!parseInt(chat_cont.attr('data-stop-scroll'))){
 					var pm_body = chat_cont.find('.pm_body');
 					pm_body.off('scroll',pm_scroll_mod);

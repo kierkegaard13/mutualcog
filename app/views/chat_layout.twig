@@ -6,10 +6,12 @@
 	<meta name="viewport" content="width=device-width,height=device-height, initial-scale=1.0">
         <title>Mutual Cognizance</title>
 	<link rel="icon" href="{{base}}/GavinWeb.ico" type="image/x-icon">
-        <link rel="stylesheet" href="{{base}}/app/libraries/css/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="{{base}}/app/bower_components/bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" href="{{base}}/app/libraries/css/chat_style.min.css?{{version}}" />
+        <link rel="stylesheet" href="{{base}}/app/libraries/css/jquery.mCustomScrollbar.min.css" />
         {% block styles %}{% endblock %}
 	<script src='//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
+	<script src='{{base}}/app/libraries/js/jquery.mCustomScrollbar.concat.min.js'></script>
 </head>
 <body>
 {% block header %}
@@ -62,7 +64,7 @@
 <script src='//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js'></script>
 <script src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js'></script>
 <script type="text/javascript">
-	document.writeln("<script type='text/javascript' src='{{base}}/app/libraries/css/dist/js/bootstrap.min.js'><" + "/script>");
+	document.writeln("<script type='text/javascript' src='{{base}}/app/bower_components/bootstrap/dist/js/bootstrap.min.js'><" + "/script>");
 	document.writeln("<script type='text/javascript' src='{{base}}/app/libraries/js/chat.min.js?{{version}}'><" + "/script>");
 	  var _gaq = _gaq || [];
 	  _gaq.push(['_setAccount', 'UA-24332662-1']);

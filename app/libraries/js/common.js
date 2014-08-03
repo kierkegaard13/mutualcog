@@ -2,7 +2,11 @@ module = function(){
 	var focused = 1;
 	var title_blinking = recent = 0;
 	var typ_cnt = 0;
-	var socket = io.connect('http://localhost:3000/',{query:"sid=" + $('#sid').attr('data-sid') + "&serial=" + $('#serial_tracker').text()});
+	if(typeof io !== 'undefined'){
+		var socket = io.connect('http://localhost:3000/',{query:"sid=" + $('#sid').attr('data-sid') + "&serial=" + $('#serial_tracker').text()});
+	}else{
+		var socket = $('body');
+	}
 	var serial_id = $('#serial_id').text();
 	var serial_tracker = $('#serial_tracker').text();
 	var user_id = $('#user_id').text();
@@ -85,9 +89,11 @@ $(document).ready(function(){
 		});
 	}
 	if($('.pm_body').length){
-		$('.pm_body').animate({scrollTop:$('.pm_body')[0].scrollHeight},'fast',function(){
+		$('.pm_body').mCustomScrollbar({theme:'light-2'});	
+		$('.pm_body').mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
+		window.setTimeout(function(){
 			$('.pm_visible').css('visibility','');	
-		});
+		},50);
 	}
 	updateChatTimes();
 	updateTimes();
@@ -118,7 +124,7 @@ $(document).ready(function(){
 		var friend_id = $(this).attr('data-friend-id');
 		var pm_id = $(this).attr('data-pm-chat-id');
 		var friend_status_class = $(this).find('#friend_' + friend_id + '_status').attr('class').replace('friend_status','');
-		if($('#pm_' + friend_name).length == 0){
+		if($('#pm_' + friend_id + '_' + pm_id).length == 0){
 			module.socket.emit('join_pm',{friend_id:friend_id,friend_name:friend_name,pm_id:pm_id},function(info){
 				$('#pm_' + info.friend_name).attr('id','pm_' + info.friend_id + '_' + info.pm_id);
 			});
@@ -182,6 +188,11 @@ $(document).ready(function(){
 			$(this).parent().resizable('enable');
 			$(this).parent().find('.pm_body').css('display','');
 			$(this).parent().find('.pm_text').css('display','');
+			$(this).parent().find('.pm_body').css('visibility','hidden');
+			$('.pm_body').mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
+			window.setTimeout(function(){
+				$('.pm_body').css('visibility','');	
+			},50);
 		}else{
 			module.socket.emit('minimize_pm',{friend_id:pm_info[1],pm_id:pm_info[2]});
 			if($(this).parent().css('height') != ''){
@@ -729,7 +740,7 @@ $('#search_input').on('keydown',function(e){
 		}
 		return false;
 	}else if(e.keyCode == 40){  /*down arrow*/
-		if(selected_term != $('#tag_dropdown').length - 1){
+		if(selected_term != $('#tag_dropdown').children().length - 1){
 			selected_term++;
 			$('.tag_results').css('background-color','');
 			$('li#search_' + selected_term).css('background-color','#ddd');

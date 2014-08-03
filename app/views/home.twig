@@ -264,7 +264,7 @@
 				</span>
 				with Tags:
 				{% for tag in chat.tags %}
-					<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}">#{{tag.name}}</a> </span>
+					<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}"><strong>#{{tag.name}}</strong></a> </span>
 				{% endfor %}
 				and <a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:gray;"><strong>{{chat.messages | length }} comments</strong></a>
 			</div>
