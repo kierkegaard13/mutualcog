@@ -3,33 +3,26 @@ var buildify = require('buildify');
 buildify.task({
 	name:'concat',
 	task:function(){
-		buildify().concat(['jquery-1.10.2.min.js','moment.min.js'])
-			.save('common_alt.min.js');
-		buildify().concat('common.js')
+		buildify().concat(['common.js','home.js'])
 			.uglify()
-			.save('common.min.js');
-		buildify().concat(['jquery-1.10.2.min.js','jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js','moment.min.js'])
-			.save('chat_alt.min.js');
-		buildify().load('chat.js')
+			.save('home.min.js');
+		buildify().concat(['common.js','chat.js'])
 			.uglify()
 			.save('chat.min.js');
 		buildify().load('info.js')
 			.uglify()
 			.save('info.min.js');
-		buildify().load('profile.js')
-			.uglify()
-			.save('profile.min.js');
 	}
 });
 
 buildify.task({
 	name:'replace',
 	task:function(){
-		buildify().load('common.min.js')
+		buildify().load('home.min.js')
 			.perform(function(content){
 				return content.replace(/mutualcog\.com/g,'www.mutualcog.com');
 			})
-			.save('common.min.js');
+			.save('home.min.js');
 		buildify().load('chat.min.js')
 			.perform(function(content){
 				return content.replace(/mutualcog\.com/g,'www.mutualcog.com');
@@ -40,11 +33,6 @@ buildify.task({
 				return content.replace(/mutualcog\.com/g,'www.mutualcog.com');
 			})
 			.save('info.min.js');
-		buildify().load('profile.min.js')
-			.perform(function(content){
-				return content.replace(/mutualcog\.com/g,'www.mutualcog.com');
-			})
-			.save('profile.min.js');
 	}
 });
 

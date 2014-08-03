@@ -6,7 +6,12 @@ class PrivateChats extends EloquentBridge
 	public $timestamps = true;
 
 	public function messages(){
-		return $this->hasMany('PrivateMessages','chat_id')->take(25)->orderBy('created_at');
+		$mssg_count = count(DB::table('private_messages')->where('chat_id',$this->id)->get());
+		if($mssg_count > 25){
+			return $this->hasMany('PrivateMessages','chat_id')->skip($mssg_count - 25)->take(25)->orderBy('created_at');
+		}else{
+			return $this->hasMany('PrivateMessages','chat_id')->take(25)->orderBy('created_at');
+		}
 	}
 
 	public function friends(){
