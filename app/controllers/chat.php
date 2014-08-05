@@ -350,6 +350,29 @@ class Chat extends BaseController {
 		}
 		return 0;
 	}
+
+	public function getHardRemove($chat_id){
+		$chat = Chats::find($chat_id);
+		if($chat){
+			$chat->delete();
+		}
+		if(Session::has('curr_page')){
+			return Redirect::to(Session::get('curr_page'));
+		}
+		return Redirect::to('home');
+	}
+
+	public function getSoftRemove($chat_id){
+		$chat = Chats::find($chat_id);
+		if($chat){
+			$chat->removed = 1;
+			$chat->save();
+		}
+		if(Session::has('curr_page')){
+			return Redirect::to(Session::get('curr_page'));
+		}
+		return Redirect::to('home');
+	}
 	
 	public function postDetails(){
 		$chat = Chats::find(Input::get('id'));

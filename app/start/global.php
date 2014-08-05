@@ -51,6 +51,11 @@ Log::useDailyFiles(storage_path().'/logs/'.$logFile);
 App::error(function(Exception $exception, $code)
 {
 	Log::error($exception);
+	//return View::make('error');
+});
+
+App::missing(function($exception){
+	return View::make('missing');
 });
 
 /*
@@ -66,7 +71,7 @@ App::error(function(Exception $exception, $code)
 
 App::down(function()
 {
-	return Response::make("Be right back!", 503);
+	return View::make('maintenance');
 });
 
 /*

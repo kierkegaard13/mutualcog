@@ -5,8 +5,10 @@ module = function(){
 	var user_validated = pass1_validated = pass2_validated = title_blinking = typ_cnt = connected = recent = banned = stop_scroll = scroll_button_clicked = scroll_top = 0;
 	var clicked_on = -1;
 	var chat_id = $('.chat_id').attr('id');
-	var upvoted = jQuery.parseJSON($('#up_arr').text());
-	var downvoted = jQuery.parseJSON($('#down_arr').text());
+	if($('#up_arr').length){
+		var upvoted = jQuery.parseJSON($('#up_arr').text());
+		var downvoted = jQuery.parseJSON($('#down_arr').text());
+	}
 	if(typeof io !== 'undefined'){
 		var socket = io.connect('http://localhost:3000/',{query:"sid=" + $('#sid').attr('data-sid') + "&serial=" + $('#serial_tracker').text()});
 	}else{
@@ -27,6 +29,175 @@ module = function(){
 
 	return {pm_scroll_inactive:pm_scroll_inactive,user_validated:user_validated,pass1_validated:pass1_validated,pass2_validated:pass2_validated,connected:connected,recent:recent,typ_cnt:typ_cnt,pm_info:pm_info,focused:focused,live:live,title_blinking:title_blinking,banned:banned,stop_scroll:stop_scroll,scroll_mod_active:scroll_mod_active,scroll_button_clicked:scroll_button_clicked,scroll_top:scroll_top,clicked_on:clicked_on,chat_id:chat_id,upvoted:upvoted,downvoted:downvoted,socket:socket,color_arr:color_arr,mems:mems,mods:mods,admin:admin,notifications_top_positions:notifications_top_positions,notifications_bottom_positions:notifications_bottom_positions,notifications_top_ids:notifications_top_ids,notifications_bottom_ids:notifications_bottom_ids,serial_id:serial_id,serial_tracker:serial_tracker,user_id:user_id,user_tracker:user_tracker};
 }();
+
+updateChatTimes = function(){
+	$.each($('.chat_time'),function(index,value){
+		$(this).text(moment.utc($(this).attr('id')).fromNow());
+	});
+	if($('.last_login').length){
+		$('.last_login').html('<strong>Last login: </strong>' + moment.utc($('.last_login').attr('id')).fromNow());
+	}
+}();
+
+updateTimes = function(){
+	$.each($('.time'),function(index,value){
+		$(this).text(moment.utc($(this).attr('id')).fromNow());
+	});
+}();
+
+$(document).ready(function(){
+	if(module.user_id.length){
+		window.setInterval(function(){
+			if(module.typ_cnt > 1){
+				module.typ_cnt--;
+			}else if(module.typ_cnt == 1){
+				module.typ_cnt--;
+				module.socket.emit('not_typing',{pm_id:module.pm_info[2],friend_id:module.pm_info[1],user_id:module.user_id});
+			}
+			if(module.recent > 120){
+				$.ajax({
+					type:'POST',
+					data:{user_id:module.user_id},
+					url:'//mutualcog.com/profile/update-online-status',
+					success:function(){},
+					error:function(){}	
+				});
+			}else{
+				module.recent++;	
+			}	
+		},1000);
+		$(window).on('mousemove',function(){
+			if(module.recent > 120){
+				module.socket.emit('seen_chats');
+			}
+			module.recent = 0;
+		});
+	}
+	if($('.pm_body').length){
+		$('.pm_body').mCustomScrollbar({theme:'light-2',callbacks:{onScroll:function(){
+			var $this = $(this);
+			var par_id = $this.parent().attr('id');
+			var scrollBottom = this.mcs.draggerTop + $this.find('.mCSB_dragger').height();
+			if(scrollBottom == $this.height()){
+				module.pm_scroll_inactive[par_id] = 0;
+			}else{
+				module.pm_scroll_inactive[par_id] = 1;
+			}
+		}}});	
+		$('.pm_body').mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
+		window.setTimeout(function(){
+			$('.pm_visible').css('visibility','');	
+		},50);
+	}
+	updateChatTimes;
+	updateTimes;
+	setInterval(updateTimes,60000);
+	setInterval(updateChatTimes,60000);
+	$.each($('.pm_message'),function(index,val){
+		$('.pm_message').eq(index).attr('title',moment.utc($('.pm_message').eq(index).attr('title')).local().format('hh:mma'));
+	});
+	$('#mssg_requests').popover({html:true});
+	$('#global_requests').popover({html:true});
+	$('#friend_requests').popover({html:true});
+	$('#mssg_requests').blur(function(){
+		$(this).popover('hide');
+	});
+	$('#global_requests').blur(function(){
+		$(this).popover('hide');
+	});
+	$('#friend_requests').blur(function(){
+		$(this).popover('hide');
+	});
+	$('body').on('click','.pm_remove',function(){
+		$(this).parent().parent().remove();
+		var pm_info = $(this).parent().parent().attr('id').split('_');
+		module.socket.emit('leave_pm',{pm_id:pm_info[2],friend_id:pm_info[1]});
+		return false;
+	});
+	$('body').on('click','.friend_box',function(){
+		var friend_name = $(this).attr('id').replace('friend_box_for_','');
+		var friend_id = $(this).attr('data-friend-id');
+		var pm_id = $(this).attr('data-pm-chat-id');
+		var friend_status_class = $(this).find('#friend_' + friend_id + '_status').attr('class').replace('friend_status','');
+		if($('#pm_' + friend_id + '_' + pm_id).length == 0){
+			module.socket.emit('join_pm',{friend_id:friend_id,friend_name:friend_name,pm_id:pm_id},function(info){
+				$('#pm_' + info.friend_name).attr('id','pm_' + info.friend_id + '_' + info.pm_id);
+			});
+			$.ajax({
+				type:'GET',
+				data:{pm_id:pm_id},
+				url:'//mutualcog.com/chat/pm-log',
+				success:function(hresp){	
+					var chat_box = '<div class="pm_cont" id="pm_' + friend_id + '_' + pm_id + '">';
+					chat_box += '<div class="pm_header"><div class="' + friend_status_class + ' pm_status"></div><div class="glyphicon glyphicon-remove pm_remove"></div><div class="pm_name">' + friend_name + '</div></div>';
+					chat_box += '<div class="pm_body"><div class="pm_body_mssgs">'
+					$.each(hresp,function(index,val){
+						if(val.author_id == module.user_id){
+							chat_box += '<div class="pm_mssg_cont"> <div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment.utc(val.created_at).local().format('hh:mma') + '"> ' + val.message + ' </div> </div>';
+						}else{
+							chat_box += '<div class="pm_mssg_cont"> <div class="pm_message pull-left" style="background-color:#7badfc;margin-right:30px;margin-left:5px;" title="' + moment.utc(val.created_at).local().format('hh:mma') + '"> ' + val.message + ' </div> </div>';
+						}
+					});
+					chat_box += '</div><div class="pm_body_alerts"> <div class="pm_mssg_alert pm_unseen" style="display:none;">Not seen</div> <div class="pm_mssg_alert pm_typing" style="display:none;">' + friend_name + ' is typing...</div> </div></div>';
+					chat_box += '<textarea rows=1 class="pm_text"></textarea>';
+					chat_box += '</div>'; 
+					$('.pm_bar').prepend(chat_box);
+					$('.pm_cont').resizable({handles:"nw",ghost:false,maxHeight:450,maxWidth:400,minHeight:330,minWidth:240,resize:function(e,ui){
+						var ui_height = ui.size.height;
+						var ui_width = ui.size.width - 10;
+						$(this).css('left','0');
+						$(this).css('top','0');
+						$(this).find('.pm_header').width(ui_width);
+						$(this).find('.pm_body').height(ui_height - 64);
+						$(this).find('.pm_body').width($(this).find('.pm_header').width() + 6);
+						$(this).find('.pm_text').width($(this).find('.pm_header').width() - 2);
+					}});
+					var chat_cont = $('#pm_' + friend_id + '_' + pm_id);
+					if(module.pm_scroll_inactive[chat_cont.attr('id')] == 0 || !(chat_cont.attr('id') in module.pm_scroll_inactive)){
+						var pm_body = chat_cont.find('.pm_body');
+						window.setTimeout(function(){
+							pm_body.mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
+						},20);
+					}
+				},
+				error:function(){}	
+			});
+		}
+	});
+	$('.pm_cont').resizable({handles:"nw",ghost:false,maxHeight:450,maxWidth:400,minHeight:330,minWidth:240,resize:function(e,ui){
+		var ui_height = ui.size.height;
+		var ui_width = ui.size.width - 10;
+		$(this).css('left','0');
+		$(this).css('top','0');
+		$(this).find('.pm_header').width(ui_width);
+		$(this).find('.pm_body').height(ui_height - 64);
+		$(this).find('.pm_body').width($(this).find('.pm_header').width() + 6);
+		$(this).find('.pm_text').width($(this).find('.pm_header').width() - 2);
+	}});
+	$('body').on('click','.pm_header',function(){
+		var pm_info = $(this).parent().attr('id').split('_');
+		if($(this).parent().find('.pm_body').css('display') == 'none'){
+			module.socket.emit('maximize_pm',{friend_id:pm_info[1],pm_id:pm_info[2]});
+			$(this).parent().resizable('enable');
+			$(this).parent().find('.pm_body').css('display','');
+			$(this).parent().find('.pm_text').css('display','');
+			$(this).parent().find('.pm_body').css('visibility','hidden');
+			$('.pm_body').mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
+			window.setTimeout(function(){
+				$('.pm_body').css('visibility','');	
+			},50);
+		}else{
+			module.socket.emit('minimize_pm',{friend_id:pm_info[1],pm_id:pm_info[2]});
+			if($(this).parent().css('height') != ''){
+				$(this).parent().attr('data-expanded-height',$(this).parent().css('height'));
+				$(this).parent().css('height','');
+			}
+			$(this).parent().resizable('disable');
+			$(this).parent().find('.pm_body').css('display','none');
+			$(this).parent().find('.pm_text').css('display','none');
+		}
+	});
+});
 
 function validateUser(username){
 	if(username.length < 3 || username.length > 20){

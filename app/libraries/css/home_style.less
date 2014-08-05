@@ -1,5 +1,14 @@
 @import "common";
 
+.main_content a{
+  color:@link_grey;
+}
+.main_content a:hover{
+  color:@link_grey;
+}
+.main_content a:focus{
+  color:@link_grey;
+}
 .modal{
   overflow-y:auto;
 }
@@ -250,9 +259,12 @@ select {
 .chat_title_box:hover {
   background-color: #f5f5f5;
 }
-.chat_info {
+.chat_info,.more_options {
   color:#777;
   font-size:12px; 
+}
+.more_options>span {
+  margin-right:5px;
 }
 .suggested_tags {
   cursor:pointer;

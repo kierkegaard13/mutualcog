@@ -17,29 +17,8 @@
 	{{parent()}}
 {% endblock %}
 
-{% block side_2 %}
-                        <div class="small_content_box">
-				<div class="content side_content" id="create_cont">
-<form method="post" action="{{site}}/chat/new-chat" class="mutual_form" id="home_form">
-<fieldset>
-	<a class="btn btn-default btn-xs advanced_create" id="advanced_create" href="#" data-toggle="modal" data-target="advanced_modal"><div class="glyphicon glyphicon-cog advanced_cog" data-toggle="tooltip" data-original-title="Advanced options" data-container="body" data-placement="top"></div></a>
-	<legend>Create a new Chat</legend>
-	<div id="title_group" class="form-group">
-		<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Title must be longer than 2 characters but less than 180" data-trigger="focus" data-container="body" type="text" name="title" id="Title" placeholder="What's this chat about?">
-	</div>
-	<div id="link_group" class="form-group">
-		<input class="form-control" type="text" name="link" id="Link" placeholder="Add a link (optional)">
-	</div>
-	<div id="tags_group" class="form-group">
-		<input class="form-control tags_input" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Tags" data-container="body" data-placement="bottom" type="text" name="tags" id="Tags" placeholder="Use spaces to separate tags (max: 5)" autocomplete="off">
-	</div>
-	<input class="form-control" type="hidden" name="live_status" value="1">
-	<button class="btn btn-primary" type="Submit" style="width:100%;">Create</button>
-</fieldset>
-</form>
-				</div>
-                        </div>
-<div class="modal fade" id="advanced_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="continue_modalLabel">
+{% block modals %}
+<div class="modal fade" id="advanced_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="advanced_modalLabel">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -78,6 +57,83 @@
 		</div>
 	</div>	
 </div>
+<div class="modal fade" id="remove_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="remove_modalLabel">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Remove Post?</h4>
+			</div>
+			<div class="modal-footer">
+				<a href="{{site}}/chat/soft-remove/" class="btn btn-primary" id="remove_chat_final" type="Submit">Yes</a>
+				<button type="button" class="btn" data-dismiss="modal">No</button>
+			</div>
+		</div>
+	</div>	
+</div>
+<div class="modal fade" id="edit_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="edit_modalLabel">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Edit Chat</h4>
+			</div>
+			<div class="modal-body">
+				<form method="post" action="{{site}}/chat/new-chat" class="mutual_form" id="home_form_v2">
+				<fieldset>
+					<div id="title_group_v2" class="form-group">
+						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Title must be longer than 2 characters but less than 180" data-trigger="focus" type="text" name="title" id="Title_v2" placeholder="What's this chat about?">
+					</div>
+					<div id="link_group_v2" class="form-group">
+						<input class="form-control" type="text" name="link" id="Link_v2" placeholder="Add a link (optional)">
+					</div>
+					<div id="tags_group_v2" class="form-group">
+						<input class="form-control tags_input" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Tags" data-placement="bottom" type="text" name="tags" id="Tags_v2" placeholder="Use spaces to separate tags (max: 5)" autocomplete="off">
+					</div>
+					<div id="description_group" class="form-group">
+						<label for="description">Description</label>
+						<textarea name="description" class="form-control" id="description" rows="5"></textarea>
+					</div>
+					<div id="live_group" class="form-group">
+						<select class="form-control" name="live_status">
+							<option value="1">Live</option>
+							<option value="0">Static</option>
+						</select>
+					</div>
+				</fieldset>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" type="Submit">Save</button>
+				<button type="button" class="btn" data-dismiss="modal">Close</button>
+				</form>
+			</div>
+		</div>
+	</div>	
+</div>
+{% endblock %}
+
+{% block side_2 %}
+                        <div class="small_content_box">
+				<div class="content side_content" id="create_cont">
+<form method="post" action="{{site}}/chat/new-chat" class="mutual_form" id="home_form">
+<fieldset>
+	<a class="btn btn-default btn-xs advanced_create" id="advanced_create" href="#" data-toggle="modal" data-target="advanced_modal"><div class="glyphicon glyphicon-cog advanced_cog" data-toggle="tooltip" data-original-title="Advanced options" data-container="body" data-placement="top"></div></a>
+	<legend>Create a new Chat</legend>
+	<div id="title_group" class="form-group">
+		<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Title must be longer than 2 characters but less than 180" data-trigger="focus" data-container="body" type="text" name="title" id="Title" placeholder="What's this chat about?">
+	</div>
+	<div id="link_group" class="form-group">
+		<input class="form-control" type="text" name="link" id="Link" placeholder="Add a link (optional)">
+	</div>
+	<div id="tags_group" class="form-group">
+		<input class="form-control tags_input" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Tags" data-container="body" data-placement="bottom" type="text" name="tags" id="Tags" placeholder="Use spaces to separate tags (max: 5)" autocomplete="off">
+	</div>
+	<input class="form-control" type="hidden" name="live_status" value="1">
+	<button class="btn btn-primary" type="Submit" style="width:100%;">Create</button>
+</fieldset>
+</form>
+				</div>
+                        </div>
 {% endblock %}
 
 {% block side_1 %}
@@ -222,7 +278,7 @@
 				{% endif %}
 			{% endif %}
 			{% if chat.admin % 16777259 == 0 %}
-				<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><strong>{{chat.admin}}</strong></a>, 
+				<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}"><strong>{{chat.admin}}</strong></a>, 
 			{% else %}
 				<div class="chat_info">Created by <strong>{{chat.admin}}</strong>, 
 			{% endif %}
@@ -266,7 +322,18 @@
 				{% for tag in chat.tags %}
 					<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}"><strong>#{{tag.name}}</strong></a> </span>
 				{% endfor %}
-				and <a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:gray;"><strong>{{chat.messages | length }} comments</strong></a>
+				and <a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}"><strong>{{chat.messages | length }} comments</strong></a>
+			</div>
+			<div class="more_options">
+				{% if user.name == chat.admin %}
+					<span><a href="#" data-toggle="modal" class="edit_chat_link" data-target="edit_modal"><strong>Edit</strong></a></span>
+				{% endif %}
+				{% if user.name == chat.admin%}
+					<span><a href="#" data-toggle="modal" data-chat-id="soft_{{chat.id}}" class="remove_chat_link" data-target="remove_modal"><strong>Remove</strong></a></span>
+				{% elseif user.is_admin %}
+					<span><a href="#" data-toggle="modal" data-chat-id="hard_{{chat.id}}" class="remove_chat_link" data-target="remove_modal"><strong>Remove</strong></a></span>
+				{% endif %}
+				<span><a href="{{site}}/chat/static/{{chat.id}}"><strong>Static</strong></a></span>
 			</div>
 		</div>
 	</div>
