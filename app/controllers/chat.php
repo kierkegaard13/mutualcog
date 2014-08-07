@@ -352,9 +352,13 @@ class Chat extends BaseController {
 	}
 
 	public function getHardRemove($chat_id){
-		$chat = Chats::find($chat_id);
-		if($chat){
-			$chat->delete();
+		if(Auth::check()){
+			if($chat->admin == Auth::user()->name){
+				$chat = Chats::find($chat_id);
+				if($chat){
+					$chat->delete();
+				}
+			}
 		}
 		if(Session::has('curr_page')){
 			return Redirect::to(Session::get('curr_page'));
@@ -363,15 +367,130 @@ class Chat extends BaseController {
 	}
 
 	public function getSoftRemove($chat_id){
-		$chat = Chats::find($chat_id);
-		if($chat){
-			$chat->removed = 1;
-			$chat->save();
+		if(Auth::check()){
+			if(Auth::user()->is_admin || Auth::user()->tag_mod == $chat_id || Auth::user()->tag_admin == $chat_id){
+				$chat = Chats::find($chat_id);
+				if($chat){
+					$chat->removed = 1;
+					$chat->save();
+				}
+			}
 		}
 		if(Session::has('curr_page')){
 			return Redirect::to(Session::get('curr_page'));
 		}
 		return Redirect::to('home');
+	}
+
+	public function postEditChat(){
+		$validated = 1;
+		if(htmlentities(Input::get('js_key')) != 'js_enabled'){
+			$validated = 0;
+		}
+		if($validated && Auth::check()){
+			$chat_id = htmlentities(Input::get('chat_id'));
+			$chat = Chats::find($chat_id);
+			if($chat->admin != Auth::user()->name){
+				if(Session::has('curr_page')){
+					return Redirect::to(Session::get('curr_page'));
+				}else{
+					return Redirect::to('home');
+				}
+			}
+			if(strlen(Input::get('title')) < 3 || strlen(Input::get('title')) > 180){
+				return Redirect::to(Session::get('curr_page'));
+			}
+			$chat->title = htmlentities(Input::get('title'));
+			$link = htmlentities(Input::get('link'));
+			if($link && $link != $chat->link){
+				if((strpos($link,'http://') == 'false') && (strpos($link,'https://') == 'false')){
+					$link = 'http://' . $link;
+				}
+				function get($a,$b,$c)
+				{
+					 // Gets a string between 2 strings
+					 $y = explode($b,$a);
+					 if($y[1]){
+						$x = explode($c,$y[1]);
+						return $x[0];
+					 }else{
+						return 0;
+					 }
+				}
+				if(substr($link,-4,4) == '.png' || substr($link,-4,4) == '.gif' || substr($link,-4,4) == '.jpg' || substr($link,-5,5) == '.jpeg'){
+					$site_name = str_replace('http://','',$link);
+					$site_name = explode('/',$site_name);
+					$site_name = $site_name[0];
+					$chat->link = $link;
+					$chat->image = $link;
+					$chat->site_name = $site_name;
+				}else{
+					$image = get(file_get_contents($link), "<img src=", " ");
+					$image = str_replace('"','',$image);
+					$site_name = str_replace('http://','',$link);
+					$site_name = explode('/',$site_name);
+					$site_name = $site_name[0];
+					$chat->link = $link;
+					$chat->image = $image;
+					$chat->site_name = $site_name;
+				}
+			}
+			$details = htmlentities(Input::get('description'));
+			if($details){
+				$chat->raw_details = $details;
+				$chat->details = $this->parseText($details);
+			}
+			if(htmlentities(Input::get('live_status')) == 1 || htmlentities(Input::get('live_status')) == 0){
+				$chat->live = htmlentities(Input::get('live_status'));
+			}
+			$tags = Input::get('tags');
+			$tags = explode(' ',$tags);
+			$tag_found = 0;
+			$tag_index = 0;
+			foreach($chat->tags as $old_tag){
+				foreach($tags as $tag){
+					if($old_tag->name == str_replace('#','',$tag)){
+						$tag_found = 1;
+					}
+				}
+				if($tag_found){
+					unset($tags[$tag_index]);
+				}else{
+					$chat_to_tag = ChatsToTags::wherechat_id($chat->id)->wheretag_id($old_tag->id)->get();
+					$chat_to_tag->delete();
+				}
+				$tag_found = 0;
+				$tag_index++;
+			}
+			foreach($tags as $tag){
+				if(strlen($tag) > 2 && strlen($tag) < 20){
+					$t = new Tags();
+					$tag = str_replace('#','',$tag);
+					$tag = htmlentities($tag);
+					if($tag){
+						$t->name = $tag;
+						if($t->findAll()){
+							$t = $t->findAll();
+							$t->popularity = $t->popularity + 1;
+							$t->save();
+						}else{
+							$t->save();
+						}
+						$t = $t->findAll();
+						$chats_to_tags = new ChatsToTags();
+						$chats_to_tags->chat_id = $chat->id;
+						$chats_to_tags->tag_id = $t->id;
+						$chats_to_tags->save();
+					}
+				}
+			}
+			$chat->save();
+		}
+		if(Session::has('curr_page')){
+			return Redirect::to(Session::get('curr_page'));
+		}else{
+			return Redirect::to('home');
+		}
 	}
 	
 	public function postDetails(){
@@ -512,7 +631,11 @@ class Chat extends BaseController {
 				return Redirect::to(action('chat@getStatic',$chat->id));
 			}
 		}
-		return Redirect::to(Session::get('curr_page'));
+		if(Session::has('curr_page')){
+			return Redirect::to(Session::get('curr_page'));
+		}else{
+			return Redirect::to('home');
+		}
 	}
 
 	public function postUpvote(){

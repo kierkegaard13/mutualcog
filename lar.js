@@ -30,24 +30,27 @@ function sanitize(text) {
 }
 
 function emoji(text){
-	var mapArr = ['\\&lt\\;3',':\\)',':\\(',':D',":\\&\\#39\\;\\(",'spec_face_angr',':\\/',':\\|',':O',':P','T_T'];
+	var mapArr = ['\\&lt\\;3',':\\)',':\\(',':D',":\\&\\#39\\;\\(",'spec_face_angr','spec_face_rage',':\\/',':\\|',':O',':P','T_T'];
 
 	var mapObj = {
 		'&lt;3':'<img style="height:18px;" src="//localhost/laravel/app/emoji/heart.png"></img>',
 		':D':'<img style="height:18px;" src="//localhost/laravel/app/emoji/smile.png"></img>',
 		':)':'<img style="height:18px;" src="//localhost/laravel/app/emoji/smiley.png"></img>',
+		':(':'<img style="height:18px;" src="//localhost/laravel/app/emoji/disappointed.png"></img>',
 		':|':'<img style="height:18px;" src="//localhost/laravel/app/emoji/neutral_face.png"></img>',
+		':/':'<img style="height:18px;" src="//localhost/laravel/app/emoji/confused.png"></img>',
 		":&#39;(":'<img style="height:18px;" src="//localhost/laravel/app/emoji/cry.png"></img>',
 		':O':'<img style="height:18px;" src="//localhost/laravel/app/emoji/open_mouth.png"></img>',
 		':P':'<img style="height:18px;" src="//localhost/laravel/app/emoji/stuck_out_tongue_closed_eyes.png"></img>',
 		'T_T':'<img style="height:18px;" src="//localhost/laravel/app/emoji/sob.png"></img>',
-		'spec_face_angr':'<img style="height:18px;" src="//localhost/laravel/app/emoji/rage.png"></img>'
+		'spec_face_angr':'<img style="height:18px;" src="//localhost/laravel/app/emoji/angry.png"></img>',
+		'spec_face_rage':'<img style="height:18px;" src="//localhost/laravel/app/emoji/rage.png"></img>'
 	};
 
 	var re = new RegExp(mapArr.join("|"),"gi");
 	text = text.replace(re, function(matched){
 		console.log(matched);
-		  return mapObj[matched];
+		return mapObj[matched];
 	});
 	return text;
 }
@@ -64,7 +67,7 @@ function processMessage(message){
 	var re2 = new RegExp('</p>$','g');
 	message = hashHtml(message);
 	message = message.replace('>:|','spec_face_angr');
-	message = message.replace('>:(','spec_face_angr');
+	message = message.replace('>:(','spec_face_rage');
 	message = marked(message);
 	if(message.length){
 		message = message.replace(/^\s+|\s+$/g,'');
@@ -195,6 +198,13 @@ io.sockets.on('connection', function(client) {
 
 	client.on('join_pm',function(pm_info,fn){
 		if(client.authorized){
+			conn.where({id:pm_info.friend_id}).get('users',function(err,rows){
+				if(rows[0].disconnecting){
+					conn.where({id:pm_info.friend_id}).update('users',{online:0,disconnecting:0},function(err,info){
+						if(err)console.log(err);
+					});
+				}
+			});
 			if(pm_info.pm_id != 0){
 				conn.where({user_id:client.user_id,entity_id:pm_info.friend_id,entity_type:0}).update('users_to_private_chats',{visible:1},function(err,info){
 					if(err)console.log(err);
@@ -255,6 +265,12 @@ io.sockets.on('connection', function(client) {
 						if(err)console.log(err);
 					});
 				}
+			});
+			conn.where({user_id:client.user_id,entity_id:pm_info.friend_id,type:0}).get('interaction_users',function(err,rows){
+				if(err)console.log(err);
+				conn.where({user_id:client.user_id,entity_id:pm_info.friend_id,type:0}).update('interaction_users',{bond:rows[0].bond + 1},function(err,rows){
+					if(err)console.log(err);
+				});
 			});
 			/* Find out if recipient has chat maximized, minimized, or closed */
 			conn.where({user_id:pm_info.friend_id,entity_id:client.user_id,entity_type:0}).get('users_to_private_chats',function(err,rows){

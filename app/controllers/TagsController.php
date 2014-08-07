@@ -32,7 +32,10 @@ class TagsController extends BaseController {
 			$usertag->score = 1;
 			$usertag->save();
 		}
-		return Redirect::to(Session::get('curr_page'));
+		if(Session::has('curr_page')){
+			return Redirect::to(Session::get('curr_page'));
+		}
+		return Redirect::to('home');
 	}
 
 	public function getUnsubscribe($tag_id){
@@ -47,7 +50,31 @@ class TagsController extends BaseController {
 				$usertag->delete();
 			}
 		}
-		return Redirect::to(Session::get('curr_page'));
+		if(Session::has('curr_page')){
+			return Redirect::to(Session::get('curr_page'));
+		}
+		return Redirect::to('home');
+	}
+
+	public function postEditTag(){
+		if(Auth::check()){
+			$tag_id = htmlentities(Input::get('tag_id'));
+			$description = htmlentities(Input::get('description'));
+			$raw_info = htmlentities(Input::get('info'));
+			$tag = Tags::find($tag_id);
+			if($tag){
+				if(Auth::user()->tag_admin == $tag_id){
+					$tag->description = $description;
+					$tag->raw_info = $raw_info;
+					$tag->info = $this->parseText($raw_info);
+					$tag->save();
+				}
+			}
+		}
+		if(Session::has('curr_page')){
+			return Redirect::to(Session::get('curr_page'));
+		}
+		return Redirect::to('home');
 	}
 }
 

@@ -13,6 +13,9 @@ class P extends BaseController {
 		$user = new User();
 		$user->name = $username;
 		$user = $user->findAll();
+		if(!$user){
+			return View::make('missing');
+		}	
 		$requested = 0;
 		if(Auth::check()){
 			$requested = count(Requests::wheresender_id(Auth::user()->id)->whereuser_id($user->id)->wheretype(2)->first());

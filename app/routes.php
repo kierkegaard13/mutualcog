@@ -33,7 +33,7 @@ function getUniqueSerialNumber($serial_number=null){
 			Session::put('serial_id',$temp->id);
 			return true;
 		}
-		$serial_number = mt_rand(0,16777215);
+		$serial_number = mt_rand(2,268435455);
 		return getUniqueSerialNumber($serial_number);
 	}
 	$serial->save();
