@@ -2,7 +2,55 @@
 
 class TagsController extends BaseController {
 
+	public function getAcceptMod($request_id,$tag_id){
+		if(!isset($request_id) || !isset($tag_id)){
+			return App::abort(404,'You seem to have entered an invalid URL');
+		}
+		$request = Requests::find($request_id);
+		if(Auth::check() && $request){
+			$friend_id = $request->sender_id;
+			if(Auth::user()->id != $friend_id && Auth::user()->id == $request->user_id){
+				$user_to_tag = UsersToTags::whereuser_id(Auth::user()->id)->wheretag_id($tag_id)->first();
+				$user_to_tag->is_mod = 1;
+				$user_to_tag->save();
+				$request->delete();
+			}
+		}
+		if(Session::has('curr_page')){
+			return Redirect::to(Session::get('curr_page'));
+		}
+		return Redirect::to('home');
+	}
+
+	public function getDeclineMod($request_id,$tag_id){
+		if(!isset($request_id) || !isset($tag_id)){
+			return App::abort(404,'You seem to have entered an invalid URL');
+		}
+		$request = Requests::find($request_id);
+		if(Auth::check() && $request){
+			$friend_id = $request->sender_id;
+			if(Auth::user()->id != $friend_id && Auth::user()->id == $request->user_id){
+				$request->delete();
+			}
+		}
+		if(Session::has('curr_page')){
+			return Redirect::to(Session::get('curr_page'));
+		}
+		return Redirect::to('home');
+	}
+
 	public function getSimilarTag(){
+		$input = htmlentities(Input::get('tag'));
+		$res_arr = array();
+		$tag = new Tags();
+		$tag = $tag->where('name','LIKE','%' . $input . '%')->take(5)->get();
+		foreach($tag as $t){
+			$res_arr[] = array('id' => $t->id,'name' => $t->name);
+		}
+		return $res_arr;
+	}
+
+	public function getSimilarEntity(){
 		$input = htmlentities(Input::get('tag'));
 		$res_arr = array();
 		$tag = new Tags();
@@ -14,6 +62,18 @@ class TagsController extends BaseController {
 		$people = $people->where('name','LIKE','%' . $input . '%')->take(5)->get();
 		foreach($people as $person){
 			$res_arr[] = array('id' => $person->id,'name' => $person->name,'type' => 'person');
+		}
+		return $res_arr;
+	}
+
+	public function getSimilarUser(){
+		$mod_input = htmlentities(Input::get('mod'));
+		$tag_id = htmlentities(Input::get('tag_id'));
+		$res_arr = array();
+		$mod = new User();
+		$mod = $mod->select('users.*')->where('name','LIKE','%' . $mod_input . '%')->join('users_to_tags','users_to_tags.user_id','=','users.id')->where('users_to_tags.tag_id',$tag_id)->take(5)->get();
+		foreach($mod as $m){
+			$res_arr[] = array('id' => $m->id,'name' => $m->name);
 		}
 		return $res_arr;
 	}

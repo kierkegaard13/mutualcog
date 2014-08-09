@@ -139,7 +139,7 @@ $(window).on('click',function(e){
 });
 
 $(document).ready(function(){
-	$('.chat_main').mCustomScrollbar({theme:'minimal',scrollInertia:100,callbacks:{onScroll:function(){
+	$('.chat_main').mCustomScrollbar({theme:'minimal',callbacks:{onScroll:function(){
 		module.scroll_top = this.mcs.draggerTop;
 		var scrollBottom = this.mcs.draggerTop + $('.chat_main').find('.mCSB_dragger').height();
 		if(scrollBottom == $('.chat_main').height() - 4){
@@ -147,7 +147,7 @@ $(document).ready(function(){
 			module.scroll_mod_active = 1;
 			$('#stop_scroll').removeClass('highlight_red');	
 			$('#stop_scroll').attr('data-original-title','Stop scrollbar');
-		}else if(scroll_mod_active){
+		}else if(scroll_mod_active && !module.stop_scroll){
 			module.stop_scroll = 1;
 			if($('#stop_scroll').hasClass('highlight_red')){
 			}else{
@@ -449,22 +449,6 @@ notifyMessage = function(){
 		}
 	},800);
 }
-
-module.socket.on('displayFriendRequests',function(request_info){
-	var friend_count = $('#friend_requests_count');
-	var f_content = "";
-	if(friend_count.text().length > 0){
-		friend_count.text(parseInt(friend_count.text()) + 1);
-	}else{
-		$('#friend_request_glyph').addClass('pull-left');
-		friend_count.text('1');
-	}
-	if($('#friend_requests').attr('data-content').indexOf('No friend requests') >= 0){
-		$('#friend_requests').attr('data-content',"<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/p/" + request_info.sender + "'>" + request_info.sender + "</a> has requested your friendship </div> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/profile/accept/" + request_info.id + "'>Accept</a> / <a class='chat_link' href='//mutualcog.com/profile/decline/" + request_info.id + "'>Decline</a> </div> </div>");
-	}else{
-		$('#friend_requests').attr('data-content',$('#friend_requests').attr('data-content').prepend("<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/p/" + request_info.sender + "'>" + request_info.sender + "</a> has requested your friendship </div> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/profile/accept/" + request_info.id + "'>Accept</a> / <a class='chat_link' href='//mutualcog.com/profile/decline/" + request_info.id + "'>Decline</a> </div> </div>"));
-	}
-});
 
 module.socket.on('connect',function() {
 	console.log('Client has connected');

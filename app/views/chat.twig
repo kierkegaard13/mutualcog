@@ -55,7 +55,7 @@
 </div>
 <div class="chat_title_cont">
 <div class="chat_id" id="{{chat.id}}">{{chat.title}}</div>
-<div style="color:#777;font-size:12px;"><strong>Created by </strong> <span id="chat_admin">{{chat.admin}}</span>, 
+<div style="color:#777;font-size:12px;">Created by  <span id="chat_admin"><strong>{{chat.admin}}</strong></span>, 
 	{% set time_passed = server_time|date('U') - chat.created_at|date('U') %}
 	<span class="chat_time" id="{{chat.created_at}}">
 		{% if time_passed < 45 %}

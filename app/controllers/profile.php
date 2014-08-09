@@ -17,9 +17,9 @@ class Profile extends BaseController {
 			return App::abort(404,'You seem to have entered an invalid URL');
 		}
 		$request = Requests::find($request_id);
-		$friend_id = $request->sender_id;
-		if(Auth::check()){
-			if(Auth::user()->id != $friend_id){
+		if(Auth::check() && $request){
+			$friend_id = $request->sender_id;
+			if(Auth::user()->id != $friend_id && Auth::user()->id == $request->user_id){
 				$interaction_user = InteractionUsers::whereuser_id(Auth::user()->id)->whereentity_id($friend_id)->wheretype(0)->first();
 				if($interaction_user){
 					$interaction_user->friended = 1;
@@ -43,8 +43,8 @@ class Profile extends BaseController {
 					$inter_friend->bond = 50;
 					$inter_friend->save();
 				}
+				$request->delete();
 			}
-			$request->delete();
 		}
 		if(Session::has('curr_page')){
 			return Redirect::to(Session::get('curr_page'));

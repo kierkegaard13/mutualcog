@@ -386,7 +386,7 @@ $('#search_input').on('keyup',function(e){
 			$.ajax({
 				type:'GET',
 				data: {tag:tag},
-				url:'//mutualcog.com/tags/similar-tag',
+				url:'//mutualcog.com/tags/similar-entity',
 				success:function(hresp){
 					var content = '';
 					$.each(hresp,function(index,value){
@@ -595,5 +595,37 @@ $('body').on('keyup','.pm_text',function(e){
 		module.typ_cnt = 4;
 	}
 	return true;
+});
+
+module.socket.on('displayFriendRequests',function(request_info){
+	var friend_count = $('#friend_requests_count');
+	var f_content = "";
+	if(friend_count.text().length > 0){
+		friend_count.text(parseInt(friend_count.text()) + 1);
+	}else{
+		$('#friend_request_glyph').addClass('pull-left');
+		friend_count.text('1');
+	}
+	if($('#friend_requests').attr('data-content').indexOf('No friend requests') >= 0){
+		$('#friend_requests').attr('data-content',"<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/p/" + request_info.sender + "'>" + request_info.sender + "</a> has requested your friendship </div> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/profile/accept/" + request_info.id + "'>Accept</a> / <a class='chat_link' href='//mutualcog.com/profile/decline/" + request_info.id + "'>Decline</a> </div> </div>");
+	}else{
+		$('#friend_requests').attr('data-content',$('#friend_requests').attr('data-content').prepend("<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/p/" + request_info.sender + "'>" + request_info.sender + "</a> has requested your friendship </div> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/profile/accept/" + request_info.id + "'>Accept</a> / <a class='chat_link' href='//mutualcog.com/profile/decline/" + request_info.id + "'>Decline</a> </div> </div>"));
+	}
+});
+
+module.socket.on('displayGlobalRequests',function(request_info){
+	var global_count = $('#global_requests_count');
+	var f_content = "";
+	if(global_count.text().length > 0){
+		global_count.text(parseInt(global_count.text()) + 1);
+	}else{
+		$('#global_request_glyph').addClass('pull-left');
+		global_count.text('1');
+	}
+	if($('#global_requests').attr('data-content').indexOf('No global requests') >= 0){
+		$('#global_requests').attr('data-content',"<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/p/" + request_info.sender + "'>" + request_info.sender + "</a> has requested you as a mod for <a class='chat_link' href='//mutualcog.com/t/" + request_info.tag_name + "/'>/t/"  + request_info.tag_name + "</a> </div> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/tags/accept-mod/" + request_info.id + "/" + request_info.tag_id + "'>Accept</a> / <a class='chat_link' href='//mutualcog.com/tags/decline-mod/" + request_info.id + "/" + request_info.tag_id + "'>Decline</a> </div> </div>");
+	}else{
+		$('#global_requests').attr('data-content',$('#global_requests').attr('data-content').prepend("<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/p/" + request_info.sender + "'>" + request_info.sender + "</a> has requested you as a mod for <a class='chat_link' href='//mutualcog.com/t/" + request_info.tag_name + "'>/t/" + request_info.tag_name + "</a> </div> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/tags/accept-mod/" + request_info.id + "/" + request_info.tag_id + "'>Accept</a> / <a class='chat_link' href='//mutualcog.com/tags/decline-mod/" + request_info.id + "/" + request_info.tag_id + "'>Decline</a> </div> </div>"));
+	}
 });
 

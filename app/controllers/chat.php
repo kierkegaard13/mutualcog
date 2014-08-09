@@ -353,9 +353,11 @@ class Chat extends BaseController {
 
 	public function getHardRemove($chat_id){
 		if(Auth::check()){
-			if($chat->admin == Auth::user()->name){
-				$chat = Chats::find($chat_id);
-				if($chat){
+			$chat = Chats::find($chat_id);
+			if($chat){
+				if($chat->admin == Auth::user()->name){
+					$messages = Messages::wherechat_id($chat_id)->delete();
+					$chat_to_tags = ChatsToTags::wherechat_id($chat_id)->delete();
 					$chat->delete();
 				}
 			}
@@ -366,13 +368,19 @@ class Chat extends BaseController {
 		return Redirect::to('home');
 	}
 
-	public function getSoftRemove($chat_id){
-		if(Auth::check()){
-			if(Auth::user()->is_admin || Auth::user()->tag_mod == $chat_id || Auth::user()->tag_admin == $chat_id){
+	public function getSoftRemove($chat_id,$tag_id = null){
+		if(Auth::check() && $chat_id){
+			if(Auth::user()->is_admin){
 				$chat = Chats::find($chat_id);
 				if($chat){
 					$chat->removed = 1;
 					$chat->save();
+				}
+			}else if(Auth::user()->tag_mod == $tag_id || Auth::user()->tag_admin == $tag_id){
+				if($tag_id){
+					$chat_to_tag = ChatsToTags::wherechat_id($chat_id)->wheretag_id($tag_id)->first();
+					$chat_to_tag->removed = 1;
+					$chat_to_tag->save();
 				}
 			}
 		}

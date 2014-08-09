@@ -1,4 +1,5 @@
 var selected_tag = -1;
+var selected_mod = -1;
 
 $(document).ready(function(){
 	$('.chat_status_indicator').tooltip();
@@ -42,12 +43,7 @@ $(document).ready(function(){
 	});
 	$('a.remove_chat_link').click(function(e){
 		var remove_link = $('#remove_modal').find('#remove_chat_final');
-		var remove_link_href = remove_link.attr('href');
-		if($(this).attr('data-chat-id').split('_')[0] == 'soft'){
-			remove_link.attr('href',remove_link_href.substring(0,remove_link_href.lastIndexOf('/') - 11) + 'soft-remove/' + $(this).attr('data-chat-id').split('_')[1]);
-		}else{
-			remove_link.attr('href',remove_link_href.substring(0,remove_link_href.lastIndexOf('/') - 11) + 'hard-remove/' + $(this).attr('data-chat-id').split('_')[1]);
-		}
+		remove_link.attr('href',$(this).attr('data-remove-link'));
 		$('#remove_modal').modal();
 		return false;
 	});
@@ -68,22 +64,6 @@ $(document).ready(function(){
 		}
 		return false;
 	});
-});
-
-module.socket.on('displayFriendRequests',function(request_info){
-	var friend_count = $('#friend_requests_count');
-	var f_content = "";
-	if(friend_count.text().length > 0){
-		friend_count.text(parseInt(friend_count.text()) + 1);
-	}else{
-		$('#friend_request_glyph').addClass('pull-left');
-		friend_count.text('1');
-	}
-	if($('#friend_requests').attr('data-content').indexOf('No friend requests') >= 0){
-		$('#friend_requests').attr('data-content',"<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/p/" + request_info.sender + "'>" + request_info.sender + "</a> has requested your friendship </div> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/profile/accept/" + request_info.id + "'>Accept</a> / <a class='chat_link' href='//mutualcog.com/profile/decline/" + request_info.id + "'>Decline</a> </div> </div>");
-	}else{
-		$('#friend_requests').attr('data-content',$('#friend_requests').attr('data-content').prepend("<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/p/" + request_info.sender + "'>" + request_info.sender + "</a> has requested your friendship </div> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/profile/accept/" + request_info.id + "'>Accept</a> / <a class='chat_link' href='//mutualcog.com/profile/decline/" + request_info.id + "'>Decline</a> </div> </div>"));
-	}
 });
 
 function cookiesEnabled() {
@@ -366,8 +346,8 @@ $('.tags_input').on('keydown',function(e){
 		if($('.popover').length != 0){
 			if(selected_tag != 0){
 				selected_tag -= 1;
-				$('.suggested_tags').css('color','');
-				$('.suggested_tags').eq(selected_tag).css('color','#57bf4b');
+				$('.suggested_tags').removeClass('base_green_color');
+				$('.suggested_tags').eq(selected_tag).addClass('base_green_color');
 			}
 			return false;
 		}
@@ -375,8 +355,8 @@ $('.tags_input').on('keydown',function(e){
 		if($('.popover').length != 0){
 			if(selected_tag != $('.suggested_tags').length - 1){
 				selected_tag += 1;
-				$('.suggested_tags').css('color','');
-				$('.suggested_tags').eq(selected_tag).css('color','#57bf4b');
+				$('.suggested_tags').removeClass('base_green_color');
+				$('.suggested_tags').eq(selected_tag).addClass('base_green_color');
 			}
 			return false;
 		}
@@ -463,6 +443,125 @@ $('.tags_input').on('keyup',function(e){
 		}else{
 			$(this).popover('destroy');
 			selected_tag = -1;
+		}
+	}
+});
+
+$('#mod_input').on('keydown',function(e){
+	if(e.keyCode == 13){  /*enter key*/
+		if(selected_mod != -1){
+			var request_info = {user_id:$('.suggested_mods').eq(selected_mod).attr('id'),user:$('.suggested_mods').eq(selected_mod).text(),sender_id:module.user_id,sender:module.user_tracker,tag_id:$(this).attr('data-tag-id'),tag_name:$(this).attr('data-tag-name')};
+			module.socket.emit('request_mod',request_info,function(){
+				$('#mod_request_sent').show('fade',function(){
+					window.setTimeout(function(){
+						$('#mod_request_sent').hide('fade');
+					},1500);
+				});
+			});
+			$(this).popover('destroy');
+			$(this).val('');
+			$(this).focus();
+		}
+		return false;
+	}else if(e.keyCode == 38){  /*up arrow*/
+		if($('.popover').length != 0){
+			if(selected_mod != 0){
+				selected_mod += 1;
+				$('.suggested_mods').removeClass('base_green_color');
+				$('.suggested_mods').eq(selected_mod).addClass('base_green_color');
+			}
+			return false;
+		}
+	}else if(e.keyCode == 40){  /*down arrow*/
+		if($('.popover').length != 0){
+			if(selected_mod != $('.suggested_mods').length - 1){
+				selected_mod -= 1;
+				$('.suggested_mods').removeClass('base_green_color');
+				$('.suggested_mods').eq(selected_mod).addClass('base_green_color');
+			}
+			return false;
+		}
+	}
+});
+
+$('#mod_input').on('keyup',function(e){
+	if(e.keyCode == 32 || e.keyCode == 13){  
+		/*space bar*/
+	}else if(e.keyCode == 38 || e.keyCode == 40){
+		/*up arrow or down arrow*/
+	}else{
+		var guess = $(this).val();
+		if(guess.length > 2){
+			var mods_input = $(this);
+			var tag_id = $(this).attr('data-tag-id');
+			$(this).on('blur',function(){
+				if($('.popover').length){
+					$(this).popover('hide');
+				}
+			});
+			$.ajax({
+				type:'GET',
+				data: {mod:guess,tag_id:tag_id},
+				url:'//mutualcog.com/tags/similar-user',
+				success:function(hresp){
+					var content = '';
+					$.each(hresp,function(index,value){
+						content += '<div class="suggested_mods" id="' + value.id + '">' + value.name + '</div>';
+					});
+					if($('.popover').length == 0){
+						if(content){
+							mods_input.popover({html:true});
+							mods_input.attr('data-content',content);
+							mods_input.popover('show');
+							$('.suggested_mods').click(function(){
+								var request_info = {user_id:$('.suggested_mods').eq(selected_mod).attr('id'),user:$('.suggested_mods').eq(selected_mod).text(),sender_id:module.user_id,sender:module.user_tracker,tag_id:$(this).attr('data-tag-id'),tag_name:$(this).attr('data-tag-name')};
+								module.socket.emit('request_mod',request_info,function(){
+									$('#mod_request_sent').show('fade',function(){
+										window.setTimeout(function(){
+											$('#mod_request_sent').hide('fade');
+										},1500);
+									});
+								});
+								mods_input.focus();
+								mods_input.popover('destroy');
+								mods_input.val('');
+								selected_mod = -1;
+							});
+							selected_mod = -1;
+						}
+					}else{
+						if(content){
+							if($('.popover-content').html() != content){
+								$('.popover-content').html(content);
+								selected_mod = -1;
+								$('.suggested_mods').off('click');
+								$('.suggested_mods').click(function(){
+									var request_info = {user_id:$('.suggested_mods').eq(selected_mod).attr('id'),user:$('.suggested_mods').eq(selected_mod).text(),sender_id:module.user_id,sender:module.user_tracker,tag_id:$(this).attr('data-tag-id'),tag_name:$(this).attr('data-tag-name')};
+									module.socket.emit('request_mod',request_info,function(){
+										$('#mod_request_sent').show('fade',function(){
+											window.setTimeout(function(){
+												$('#mod_request_sent').hide('fade');
+											},1500);
+										});
+									});
+									mods_input.focus();
+									mods_input.popover('destroy');
+									mods_input.val('');
+									selected_mod = -1;
+								});
+							}
+						}else{
+							mods_input.popover('destroy');
+							selected_mod = -1;
+						}
+					}
+				},
+				error:function(){
+				}
+			});
+		}else{
+			$(this).popover('destroy');
+			selected_mod = -1;
 		}
 	}
 });

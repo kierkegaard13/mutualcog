@@ -42,6 +42,7 @@ class P extends BaseController {
 		$view['requested'] = $requested;
 		$view['friendships'] = $user->friendships;
 		$view['color_arr'] = array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#000');
+		$view['curr_tag_id'] = '';
 		$view['upvoted'] = $upvoted;
 		$view['downvoted'] = $downvoted;
 		$view['mssg_upvoted'] = $mssg_upvoted;
