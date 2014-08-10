@@ -176,86 +176,120 @@ class Profile extends BaseController {
 		return Redirect::to('home');
 	}
 
-	public function postNewUser(){
+	public function postRegister(){
 		$username = htmlentities(Input::get('username'));
 		$pass = htmlentities(Input::get('pass'));
 		$pass2 = htmlentities(Input::get('pass2'));
-		if($username && $pass && $pass2){
-			$user = new User();
-			if(preg_match('/[a-zA-z]/',$username)){
-				$user->name = ucfirst($username);
-			}else{
-				return Redirect::to(Session::get('curr_page'))->with('error','Your username must contain at least 1 character');
-			}
-			if($user->findAll()){
-				$user = $user->findAll();
-				if(Crypt::decrypt($user->password) == $pass && $pass == $pass2){
-					Auth::login($user);
-					$user->last_login = date(DATE_ATOM);
-					$user->save();
-					$node = new NodeAuth();
-					$node->user_id = $user->id;
-					$node->user = $user->name;
-					if($node->findAll()){
-						$node = $node->findAll();
-						$node->serial = Session::get('unique_serial');
-						$node->serial_id = Session::get('serial_id');
-						$node->sid = Session::getId();
-						$node->authorized = 1;
-						$node->save();
-					}else{
-						$node->serial = Session::get('unique_serial');
-						$node->serial_id = Session::get('serial_id');
-						$node->sid = Session::getId();
-						$node->authorized = 1;
-						$node->save();
-					}
-				}
-				return Redirect::to(Session::get('curr_page'));
-			}
-			$user->password = Crypt::encrypt($pass);
-			$user->last_login = date(DATE_ATOM);
-			$user->ip_address = Request::getClientIp();
-			$user->save();
-			Auth::login($user);
-			return Redirect::to(Session::get('curr_page'));
-		}elseif($username && $pass){
-			$user = new User();
-			$user->name = ucfirst($username);
-			$user = $user->findAll();
-			if(Crypt::decrypt($user->password) == $pass){
-				$user->last_login = date(DATE_ATOM);
-				$user->serial_id = Session::get('serial_id');
-				$user->save();
-				Auth::login($user);
-				$node = new NodeAuth();
-				$node->user_id = $user->id;
-				$node->user = $user->name;
-				if($node->findAll()){
-					$node = $node->findAll();
-					$node->serial = Session::get('unique_serial');
-					$node->serial_id = Session::get('serial_id');
-					$node->sid = Session::getId();
-					$node->authorized = 1;
-					$node->save();
-				}else{
-					$node->serial = Session::get('unique_serial');
-					$node->serial_id = Session::get('serial_id');
-					$node->sid = Session::getId();
-					$node->authorized = 1;
-					$node->save();
-				}
-			}
+		$email = htmlentities(Input::get('email'));
+		$validator = Validator::make(
+				array(
+					'name' => $username,
+					'password' => $pass,
+					'password_confirmation' => $pass2,
+					'email' => $email
+				     ),
+				array(
+					'name' => 'required|unique:users|min:2|max:20',
+					'password' => 'required|min:6|max:30|confirmed',
+					'password_confirmation' => 'required',
+					'email' => 'email'
+				     )
+				);
+		if($validator->fails()){
 			if(Session::has('curr_page')){
 				return Redirect::to(Session::get('curr_page'));
 			}
 			return Redirect::to('home');
+		}		
+		$user = new User();
+		if(preg_match('/[a-zA-z]/',$username)){
+			$user->name = ucfirst($username);
 		}else{
 			if(Session::has('curr_page')){
 				return Redirect::to(Session::get('curr_page'));
 			}
 			return Redirect::to('home');
 		}
+		$user->password = Crypt::encrypt($pass);
+		$user->last_login = date(DATE_ATOM);
+		$user->ip_address = Request::getClientIp();
+		if($email){
+			$user->email = $email;
+		}
+		$user->save();
+		Auth::login($user);
+		$node = new NodeAuth();
+		$node->user_id = $user->id;
+		$node->user = $user->name;
+		if($node->findAll()){
+			$node = $node->findAll();
+			$node->serial = Session::get('unique_serial');
+			$node->serial_id = Session::get('serial_id');
+			$node->sid = Session::getId();
+			$node->authorized = 1;
+			$node->save();
+		}else{
+			$node->serial = Session::get('unique_serial');
+			$node->serial_id = Session::get('serial_id');
+			$node->sid = Session::getId();
+			$node->authorized = 1;
+			$node->save();
+		}
+		if(Session::has('curr_page')){
+			return Redirect::to(Session::get('curr_page'));
+		}
+		return Redirect::to('home');
+	}
+
+	public function postLogin(){
+		$username = htmlentities(Input::get('username'));
+		$pass = htmlentities(Input::get('pass'));
+		$validator = Validator::make(
+				array(
+					'name' => $username,
+					'password' => $pass,
+				     ),
+				array(
+					'name' => 'required',
+					'password' => 'required',
+				     )
+				);
+		if($validator->fails()){
+			if(Session::has('curr_page')){
+				return Redirect::to(Session::get('curr_page'));
+			}
+			return Redirect::to('home');
+		}
+		$user = new User();
+		$user->name = ucfirst($username);
+		$user = $user->findAll();
+		if(Crypt::decrypt($user->password) == $pass){
+			$user->last_login = date(DATE_ATOM);
+			$user->serial_id = Session::get('serial_id');
+			$user->save();
+			Auth::login($user);
+			$node = new NodeAuth();
+			$node->user_id = $user->id;
+			$node->user = $user->name;
+			if($node->findAll()){
+				$node = $node->findAll();
+				$node->serial = Session::get('unique_serial');
+				$node->serial_id = Session::get('serial_id');
+				$node->sid = Session::getId();
+				$node->authorized = 1;
+				$node->save();
+			}else{
+				$node->serial = Session::get('unique_serial');
+				$node->serial_id = Session::get('serial_id');
+				$node->sid = Session::getId();
+				$node->authorized = 1;
+				$node->save();
+			}
+		}
+		if(Session::has('curr_page')){
+			return Redirect::to(Session::get('curr_page'));
+		}
+		return Redirect::to('home');
 	}
 
 }

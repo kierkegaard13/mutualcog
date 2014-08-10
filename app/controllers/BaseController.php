@@ -17,6 +17,7 @@ class BaseController extends Controller {
 			View::share('user',Auth::user());
 			View::share('logged_in','1');
 		}else{
+			View::share('user','');
 			View::share('logged_in','0');
 		}
 		$this->sid = Session::getId();

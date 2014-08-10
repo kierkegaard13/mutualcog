@@ -14,11 +14,11 @@ class Chats extends EloquentBridge
 	}
 
 	public function messages(){
-		return $this->hasMany('Messages','chat_id')->wherereadable('1')->orderBy('path');
+		return $this->hasMany('Messages','chat_id')->wherereadable('1')->orderBy('path')->take(1000);
 	}
 
 	public function messagesOnly(){
-		return $this->hasMany('Messages','chat_id')->wherereadable('1')->whereresponseto('0')->orderBy('path');
+		return $this->hasMany('Messages','chat_id')->wherereadable('1')->whereresponseto('0')->orderBy('path')->take(1000);
 	}
 
 	public function messagesPaginate(){

@@ -5,8 +5,13 @@ $(document).ready(function(){
 	$('.chat_status_indicator').tooltip();
 	$('.advanced_cog').tooltip();
 	$('#pause_chat').tooltip();
+	$('.remove_mod').tooltip();
 	$('.mssg_upvote').on('click',upvoteMssg);
 	$('.mssg_downvote').on('click',downvoteMssg);
+	$('.remove_mod').on('click',function(){
+		var el_id_arr = $(this).attr('id').split('_');
+		window.location.href = "//mutualcog.com/tags/remove-mod/" + el_id_arr[2] + "/" + el_id_arr[3];
+	});
 	$('#user_props').change(function(){
 		module.socket.emit('change_user_props',{props:$(this).val()});
 	});
@@ -17,10 +22,6 @@ $(document).ready(function(){
 		$(this).addClass('btn-success');
 		$(this).html('<div class="glyphicon glyphicon-check" id="request_glyph"></div> Request Sent');
 		$(this).off('click');
-	});
-	$('a#advanced_create').click(function(e){
-		$('#advanced_modal').modal();
-		return false;
 	});
 	$('a#tag_edit').click(function(e){
 		var tag_cont = $(this).parents('.side_content');

@@ -26,7 +26,7 @@
 	<div class="small_content_box">
 		<div class="content side_content" id="subscribe">
 			{% if user.tag_admin == curr_tag_id and curr_tag_id | length > 0 %}
-				<a class="btn btn-default btn-xs advanced_create" id="tag_edit" href="#" data-toggle="modal" data-target="tag_edit_modal"><div class="glyphicon glyphicon-cog advanced_cog" data-toggle="tooltip" data-original-title="Edit Community" data-container="body" data-placement="top"></div></a>
+				<a class="btn btn-default btn-xs advanced_create" id="tag_edit" href="#" data-toggle="modal" data-target="tag_edit_modal"><div class="glyphicon glyphicon-cog advanced_cog" data-toggle="tooltip" data-original-title="Manage Community" data-container="body" data-placement="top"></div></a>
 			{% endif %}
 			<div><a href="{{site}}/t/{{curr_tag.name}}" style="font-size:20px;color:#333;">{{curr_tag.name}}{% if tag_admin.user_id == user.id %} (Admin) {% elseif user.id in curr_tag.moderators %} (Mod) {% endif %}</a></div>
 			<div style="margin:4px 0;">
@@ -60,7 +60,7 @@
 				<div class="content side_content" id="create_cont">
 <form method="post" action="{{site}}/chat/new-chat" class="mutual_form" id="home_form">
 <fieldset>
-	<a class="btn btn-default btn-xs advanced_create" id="advanced_create" href="#" data-toggle="modal" data-target="advanced_modal"><div class="glyphicon glyphicon-cog advanced_cog" data-toggle="tooltip" data-original-title="Advanced options" data-container="body" data-placement="top"></div></a>
+	<a class="btn btn-default btn-xs advanced_create" id="advanced_create" href="#" data-toggle="modal" data-target="#advanced_modal"><div class="glyphicon glyphicon-cog advanced_cog" data-toggle="tooltip" data-original-title="Advanced options" data-container="body" data-placement="top"></div></a>
 	<legend>Create a new Chat</legend>
 	<div id="title_group" class="form-group">
 		<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Title must be longer than 2 characters but less than 180" data-trigger="focus" data-container="body" type="text" name="title" id="Title" placeholder="What's this chat about?">
@@ -89,12 +89,20 @@
 		<a href="{{site}}/p/{{tag_admin.user.name}}">{{tag_admin.user.name}}</a>
 	</div>
 {% else %}
-	<div style="font-size:14px;margin-left:10px;">Become the admin</div>
+	{% if user.owned < 1 and user_subscribed %}
+		<a href="{{site}}/tags/assign-admin/{{user.id}}/{{curr_tag_id}}" style="font-size:14px;margin-left:10px;">Become the admin</a>
+	{% else %}
+		<div style="font-size:14px;margin-left:10px;">No Admin</div>
+	{% endif %}
 {% endif %}
 <div>Moderators</div>
 <div style="font-size:14px;margin-left:10px;">
 	{% for mod in tag_mods %}
-		<div><a href="{{site}}/p/{{mod.user.name}}">{{mod.user.name}}</a></div>
+		<div>
+			{% if mod.user_id == user.id or tag_admin.user_id == user.id %} 
+				<span id="remove_mod_{{mod.user.id}}_{{curr_tag_id}}" class="glyphicon glyphicon-remove remove_mod" data-toggle="tooltip" data-original-title="Remove Mod Powers" data-container="body" data-placement="top auto"></span>	
+			{% endif %}
+			<a href="{{site}}/p/{{mod.user.name}}">{{mod.user.name}}</a></div>
 	{% else %}
 		<div>No moderators</div>
 	{% endfor %}

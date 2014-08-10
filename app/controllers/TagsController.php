@@ -2,6 +2,24 @@
 
 class TagsController extends BaseController {
 
+	public function getAssignAdmin($user_id,$tag_id){
+		if(Auth::check()){
+			$tag = Tags::find($tag_id);
+			$user_to_tag = UsersToTags::whereuser_id($user_id)->wheretag_id($tag_id)->first();
+			if(Auth::user()->owned() < 1 && $tag && Auth::user()->id == $user_id && $user_to_tag){
+				if($user_to_tag->is_mod){
+					$user_to_tag->is_mod = 0;
+				}
+				$user_to_tag->is_admin = 1;
+				$user_to_tag->save();
+			}
+		}
+		if(Session::has('curr_page')){
+			return Redirect::to(Session::get('curr_page'));
+		}
+		return Redirect::to('home');
+	}
+
 	public function getAcceptMod($request_id,$tag_id){
 		if(!isset($request_id) || !isset($tag_id)){
 			return App::abort(404,'You seem to have entered an invalid URL');
@@ -31,6 +49,20 @@ class TagsController extends BaseController {
 			$friend_id = $request->sender_id;
 			if(Auth::user()->id != $friend_id && Auth::user()->id == $request->user_id){
 				$request->delete();
+			}
+		}
+		if(Session::has('curr_page')){
+			return Redirect::to(Session::get('curr_page'));
+		}
+		return Redirect::to('home');
+	}
+
+	public function getRemoveMod($mod_id,$tag_id){
+		if(Auth::check()){
+			if(Auth::user()->tag_admin == $tag_id || Auth::user()->id == $mod_id){
+				$user_to_tag = UsersToTags::whereuser_id($mod_id)->wheretag_id($tag_id)->first();
+				$user_to_tag->is_mod = 0;
+				$user_to_tag->save();
 			}
 		}
 		if(Session::has('curr_page')){
@@ -81,12 +113,6 @@ class TagsController extends BaseController {
 	public function getSubscribe($tag_id){
 		if(Auth::check()){
 			$usertag = new UsersToTags();
-			$tag = Tags::find($tag_id);
-			if($tag->admin == '0' && Auth::user()->owned() < 3){
-				$usertag->is_admin = 1;
-				$tag->admin = Auth::user()->name;
-				$tag->save();
-			}
 			$usertag->tag_id = htmlentities($tag_id);
 			$usertag->user_id = Auth::user()->id;
 			$usertag->score = 1;

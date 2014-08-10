@@ -2,7 +2,7 @@ module = function(){
 	var focused = live = scroll_mod_active = 1;
 	var pm_info = '';
 	var pm_scroll_inactive = {};
-	var user_validated = pass1_validated = pass2_validated = title_blinking = typ_cnt = connected = recent = banned = stop_scroll = scroll_button_clicked = scroll_top = 0;
+	var user_validated = pass1_validated = pass2_validated = email_validated = title_blinking = typ_cnt = connected = recent = banned = stop_scroll = scroll_button_clicked = scroll_top = 0;
 	var clicked_on = -1;
 	var chat_id = $('.chat_id').attr('id');
 	if($('#up_arr').length){
@@ -27,7 +27,7 @@ module = function(){
 	var user_id = $('#user_id').text();
 	var user_tracker = $('#user_tracker').text();
 
-	return {pm_scroll_inactive:pm_scroll_inactive,user_validated:user_validated,pass1_validated:pass1_validated,pass2_validated:pass2_validated,connected:connected,recent:recent,typ_cnt:typ_cnt,pm_info:pm_info,focused:focused,live:live,title_blinking:title_blinking,banned:banned,stop_scroll:stop_scroll,scroll_mod_active:scroll_mod_active,scroll_button_clicked:scroll_button_clicked,scroll_top:scroll_top,clicked_on:clicked_on,chat_id:chat_id,upvoted:upvoted,downvoted:downvoted,socket:socket,color_arr:color_arr,mems:mems,mods:mods,admin:admin,notifications_top_positions:notifications_top_positions,notifications_bottom_positions:notifications_bottom_positions,notifications_top_ids:notifications_top_ids,notifications_bottom_ids:notifications_bottom_ids,serial_id:serial_id,serial_tracker:serial_tracker,user_id:user_id,user_tracker:user_tracker};
+	return {pm_scroll_inactive:pm_scroll_inactive,user_validated:user_validated,email_validated:email_validated,pass1_validated:pass1_validated,pass2_validated:pass2_validated,connected:connected,recent:recent,typ_cnt:typ_cnt,pm_info:pm_info,focused:focused,live:live,title_blinking:title_blinking,banned:banned,stop_scroll:stop_scroll,scroll_mod_active:scroll_mod_active,scroll_button_clicked:scroll_button_clicked,scroll_top:scroll_top,clicked_on:clicked_on,chat_id:chat_id,upvoted:upvoted,downvoted:downvoted,socket:socket,color_arr:color_arr,mems:mems,mods:mods,admin:admin,notifications_top_positions:notifications_top_positions,notifications_bottom_positions:notifications_bottom_positions,notifications_top_ids:notifications_top_ids,notifications_bottom_ids:notifications_bottom_ids,serial_id:serial_id,serial_tracker:serial_tracker,user_id:user_id,user_tracker:user_tracker};
 }();
 
 updateChatTimes = function(){
@@ -201,9 +201,14 @@ $(document).ready(function(){
 
 function validateUser(username){
 	if(username.length < 3 || username.length > 20){
-		$('#user_group').attr('class','form-group has-error');
-		$('#username').attr('data-original-title','Username must be longer than 2 characters but less than 15');
-		$('#username').tooltip('show');
+		$('#reg_user_group').attr('class','form-group has-error');
+		$('#reg_username').attr('data-original-title','Username must be longer than 2 characters but less than 15');
+		$('#reg_username').tooltip('show');
+		module.user_validated = 0;
+		return false;
+	}else{
+		$('#reg_user_group').attr('class','form-group');
+		$('#reg_username').tooltip('destroy');
 	}
 	var response = $.ajax({
 		type:'GET',
@@ -211,20 +216,20 @@ function validateUser(username){
 		url:'//mutualcog.com/profile/validate-username',
 		async:false,
 	}).responseText;
-	if(response == 2 && $('#pass2').val() != ""){
-		$('#user_group').attr('class','form-group has-error');
-		$('#username').attr('data-original-title','That username already exists');
-		$('#username').tooltip('show');
+	if(response == 2){
+		$('#reg_user_group').attr('class','form-group has-error');
+		$('#reg_username').attr('data-original-title','That username already exists');
+		$('#reg_username').tooltip('show');
 		module.user_validated = 0;
 	}else if(response == 3){
-		$('#user_group').attr('class','form-group has-error');
-		$('#username').attr('data-original-title','Your username must contain at least one character');
-		$('#username').tooltip('show');
+		$('#reg_user_group').attr('class','form-group has-error');
+		$('#reg_username').attr('data-original-title','Your username must contain at least one character');
+		$('#reg_username').tooltip('show');
 		module.user_validated = 0;
 	}else{
 		if($('#pass2').val() != ""){
-			$('#user_group').attr('class','form-group');
-			$('#username').tooltip('destroy');
+			$('#reg_user_group').attr('class','form-group');
+			$('#reg_username').tooltip('destroy');
 		}
 		module.user_validated = 1;
 	}
@@ -253,44 +258,64 @@ function validateLogin(username,password){
 
 function validatePasswords(pass1,pass2){
 	if(pass1 != pass2 && pass2 != ""){
-		$('#pass1_group').attr('class','form-group has-error');
+		$('#reg_pass1_group').attr('class','form-group has-error');
 		$('#pass2_group').attr('class','form-group has-error');
 		$('#pass2').tooltip('show');
 		module.pass2_validated = 0;
-		module.pass1_validated = 0;
 	}else if((pass1.length < 6 || pass1.length > 30) && pass2 != ""){
-		$('#pass1_group').attr('class','form-group has-error');
+		$('#reg_pass1_group').attr('class','form-group has-error');
 		$('#pass2_group').attr('class','form-group has-error');
-		$('#pass').tooltip('show');
+		$('#reg_pass').tooltip('show');
 		module.pass2_validated = 0;
-		module.pass1_validated = 0;
 	}else{
-		$('#pass1_group').attr('class','form-group');
+		$('#reg_pass1_group').attr('class','form-group');
 		$('#pass2_group').attr('class','form-group');
 		$('#pass2').tooltip('destroy');
-		$('#pass').tooltip('destroy');
+		$('#reg_pass').tooltip('destroy');
 		module.pass2_validated = 1;
-		module.pass1_validated = 1;
 	}
 }
 
-$('#username').blur(function(){
-	var username = $('#username').val();
-	var pass = $('#pass').val();
+function validateEmail(email){
+	var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+	if(regex.test(email)){
+		$('#email_group').attr('class','form-group');
+		$('#email').tooltip('destroy');
+		module.email_validated = 1; 
+	}else{
+		$('#email_group').attr('class','form-group has-error');
+		$('#email').tooltip('show');
+		module.email_validated = 0;
+	}
+}
+
+$('.close_reg').on('click',function(){
+	$('#reg_username').tooltip('destroy');
+	$('#reg_pass').tooltip('destroy');
+	$('#pass2').tooltip('destroy');
+	$('#email').tooltip('destroy');
+	return true;
+});
+
+$('#reg_username').blur(function(){
+	var username = $('#reg_username').val();
 	if(username.length > 0){
 		validateUser(username);
 	}
 });
 
 $('#pass2').blur(function(){
-	var username = $('#username').val();
-	var pass = $('#pass').val();
+	var pass = $('#reg_pass').val();
 	var pass2 = $('#pass2').val();
 	if(pass.length > 0 && pass2.length > 0){
 		validatePasswords(pass,pass2);
 	}
-	if(username.length > 0){
-		validateUser(username);
+});
+
+$('#email').blur(function(){
+	var email = $('#email').val();
+	if(email != ""){
+		validateEmail(email);
 	}
 });
 
@@ -298,7 +323,27 @@ $('#login_form').submit(function(){
 	var submit = 1;
 	var username = $('#username').val();
 	var pass = $('#pass').val();
+	if(!module.pass1_validated){
+		if(username.length > 0 && pass.length > 0){
+			validateLogin(username,pass);
+		}
+		if(!module.pass1_validated){
+			submit = 0;
+		}
+	}
+	if(submit){
+		return true;
+	}else{
+		return false;
+	} 
+});
+
+$('#register_form').submit(function(){
+	var submit = 1;
+	var username = $('#reg_username').val();
+	var pass = $('#reg_pass').val();
 	var pass2 = $('#pass2').val();
+	var email = $('#email').val();
 	if(!module.user_validated){
 		if(username.length > 0){
 			validateUser(username);
@@ -307,19 +352,7 @@ $('#login_form').submit(function(){
 			submit = 0;
 		}
 	}
-	if(!module.pass1_validated){
-		if(pass2 == ""){
-			if(username.length > 0 && pass.length > 0){
-				validateLogin(username,pass);
-			}
-			if(!module.pass1_validated){
-				submit = 0;
-			}
-		}else{
-			submit = 0;
-		}
-	}
-	if(pass2 != "" && !module.pass2_validated){
+	if(!module.pass2_validated){
 		if(pass.length > 0 && pass2.length > 0){
 			validatePasswords(pass,pass2);
 		}
@@ -327,11 +360,15 @@ $('#login_form').submit(function(){
 			submit = 0;
 		}
 	}
+	if(!module.email_validated && email != ""){
+		validateEmail(email);
+		if(!module.email_validated){
+			submit = 0;
+		}
+	}
 	if(submit){
 		return true;
 	}else{
-		console.log(module.user_validated);
-		console.log(module.pass1_validated);
 		return false;
 	} 
 });

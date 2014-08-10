@@ -189,7 +189,7 @@
 									<span class="caret caret_tooltip" id="caret_{{message.id}}" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span>
 								</div>
 								{% if 'This message has been deleted' in message.message == 0 and (serial == message.author or user.name == message.author) %}
-									<span id="message.id" class="glyphicon glyphicon-remove mssg_icon" data-toggle="tooltip" title="Delete post" data-container="body" data-placement="top"></span>	
+									<span id="remove_{{message.id}}" class="glyphicon glyphicon-remove mssg_icon" data-toggle="tooltip" data-original-title="Delete post" data-container="body" data-placement="top"></span>	
 								{% endif %}  
 								{% if message.author == chat.admin %}
 									<span class="glyphicon glyphicon-star"></span>	
