@@ -242,10 +242,10 @@ class Chat extends BaseController {
 
 	public function postMessage($chat_id){
 		$chat = Chats::find($chat_id);
-		if(!$chat->live){
+		$mssg_content = htmlentities(Input::get('mssg_content'));
+		if(!$chat->live && strlen($mssg_content) < $this->max_static_length){
 			$message = new Messages();
 			$message->chat_id = htmlentities($chat_id);
-			$mssg_content = htmlentities(Input::get('mssg_content'));
 			$message->message = $this->parseText($mssg_content);
 			if(Auth::check()){
 				$message->member_id = Auth::user()->id;
@@ -286,7 +286,10 @@ class Chat extends BaseController {
 				$mssg_voted->status = 1;
 				$mssg_voted->save();
 			}
-			return Redirect::to(Session::get('curr_page'));
+			if(Session::has('curr_page')){
+				return Redirect::to(Session::get('curr_page'));
+			}
+			return Redirect::to('home');
 		}
 		return Redirect::to(action('chat@getLive',$chat_id));
 	}
@@ -305,7 +308,10 @@ class Chat extends BaseController {
 				$chat->live = 0;
 				$chat->save();
 			}else{
-				return Redirect::to(Session::get('curr_page'));
+				if(Session::has('curr_page')){
+					return Redirect::to(Session::get('curr_page'));
+				}
+				return Redirect::to('home');
 			}
 		}	
 		return Redirect::to(action('chat@getStatic',$chat_id));
@@ -325,7 +331,10 @@ class Chat extends BaseController {
 				$chat->live = 1;
 				$chat->save();
 			}else{
-				return Redirect::to(Session::get('curr_page'));
+				if(Session::has('curr_page')){
+					return Redirect::to(Session::get('curr_page'));
+				}
+				return Redirect::to('home');
 			}
 		}	
 		return Redirect::to(action('chat@getLive',$chat_id));
@@ -435,9 +444,9 @@ class Chat extends BaseController {
 					'tags' => $tags
 				     ),
 				array(
-					'title' => 'required|between:5,180',
+					'title' => "required|between:5,$this->max_title_length",
 					'link' => 'active_url',
-					'description' => 'max:2000',
+					'description' => "max:$this->max_static_length",
 					'tags' => 'max:120'
 				     )
 				);
@@ -575,9 +584,9 @@ class Chat extends BaseController {
 					'tags' => $tags
 				     ),
 				array(
-					'title' => 'required|between:5,180',
+					'title' => "required|between:5,$this->max_title_length",
 					'link' => 'active_url',
-					'description' => 'max:2000',
+					'description' => "max:$this->max_static_length",
 					'tags' => 'max:120'
 				     )
 				);

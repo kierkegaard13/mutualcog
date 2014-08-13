@@ -189,7 +189,7 @@ class Profile extends BaseController {
 					'email' => $email
 				     ),
 				array(
-					'name' => 'required|unique:users|between:3,20',
+					'name' => "required|unique:users|between:3,$this->max_user_length",
 					'password' => 'required|between:6,30|confirmed',
 					'password_confirmation' => 'required',
 					'email' => 'email'

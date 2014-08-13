@@ -171,8 +171,8 @@ class TagsController extends BaseController {
 					     ),
 					array(
 						'id' => 'required',
-						'description' => 'max:80',
-						'info' => 'max:2000'
+						'description' => "max:$this->max_description_length",
+						'info' => "max:$this->max_info_length"
 					     )
 					);
 			if(!$validator->fails()){
@@ -206,8 +206,8 @@ class TagsController extends BaseController {
 					     ),
 					array(
 						'name' => 'required|between:3,20|unique:tags',
-						'description' => 'max:80',
-						'info' => 'max:2000'
+						'description' => "max:$this->max_description_length",
+						'info' => "max:$this->max_info_length"
 					     )
 					);
 			if(!$validator->fails()){
