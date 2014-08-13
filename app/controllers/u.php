@@ -1,6 +1,6 @@
 <?php
 
-class P extends BaseController {
+class U extends BaseController {
 
 	public function getIndex($username){
 		$view = View::make('profile');

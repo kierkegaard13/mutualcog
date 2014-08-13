@@ -51,7 +51,7 @@
 					<div class="content side_content" id="create_new_mssg">
 <form method="post" action="{{site}}/chat/message/{{chat.id}}">
 	<legend>Submit a new Message</legend>
-	<textarea rows="4" name="mssg_content"></textarea>
+	<textarea rows="4" name="mssg_content" maxlength="{{max_static_length}}"></textarea>
 	<button type="submit" class="btn btn-primary" style="width:100%;">Send Message</button>
 </form>
 					</div>
@@ -103,7 +103,7 @@
 		{% endif %}
 	{% endif %}
 	{% if chat.admin % 16777259 == 0 %}
-		<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><strong>{{chat.admin}}</strong></a>, 
+		<div class="chat_info">Created by <a href="{{site}}/u/{{chat.admin}}" style="color:gray;"><strong>{{chat.admin}}</strong></a>, 
 	{% else %}
 		<div class="chat_info">Created by <strong>{{chat.admin}}</strong>, 
 	{% endif %}
@@ -155,7 +155,7 @@
 </div>
 {% if not chat.live %}
 <form method="post" class="visible-xs" action="{{site}}/chat/message/{{chat.id}}">
-	<textarea rows="4" name="mssg_content"></textarea>
+	<textarea rows="4" name="mssg_content" maxlength="{{max_static_length}}"></textarea>
 	<button type="submit" class="btn btn-sm btn-primary">Send Message</button>
 </form>
 {% endif %}
@@ -166,7 +166,7 @@
 <div id="reply_form_box" style="display:none;">
 <form method="post" id="reply_form" class="reply_forms" action="{{site}}/chat/message/{{chat.id}}">
 	<input type="hidden" name="reply_to" id="reply_to">
-	<textarea rows="3" name="mssg_content"></textarea>
+	<textarea rows="3" name="mssg_content" maxlength="{{max_static_length}}"></textarea>
 	<button type="submit" class="btn btn-sm btn-primary">Send Message</button>
 </form>
 </div>

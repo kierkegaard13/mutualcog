@@ -77,7 +77,7 @@
 <div>Admin</div>
 {% if tag_admin %}
 	<div style="font-size:14px;margin-left:10px;">
-		<a href="{{site}}/p/{{tag_admin.user.name}}">{{tag_admin.user.name}}</a>
+		<a href="{{site}}/u/{{tag_admin.user.name}}">{{tag_admin.user.name}}</a>
 	</div>
 {% else %}
 	{% if user.owned < 1 and user_subscribed %}
@@ -93,7 +93,7 @@
 			{% if mod.user_id == user.id or tag_admin.user_id == user.id %} 
 				<span id="remove_mod_{{mod.user.id}}_{{curr_tag_id}}" class="glyphicon glyphicon-remove remove_mod" data-toggle="tooltip" data-original-title="Remove Mod Powers" data-container="body" data-placement="top auto"></span>	
 			{% endif %}
-			<a href="{{site}}/p/{{mod.user.name}}">{{mod.user.name}}</a></div>
+			<a href="{{site}}/u/{{mod.user.name}}">{{mod.user.name}}</a></div>
 	{% else %}
 		<div>No moderators</div>
 	{% endfor %}

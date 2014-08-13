@@ -12,7 +12,7 @@
 	<div class="collapse navbar-collapse" id="mutual_navbar" style="position:relative;">
 		<form class="navbar-form tag_search" role="search">
 			<div class="form-group dropdown">
-				<input class="form-control tag_input" id="search_input" type="text" placeholder="Search" autocomplete="off">
+				<input class="form-control tag_input" id="search_input" type="text" placeholder="Search" autocomplete="off" maxlength="{{max_title_length}}">
 				<ul class="dropdown-menu" id="tag_dropdown" role="menu" aria-labelledby="search_input">
 				</ul>
 			</div>
@@ -127,7 +127,7 @@
 				<fieldset>
 					<div id="title_group_v2" class="form-group">
 						<label for="Title_v2">Title</label>
-						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Title must be unique and have between 5 and 200 characters" data-trigger="focus" type="text" name="title" id="Title_v2" placeholder="What's this chat about?" maxlength="200">
+						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Title must be have between 5 and {{max_title_length}} characters" data-trigger="focus" type="text" name="title" id="Title_v2" placeholder="What's this chat about?" maxlength="{{max_title_length}}">
 					</div>
 					<div id="link_group_v2" class="form-group">
 						<label for="Link_v2">Link <small>(optional)</small></label>
@@ -139,7 +139,7 @@
 					</div>
 					<div id="description_group" class="form-group">
 						<label for="description">Description <small>(optional)</small></label>
-						<textarea name="description" class="form-control" id="description" rows="5"></textarea>
+						<textarea name="description" data-toggle="tooltip" data-placement="top" data-original-title="Descriptions have a max length of {{max_static_length}} characters" data-trigger="focus" class="form-control" id="description" rows="5" maxlength="{{max_static_length}}"></textarea>
 					</div>
 					<div id="live_group" class="form-group">
 						<select class="form-control" name="live_status">
@@ -173,11 +173,11 @@
 					</div>
 					<div id="create_desc_group" class="form-group">
 						<label for="description">Community Description (Doesn't show up in sidebar)</label>
-						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Description must be a max of 80 characters" data-trigger="focus" type="text" name="description" id="create_tag_desc" placeholder="Write a very short description of the content in your community" maxlength="80">
+						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Description must be a max of {{max_description_length}} characters" data-trigger="focus" type="text" name="description" id="create_tag_desc" placeholder="Write a very short description of the content in your community" maxlength="{{max_description_length}}">
 					</div>
 					<div id="create_info_group" class="form-group">
 						<label for="info">Community Info (Sidebar Description, Posting Rules, etc)</label>
-						<textarea class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Info must be a max of 2000 characters" data-trigger="focus" name="info" id="create_tag_info" rows=10 maxlength="2000"></textarea>
+						<textarea class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Info must be a max of {{max_info_length}} characters" data-trigger="focus" name="info" id="create_tag_info" rows=10 maxlength="{{max_info_length}}"></textarea>
 					</div>
 				</fieldset>
 				<small>You will be able to request mods after community creation by clicking the manage community button in the sidebar</small>
@@ -205,15 +205,15 @@
 					</div>
 					<div id="tag_desc_group" class="form-group">
 						<label for="description">Community Description (Doesn't show up in sidebar)</label>
-						<input class="form-control" type="text" name="description" id="edit_tag_desc" placeholder="Write a very short description of the content in your community" maxlength="80">
+						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Description must be a max of {{max_description_length}} characters" data-trigger="focus" type="text" name="description" id="edit_tag_desc" placeholder="Write a very short description of the content in your community" maxlength="{{max_description_length}}">
 					</div>
 					<div id="tag_info_group" class="form-group">
 						<label for="info">Community Info (Sidebar Description, Posting Rules, etc)</label>
-						<textarea class="form-control" name="info" id="edit_tag_info" rows=10 maxlength="2000"></textarea>
+						<textarea class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Info must be a max of {{max_info_length}} characters" data-trigger="focus" name="info" id="edit_tag_info" rows=10 maxlength="{{max_info_length}}"></textarea>
 					</div>
 					<div id="mod_info_group" class="form-group">
 						<label for="mods" style="width:100%;">Appoint mods (max:20) <small>*must be subscribed </small><small id="mod_request_sent" class="base_green_color pull-right" style="display:none;">Request Sent</small></label>
-						<input class="form-control" data-toggle="popover" data-user-id="" data-tag-id="{{curr_tag_id}}" data-tag-name="{{curr_tag.name}}" data-content="<div>Some content</div>" data-container="body" data-placement="auto top" type="text" name="mods" id="mod_input" placeholder="Use enter or mouse to select from list" autocomplete="off">
+						<input class="form-control" data-toggle="popover" data-user-id="" data-tag-id="{{curr_tag_id}}" data-tag-name="{{curr_tag.name}}" data-content="<div>Some content</div>" data-container="body" data-placement="auto top" type="text" name="mods" id="mod_input" placeholder="Use enter or mouse to select from list" autocomplete="off" maxlength="{{max_user_length}}">
 					</div>
 				</fieldset>
 			</div>
@@ -251,7 +251,7 @@
 				<fieldset>
 					<div id="reg_user_group" class="form-group">
 						<label for="username">Preferred Username</label>
-						<input class="form-control" data-toggle="tooltip" data-placement="auto top" data-original-title="Username must be longer than 2 characters but less than 15" data-trigger="focus" data-container="body" type="text" name="username" id="reg_username" placeholder="Usernames are between 3 and 20 characters" maxlength="20">
+						<input class="form-control" data-toggle="tooltip" data-placement="auto top" data-original-title="Username must be longer than 2 characters but less than 15" data-trigger="focus" data-container="body" type="text" name="username" id="reg_username" placeholder="Usernames are between 3 and {{max_user_length}} characters" maxlength="{{max_user_length}}">
 					</div>
 					<div id="reg_pass1_group" class="form-group">
 						<label for="pass">Password</label>
@@ -263,7 +263,7 @@
 					</div>
 					<div id="email_group" class="form-group">
 						<label for="pass2">Email <small>(optional)</small></label>
-						<input class="form-control" data-toggle="popover" data-original-title="Not a valid email" data-container="body" data-placement="auto top" data-trigger="focus" type="email" name="email" id="email" placeholder="Enter your email">
+						<input class="form-control" data-toggle="popover" data-original-title="Not a valid email" data-container="body" data-placement="auto top" data-trigger="focus" type="email" name="email" id="email" placeholder="Enter your email" maxlength="{{max_title_length}}">
 					</div>
 				</fieldset>
 			</div>
@@ -290,11 +290,11 @@
 					</div>
 					<div id="title_group_v3" class="form-group">
 						<label for="Title_v3">Title</label>
-						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Titles must be unique and have between 5 and 200 characters" data-trigger="focus" type="text" name="title" id="Title_v3" placeholder="What's this chat about?" maxlength="200">
+						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Titles must be unique and have between 5 and {{max_title_length}} characters" data-trigger="focus" type="text" name="title" id="Title_v3" placeholder="What's this chat about?" maxlength="{{max_title_length}}">
 					</div>
 					<div id="link_group_v3" class="form-group">
 						<label for="Link_v3">Link <small>(optional)</small></label>
-						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Not a valid url" data-trigger="focus" type="text" name="link" id="Link_v3" placeholder="Add a link (optional)">
+						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Not a valid url" data-trigger="focus" type="text" name="link" id="Link_v3" placeholder="Add a link (optional)" maxlength="{{max_static_length}}">
 					</div>
 					<div id="tags_group_v3" class="form-group">
 						<label for="Tags_v3">Tags</label>
@@ -302,7 +302,7 @@
 					</div>
 					<div id="description_group" class="form-group">
 						<label for="description">Description <small>(optional)</small></label>
-						<textarea name="description" class="form-control" id="description_v3" rows="5" maxlength="2000"></textarea>
+						<textarea name="description" data-toggle="tooltip" data-placement="top" data-original-title="Descriptions have a max length of {{max_static_length}} characters" data-trigger="focus" class="form-control" id="description_v3" rows="5" maxlength="{{max_static_length}}"></textarea>
 					</div>
 					<div id="live_group" class="form-group">
 						<select class="form-control" name="live_status" id="live_status_v3">
@@ -342,10 +342,10 @@
 	<form method="post" action="{{site}}/profile/login" class="mutual_form" id="login_form">
 	<fieldset>
 		<div id="user_group" class="form-group">
-			<input class="form-control" data-toggle="tooltip" data-placement="auto top" data-original-title="Username or password incorrect" data-trigger="focus" data-container="body" type="text" name="username" id="username" placeholder="Enter your username">
+			<input class="form-control" data-toggle="tooltip" data-placement="auto top" data-original-title="Username or password incorrect" data-trigger="focus" data-container="body" type="text" name="username" id="username" placeholder="Enter your username" maxlength="{{max_user_length}}">
 		</div>
 		<div id="pass1_group" class="form-group">
-			<input class="form-control" type="password" name="pass" id="pass" placeholder="Enter your password">
+			<input class="form-control" type="password" name="pass" id="pass" placeholder="Enter your password" maxlength="30">
 		</div>
 		<button class="btn btn-primary" type="Submit" style="width:100%;">Login</button>
 	</fieldset>
@@ -367,7 +367,7 @@
 			{% for request in user.friendRequests %}
 				<div class='request_cont'>
 					<div class='request_text'>
-						<a class='chat_link' href='{{site}}/p/{{request.sender}}'>{{request.sender}}</a> has requested your friendship
+						<a class='chat_link' href='{{site}}/u/{{request.sender}}'>{{request.sender}}</a> has requested your friendship
 					</div>
 					<div class='request_text'>
 						<a class='chat_link' href='{{site}}/profile/accept/{{request.id}}'>Accept</a> / <a class='chat_link' href='{{site}}/profile/decline/{{request.id}}'>Decline</a>
@@ -399,7 +399,7 @@
 		</button>
 	</div>
 	<div class="row" style="margin:10px 0 0 0;">
-		<a class="btn btn-success col-xs-3 btn-sm" href="{{site}}/p/{{user.name}}">My Profile</a>
+		<a class="btn btn-success col-xs-3 btn-sm" href="{{site}}/u/{{user.name}}">My Profile</a>
 		<a class="btn btn-primary col-xs-offset-6 col-xs-3 btn-sm" href="{{site}}/profile/logout">Logout</a>
 	</div>
 {% endif %}
@@ -456,7 +456,7 @@
 			{% endif %}
 			{% if chat.admin % 275604541 == 0 %}
 				<div class="chat_info">Created by 
-					<a href="{{site}}/p/{{chat.admin}}">
+					<a href="{{site}}/u/{{chat.admin}}">
 						<strong>
 							{% if chat.author.is_admin or chat.author.is_mod %}
 								<span class="brighter_red_color">{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</span></strong></a>,

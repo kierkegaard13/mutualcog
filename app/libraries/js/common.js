@@ -393,7 +393,7 @@ $('#search_input').on('keyup',function(e){
 						if(value.type == 'tag'){
 							content += '<li id="search_' + index + '" class="tag_results"><a href="//mutualcog.com/t/' + value.name + '">' + value.name + '</a></li>';
 						}else{
-							content += '<li id="search_' + index + '" class="tag_results"><a href="//mutualcog.com/p/' + value.name + '">' + value.name + '</a></li>';
+							content += '<li id="search_' + index + '" class="tag_results"><a href="//mutualcog.com/u/' + value.name + '">' + value.name + '</a></li>';
 						}
 					});
 					if(content){
@@ -492,6 +492,22 @@ module.socket.on('receive_pm',function(info){
 		window.setTimeout(function(){
 			pm_body.mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
 		},20);
+	}
+});
+
+module.socket.on('displayFriendRequests',function(request_info){
+	var friend_count = $('#friend_requests_count');
+	var f_content = "";
+	if(friend_count.text().length > 0){
+		friend_count.text(parseInt(friend_count.text()) + 1);
+	}else{
+		$('#friend_request_glyph').addClass('pull-left');
+		friend_count.text('1');
+	}
+	if($('#friend_requests').attr('data-content').indexOf('No friend requests') >= 0){
+		$('#friend_requests').attr('data-content',"<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/u/" + request_info.sender + "'>" + request_info.sender + "</a> has requested your friendship </div> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/profile/accept/" + request_info.id + "'>Accept</a> / <a class='chat_link' href='//mutualcog.com/profile/decline/" + request_info.id + "'>Decline</a> </div> </div>");
+	}else{
+		$('#friend_requests').attr('data-content',$('#friend_requests').attr('data-content').prepend("<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/u/" + request_info.sender + "'>" + request_info.sender + "</a> has requested your friendship </div> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/profile/accept/" + request_info.id + "'>Accept</a> / <a class='chat_link' href='//mutualcog.com/profile/decline/" + request_info.id + "'>Decline</a> </div> </div>"));
 	}
 });
 

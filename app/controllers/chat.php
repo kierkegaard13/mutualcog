@@ -478,38 +478,39 @@ class Chat extends BaseController {
 				if($link){
 					if((strpos($link,'http://') == 'false') && (strpos($link,'https://') == 'false')){
 						$link = 'http://' . $link;
-				}
-				function get($a,$b,$c)
-				{
-					// Gets a string between 2 strings
-					$y = explode($b,$a);
-					if($y[1]){
-						$x = explode($c,$y[1]);
-						return $x[0];
+					}
+					function get($a,$b,$c)
+					{
+						// Gets a string between 2 strings
+						$y = explode($b,$a);
+						if($y[1]){
+							$x = explode($c,$y[1]);
+							return $x[0];
+						}else{
+							return 0;
+						}
+					}
+					if(substr($link,-4,4) == '.png' || substr($link,-4,4) == '.gif' || substr($link,-4,4) == '.jpg' || substr($link,-5,5) == '.jpeg'){
+						$site_name = str_replace('http://','',$link);
+						$site_name = str_replace('https://','',$link);
+						$site_name = explode('/',$site_name);
+						$site_name = $site_name[0];
+						$chat->link = $link;
+						$chat->image = $link;
+						$chat->site_name = $site_name;
 					}else{
-						return 0;
+						$image = get(file_get_contents($link), "<img src=", " ");
+						$image = str_replace('"','',$image);
+						$site_name = str_replace('http://','',$link);
+						$site_name = str_replace('https://','',$link);
+						$site_name = explode('/',$site_name);
+						$site_name = $site_name[0];
+						$chat->link = $link;
+						$chat->image = $image;
+						$chat->site_name = $site_name;
 					}
 				}
-				if(substr($link,-4,4) == '.png' || substr($link,-4,4) == '.gif' || substr($link,-4,4) == '.jpg' || substr($link,-5,5) == '.jpeg'){
-					$site_name = str_replace('http://','',$link);
-					$site_name = str_replace('https://','',$link);
-					$site_name = explode('/',$site_name);
-					$site_name = $site_name[0];
-					$chat->link = $link;
-					$chat->image = $link;
-					$chat->site_name = $site_name;
-				}else{
-					$image = get(file_get_contents($link), "<img src=", " ");
-					$image = str_replace('"','',$image);
-					$site_name = str_replace('http://','',$link);
-					$site_name = str_replace('https://','',$link);
-					$site_name = explode('/',$site_name);
-					$site_name = $site_name[0];
-					$chat->link = $link;
-					$chat->image = $image;
-					$chat->site_name = $site_name;
-				}
-				}
+				$duplicate = Chats::wheretitle($title)->wherelink($link)->first();
 				if($details){
 					$chat->raw_details = $details;
 					$chat->details = $this->parseText($details);
@@ -517,21 +518,25 @@ class Chat extends BaseController {
 				if($live_status == 1 || $live_status == 0){
 					$chat->live = $live_status;
 				}
-				if(Auth::check()){
-					$chat->admin = Auth::user()->name;
-					$chat->admin_id = Auth::user()->id;
-					$chat->save();
-					$ch_voted = new ChatsVoted();
-					$ch_voted->chat_id = $chat->id;
-					$ch_voted->member_id = Auth::user()->id;
-					$ch_voted->status = 1;
-					$ch_voted->save();
+				if($duplicate){
+					$chat = $duplicate;
 				}else{
-					$chat->admin = Session::get('unique_serial');
-					$chat->admin_id = Session::get('serial_id');
-					$chat->save();
+					if(Auth::check()){
+						$chat->admin = Auth::user()->name;
+						$chat->admin_id = Auth::user()->id;
+						$chat->save();
+						$ch_voted = new ChatsVoted();
+						$ch_voted->chat_id = $chat->id;
+						$ch_voted->member_id = Auth::user()->id;
+						$ch_voted->status = 1;
+						$ch_voted->save();
+					}else{
+						$chat->admin = Session::get('unique_serial');
+						$chat->admin_id = Session::get('serial_id');
+						$chat->save();
+					}
+					$chat = $chat->findAll();
 				}
-				$chat = $chat->findAll();
 				$tags = explode(' ',$tags);
 				foreach($tags as $tag){
 					if(strlen($tag) > 2 && strlen($tag) < 20){
@@ -551,7 +556,10 @@ class Chat extends BaseController {
 							$chats_to_tags = new ChatsToTags();
 							$chats_to_tags->chat_id = $chat->id;
 							$chats_to_tags->tag_id = $t->id;
-							$chats_to_tags->save();
+							if($chats_to_tags->findAll()){
+							}else{
+								$chats_to_tags->save();
+							}
 						}
 					}
 				}

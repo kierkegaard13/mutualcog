@@ -58,7 +58,7 @@
 <div style="color:#777;font-size:12px;">
 	{% if chat.admin % 275604541 == 0 %}
 		<div class="chat_info">Created by 
-			<a href="{{site}}/p/{{chat.admin}}">
+			<a href="{{site}}/u/{{chat.admin}}">
 				<strong>
 					{% if chat.author.is_admin or chat.author.is_mod %}
 						<span class="brighter_red_color">{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</span></strong></a>,
@@ -146,7 +146,7 @@
 					<h4 class="modal-title">Edit Chat Description</h4>
 				</div>
 				<div class="modal-body">
-					<textarea rows="7" id="detail_text">{{chat.raw_details | raw}}</textarea>
+					<textarea rows="7" id="detail_text" maxlength="{{max_static_length}}">{{chat.raw_details | raw}}</textarea>
 				</div>
 				<div class="modal-footer">
 					<button class="btn btn-success" id="save_details">Save Details</button>
@@ -274,7 +274,7 @@
 	</div>
 </div>
 
-<textarea class="global" id="message" style="height:23%;">
+<textarea class="global" id="message" style="height:23%;" maxlength="{{max_chat_mssg_length}}">
 Press enter to send a message to all 
 </textarea>
 

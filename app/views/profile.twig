@@ -221,7 +221,7 @@
 	<div class="frame" style="height:620px;white-space:normal;">
 		{% for friendship in friendships %}
 			<div class="col-lg-3 interaction">
-				<a href="{{site}}/p/{{friendship.entity.name}}" style="color:black;"><strong>{{friendship.entity.name}}</strong></a>
+				<a href="{{site}}/u/{{friendship.entity.name}}" style="color:black;"><strong>{{friendship.entity.name}}</strong></a>
 				<div style="font-size:14px;">
 					<div>Last Interaction : <span class="interaction_time" id="{{friendship.entityship.updated_at}}"></span></div>
 				</div>
