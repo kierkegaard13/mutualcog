@@ -38,11 +38,17 @@ code{
 .form-group {
   margin-bottom:10px;
 }
-.chat_info,.more_options a {
-  color:gray;
+.chat_info a {
+  color:@link_grey;
 }
-.chat_info,.more_options a:hover {
-  color:gray;
+.chat_info a:hover {
+  color:@link_grey;
+}
+.more_options a {
+  color:@link_grey;
+}
+.more_options a:hover {
+  color:@link_grey;
 }
 @media screen and (min-width:992px){
 	.wrapper_list_active {
@@ -109,7 +115,7 @@ code{
 	  margin-left:-4px;
 	}
 	.navbar {
-	  font-size:16px;
+	  font-size:14px;
 	  position:fixed;
 	  top:0;
 	  z-index:100;
@@ -122,6 +128,7 @@ code{
 	  height:40px;
 	}
 	.navbar-brand {
+	  font-size:14px;
 	  margin-top:-1px;
 	  padding-top:10px;
 	  padding-right:10px;
@@ -129,7 +136,7 @@ code{
 	  height:auto;
 	}
 	.navbar-collapse.collapse {
-	  margin-left:68px;
+	  margin-left:63px;
 	  padding-left:0px;
 	  padding-right:0px;
 	  white-space:nowrap;
@@ -222,6 +229,9 @@ code{
 	  overflow-y:hidden !important;
 	  overflow-x:hidden !important;
 	}
+	.navbar-brand {
+	  font-size:16px;
+	}
 	.dropdown-menu>li>a {
 	  color:white;
 	  transition:background-color .5s;
@@ -253,7 +263,6 @@ code{
   background-color:#eee;
 }
 .navbar-brand {
-  font-size:16px;
   color:#fff;
   background-color: @navbar_color;
   transition:background-color .5s;
