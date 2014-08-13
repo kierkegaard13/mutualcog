@@ -17,9 +17,9 @@ class Profile extends BaseController {
 			return App::abort(404,'You seem to have entered an invalid URL');
 		}
 		$request = Requests::find($request_id);
-		$friend_id = $request->sender_id;
-		if(Auth::check()){
-			if(Auth::user()->id != $friend_id){
+		if(Auth::check() && $request){
+			$friend_id = $request->sender_id;
+			if(Auth::user()->id != $friend_id && Auth::user()->id == $request->user_id){
 				$interaction_user = InteractionUsers::whereuser_id(Auth::user()->id)->whereentity_id($friend_id)->wheretype(0)->first();
 				if($interaction_user){
 					$interaction_user->friended = 1;
@@ -43,8 +43,8 @@ class Profile extends BaseController {
 					$inter_friend->bond = 50;
 					$inter_friend->save();
 				}
+				$request->delete();
 			}
-			$request->delete();
 		}
 		if(Session::has('curr_page')){
 			return Redirect::to(Session::get('curr_page'));
@@ -176,50 +176,81 @@ class Profile extends BaseController {
 		return Redirect::to('home');
 	}
 
-	public function postNewUser(){
+	public function postRegister(){
 		$username = htmlentities(Input::get('username'));
 		$pass = htmlentities(Input::get('pass'));
 		$pass2 = htmlentities(Input::get('pass2'));
-		if($username && $pass && $pass2){
+		$email = htmlentities(Input::get('email'));
+		$validator = Validator::make(
+				array(
+					'name' => $username,
+					'password' => $pass,
+					'password_confirmation' => $pass2,
+					'email' => $email
+				     ),
+				array(
+					'name' => 'required|unique:users|between:3,20',
+					'password' => 'required|between:6,30|confirmed',
+					'password_confirmation' => 'required',
+					'email' => 'email'
+				     )
+				);
+		if(!$validator->fails()){
 			$user = new User();
 			if(preg_match('/[a-zA-z]/',$username)){
 				$user->name = ucfirst($username);
 			}else{
-				return Redirect::to(Session::get('curr_page'))->with('error','Your username must contain at least 1 character');
-			}
-			if($user->findAll()){
-				$user = $user->findAll();
-				if(Crypt::decrypt($user->password) == $pass && $pass == $pass2){
-					Auth::login($user);
-					$user->last_login = date(DATE_ATOM);
-					$user->save();
-					$node = new NodeAuth();
-					$node->user_id = $user->id;
-					$node->user = $user->name;
-					if($node->findAll()){
-						$node = $node->findAll();
-						$node->serial = Session::get('unique_serial');
-						$node->serial_id = Session::get('serial_id');
-						$node->sid = Session::getId();
-						$node->authorized = 1;
-						$node->save();
-					}else{
-						$node->serial = Session::get('unique_serial');
-						$node->serial_id = Session::get('serial_id');
-						$node->sid = Session::getId();
-						$node->authorized = 1;
-						$node->save();
-					}
+				if(Session::has('curr_page')){
+					return Redirect::to(Session::get('curr_page'));
 				}
-				return Redirect::to(Session::get('curr_page'));
+				return Redirect::to('home');
 			}
 			$user->password = Crypt::encrypt($pass);
 			$user->last_login = date(DATE_ATOM);
 			$user->ip_address = Request::getClientIp();
+			if($email){
+				$user->email = $email;
+			}
 			$user->save();
 			Auth::login($user);
+			$node = new NodeAuth();
+			$node->user_id = $user->id;
+			$node->user = $user->name;
+			if($node->findAll()){
+				$node = $node->findAll();
+				$node->serial = Session::get('unique_serial');
+				$node->serial_id = Session::get('serial_id');
+				$node->sid = Session::getId();
+				$node->authorized = 1;
+				$node->save();
+			}else{
+				$node->serial = Session::get('unique_serial');
+				$node->serial_id = Session::get('serial_id');
+				$node->sid = Session::getId();
+				$node->authorized = 1;
+				$node->save();
+			}
+		}		
+		if(Session::has('curr_page')){
 			return Redirect::to(Session::get('curr_page'));
-		}elseif($username && $pass){
+		}
+		return Redirect::to('home');
+	}
+
+	public function postLogin(){
+		$username = htmlentities(Input::get('username'));
+		$pass = htmlentities(Input::get('pass'));
+		$validator = Validator::make(
+				array(
+					'name' => $username,
+					'password' => $pass,
+				     ),
+				array(
+					'name' => 'required',
+					'password' => 'required',
+				     )
+				);
+		if(!$validator->fails()){
 			$user = new User();
 			$user->name = ucfirst($username);
 			$user = $user->findAll();
@@ -246,16 +277,11 @@ class Profile extends BaseController {
 					$node->save();
 				}
 			}
-			if(Session::has('curr_page')){
-				return Redirect::to(Session::get('curr_page'));
-			}
-			return Redirect::to('home');
-		}else{
-			if(Session::has('curr_page')){
-				return Redirect::to(Session::get('curr_page'));
-			}
-			return Redirect::to('home');
 		}
+		if(Session::has('curr_page')){
+			return Redirect::to(Session::get('curr_page'));
+		}
+		return Redirect::to('home');
 	}
 
 }

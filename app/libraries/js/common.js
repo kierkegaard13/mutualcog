@@ -280,18 +280,6 @@ $('#username').blur(function(){
 	if(username.length > 0){
 		validateUser(username);
 	}
-	if(username.length > 0 && pass.length > 0 && pass2 == ""){
-		validateLogin(username,pass);
-	}
-});
-
-$('#pass').blur(function(){
-	var username = $('#username').val();
-	var pass = $('#pass').val();
-	var pass2 = $('#pass2').val();
-	if(username.length > 0 && pass.length > 0 && pass2 == ""){
-		validateLogin(username,pass);
-	}
 });
 
 $('#pass2').blur(function(){

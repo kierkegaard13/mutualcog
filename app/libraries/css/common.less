@@ -6,7 +6,7 @@ html,body{
 body{
   background-color:#ddd;
   font-size:18px;
-  font-family: 'Open Sans',sans-serif;
+  font-family: 'verdana','arial','helvetica',sans-serif;
 }
 p{
   margin:0;
@@ -95,7 +95,7 @@ code{
 	  width:143px;
 	}
 	.nav_margin {
-	  margin-left:138px;
+	  margin-left:130px;
 	}
 	.nav_right {
 	  overflow:hidden !important;
@@ -103,7 +103,6 @@ code{
 	.navbar {
 	  font-size:16px;
 	  position:fixed;
-	  box-shadow: 0px 1px 2px #555;
 	  top:0;
 	  z-index:100;
 	  width:100%;
@@ -122,7 +121,7 @@ code{
 	  height:auto;
 	}
 	.navbar-collapse.collapse {
-	  margin-left:71px;
+	  margin-left:68px;
 	  padding-left:0px;
 	  padding-right:0px;
 	}
@@ -273,7 +272,6 @@ code{
   padding:10px;
   padding-left:15px;
   border-bottom:solid 1px #aaa;
-  background-color:#eee;
   font-size:16px;
   overflow:hidden;
   transition:background-color .5s;
@@ -291,7 +289,6 @@ code{
   padding:0;
   padding-top:40px;
   width:190px;
-  border-right:1px solid #aaa; 
 }
 .pm_name {
   position:absolute;
@@ -312,6 +309,8 @@ code{
   display:inline-block;
 }
 .pm_header {
+  border-top-right-radius:2px;
+  border-top-left-radius:2px;
   width:250px;
   height:30px;
   color:white;
@@ -372,6 +371,11 @@ code{
   right:0px;
   margin-bottom:-7px; 
 }
+.chat_status_indicator {
+  margin: -5px 10px 0 5px;
+  cursor:pointer;
+  display:inline-block;
+}
 .green_ball {
   height:8px;
   display:inline-block;
@@ -380,8 +384,7 @@ code{
   border-radius:8px;
 }
 .big_green_ball {
-  margin-right:5px;
-  margin-left:5px;
+  margin: 0 5px;
   height:10px;
   display:inline-block;
   width:10px;
@@ -390,8 +393,7 @@ code{
   border-radius:8px;
 }
 .big_yellow_ball {
-  margin-right:5px;
-  margin-left:5px;
+  margin: 0 5px;
   height:10px;
   display:inline-block;
   width:10px;

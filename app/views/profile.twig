@@ -17,6 +17,10 @@
 	{{parent()}}
 {% endblock %}
 
+{% block modals %}
+	{{parent()}}
+{% endblock %}
+
 {% block side_2 %}
                         <div class="small_content_box">
 				<div class="content_right">
@@ -166,7 +170,7 @@
 							<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
 						{% endif %}
 					</span>
-					<span class="chat_id_{{message.id}}" id="{{message.chat_id}}">
+					<span class="chat_id_{{message.id}} p_mssg_body" id="{{message.chat_id}}">
 						<strong class='mssg_op' id="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}} (<span class='response_count' id="{{message.id}}">{{message.responses}}</span>)</strong> : {{message.message | raw}}
 					</span>
 					<div class="p_time_box">
@@ -231,6 +235,3 @@
 </div>
 {% endblock %}
 
-{% block scripts %}
-<script src="{{base}}/app/libraries/js/profile.min.js?{{version}}"></script>
-{% endblock %}

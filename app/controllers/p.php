@@ -13,6 +13,9 @@ class P extends BaseController {
 		$user = new User();
 		$user->name = $username;
 		$user = $user->findAll();
+		if(!$user){
+			return View::make('missing');
+		}	
 		$requested = 0;
 		if(Auth::check()){
 			$requested = count(Requests::wheresender_id(Auth::user()->id)->whereuser_id($user->id)->wheretype(2)->first());
@@ -39,6 +42,7 @@ class P extends BaseController {
 		$view['requested'] = $requested;
 		$view['friendships'] = $user->friendships;
 		$view['color_arr'] = array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#000');
+		$view['curr_tag_id'] = '';
 		$view['upvoted'] = $upvoted;
 		$view['downvoted'] = $downvoted;
 		$view['mssg_upvoted'] = $mssg_upvoted;

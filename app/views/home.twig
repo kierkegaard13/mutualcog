@@ -18,143 +18,88 @@
 {% endblock %}
 
 {% block modals %}
-<div class="modal fade" id="advanced_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="advanced_modalLabel">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Advanced Chat Options</h4>
-			</div>
-			<div class="modal-body">
-				<form method="post" action="{{site}}/chat/new-chat" class="mutual_form" id="home_form_v2">
-				<fieldset>
-					<div id="title_group_v2" class="form-group">
-						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Title must be longer than 2 characters but less than 180" data-trigger="focus" type="text" name="title" id="Title_v2" placeholder="What's this chat about?">
-					</div>
-					<div id="link_group_v2" class="form-group">
-						<input class="form-control" type="text" name="link" id="Link_v2" placeholder="Add a link (optional)">
-					</div>
-					<div id="tags_group_v2" class="form-group">
-						<input class="form-control tags_input" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Tags" data-placement="bottom" type="text" name="tags" id="Tags_v2" placeholder="Use spaces to separate tags (max: 5)" autocomplete="off">
-					</div>
-					<div id="description_group" class="form-group">
-						<label for="description">Description</label>
-						<textarea name="description" class="form-control" id="description" rows="5"></textarea>
-					</div>
-					<div id="live_group" class="form-group">
-						<select class="form-control" name="live_status">
-							<option value="1">Live</option>
-							<option value="0">Static</option>
-						</select>
-					</div>
-				</fieldset>
-			</div>
-			<div class="modal-footer">
-				<button class="btn btn-primary" type="Submit">Create</button>
-				<button type="button" class="btn" data-dismiss="modal">Close</button>
-				</form>
-			</div>
-		</div>
-	</div>	
-</div>
-<div class="modal fade" id="remove_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="remove_modalLabel">
-	<div class="modal-dialog modal-sm">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Remove Post?</h4>
-			</div>
-			<div class="modal-footer">
-				<a href="{{site}}/chat/soft-remove/" class="btn btn-primary" id="remove_chat_final" type="Submit">Yes</a>
-				<button type="button" class="btn" data-dismiss="modal">No</button>
-			</div>
-		</div>
-	</div>	
-</div>
-<div class="modal fade" id="edit_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="edit_modalLabel">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Edit Chat</h4>
-			</div>
-			<div class="modal-body">
-				<form method="post" action="{{site}}/chat/new-chat" class="mutual_form" id="home_form_v2">
-				<fieldset>
-					<div id="title_group_v2" class="form-group">
-						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Title must be longer than 2 characters but less than 180" data-trigger="focus" type="text" name="title" id="Title_v2" placeholder="What's this chat about?">
-					</div>
-					<div id="link_group_v2" class="form-group">
-						<input class="form-control" type="text" name="link" id="Link_v2" placeholder="Add a link (optional)">
-					</div>
-					<div id="tags_group_v2" class="form-group">
-						<input class="form-control tags_input" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Tags" data-placement="bottom" type="text" name="tags" id="Tags_v2" placeholder="Use spaces to separate tags (max: 5)" autocomplete="off">
-					</div>
-					<div id="description_group" class="form-group">
-						<label for="description">Description</label>
-						<textarea name="description" class="form-control" id="description" rows="5"></textarea>
-					</div>
-					<div id="live_group" class="form-group">
-						<select class="form-control" name="live_status">
-							<option value="1">Live</option>
-							<option value="0">Static</option>
-						</select>
-					</div>
-				</fieldset>
-			</div>
-			<div class="modal-footer">
-				<button class="btn btn-primary" type="Submit">Save</button>
-				<button type="button" class="btn" data-dismiss="modal">Close</button>
-				</form>
-			</div>
-		</div>
-	</div>	
-</div>
-{% endblock %}
-
-{% block side_2 %}
-                        <div class="small_content_box">
-				<div class="content side_content" id="create_cont">
-<form method="post" action="{{site}}/chat/new-chat" class="mutual_form" id="home_form">
-<fieldset>
-	<a class="btn btn-default btn-xs advanced_create" id="advanced_create" href="#" data-toggle="modal" data-target="advanced_modal"><div class="glyphicon glyphicon-cog advanced_cog" data-toggle="tooltip" data-original-title="Advanced options" data-container="body" data-placement="top"></div></a>
-	<legend>Create a new Chat</legend>
-	<div id="title_group" class="form-group">
-		<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Title must be longer than 2 characters but less than 180" data-trigger="focus" data-container="body" type="text" name="title" id="Title" placeholder="What's this chat about?">
-	</div>
-	<div id="link_group" class="form-group">
-		<input class="form-control" type="text" name="link" id="Link" placeholder="Add a link (optional)">
-	</div>
-	<div id="tags_group" class="form-group">
-		<input class="form-control tags_input" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Tags" data-container="body" data-placement="bottom" type="text" name="tags" id="Tags" placeholder="Use spaces to separate tags (max: 5)" autocomplete="off">
-	</div>
-	<input class="form-control" type="hidden" name="live_status" value="1">
-	<button class="btn btn-primary" type="Submit" style="width:100%;">Create</button>
-</fieldset>
-</form>
-				</div>
-                        </div>
+	{{parent()}}
 {% endblock %}
 
 {% block side_1 %}
-{% if not home_active %}
 	<div class="small_content_box">
-		<div class="content_left grad4"></div>
-		<div class="content_right grad4"></div>
 		<div class="content side_content" id="subscribe">
-			<div><a href="{{site}}/t/{{curr_tag.name}}" style="font-size:22px;color:#333;"><strong>{{curr_tag.name}}</strong>{% if curr_tag.admin == user.name %} (Admin) {% endif %}</a></div>
-			{% if logged_in %}
-				{% if user_subscribed %}
-					<span><a href="{{site}}/tags/unsubscribe/{{curr_tag.id}}" class="btn btn-danger btn-xs">Unsubscribe</a></span>
-				{% else %}
-					<span><a href="{{site}}/tags/subscribe/{{curr_tag.id}}" class="btn btn-success btn-xs">Subscribe</a></span>
-				{% endif %}
-			{% endif %}
-			{% set tag_subscribers = curr_tag.subscribers | length %}
-			<span>{{tag_subscribers}} Subscriber{% if tag_subscribers != 1 %}s{% endif %}</span>
-			<div style="font-size:14px;"><div class="green_ball"></div> {{curr_tag.online}} online</div>
+<div style="margin-top:5px;">
+	<btn class="btn btn-primary" style="width:100%;" data-toggle="modal" data-target="#chat_modal">Create Chat</btn>
+</div>
+{% if not curr_tag_id and user %}
+	<div style="margin-top:10px;">
+		<btn class="btn btn-primary" style="width:100%;" data-toggle="modal" data-target="#tag_create_modal">Create Community</btn>
+	</div>
+{% endif %}
 		</div>
 	</div>
+{% endblock %}
+
+{% block side_2 %}
+{% if curr_tag_id %}
+	<div class="small_content_box">
+		<div class="content side_content" id="subscribe">
+			{% if user.tag_admin == curr_tag_id and curr_tag_id | length > 0 %}
+				<a class="btn btn-default btn-xs advanced_create" id="tag_edit" href="#" data-toggle="modal" data-target="tag_edit_modal"><div class="glyphicon glyphicon-cog advanced_cog" data-toggle="tooltip" data-original-title="Manage Community" data-container="body" data-placement="top"></div></a>
+			{% endif %}
+			<div><a href="{{site}}/t/{{curr_tag.name}}" style="font-size:20px;color:#333;">{{curr_tag.name}}{% if tag_admin.user_id == user.id %} (Admin) {% elseif user.id in curr_tag.moderators %} (Mod) {% endif %}</a></div>
+			<div style="margin:4px 0;">
+				{% if logged_in %}
+					{% if user_subscribed %}
+						<span><a href="{{site}}/tags/unsubscribe/{{curr_tag.id}}" class="btn btn-danger btn-xs">Unsubscribe</a></span>
+					{% else %}
+						<span><a href="{{site}}/tags/subscribe/{{curr_tag.id}}" class="btn btn-success btn-xs">Subscribe</a></span>
+					{% endif %}
+				{% endif %}
+				{% set tag_subscribers = curr_tag.subscribers | length %}
+				<span style="font-size:16px;">{{tag_subscribers}} Subscriber{% if tag_subscribers != 1 %}s{% endif %}</span>
+			</div>
+			<div style="font-size:14px;"><div class="green_ball"></div> {{curr_tag.online}} online</div>
+			<div id="tag_id_str" style="display:none;">{{curr_tag.id}}</div>
+			<div id="tag_info_str" style="display:none;">{{curr_tag.raw_info}}</div>
+			<div id="tag_desc_str" style="display:none;">{{curr_tag.description}}</div>
+			{% if curr_tag.info|length > 0 %}
+				<div id="tag_info" style="font-size:16px;">
+					<br>
+					{{curr_tag.info|raw}}
+				</div>
+			{% endif %}
+		</div>
+	</div>
+{% endif %}
+{% endblock %}
+
+{% block side_3 %}
+{% if curr_tag_id %}
+                        <div class="small_content_box">
+				<div class="content side_content" id="create_cont">
+<div>Admin</div>
+{% if tag_admin %}
+	<div style="font-size:14px;margin-left:10px;">
+		<a href="{{site}}/p/{{tag_admin.user.name}}">{{tag_admin.user.name}}</a>
+	</div>
+{% else %}
+	{% if user.owned < 1 and user_subscribed %}
+		<a href="{{site}}/tags/assign-admin/{{user.id}}/{{curr_tag_id}}" style="font-size:14px;margin-left:10px;">Become the admin</a>
+	{% else %}
+		<div style="font-size:14px;margin-left:10px;">No Admin</div>
+	{% endif %}
+{% endif %}
+<div>Moderators</div>
+<div style="font-size:14px;margin-left:10px;">
+	{% for mod in tag_mods %}
+		<div>
+			{% if mod.user_id == user.id or tag_admin.user_id == user.id %} 
+				<span id="remove_mod_{{mod.user.id}}_{{curr_tag_id}}" class="glyphicon glyphicon-remove remove_mod" data-toggle="tooltip" data-original-title="Remove Mod Powers" data-container="body" data-placement="top auto"></span>	
+			{% endif %}
+			<a href="{{site}}/p/{{mod.user.name}}">{{mod.user.name}}</a></div>
+	{% else %}
+		<div>No moderators</div>
+	{% endfor %}
+</div>
+				</div>
+                        </div>
 {% endif %}
 {% endblock %}
 
@@ -235,107 +180,5 @@
 {% endblock %}
 
 {% block chat_box %}
-<div class="chat_title_box">
-	<div class="row">
-		<div class="number_box"> {{loop.index}}. </div>
-		<div class="vote_box">
-			{% if chat.id in upvoted %}
-				<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-				<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-				<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
-			{% elseif chat.id in downvoted %}
-				<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-				<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-				<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
-			{% else %}
-				<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-				<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-				<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
-			{% endif %}
-		</div>
-		{% if chat.image %}
-			<a class="pull-left link_thumbnail" href="{{chat.link}}">
-				<img src="{{chat.image}}" alt="Image Error" width="80" height="80">
-			</a>
-		{% endif %}
-		{% if chat.live %}
-			<div class="pull-right big_green_ball chat_status_indicator" data-toggle="tooltip" data-original-title="Live Chat" data-container="body" data-placement="top"></div>
-		{% else %}
-			<div class="pull-right big_yellow_ball chat_status_indicator" data-toggle="tooltip" data-original-title="Static Chat" data-container="body" data-placement="top"></div>
-		{% endif %}
-		<div class="chat_title">
-			{% if chat.seen %}
-				{% if chat.link %}
-					<a href="{{chat.link}}" style="color:purple;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
-				{% else %}
-					<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:purple;">{{chat.title}}</a>
-				{% endif %}
-			{% else %}
-				{% if chat.link %}
-					<a href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
-				{% else %}
-					<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
-				{% endif %}
-			{% endif %}
-			{% if chat.admin % 16777259 == 0 %}
-				<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}"><strong>{{chat.admin}}</strong></a>, 
-			{% else %}
-				<div class="chat_info">Created by <strong>{{chat.admin}}</strong>, 
-			{% endif %}
-				{% set time_passed = server_time|date('U') - chat.created_at|date('U') %}
-				<span class="chat_time" id="{{chat.created_at}}" title="{{chat.created_at}} UTC">
-					{% if time_passed < 45 %}
-						seconds ago
-					{% elseif time_passed < 2700 %}
-						{% if time_passed < 90 %}
-							a minute ago
-						{% else %}
-							{{(time_passed/60)|round}} minutes ago
-						{% endif %}
-					{% elseif time_passed < 79200%}
-						{% if time_passed < 5400 %}
-							an hour ago
-						{% else %}
-							{{(time_passed/3600)|round}} hours ago
-						{% endif %}
-					{% elseif time_passed < 2160000 %}
-						{% if time_passed < 129600 %}
-							a day ago
-						{% else %}
-							{{(time_passed/86400)|round}} days ago
-						{% endif %}
-					{% elseif time_passed < 29808000 %}
-						{% if time_passed < 3888000 %}
-							a month ago
-						{% else %}
-							{{(time_passed/2592000)|round}} months ago
-						{% endif %}
-					{% else %}
-						{% if time_passed < 47260800 %}
-							a year ago
-						{% else %}
-							{{(time_passed/31536000)|round}} years ago
-						{% endif %}
-					{% endif %}
-				</span>
-				with Tags:
-				{% for tag in chat.tags %}
-					<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}"><strong>#{{tag.name}}</strong></a> </span>
-				{% endfor %}
-				and <a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}"><strong>{{chat.messages | length }} comments</strong></a>
-			</div>
-			<div class="more_options">
-				{% if user.name == chat.admin %}
-					<span><a href="#" data-toggle="modal" class="edit_chat_link" data-target="edit_modal"><strong>Edit</strong></a></span>
-				{% endif %}
-				{% if user.name == chat.admin%}
-					<span><a href="#" data-toggle="modal" data-chat-id="soft_{{chat.id}}" class="remove_chat_link" data-target="remove_modal"><strong>Remove</strong></a></span>
-				{% elseif user.is_admin %}
-					<span><a href="#" data-toggle="modal" data-chat-id="hard_{{chat.id}}" class="remove_chat_link" data-target="remove_modal"><strong>Remove</strong></a></span>
-				{% endif %}
-				<span><a href="{{site}}/chat/static/{{chat.id}}"><strong>Static</strong></a></span>
-			</div>
-		</div>
-	</div>
-</div>
+	{{parent()}}
 {% endblock %}

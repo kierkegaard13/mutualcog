@@ -114,6 +114,214 @@
 	</div>
 {% endblock %}
 
+{% block modals %}
+<div class="modal fade" id="chat_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="chat_modalLabel">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Create a Chat</h4>
+			</div>
+			<div class="modal-body">
+				<form method="post" action="{{site}}/chat/new-chat" class="mutual_form" id="home_form_v2">
+				<fieldset>
+					<div id="title_group_v2" class="form-group">
+						<label for="Title_v2">Title</label>
+						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Title must be unique and have between 5 and 200 characters" data-trigger="focus" type="text" name="title" id="Title_v2" placeholder="What's this chat about?" maxlength="200">
+					</div>
+					<div id="link_group_v2" class="form-group">
+						<label for="Link_v2">Link <small>(optional)</small></label>
+						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Not a valid url" data-trigger="focus" type="text" name="link" id="Link_v2" placeholder="Add a link (optional)">
+					</div>
+					<div id="tags_group_v2" class="form-group">
+						<label for="Tags_v2">Tags</label>
+						<input class="form-control tags_input" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Tags" data-placement="bottom" type="{% if curr_tag_id %}hidden{% else %}text{% endif %}" name="tags" id="Tags_v2" placeholder="Use spaces to separate tags (max: 5)" autocomplete="off" {% if curr_tag_id %}value="#{{curr_tag.name}}"{% endif %} maxlength="120">
+					</div>
+					<div id="description_group" class="form-group">
+						<label for="description">Description <small>(optional)</small></label>
+						<textarea name="description" class="form-control" id="description" rows="5"></textarea>
+					</div>
+					<div id="live_group" class="form-group">
+						<select class="form-control" name="live_status">
+							<option value="1">Live</option>
+							<option value="0">Static</option>
+						</select>
+					</div>
+				</fieldset>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" type="Submit">Create</button>
+				<button type="button" class="btn" data-dismiss="modal">Close</button>
+				</form>
+			</div>
+		</div>
+	</div>	
+</div>
+<div class="modal fade" id="tag_create_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="tag_create_modalLabel">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Create Community</h4>
+			</div>
+			<div class="modal-body">
+				<form method="post" action="{{site}}/tags/create-tag" class="mutual_form" id="tag_create_form">
+				<fieldset>
+					<div id="create_name_group" class="form-group">
+						<label for="name">Community Tag Name</label>
+						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Tag name must be unique" data-trigger="focus" type="text" name="tag_name" id="create_tag_name" placeholder="Tags are between 3 and 20 characters" maxlength="20">
+					</div>
+					<div id="create_desc_group" class="form-group">
+						<label for="description">Community Description (Doesn't show up in sidebar)</label>
+						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Description must be a max of 80 characters" data-trigger="focus" type="text" name="description" id="create_tag_desc" placeholder="Write a very short description of the content in your community" maxlength="80">
+					</div>
+					<div id="create_info_group" class="form-group">
+						<label for="info">Community Info (Sidebar Description, Posting Rules, etc)</label>
+						<textarea class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Info must be a max of 2000 characters" data-trigger="focus" name="info" id="create_tag_info" rows=10 maxlength="2000"></textarea>
+					</div>
+				</fieldset>
+				<small>You will be able to request mods after community creation by clicking the manage community button in the sidebar</small>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" type="Submit">Save</button>
+				<button type="button" class="btn" data-dismiss="modal">Close</button>
+				</form>
+			</div>
+		</div>
+	</div>	
+</div>
+<div class="modal fade" id="tag_edit_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="tag_edit_modalLabel">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Edit Community</h4>
+			</div>
+			<div class="modal-body">
+				<form method="post" action="{{site}}/tags/edit-tag" class="mutual_form" id="tag_edit_form">
+				<fieldset>
+					<div id="tag_id_group" class="form-group">
+						<input class="form-control" type="hidden" name="tag_id" id="input_tag_id" maxlength="20">
+					</div>
+					<div id="tag_desc_group" class="form-group">
+						<label for="description">Community Description (Doesn't show up in sidebar)</label>
+						<input class="form-control" type="text" name="description" id="edit_tag_desc" placeholder="Write a very short description of the content in your community" maxlength="80">
+					</div>
+					<div id="tag_info_group" class="form-group">
+						<label for="info">Community Info (Sidebar Description, Posting Rules, etc)</label>
+						<textarea class="form-control" name="info" id="edit_tag_info" rows=10 maxlength="2000"></textarea>
+					</div>
+					<div id="mod_info_group" class="form-group">
+						<label for="mods" style="width:100%;">Appoint mods (max:20) <small>*must be subscribed </small><small id="mod_request_sent" class="base_green_color pull-right" style="display:none;">Request Sent</small></label>
+						<input class="form-control" data-toggle="popover" data-user-id="" data-tag-id="{{curr_tag_id}}" data-tag-name="{{curr_tag.name}}" data-content="<div>Some content</div>" data-container="body" data-placement="auto top" type="text" name="mods" id="mod_input" placeholder="Use enter or mouse to select from list" autocomplete="off">
+					</div>
+				</fieldset>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" type="Submit">Save</button>
+				<button type="button" class="btn" data-dismiss="modal">Close</button>
+				</form>
+			</div>
+		</div>
+	</div>	
+</div>
+<div class="modal fade" id="remove_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="remove_modalLabel">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Remove Post?</h4>
+			</div>
+			<div class="modal-footer">
+				<a href="{{site}}/chat/soft-remove/" class="btn btn-primary" id="remove_chat_final" type="Submit">Yes</a>
+				<button type="button" class="btn" data-dismiss="modal">No</button>
+			</div>
+		</div>
+	</div>	
+</div>
+<div class="modal fade" id="register_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="register_modalLabel">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Register</h4>
+			</div>
+			<div class="modal-body">
+				<form method="post" action="{{site}}/profile/register" class="mutual_form" id="register_form">
+				<fieldset>
+					<div id="reg_user_group" class="form-group">
+						<label for="username">Preferred Username</label>
+						<input class="form-control" data-toggle="tooltip" data-placement="auto top" data-original-title="Username must be longer than 2 characters but less than 15" data-trigger="focus" data-container="body" type="text" name="username" id="reg_username" placeholder="Usernames are between 3 and 20 characters" maxlength="20">
+					</div>
+					<div id="reg_pass1_group" class="form-group">
+						<label for="pass">Password</label>
+						<input class="form-control" data-toggle="tooltip" data-placement="auto top" data-original-title="Password must be longer than 6 characters but less than 30" data-trigger="focus" data-container="body" type="password" name="pass" id="reg_pass" placeholder="Passwords are between 6 and 30 characters" maxlength="30">
+					</div>
+					<div id="pass2_group" class="form-group">
+						<label for="pass2">Confirm Password</label>
+						<input class="form-control" data-toggle="popover" data-original-title="Passwords don't match" data-container="body" data-placement="auto top" data-trigger="focus" type="password" name="pass2" id="pass2" placeholder="Enter your password again">
+					</div>
+					<div id="email_group" class="form-group">
+						<label for="pass2">Email <small>(optional)</small></label>
+						<input class="form-control" data-toggle="popover" data-original-title="Not a valid email" data-container="body" data-placement="auto top" data-trigger="focus" type="email" name="email" id="email" placeholder="Enter your email">
+					</div>
+				</fieldset>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" type="Submit">Register</button>
+				<button type="button" class="btn close_reg" data-dismiss="modal">Close</button>
+				</form>
+			</div>
+		</div>
+	</div>	
+</div>
+<div class="modal fade" id="edit_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="edit_modalLabel">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Edit Chat</h4>
+			</div>
+			<div class="modal-body">
+				<form method="post" action="{{site}}/chat/edit-chat" class="mutual_form" id="home_form_v3">
+				<fieldset>
+					<div id="id_group" class="form-group">
+						<input class="form-control" type="hidden" name="chat_id" id="form_chat_id">
+					</div>
+					<div id="title_group_v3" class="form-group">
+						<label for="Title_v3">Title</label>
+						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Titles must be unique and have between 5 and 200 characters" data-trigger="focus" type="text" name="title" id="Title_v3" placeholder="What's this chat about?" maxlength="200">
+					</div>
+					<div id="link_group_v3" class="form-group">
+						<label for="Link_v3">Link <small>(optional)</small></label>
+						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Not a valid url" data-trigger="focus" type="text" name="link" id="Link_v3" placeholder="Add a link (optional)">
+					</div>
+					<div id="tags_group_v3" class="form-group">
+						<label for="Tags_v3">Tags</label>
+						<input class="form-control tags_input" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Tags" data-placement="bottom" type="text" name="tags" id="Tags_v3" placeholder="Use spaces to separate tags (max: 5)" autocomplete="off" maxlength="120">
+					</div>
+					<div id="description_group" class="form-group">
+						<label for="description">Description <small>(optional)</small></label>
+						<textarea name="description" class="form-control" id="description_v3" rows="5" maxlength="2000"></textarea>
+					</div>
+					<div id="live_group" class="form-group">
+						<select class="form-control" name="live_status" id="live_status_v3">
+							<option value="1">Live</option>
+							<option value="0">Static</option>
+						</select>
+					</div>
+				</fieldset>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" type="Submit">Save</button>
+				<button type="button" class="btn" data-dismiss="modal">Close</button>
+				</form>
+			</div>
+		</div>
+	</div>	
+</div>
+{% endblock %}
+
 {% block welcome %}
 <div style="display:none;" id="sid" data-sid="{{sid}}"></div>
 <div style="margin-bottom:10px;">Welcome, 
@@ -126,20 +334,20 @@
 	<div id="user_id" style="display:none;">{{user.id}}</div>
 	<span id="user_tracker">{{user.name}}</span>
 {% endif %}
+{% if not user %}
+<span class="pull-right"><a href="#" data-toggle="modal" class="register_link" data-target="#register_modal">Register?</a></span>
+{% endif %}
 </div>
 {% if not logged_in %}
-	<form method="post" action="{{site}}/profile/new-user" class="mutual_form" id="login_form">
+	<form method="post" action="{{site}}/profile/login" class="mutual_form" id="login_form">
 	<fieldset>
 		<div id="user_group" class="form-group">
-			<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Username must be longer than 2 characters but less than 15" data-trigger="focus" data-container="body" type="text" name="username" id="username" placeholder="Enter your actual or preferred username">
+			<input class="form-control" data-toggle="tooltip" data-placement="auto top" data-original-title="Username or password incorrect" data-trigger="focus" data-container="body" type="text" name="username" id="username" placeholder="Enter your username">
 		</div>
 		<div id="pass1_group" class="form-group">
-			<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Password must be longer than 6 characters but less than 30" data-trigger="focus" data-container="body" type="password" name="pass" id="pass" placeholder="Enter your password">
+			<input class="form-control" type="password" name="pass" id="pass" placeholder="Enter your password">
 		</div>
-		<div id="pass2_group" class="form-group">
-			<input class="form-control" data-toggle="popover" data-original-title="Passwords don't match" data-container="body" data-placement="left" data-trigger="focus" type="password" name="pass2" id="pass2" placeholder="Enter password again to register">
-		</div>
-		<button class="btn btn-primary" type="Submit" style="width:100%;">Login/Register</button>
+		<button class="btn btn-primary" type="Submit" style="width:100%;">Login</button>
 	</fieldset>
 	</form>
 {% else %}
@@ -182,7 +390,7 @@
 		</button>
 		<button class="btn btn-sm col-xs-offset-1 col-xs-3 btn-default" id="global_requests" data-toggle="popover" data-content="
 			{% for request in user.globalRequests %}
-				<div class='request_text'>Hello</div>
+				{{request.message}}
 			{% else %}
 				<div class='request_text'>No global requests right now</div>
 			{% endfor %}" data-container="body" data-placement="bottom">
@@ -222,18 +430,45 @@
 			</a>
 		{% endif %}
 		{% if chat.live %}
-			<div class="pull-right big_green_ball chat_status_indicator" data-toggle="tooltip" data-original-title="Live Chat" data-container="body" data-placement="top"></div>
+			<div class="pull-right glyphicon glyphicon-play brighter_green_color chat_status_indicator" data-toggle="tooltip" data-original-title="Live Chat" data-container="body" data-placement="top"></div>
 		{% else %}
-			<div class="pull-right big_yellow_ball chat_status_indicator" data-toggle="tooltip" data-original-title="Static Chat" data-container="body" data-placement="top"></div>
+			<div class="pull-right glyphicon glyphicon-pause darker_yellow_color chat_status_indicator" data-toggle="tooltip" data-original-title="Static Chat" data-container="body" data-placement="top"></div>
 		{% endif %}
+		<div class="chat_tag_str" style="display:none;">#{{chat.tags|join(' #')}}</div>
+		<div class="chat_link_str" style="display:none;">{{chat.link}}</div>
+		<div class="chat_title_str" style="display:none;">{{chat.title}}</div>
+		<div class="chat_desc_str" style="display:none;">{{chat.raw_details}}</div>
+		<div class="chat_live_str" style="display:none;">{{chat.live}}</div>
+		<div class="chat_id_str" style="display:none;">{{chat.id}}</div>
 		<div class="chat_title">
-			{% if chat.link %}
-				<a href="{{chat.link}}" style="color:{% if chat.seen %}purple{% else %}#032f75{% endif %};">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+			{% if chat.seen %}
+				{% if chat.link %}
+					<a href="{{chat.link}}" style="color:purple;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+				{% else %}
+					<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:purple;">{{chat.title}}</a>
+				{% endif %}
 			{% else %}
-				<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="{% if chat.seen %}purple{% else %}color:#032f75{% endif %};">{{chat.title}}</a>
+				{% if chat.link %}
+					<a href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+				{% else %}
+					<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
+				{% endif %}
 			{% endif %}
-			{% if chat.admin % 16777259 == 0 %}
-				<div class="chat_info">Created by <a href="{{site}}/p/{{chat.admin}}" style="color:gray;"><strong>{{chat.admin}}</strong></a>, 
+			{% if chat.admin % 275604541 == 0 %}
+				<div class="chat_info">Created by 
+					<a href="{{site}}/p/{{chat.admin}}">
+						<strong>
+							{% if chat.author.is_admin or chat.author.is_mod %}
+								<span class="brighter_red_color">{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</span></strong></a>,
+							{% elseif curr_tag_id %}
+								{% if chat.admin_id == tag_admin.user_id or chat.admin_id in curr_tag.moderators %}
+									<span class="base_green_color">{{chat.admin}}{% if chat.admin_id == tag_admin.user_id %}[A]{% elseif chat.admin_id in curr_tag.moderators %}[M]{% endif %}</span></strong></a>,
+								{% else %}
+									{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</strong></a>,
+								{% endif %}
+							{% else %}
+								{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</strong></a>,
+							{% endif %}
 			{% else %}
 				<div class="chat_info">Created by <strong>{{chat.admin}}</strong>, 
 			{% endif %}
@@ -273,11 +508,27 @@
 						{% endif %}
 					{% endif %}
 				</span>
-				with Tags:
-				{% for tag in chat.tags %}
-					<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}">#{{tag.name}}</a> </span>
-				{% endfor %}
-				and <a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:gray;"><strong>{{chat.messages | length }} comments</strong></a>
+				{% if not curr_tag_id %}
+					with Tags:
+					{% for tag in chat.tags %}
+						<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}"><strong>#{{tag.name}}</strong></a> </span>
+					{% endfor %}
+					and
+				{% else %}
+					with
+				{% endif %}
+				<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:gray;"><strong>{{chat.messages | length }} comments</strong></a>
+			</div>
+			<div class="more_options">
+				{% if user.name == chat.admin %}
+					<span><a href="#" data-toggle="modal" class="edit_chat_link" data-target="edit_modal"><strong>Edit</strong></a></span>
+				{% endif %}
+				{% if user.name == chat.admin %}
+					<span><a href="#" data-toggle="modal" data-remove-link="{{site}}/chat/hard-remove/{{chat.id}}/{{curr_tag_id}}" class="remove_chat_link" data-target="remove_modal"><strong>Remove</strong></a></span>
+				{% elseif user.is_admin or ((user.tag_admin == curr_tag_id or user.tag_mod == curr_tag_id) and (curr_tag_id|length > 0)) %}
+					<span><a href="#" data-toggle="modal" data-remove-link="{{site}}/chat/soft-remove/{{chat.id}}/{{curr_tag_id}}" class="remove_chat_link" data-target="remove_modal"><strong>Remove</strong></a></span>
+				{% endif %}
+				<span><a href="{{site}}/chat/static/{{chat.id}}"><strong>Static</strong></a></span>
 			</div>
 		</div>
 	</div>

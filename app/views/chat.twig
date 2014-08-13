@@ -55,7 +55,25 @@
 </div>
 <div class="chat_title_cont">
 <div class="chat_id" id="{{chat.id}}">{{chat.title}}</div>
-<div style="color:#777;font-size:12px;"><strong>Created by </strong> <span id="chat_admin">{{chat.admin}}</span>, 
+<div style="color:#777;font-size:12px;">
+	{% if chat.admin % 275604541 == 0 %}
+		<div class="chat_info">Created by 
+			<a href="{{site}}/p/{{chat.admin}}">
+				<strong>
+					{% if chat.author.is_admin or chat.author.is_mod %}
+						<span class="brighter_red_color">{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</span></strong></a>,
+					{% elseif curr_tag_id %}
+						{% if chat.admin_id == tag_admin.user_id or chat.admin_id in curr_tag.moderators %}
+							<span class="base_green_color">{{chat.admin}}{% if chat.admin_id == tag_admin.user_id %}[A]{% elseif chat.admin_id in curr_tag.moderators %}[M]{% endif %}</span></strong></a>,
+						{% else %}
+							{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</strong></a>,
+						{% endif %}
+					{% else %}
+						{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</strong></a>,
+					{% endif %}
+	{% else %}
+		<div class="chat_info">Created by <strong>{{chat.admin}}</strong>, 
+	{% endif %}
 	{% set time_passed = server_time|date('U') - chat.created_at|date('U') %}
 	<span class="chat_time" id="{{chat.created_at}}">
 		{% if time_passed < 45 %}
@@ -94,7 +112,7 @@
 	</span>
 	with Tags:
 	{% for tag in chat.tags %}
-		<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}">#{{tag.name}}</a> </span>
+		<span><a href="{{site}}/t/{{tag.name}}"><strong>#{{tag.name}}</strong></a> </span>
 	{% endfor %}
 </div>
 </div>
@@ -189,7 +207,7 @@
 									<span class="caret caret_tooltip" id="caret_{{message.id}}" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span>
 								</div>
 								{% if 'This message has been deleted' in message.message == 0 and (serial == message.author or user.name == message.author) %}
-									<span id="message.id" class="glyphicon glyphicon-remove mssg_icon" data-toggle="tooltip" title="Delete post" data-container="body" data-placement="top"></span>	
+									<span id="remove_{{message.id}}" class="glyphicon glyphicon-remove mssg_icon" data-toggle="tooltip" data-original-title="Delete post" data-container="body" data-placement="top"></span>	
 								{% endif %}  
 								{% if message.author == chat.admin %}
 									<span class="glyphicon glyphicon-star"></span>	

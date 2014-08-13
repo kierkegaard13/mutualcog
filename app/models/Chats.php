@@ -5,12 +5,20 @@ class Chats extends EloquentBridge
 	protected $table = "chats";
 	public $timestamps = true;
 
+	public function author(){
+		if(preg_match('/[a-zA-Z]/',$this->admin)){
+			return $this->belongsTo('User','admin_id');
+		}else{
+			return $this->belongsTo('Serials','admin_id');
+		}
+	}
+
 	public function messages(){
-		return $this->hasMany('Messages','chat_id')->wherereadable('1')->orderBy('path');
+		return $this->hasMany('Messages','chat_id')->wherereadable('1')->orderBy('path')->take(1000);
 	}
 
 	public function messagesOnly(){
-		return $this->hasMany('Messages','chat_id')->wherereadable('1')->whereresponseto('0')->orderBy('path');
+		return $this->hasMany('Messages','chat_id')->wherereadable('1')->whereresponseto('0')->orderBy('path')->take(1000);
 	}
 
 	public function messagesPaginate(){

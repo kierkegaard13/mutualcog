@@ -28,6 +28,8 @@ class Home extends BaseController {
 		if(Auth::check()){
 			Auth::user()->page = 'home';
 			Auth::user()->chat_id = 0;
+			Auth::user()->tag_admin = 0;
+			Auth::user()->tag_mod = 0;
 			Auth::user()->save();
 			foreach(Auth::user()->upvotedChats() as $upvote){
 				$upvoted[] = $upvote->chat_id;
@@ -39,6 +41,7 @@ class Home extends BaseController {
 		Session::put('curr_page',URL::full());
 		$view['home_active'] = 'highlight_light_blue';
 		$view['sid'] = Session::getId();
+		$view['curr_tag_id'] = '';
 		$view['upvoted'] = $upvoted;
 		$view['downvoted'] = $downvoted;
 		$view['tags'] = $tags;
