@@ -73,9 +73,9 @@ function processMessage(message){
 		message = message.replace(/^\s+|\s+$/g,'');
 		message = message.replace(re1,'');
 		message = message.replace(re2,'');
-		message = message.replace(p_reg,"<a class='chat_link' href='\/\/mutualcog.com/p/$1'>\/p\/$1</a>$2");
+		message = message.replace(p_reg,"<a class='chat_link' href='\/\/mutualcog.com/u/$1'>\/p\/$1</a>$2");
 		message = message.replace(t_reg,"<a class='chat_link' href='\/\/mutualcog.com/t/$1'>\/t\/$1</a>$2");
-		message = message.replace(at_reg,"<a class='chat_link' href='\/\/mutualcog.com/p/$1'>@$1</a>$2");
+		message = message.replace(at_reg,"<a class='chat_link' href='\/\/mutualcog.com/u/$1'>@$1</a>$2");
 		message = message.replace(hash_reg,"<a class='chat_link' href='\/\/mutualcog.com/t/$1'>#$1</a>$2");
 		message = message.replace(url_reg,"$1<a class='chat_link' href='\/\/$3\.$4$5'>$3\.$4$5</a>");
 		message = message.replace(url_reg2,"<a class='chat_link' href='\/\/$2\.$3$4'>$2\.$3$4</a>");
@@ -255,7 +255,7 @@ io.sockets.on('connection', function(client) {
 	});
 
 	client.on('send_pm',function(pm_info,fn){
-		if(client.authorized){
+		if(client.authorized && pm_info.length < 10000){
 			pm_info.message = processMessage(pm_info.message);
 			var mssg_id = 0;
 			/* Figure out if recipient has disconnected */
@@ -350,12 +350,41 @@ io.sockets.on('connection', function(client) {
 		}
 	});
 
-	client.on('request_friend',function(info){
-		var request_info = info;
-		conn.insert('requests',{type:2,user_id:info.user_id,sender_id:info.sender_id,sender:info.sender,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
-			if(err)console.log(err);
-			io.sockets.in('user_' + request_info.user_id).emit('displayFriendRequests',{id:info.insert_id,sender:request_info.sender,sender_id:request_info.sender_id});
-		});
+	client.on('request_friend',function(info){  //type: 2 is friend, 1 is mssg, 0 is global
+		if(client.authorized){
+			var request_info = info;
+			conn.insert('requests',{type:2,user_id:info.user_id,sender_id:info.sender_id,sender:info.sender,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
+				if(err)console.log(err);
+				io.sockets.in('user_' + request_info.user_id).emit('displayFriendRequests',{id:info.insertId,sender:client.user,sender_id:client.user_id});
+			});
+		}
+	});
+
+	client.on('request_mod',function(info,fn){
+		if(client.authorized){
+			var request_info = info;
+			conn.where({user_id:client.user_id,tag_id:info.tag_id}).get('users_to_tags',function(err,rows){
+				if(err)console.log(err);
+				if(rows[0].is_admin){
+					conn.where({type:0,global_type:'mod',user_id:info.user_id,sender_id:client.user_id}).get('requests',function(err,rows){
+						if(err)console.log(err);
+						if(rows.length == 0){
+							conn.insert('requests',{type:0,global_type:'mod',user_id:info.user_id,sender_id:client.user_id,sender:client.user,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
+								if(err)console.log(err);
+								var message = "<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/u/" + request_info.sender + "'>" + request_info.sender + "</a> has requested you as a mod for <a class='chat_link' href='//mutualcog.com/t/" + request_info.tag_name + "'>/t/"  + request_info.tag_name + "</a> </div> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/tags/accept-mod/" + info.insertId + "/" + request_info.tag_id + "'>Accept</a> / <a class='chat_link' href='//mutualcog.com/tags/decline-mod/" + info.insertId + "/" + request_info.tag_id + "'>Decline</a> </div> </div>";
+								var request_id = info.insertId;
+								conn.where({id:request_id}).update('requests',{message:message},function(err,info){
+									console.log(info);
+									if(err)console.log(err);
+									io.sockets.in('user_' + request_info.user_id).emit('displayGlobalRequests',{id:request_id,sender:client.user,sender_id:client.user_id,tag_name:request_info.tag_name,tag_id:request_info.tag_id,type:'mod'});
+									fn();
+								});
+							});
+						}
+					});
+				}
+			});
+		}
 	});
 
 	client.on('pause_all',function(){
@@ -450,7 +479,7 @@ io.sockets.on('connection', function(client) {
 
 	// Success!  Now listen to messages to be received
 	client.on('message_sent',function(event){ 
-		if(io.sockets.clients(client.room)[client.arr_index].live && !client.banned && event.message.replace(/^\s+|\s+$/g,'') != ''){
+		if(io.sockets.clients(client.room)[client.arr_index].live && !client.banned && event.message.replace(/^\s+|\s+$/g,'') != '' && event.message.length < 2500){
 			event.message = processMessage(event.message);
 			conn.insert('messages',{message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:event.responseto,level:event.level,parent:event.parent,author:client.user,serial:client.serial},function(err,info){
 				if(err) console.log(err);
