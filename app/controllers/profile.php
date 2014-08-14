@@ -160,6 +160,23 @@ class Profile extends BaseController {
 		return 0;
 	}
 
+	public function getValidateEmail(){
+		$email = htmlentities(Input::get('email'));
+		$validator = Validator::make(
+				array(
+					'email' => $email
+				     ),
+				array(
+					'email' => 'email'
+				     )
+				);
+		if($validator->fails()){
+			return 0;
+		}else{
+			return 1;
+		}
+	}
+
 	public function getLogout(){
 		$node = new NodeAuth();
 		$node->user_id = Auth::user()->id;

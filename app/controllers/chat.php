@@ -54,7 +54,7 @@ class Chat extends BaseController {
 							$interaction_user->bond = $interaction_user->bond + 1;
 							$interaction_user->save();
 							$interaction_friend = InteractionUsers::whereentity_id(Auth::user()->id)->whereuser_id($mem->member_id)->wheretype(0)->first();
-							$interaction_friend->bond = $interaction->bond + 1;
+							$interaction_friend->bond = $interaction_friend->bond + 1;
 							$interaction_friend->save();
 						}else{
 							$inter_user = new InteractionUsers();

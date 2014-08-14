@@ -2,7 +2,7 @@ module = function(){
 	var focused = live = scroll_mod_active = 1;
 	var pm_info = '';
 	var pm_scroll_inactive = {};
-	var user_validated = pass1_validated = pass2_validated = title_blinking = typ_cnt = connected = recent = banned = stop_scroll = scroll_button_clicked = scroll_top = 0;
+	var title_blinking = typ_cnt = connected = recent = banned = stop_scroll = scroll_button_clicked = scroll_top = 0;
 	var clicked_on = -1;
 	var chat_id = $('.chat_id').attr('id');
 	if($('#up_arr').length){
@@ -26,8 +26,13 @@ module = function(){
 	var serial_tracker = $('#serial_tracker').text();
 	var user_id = $('#user_id').text();
 	var user_tracker = $('#user_tracker').text();
+	var max_user_length = 20;
+	var max_static_length = 10000;
+	var max_chat_mssg_length = 2500;
+	var max_description_length = 100;
+	var max_info_length = 10000;
 
-	return {pm_scroll_inactive:pm_scroll_inactive,user_validated:user_validated,pass1_validated:pass1_validated,pass2_validated:pass2_validated,connected:connected,recent:recent,typ_cnt:typ_cnt,pm_info:pm_info,focused:focused,live:live,title_blinking:title_blinking,banned:banned,stop_scroll:stop_scroll,scroll_mod_active:scroll_mod_active,scroll_button_clicked:scroll_button_clicked,scroll_top:scroll_top,clicked_on:clicked_on,chat_id:chat_id,upvoted:upvoted,downvoted:downvoted,socket:socket,color_arr:color_arr,mems:mems,mods:mods,admin:admin,notifications_top_positions:notifications_top_positions,notifications_bottom_positions:notifications_bottom_positions,notifications_top_ids:notifications_top_ids,notifications_bottom_ids:notifications_bottom_ids,serial_id:serial_id,serial_tracker:serial_tracker,user_id:user_id,user_tracker:user_tracker};
+	return {max_user_length:max_user_length,max_static_length:max_static_length,max_chat_mssg_length:max_chat_mssg_length,max_description_length:max_description_length,max_info_length:max_info_length,pm_scroll_inactive:pm_scroll_inactive,connected:connected,recent:recent,typ_cnt:typ_cnt,pm_info:pm_info,focused:focused,live:live,title_blinking:title_blinking,banned:banned,stop_scroll:stop_scroll,scroll_mod_active:scroll_mod_active,scroll_button_clicked:scroll_button_clicked,scroll_top:scroll_top,clicked_on:clicked_on,chat_id:chat_id,upvoted:upvoted,downvoted:downvoted,socket:socket,color_arr:color_arr,mems:mems,mods:mods,admin:admin,notifications_top_positions:notifications_top_positions,notifications_bottom_positions:notifications_bottom_positions,notifications_top_ids:notifications_top_ids,notifications_bottom_ids:notifications_bottom_ids,serial_id:serial_id,serial_tracker:serial_tracker,user_id:user_id,user_tracker:user_tracker};
 }();
 
 updateChatTimes = function(){
@@ -199,37 +204,6 @@ $(document).ready(function(){
 	});
 });
 
-function validateUser(username){
-	if(username.length < 3 || username.length > 20){
-		$('#user_group').attr('class','form-group has-error');
-		$('#username').attr('data-original-title','Username must be longer than 2 characters but less than 15');
-		$('#username').tooltip('show');
-	}
-	var response = $.ajax({
-		type:'GET',
-		data:{username:username},
-		url:'//mutualcog.com/profile/validate-username',
-		async:false,
-	}).responseText;
-	if(response == 2 && $('#pass2').val() != ""){
-		$('#user_group').attr('class','form-group has-error');
-		$('#username').attr('data-original-title','That username already exists');
-		$('#username').tooltip('show');
-		module.user_validated = 0;
-	}else if(response == 3){
-		$('#user_group').attr('class','form-group has-error');
-		$('#username').attr('data-original-title','Your username must contain at least one character');
-		$('#username').tooltip('show');
-		module.user_validated = 0;
-	}else{
-		if($('#pass2').val() != ""){
-			$('#user_group').attr('class','form-group');
-			$('#username').tooltip('destroy');
-		}
-		module.user_validated = 1;
-	}
-}
-
 function validateLogin(username,password){
 	var response = $.ajax({
 		type:'GET',
@@ -238,102 +212,153 @@ function validateLogin(username,password){
 		async:false,
 	}).responseText;
 	if(response == 1){
-		module.pass1_validated = 1;
 		$('#user_group').attr('class','form-group');
 		$('#pass1_group').attr('class','form-group');
 		$('#username').tooltip('destroy');
+		return 1;
 	}else{
-		module.pass1_validated = 0;
 		$('#user_group').attr('class','form-group has-error');
 		$('#pass1_group').attr('class','form-group has-error');
 		$('#username').attr('data-original-title','Your username or password is incorrect');
 		$('#username').tooltip('show');
+		return 0;
+	}
+}
+
+$('#login_form').submit(function(){
+	var username = $('#username').val();
+	var pass = $('#pass').val();
+	if(username.length > 0 && pass.length > 0){
+		var res = validateLogin(username,pass);
+		if(!res){
+			return false;
+		}
+	}
+	return true;
+});
+
+function validateUser(username){
+	if(username.length < 3 || username.length > module.max_user_length){
+		$('#reg_user_group').attr('class','form-group has-error');
+		$('#reg_username').attr('data-original-title','Username must be between 3 and ' + module.max_user_length + ' characters');
+		$('#reg_username').tooltip('show');
+		return 0;
+	}
+	var response = $.ajax({
+		type:'GET',
+		data:{username:username},
+		url:'//mutualcog.com/profile/validate-username',
+		async:false,
+	}).responseText;
+	if(response == 2){
+		$('#reg_user_group').attr('class','form-group has-error');
+		$('#reg_username').attr('data-original-title','That username already exists');
+		$('#reg_username').tooltip('show');
+		return 0;
+	}else if(response == 3){
+		$('#reg_user_group').attr('class','form-group has-error');
+		$('#reg_username').attr('data-original-title','Your username must contain at least one character');
+		$('#reg_username').tooltip('show');
+		return 0;
+	}else{
+		$('#reg_user_group').attr('class','form-group');
+		$('#reg_username').tooltip('destroy');
+		return 1;
 	}
 }
 
 function validatePasswords(pass1,pass2){
 	if(pass1 != pass2 && pass2 != ""){
-		$('#pass1_group').attr('class','form-group has-error');
+		$('#reg_pass1_group').attr('class','form-group has-error');
 		$('#pass2_group').attr('class','form-group has-error');
 		$('#pass2').tooltip('show');
-		module.pass2_validated = 0;
-		module.pass1_validated = 0;
+		return 0;
 	}else if((pass1.length < 6 || pass1.length > 30) && pass2 != ""){
-		$('#pass1_group').attr('class','form-group has-error');
+		$('#reg_pass1_group').attr('class','form-group has-error');
 		$('#pass2_group').attr('class','form-group has-error');
 		$('#pass').tooltip('show');
-		module.pass2_validated = 0;
-		module.pass1_validated = 0;
+		return 0;
 	}else{
-		$('#pass1_group').attr('class','form-group');
+		$('#reg_pass1_group').attr('class','form-group');
 		$('#pass2_group').attr('class','form-group');
 		$('#pass2').tooltip('destroy');
-		$('#pass').tooltip('destroy');
-		module.pass2_validated = 1;
-		module.pass1_validated = 1;
+		$('#reg_pass').tooltip('destroy');
+		return 1;
 	}
 }
 
-$('#username').blur(function(){
-	var username = $('#username').val();
-	var pass = $('#pass').val();
+function validateEmail(email){
+	var response = $.ajax({
+		type:'GET',
+		data:{email:email},
+		url:'//mutualcog.com/profile/validate-email',
+		async:false,
+	}).responseText;
+	if(response == 0){
+		$('#email_group').attr('class','form-group has-error');
+		$('#email').tooltip('show');
+		return 0;
+	}else{
+		$('#email_group').attr('class','form-group');
+		$('#email').tooltip('destroy');
+		return 1;
+	}
+}
+
+$('#reg_username').blur(function(){
+	var username = $('#reg_username').val();
 	if(username.length > 0){
-		validateUser(username);
+		var res = validateUser(username);
 	}
 });
 
 $('#pass2').blur(function(){
-	var username = $('#username').val();
-	var pass = $('#pass').val();
+	var pass = $('#reg_pass').val();
 	var pass2 = $('#pass2').val();
 	if(pass.length > 0 && pass2.length > 0){
-		validatePasswords(pass,pass2);
-	}
-	if(username.length > 0){
-		validateUser(username);
+		var res = validatePasswords(pass,pass2);
 	}
 });
 
-$('#login_form').submit(function(){
-	var submit = 1;
-	var username = $('#username').val();
-	var pass = $('#pass').val();
+$('#register_form').submit(function(){
+	var username = $('#reg_username').val();
+	var pass = $('#reg_pass').val();
 	var pass2 = $('#pass2').val();
-	if(!module.user_validated){
-		if(username.length > 0){
-			validateUser(username);
+	var email = $('#email').val();
+	if(username.length > 0 && pass.length > 0 && pass2.length > 0){
+		var res = validateUser(username);
+		if(!res){
+			return false;
 		}
-		if(!module.user_validated){
-			submit = 0;
+		var res = validatePasswords(pass,pass2);
+		if(!res){
+			return false;
 		}
-	}
-	if(!module.pass1_validated){
-		if(pass2 == ""){
-			if(username.length > 0 && pass.length > 0){
-				validateLogin(username,pass);
+		if(email.length > 0){
+			var res = validateEmail(email);
+			if(!res){
+				return false;
 			}
-			if(!module.pass1_validated){
-				submit = 0;
-			}
-		}else{
-			submit = 0;
 		}
-	}
-	if(pass2 != "" && !module.pass2_validated){
-		if(pass.length > 0 && pass2.length > 0){
-			validatePasswords(pass,pass2);
-		}
-		if(!module.pass2_validated){
-			submit = 0;
-		}
-	}
-	if(submit){
-		return true;
 	}else{
-		console.log(module.user_validated);
-		console.log(module.pass1_validated);
+		if(username.length == 0){
+			$('#reg_user_group').attr('class','form-group has-error');
+		}
+		if(pass.length == 0){
+			$('#reg_pass1_group').attr('class','form-group has-error');
+		}
+		if(pass2.length == 0){
+			$('#pass2_group').attr('class','form-group has-error');
+		}
+		$('#reg_username').attr('data-original-title','Please enter both a username and a confirmed password');
+		$('#reg_username').tooltip('show');
 		return false;
-	} 
+	}
+	return true;
+});
+
+$('.modal').on('hide.bs.modal',function(){
+	$('.form-control').tooltip('destroy');
 });
 
 $('#tag_dropdown').on('click',function(e){
