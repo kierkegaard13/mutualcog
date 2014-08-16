@@ -103,7 +103,7 @@ class TagsController extends BaseController {
 		$tag_id = htmlentities(Input::get('tag_id'));
 		$res_arr = array();
 		$mod = new User();
-		$mod = $mod->select('users.*')->where('name','LIKE','%' . $mod_input . '%')->join('users_to_tags','users_to_tags.user_id','=','users.id')->where('users_to_tags.tag_id',$tag_id)->take(5)->get();
+		$mod = $mod->select('users.*')->where('name','LIKE','%' . $mod_input . '%')->join('users_to_tags','users_to_tags.user_id','=','users.id')->where('users_to_tags.tag_id',$tag_id)->where('users_to_tags.is_admin','0')->take(5)->get();
 		foreach($mod as $m){
 			$res_arr[] = array('id' => $m->id,'name' => $m->name);
 		}

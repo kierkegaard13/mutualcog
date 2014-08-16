@@ -134,7 +134,9 @@
 						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Not a valid url" data-trigger="focus" type="text" name="link" id="Link_v2" placeholder="Add a link (optional)">
 					</div>
 					<div id="tags_group_v2" class="form-group">
-						<label for="Tags_v2">Tags</label>
+						{% if not curr_tag_id %}
+							<label for="Tags_v2">Tags</label>
+						{% endif %}
 						<input class="form-control tags_input" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Tags" data-placement="bottom" type="{% if curr_tag_id %}hidden{% else %}text{% endif %}" name="tags" id="Tags_v2" placeholder="Use spaces to separate tags (max: 5)" autocomplete="off" {% if curr_tag_id %}value="#{{curr_tag.name}}"{% endif %} maxlength="120">
 					</div>
 					<div id="description_group" class="form-group">

@@ -1,4 +1,5 @@
 var selected_tag = -1;
+var selected_mod = -1;
 
 $(document).ready(function(){
 	$('.chat_status_indicator').tooltip();
@@ -484,6 +485,123 @@ $('.tags_input').on('keyup',function(e){
 		}else{
 			$(this).popover('destroy');
 			selected_tag = -1;
+		}
+	}
+});
+
+$('#mod_input').on('keydown',function(e){
+	if(e.keyCode == 13){  /*enter key*/
+		if(selected_mod != -1){
+			var request_info = {tag_id:$(this).attr('data-tag-id'),tag_name:$(this).attr('data-tag-name'),user_id:$('.suggested_mods').eq(selected_mod).attr('id')};
+			module.socket.emit('request_mod',request_info,function(){
+				$('#mod_request_sent').show('fade','slow',function(){
+					window.setTimeout(function(){
+						$('#mod_request_sent').hide('fade','slow');	
+					},1500);	
+				});
+			});
+			$(this).popover('destroy');
+			$(this).focus();
+			selected_mod = -1;
+		}
+		return false;
+	}else if(e.keyCode == 38){  /*up arrow*/
+		if($('.popover').length != 0){
+			if(selected_mod != 0){
+				selected_mod += 1;
+				$('.suggested_mods').css('color','');
+				$('.suggested_mods').eq(selected_mod).css('color','#57bf4b');
+			}
+		}
+		return false;
+	}else if(e.keyCode == 40){  /*down arrow*/
+		if($('.popover').length != 0){
+			if(selected_mod != $('.suggested_mods').length - 1){
+				selected_mod -= 1;
+				$('.suggested_mods').css('color','');
+				$('.suggested_mods').eq(selected_mod).css('color','#57bf4b');
+			}
+		}
+		return false;
+	}
+});
+
+$('#mod_input').on('keyup',function(e){
+	if(e.keyCode == 32 || e.keyCode == 13){  /*space bar*/
+		return false;
+	}else if(e.keyCode == 38 || e.keyCode == 40){  /*up arrow or down arrow*/
+		return false;
+	}else{
+		var mod = $(this).val();
+		var tag_id = $(this).attr('data-tag-id');
+		if(mod.length > 2){
+			var mod_input = $(this);
+			$(this).on('blur',function(){
+				if($('.popover').length){
+					$(this).popover('hide');
+				}
+			});
+			$.ajax({
+				type:'GET',
+				data: {mod:mod,tag_id:tag_id},
+				url:'//mutualcog.com/tags/similar-user',
+				success:function(hresp){
+					var content = '';
+					$.each(hresp,function(index,value){
+						content += '<div class="suggested_mods" id="' + value.id + '">' + value.name + '</div>';
+					});
+					if($('.popover').length == 0){
+						if(content){
+							mod_input.popover({html:true});
+							mod_input.attr('data-content',content);
+							mod_input.popover('show');
+							$('.suggested_mods').click(function(){
+								var request_info = {tag_id:mod_input.attr('data-tag-id'),tag_name:mod_input.attr('data-tag-name'),user_id:$('.suggested_mods').eq(selected_mod).attr('id')};
+								module.socket.emit('request_mod',request_info,function(){
+									$('#mod_request_sent').show('fade','slow',function(){
+										window.setTimeout(function(){
+											$('#mod_request_sent').hide('fade','slow');	
+										},1500);	
+									});
+								});
+								mod_input.focus();
+								mod_input.popover('destroy');
+								selected_mod = -1;
+							});
+							selected_mod = -1;
+						}
+					}else{
+						if(content){
+							if($('.popover-content').html() != content){
+								$('.popover-content').html(content);
+								selected_mod = -1;
+								$('.suggested_mods').off('click');
+								$('.suggested_mods').click(function(){
+									var request_info = {tag_id:mod_input.attr('data-tag-id'),tag_name:mod_input.attr('data-tag-name'),user_id:$('.suggested_mods').eq(selected_mod).attr('id')};
+									module.socket.emit('request_mod',request_info,function(){
+										$('#mod_request_sent').show('fade','slow',function(){
+											window.setTimeout(function(){
+												$('#mod_request_sent').hide('fade','slow');	
+											},1500);	
+										});
+									});
+									mod_input.focus();
+									mod_input.popover('destroy');
+									selected_mod = -1;
+								});
+							}
+						}else{
+							mod_input.popover('destroy');
+							selected_mod = -1;
+						}
+					}
+				},
+				error:function(){
+				}
+			});
+		}else{
+			$(this).popover('destroy');
+			selected_mod = -1;
 		}
 	}
 });

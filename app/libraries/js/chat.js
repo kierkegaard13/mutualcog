@@ -681,7 +681,7 @@ module.socket.on('publishMessage',function(chat_info){
 	}
 	if(!module.stop_scroll){
 		module.scroll_mod_active = 0;
-		$('.chat_main').mCustomScrollbar('scrollTo','bottom');	
+		$('.chat_main').mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
 		window.setTimeout(function(){
 			module.scroll_mod_active = 1;
 		},100);

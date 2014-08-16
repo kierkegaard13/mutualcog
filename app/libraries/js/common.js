@@ -412,7 +412,7 @@ $('#search_input').on('keyup',function(e){
 			$.ajax({
 				type:'GET',
 				data: {tag:tag},
-				url:'//mutualcog.com/tags/similar-tag',
+				url:'//mutualcog.com/tags/similar-entity',
 				success:function(hresp){
 					var content = '';
 					$.each(hresp,function(index,value){
