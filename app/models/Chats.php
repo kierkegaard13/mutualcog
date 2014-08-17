@@ -22,7 +22,7 @@ class Chats extends EloquentBridge
 	}
 
 	public function messagesPaginate(){
-		return $this->hasMany('Messages','chat_id')->wherereadable('1')->whereresponseto('0')->with('descendants')->orderBy('path')->paginate(50);
+		return $this->hasMany('Messages','chat_id')->wherereadable('1')->whereresponseto('0')->with('descendants')->orderBy('path')->paginate(25);
 	}
 
 	public function tags(){

@@ -171,6 +171,7 @@ $(document).ready(function(){
 				$('#stop_scroll').attr('data-original-title','Stop scrollbar');
 			}
 			module.scroll_mod_active = 1;
+			module.scroll_button_clicked = 0;
 			module.stop_scroll = 0;
 		}
 		$('#message').attr('class','global');
@@ -365,6 +366,7 @@ setClicked = function(e){
 		$('#stop_scroll').attr('data-original-title','Resume scrolling');
 	}
 	module.scroll_mod_active = 0;
+	module.scroll_button_clicked = 1;
 	module.stop_scroll = 1;
 	if($('#message').text() != ""){
 		$('#message').text("Press enter to respond to " + $(this).find('.mssg_op').attr('data-author') + "\'s message");

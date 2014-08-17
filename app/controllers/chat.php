@@ -224,7 +224,7 @@ class Chat extends BaseController {
 		$view['mods'] = $mods;
 		if($mssg_id){
 			$message = Messages::find($mssg_id);
-			$view['messages'] = Messages::where('path','LIKE',"$message->path%")->where('h_level','<=','11')->where('level','<=','13')->orderBy('path')->get();
+			$view['messages'] = Messages::where('path','LIKE',"$message->path%")->where('h_level','<=','6')->where('level','<=','2')->orderBy('path')->get();
 			$view['recursive'] = 0;
 		}else{
 			$view['messages'] = $chat->messagesPaginate();

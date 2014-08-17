@@ -174,17 +174,12 @@
 	<div class="content_right">
 	<div class="content_left">
 		<div class="chat_content">
-		{% set load_more = 0 %}
 		{% for message in messages %}
-			{% if recursive or message.level == init_level %}
-				{% set load_more = 0 %}
-			{% endif %}
 			{% if loop.first %}
 				{% set init_level = message.level %}
 			{% endif %}
 			{% if message.h_level <= init_level + 11 - message.level %}
 			{% if not loop.first and prev_level >= message.level %}
-				{% set load_more = 0 %}
 				{% for i in message.level..prev_level %}
 					</div>
 					</div>
@@ -273,10 +268,25 @@
 				</div>
 		{% if recursive %}
 		{% for response in message.descendants %}
-			{% if response.h_level <= init_level + 11 - response.level %}
-			{% if not loop.first and prev_level >= response.level %}
-				{% set load_more = 0 %}
+			{% if not loop.first and prev_level == response.level %}
 				{% for i in response.level..prev_level %}
+					{% if prev_mssg.responses > 6 or (prev_mssg.level == 2 and prev_mssg.responses > 0) %} <!-- closes previous message -->
+						Hello
+					{% endif %}
+					</div>
+					</div>
+				{% endfor %}
+			{% elseif not loop.first and prev_level > response.level %}
+				{% for i in response.level..prev_level %}
+					{% if loop.last %}
+						{% if prev_mssg.mssgParent.responses > 6 %} <!-- closes previous message -->
+							Hello
+						{% endif %}
+					{% else %}
+						{% if prev_mssg.level == 2 and prev_mssg.responses > 0 %} <!-- closes previous message -->
+							Hello
+						{% endif %}
+					{% endif %}
 					</div>
 					</div>
 				{% endfor %}
@@ -359,36 +369,31 @@
 					</div>
 				</div>
 			{% set prev_level = response.level %}
-			{% else %}
-				<!--{% if load_more == 0 %}
-					<div class="response_to_{{response.responseto}} mssg_cont level_{{response.level}} parent_{{response.parent}} {% if response.level > init_level + 3 %}hidden-xs {% endif %}{% if response.level > init_level + 5 %}hidden-sm {% endif %}{% if response.level > init_level + 8 %}hidden-md {% endif %}{% if response.level > init_level + 12 %}hidden-lg {% endif %}pad_l_20" id="mssg_cont_{{response.id}}">
-						Load more
-					</div>
-				{% endif %}-->
-				{% set load_more = load_more + 1 %}
-			{% endif %}
 			{% if loop.last %}
 				{% if response.level > 1 %}
 					{% for i in 1..response.level %}
+						{% if response.responses > 1 %}
+							Hello
+						{% endif %}
 						</div>
 						</div>
 					{% endfor %}
 				{% else %}
+					{% if response.responses > 6 %}
+						Hello
+					{% endif %}
 					</div>
 					</div>
 				{% endif %}
 			{% endif %}
+			{% set prev_mssg = response %}
 		{% else %}
 		{% endfor %}
 		{% endif %}
+		{% if message.responses > 6 %}
+			Hello
+		{% endif %}
 			{% set prev_level = message.level %}
-			{% else %}
-				<!--{% if load_more == 0 %}
-					<div class="response_to_{{message.responseto}} mssg_cont level_{{message.level}} parent_{{message.parent}} {% if message.level > init_level + 3 %}hidden-xs {% endif %}{% if message.level > init_level + 5 %}hidden-sm {% endif %}{% if message.level > init_level + 8 %}hidden-md {% endif %}{% if message.level > init_level + 12 %}hidden-lg {% endif %}pad_l_20" id="mssg_cont_{{message.id}}">
-						Load more
-					</div>
-				{% endif %}-->
-				{% set load_more = load_more + 1 %}
 			{% endif %}
 			{% if loop.last %}
 				{% if message.level > init_level %}
