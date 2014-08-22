@@ -43,6 +43,7 @@ class BaseController extends Controller {
 		View::share('max_description_length',$this->max_description_length);
 		View::share('max_info_length',$this->max_info_length);
 		View::share('max_user_length',$this->max_user_length);
+		View::share('color_arr',array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#000'));
 	}
 
 	public function parseText($text){

@@ -129,7 +129,6 @@ class Chat extends BaseController {
 			$mods[] = $mod->user;
 		}
 		Session::put('curr_page',URL::full());
-		$view['color_arr'] = array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#000');
 		$view['tags'] = $tags;
 		$view['curr_time'] = date('Y:m:d:H:i');
 		$view['upvoted'] = $upvoted;
@@ -213,7 +212,6 @@ class Chat extends BaseController {
 			$mods[] = $mod->user;
 		}
 		Session::put('curr_page',URL::full());
-		$view['color_arr'] = array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#000');
 		$view['tags'] = $tags;
 		$view['curr_time'] = date('Y:m:d:H:i');
 		$view['upvoted'] = $upvoted;
@@ -224,13 +222,26 @@ class Chat extends BaseController {
 		$view['mods'] = $mods;
 		if($mssg_id){
 			$message = Messages::find($mssg_id);
-			$view['messages'] = Messages::where('path','LIKE',"$message->path%")->where('h_level','<=','6')->where('level','<=','2')->orderBy('path')->get();
+			$view['messages'] = Messages::where('path','LIKE',"$message->path%")->where('h_level','<=','6')->where('level','<=',$message->level + 2)->orderBy('path')->get();
 			$view['recursive'] = 0;
 		}else{
 			$view['messages'] = $chat->messagesPaginate();
 			$view['recursive'] = 1;
 		}
                 return $view;
+	}
+
+	public function getLoadMore($mssg_id){
+		$message = Messages::find($mssg_id);
+		if(!$message){
+			return App::abort(500,'Message does not exist');
+		}
+		if($message->level > 2){
+			$messages = Messages::where('path','LIKE',"$message->path%")->where('path','!=',$message->path)->orderBy('path')->take(1000)->get();
+		}else{
+			$messages = Messages::where('path','LIKE',"$message->path%")->where('path','!=',$message->path)->orderBy('path')->skip(7)->take(1000)->get();
+		}
+		return $messages->toArray();
 	}
 
 	public function getPmLog(){

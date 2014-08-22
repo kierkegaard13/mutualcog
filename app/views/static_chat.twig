@@ -89,6 +89,7 @@
 	<div class="pull-right glyphicon glyphicon-pause darker_yellow_color chat_status_indicator" data-toggle="tooltip" data-original-title="Static Chat" data-container="body" data-placement="top"></div>
 {% endif %}
 <div class="static_chat_title">
+	<div id="chat_admin_info" style="display:none;">{{chat.admin}}</div>
 	{% if chat.seen %}
 		{% if chat.link %}
 			<a href="{{chat.link}}" style="color:purple;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>

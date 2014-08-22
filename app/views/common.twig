@@ -340,6 +340,7 @@
 <span class="pull-right"><a href="#" data-toggle="modal" class="register_link" data-target="#register_modal">Register?</a></span>
 {% endif %}
 </div>
+<div id="logged_in" style="display:none;">{% if logged_in %}1{% else %}0{% endif %}</div>
 {% if not logged_in %}
 	<form method="post" action="{{site}}/profile/login" class="mutual_form" id="login_form">
 	<fieldset>
@@ -562,7 +563,7 @@
 						<span class="caret caret_tooltip" id="caret_{{message.id}}" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span>
 					</div>
 					{% if 'This message has been deleted' in message.message == 0 and (serial == message.author or user.name == message.author) %}
-						<span id="message.id" class="glyphicon glyphicon-remove mssg_icon" data-toggle="tooltip" title="Delete post" data-container="body" data-placement="top"></span>	
+						<span id="remove_{{message.id}}" class="glyphicon glyphicon-remove mssg_icon" data-mssg-serial="{{response.serial}}" data-toggle="tooltip" title="Delete post" data-container="body" data-placement="top"></span>	
 					{% endif %}  
 					{% if message.author == chat.admin %}
 						<span class="glyphicon glyphicon-star"></span>	
@@ -640,8 +641,8 @@
 					<div id="toggle_{{response.id}}" class="toggle_responses">
 						<span class="caret caret_tooltip" id="caret_{{response.id}}" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span>
 					</div>
-					{% if 'This response has been deleted' in response.response == 0 and (serial == response.author or user.name == response.author) %}
-						<span id="response.id" class="glyphicon glyphicon-remove mssg_icon" data-toggle="tooltip" title="Delete post" data-container="body" data-placement="top"></span>	
+					{% if 'This response has been deleted' in response.message == 0 and (serial == response.author or user.name == response.author) %}
+						<span id="remove_{{response.id}}" class="glyphicon glyphicon-remove mssg_icon" data-mssg-serial="{{response.serial}}" data-toggle="tooltip" title="Delete post" data-container="body" data-placement="top"></span>	
 					{% endif %}  
 					{% if response.author == chat.admin %}
 						<span class="glyphicon glyphicon-star"></span>	

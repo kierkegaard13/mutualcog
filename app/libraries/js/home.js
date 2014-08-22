@@ -7,6 +7,44 @@ $(document).ready(function(){
 	$('#pause_chat').tooltip();
 	$('.mssg_upvote').on('click',upvoteMssg);
 	$('.mssg_downvote').on('click',downvoteMssg);
+	$('.chat_content').on('click','.mssg_icon',deleteIt);
+	$('.load_more').on('click',function(){
+		var url = $(this).attr('href');
+		var cont = $(this).parent();
+		var $this = $(this);
+		$.ajax({
+			type:'GET',
+			url:url,
+			success:function(hresp){
+				var res_len = hresp.length;
+				$this.remove();
+				$.each(hresp,function(index,val){
+					var res = '';
+					res += '<div class="response_to_' + val.responseto + ' mssg_cont level_' + val.level + ' parent_' + val.parent + ' pad_l_10" id="mssg_cont_' + val.id + '">';
+					res += '<div class="mssg_cont_inner"><div class="chat_mssg" id="response_' + val.id + '"> <div class="row" style="margin:0;"> <div class="mssg_body_cont"> <div class="chat_vote_box">';
+					res += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + val.id + '">' + (val.upvotes - val.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span></div>';
+					res += '<div class="mssg_body author_' + val.author + '">';
+					res += '<div id="toggle_' + val.id + '" class="toggle_responses"> <span class="caret caret_tooltip" id="caret_' + val.id + '" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span> </div>';
+					if(val.message != 'This response has been deleted' && (module.serial_tracker == val.author || module.user_tracker == val.author)){
+						res += '<span id="remove_' + val.id + '" class="glyphicon glyphicon-remove mssg_icon" data-mssg-serial="' + val.serial + '" style="margin-right:5px;" data-toggle="tooltip" title="Delete post" data-container="body" data-placement="top"></span>';	
+					}
+					if(val.author == $('#chat_admin_info').text()){
+						res += '<span class="glyphicon glyphicon-star"></span>';	
+					}
+					res += '<strong class="mssg_op" data-author="' + val.author + '" style="color:' + module.color_arr[val.serial % 7] + '"> ' + val.author + ' (<span class="response_count" id="' + val.id + '">' + val.responses + '</span>)</strong> : ' + val.message;
+					res += '<div class="time_box">';
+					if($('.chat_status_indicator').hasClass('glyphicon-pause')){
+						res += '<div class="reply"><a href="#" class="reply_link" data-mssg-id="' + val.id + '"><strong>Reply</strong></a></div>';
+					}
+					res += '<div class="time" id="' + val.created_at + '" title="' + val.created_at + ' UTC">' + moment.utc(val.created_at).fromNow() + '</div></div>';
+					res += '</div></div></div></div></div></div>';
+					cont.append(res);
+				});
+			},
+			error:function(){}
+		});
+		return false;
+	});
 	$('#user_props').change(function(){
 		module.socket.emit('change_user_props',{props:$(this).val()});
 	});

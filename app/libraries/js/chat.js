@@ -330,24 +330,6 @@ $(document).ready(function(){
 	});
 });
 
-deleteIt = function(e){
-	e.stopPropagation();
-	var mssg_id = $(this).parents('.chat_mssg').first().attr('id').replace('message_','');
-	if($('#logged_in').text() == 1){
-		module.socket.emit('delete_message',{id:mssg_id,user:module.user_tracker,serial:module.serial_tracker,responses:$(this).parent().find('.response_count').text()});
-	}else{
-		module.socket.emit('delete_message',{id:mssg_id,user:module.serial_tracker,serial:module.serial_tracker,responses:$(this).parent().find('.response_count').text()});
-	}
-};
-
-module.socket.on('softDelete',function(mssg_info){
-	if($('#message_' + mssg_info.id + '.chat_mssg').length){
-		$('.mssg_icon').tooltip('hide');
-		$('.mssg_icon').tooltip();
-		$('#message_' + mssg_info.id + '.chat_mssg').find('.mssg_body').html("<strong class='mssg_op' id='" + mssg_info.user + "' style='color:" + module.color_arr[mssg_info.serial % 7] + ";'>" + mssg_info.user + " (<span class='response_count' id='" + mssg_info.id + "'>" + mssg_info.responses + "</span>)</strong> : <em>This message has been deleted</em>");
-	}
-});
-
 setClicked = function(e){
 	e.stopPropagation();
 	module.clicked_on = $(this).attr('id').replace('message_','');
@@ -655,7 +637,7 @@ generateMssg = function(info,is_mssg){
 	}
 	tmp += '</div><div class="mssg_body author_' + info.author + '"><div id="toggle_' + info.id + '" class="toggle_responses"> <span class="caret caret_tooltip" id="caret_' + info.id + '" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span> </div> ';
 	if((module.serial_tracker == info.author || module.user_tracker == info.author) && info.message != '<i>This message has been deleted</i>'){
-		tmp += "<span id='" + info.id + "' style='margin-right:4px;' class='glyphicon glyphicon-remove mssg_icon' data-toggle='tooltip' title='Delete post' data-container='body' data-placement='top'></span>";
+		tmp += "<span id='remove_" + info.id + "' style='margin-right:4px;' class='glyphicon glyphicon-remove mssg_icon' data-mssg-serial='" + info.serial + "' data-toggle='tooltip' title='Delete post' data-container='body' data-placement='top'></span>";
 	}
 	if(module.admin.indexOf(info.author) != -1){
 		tmp += "<span class='glyphicon glyphicon-star'></span>";
