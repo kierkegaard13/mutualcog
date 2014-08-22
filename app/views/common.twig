@@ -536,3 +536,161 @@
 	</div>
 </div>
 {% endblock %}
+
+{% block static_mssg_cont %}
+<div class="mssg_cont_inner">
+	<div class="chat_mssg" id="message_{{message.id}}">
+		<div class="row" style="margin:0;">
+			<div class="mssg_body_cont">
+				<div class="chat_vote_box">
+					{% if message.id in mssg_upvoted %}
+						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
+						<div class="upvote_count" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
+						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
+					{% elseif message.id in mssg_downvoted %}
+						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
+						<div class="upvote_count" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
+						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
+					{% else %}
+						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
+						<div class="upvote_count" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
+						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
+					{% endif %}
+				</div>
+				<div class="mssg_body author_{{message.author}}">
+					<div id="toggle_{{message.id}}" class="toggle_responses">
+						<span class="caret caret_tooltip" id="caret_{{message.id}}" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span>
+					</div>
+					{% if 'This message has been deleted' in message.message == 0 and (serial == message.author or user.name == message.author) %}
+						<span id="message.id" class="glyphicon glyphicon-remove mssg_icon" data-toggle="tooltip" title="Delete post" data-container="body" data-placement="top"></span>	
+					{% endif %}  
+					{% if message.author == chat.admin %}
+						<span class="glyphicon glyphicon-star"></span>	
+					{% endif %}
+					{% if message.author in mods %}
+						<span class="glyphicon glyphicon-tower"></span>	
+					{% endif %}
+					<strong class="mssg_op" data-author="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}} (<span class="response_count" id="{{message.id}}">{{message.responses}}</span>)</strong> : {{message.message | raw}}
+					<div class="time_box">
+						{% if not chat.live %}<div class="reply"><a href="#" class="reply_link" data-mssg-id="{{message.id}}"><strong>Reply</strong></a></div>{% endif %}
+						{% set time_passed = server_time|date('U') - message.created_at|date('U') %}
+						<div class="time" id="{{message.created_at}}" title="{{message.created_at}} UTC">
+							{% if time_passed < 45 %}
+								seconds ago
+							{% elseif time_passed < 2700 %}
+								{% if time_passed < 90 %}
+									a minute ago
+								{% else %}
+									{{(time_passed/60)|round}} minutes ago
+								{% endif %}
+							{% elseif time_passed < 79200%}
+								{% if time_passed < 5400 %}
+									an hour ago
+								{% else %}
+									{{(time_passed/3600)|round}} hours ago
+								{% endif %}
+							{% elseif time_passed < 2160000 %}
+								{% if time_passed < 129600 %}
+									a day ago
+								{% else %}
+									{{(time_passed/86400)|round}} days ago
+								{% endif %}
+							{% elseif time_passed < 29808000 %}
+								{% if time_passed < 3888000 %}
+									a month ago
+								{% else %}
+									{{(time_passed/2592000)|round}} months ago
+								{% endif %}
+							{% else %}
+								{% if time_passed < 47260800 %}
+									a year ago
+								{% else %}
+									{{(time_passed/31536000)|round}} years ago
+								{% endif %}
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block static_resp_cont %}
+<div class="mssg_cont_inner">
+	<div class="chat_mssg" id="response_{{response.id}}">
+		<div class="row" style="margin:0;">
+			<div class="mssg_body_cont">
+				<div class="chat_vote_box">
+					{% if response.id in mssg_upvoted %}
+						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{response.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span>
+						<div class="upvote_count" id="mssg_votes_{{response.id}}">{{response.upvotes - response.downvotes}}</div>
+						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{response.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span>
+					{% elseif response.id in mssg_downvoted %}
+						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{response.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span>
+						<div class="upvote_count" id="mssg_votes_{{response.id}}">{{response.upvotes - response.downvotes}}</div>
+						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{response.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span>
+					{% else %}
+						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{response.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span>
+						<div class="upvote_count" id="mssg_votes_{{response.id}}">{{response.upvotes - response.downvotes}}</div>
+						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{response.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span>
+					{% endif %}
+				</div>
+				<div class="mssg_body author_{{response.author}}">
+					<div id="toggle_{{response.id}}" class="toggle_responses">
+						<span class="caret caret_tooltip" id="caret_{{response.id}}" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span>
+					</div>
+					{% if 'This response has been deleted' in response.response == 0 and (serial == response.author or user.name == response.author) %}
+						<span id="response.id" class="glyphicon glyphicon-remove mssg_icon" data-toggle="tooltip" title="Delete post" data-container="body" data-placement="top"></span>	
+					{% endif %}  
+					{% if response.author == chat.admin %}
+						<span class="glyphicon glyphicon-star"></span>	
+					{% endif %}
+					{% if response.author in mods %}
+						<span class="glyphicon glyphicon-tower"></span>	
+					{% endif %}
+					<strong class="mssg_op" data-author="{{response.author}}" style="color:{{color_arr[response.serial % 7]}}"> {{response.author}} (<span class="response_count" id="{{response.id}}">{{response.responses}}</span>)</strong> : {{response.message | raw}}
+					<div class="time_box">
+						{% if not chat.live %}<div class="reply"><a href="#" class="reply_link" data-mssg-id="{{response.id}}"><strong>Reply</strong></a></div>{% endif %}
+						{% set time_passed = server_time|date('U') - response.created_at|date('U') %}
+						<div class="time" id="{{response.created_at}}" title="{{response.created_at}} UTC">
+							{% if time_passed < 45 %}
+								seconds ago
+							{% elseif time_passed < 2700 %}
+								{% if time_passed < 90 %}
+									a minute ago
+								{% else %}
+									{{(time_passed/60)|round}} minutes ago
+								{% endif %}
+							{% elseif time_passed < 79200%}
+								{% if time_passed < 5400 %}
+									an hour ago
+								{% else %}
+									{{(time_passed/3600)|round}} hours ago
+								{% endif %}
+							{% elseif time_passed < 2160000 %}
+								{% if time_passed < 129600 %}
+									a day ago
+								{% else %}
+									{{(time_passed/86400)|round}} days ago
+								{% endif %}
+							{% elseif time_passed < 29808000 %}
+								{% if time_passed < 3888000 %}
+									a month ago
+								{% else %}
+									{{(time_passed/2592000)|round}} months ago
+								{% endif %}
+							{% else %}
+								{% if time_passed < 47260800 %}
+									a year ago
+								{% else %}
+									{{(time_passed/31536000)|round}} years ago
+								{% endif %}
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
