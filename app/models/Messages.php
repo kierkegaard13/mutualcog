@@ -6,7 +6,12 @@ class Messages extends EloquentBridge
 	public $timestamps = true;
 
 	public function descendants(){
-		return $this->hasMany('Messages','parent')->where('h_level','<=','6')->where('level','<=','2')->orderBy('path');
+		$omitted = Messages::where('path','LIKE',"$this->path%")->where('res_num','=','7')->where('y_dim','=',$this->y_dim + 1)->first();
+		if($omitted){
+			return $this->hasMany('Messages','parent')->where('path','<',$omitted->path)->where('res_num','<=','6')->where('y_dim','<=','2')->orderBy('path');
+		}else{
+			return $this->hasMany('Messages','parent')->where('res_num','<=','6')->where('y_dim','<=','2')->orderBy('path');
+		}
 	}
 
 	public function mssgParent(){

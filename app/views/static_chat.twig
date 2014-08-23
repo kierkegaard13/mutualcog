@@ -177,41 +177,41 @@
 		<div class="chat_content">
 		{% for message in messages %}
 			{% if loop.first %}
-				{% set init_level = message.level %}
+				{% set init_y = message.y_dim %}
 			{% endif %}
-			{% if message.h_level <= init_level + 11 - message.level %}
-			{% if not loop.first and prev_level >= message.level %}
-				{% for i in message.level..prev_level %}
+			{% if message.res_num <= init_y + 11 - message.y_dim %}
+			{% if not loop.first and prev_y >= message.y_dim %}
+				{% for i in message.y_dim..prev_y %}
 					</div>
 					</div>
 				{% endfor %}
 			{% endif %}
-			{% if message.level == init_level %}
-			<div class="response_to_{{message.responseto}} mssg_cont level_{{message.level}} parent_{{message.parent}}" id="mssg_cont_{{message.id}}">
+			{% if message.y_dim == init_y %}
+			<div class="response_to_{{message.responseto}} mssg_cont y_{{message.y_dim}} parent_{{message.parent}}" id="mssg_cont_{{message.id}}">
 			{% else %}
-			<div class="response_to_{{message.responseto}} mssg_cont level_{{message.level}} parent_{{message.parent}} {% if message.level > init_level + 3 %}hidden-xs {% endif %}{% if message.level > init_level + 5 %}hidden-sm {% endif %}{% if message.level > init_level + 8 %}hidden-md {% endif %}{% if message.level > init_level + 12 %}hidden-lg {% endif %}pad_l_10" id="mssg_cont_{{message.id}}">
+			<div class="response_to_{{message.responseto}} mssg_cont y_{{message.y_dim}} parent_{{message.parent}} {% if message.y_dim > init_y + 3 %}hidden-xs {% endif %}{% if message.y_dim > init_y + 5 %}hidden-sm {% endif %}{% if message.y_dim > init_y + 8 %}hidden-md {% endif %}{% if message.y_dim > init_y + 12 %}hidden-lg {% endif %}pad_l_10" id="mssg_cont_{{message.id}}">
 			{% endif %}
 			{% block static_mssg_cont %}
 				{{parent()}}
 			{% endblock %}
 		{% if recursive %}
 		{% for response in message.descendants %}
-			{% if not loop.first and prev_level == response.level %}
-				{% for i in response.level..prev_level %}
-					{% if prev_mssg.responses > 6 or (prev_mssg.level == 2 and prev_mssg.responses > 0) %} <!-- closes previous message -->
+			{% if not loop.first and prev_y == response.y_dim %}
+				{% for i in response.y_dim..prev_y %}
+					{% if prev_mssg.responses > 6 or (prev_mssg.y_dim == 2 and prev_mssg.responses > 0) %} <!-- closes previous message -->
 						<a class="load_more" href="{{site}}/chat/load-more/{{prev_mssg.id}}"><strong>Load more</strong></a>
 					{% endif %}
 					</div>
 					</div>
 				{% endfor %}
-			{% elseif not loop.first and prev_level > response.level %}
-				{% for i in response.level..prev_level %}
+			{% elseif not loop.first and prev_y > response.y_dim %}
+				{% for i in response.y_dim..prev_y %}
 					{% if loop.last %}
 						{% if prev_mssg.mssgParent.responses > 6 %} <!-- closes previous message -->
 							<a class="load_more" href="{{site}}/chat/load-more/{{prev_mssg.responseto}}"><strong>Load more</strong></a>
 						{% endif %}
 					{% else %}
-						{% if prev_mssg.level == 2 and prev_mssg.responses > 0 %} <!-- closes previous message -->
+						{% if prev_mssg.y_dim == 2 and prev_mssg.responses > 0 %} <!-- closes previous message -->
 							<a class="load_more" href="{{site}}/chat/load-more/{{prev_mssg.id}}"><strong>Load more</strong></a>
 						{% endif %}
 					{% endif %}
@@ -219,14 +219,14 @@
 					</div>
 				{% endfor %}
 			{% endif %}
-			<div class="response_to_{{response.responseto}} mssg_cont level_{{response.level}} parent_{{response.parent}} {% if response.level > 3 %}hidden-xs {% endif %}{% if response.level > 5 %}hidden-sm {% endif %}{% if response.level > 8 %}hidden-md {% endif %}{% if response.level > 12 %}hidden-lg {% endif %}pad_l_10" id="mssg_cont_{{response.id}}">
+			<div class="response_to_{{response.responseto}} mssg_cont y_{{response.y_dim}} parent_{{response.parent}} {% if response.y_dim > 3 %}hidden-xs {% endif %}{% if response.y_dim > 5 %}hidden-sm {% endif %}{% if response.y_dim > 8 %}hidden-md {% endif %}{% if response.y_dim > 12 %}hidden-lg {% endif %}pad_l_10" id="mssg_cont_{{response.id}}">
 				{% block static_resp_cont %}
 					{{parent()}}
 				{% endblock %}
-			{% set prev_level = response.level %}
+			{% set prev_y = response.y_dim %}
 			{% if loop.last %}
-				{% if response.level > 1 %}
-					{% for i in 1..response.level %}
+				{% if response.y_dim > 1 %}
+					{% for i in 1..response.y_dim %}
 						{% if response.responses > 1 %}
 							<a class="load_more" href="{{site}}/chat/load-more/{{response.id}}"><strong>Load more</strong></a>
 						{% endif %}
@@ -248,11 +248,11 @@
 		{% if message.responses > 6 %}
 			<a class="load_more" href="{{site}}/chat/load-more/{{message.id}}"><strong>Load more</strong></a>
 		{% endif %}
-			{% set prev_level = message.level %}
+			{% set prev_y = message.y_dim %}
 			{% endif %}
 			{% if loop.last %}
-				{% if message.level > init_level %}
-					{% for i in init_level..message.level %}
+				{% if message.y_dim > init_y %}
+					{% for i in init_y..message.y_dim %}
 						</div>
 						</div>
 					{% endfor %}

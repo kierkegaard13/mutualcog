@@ -172,17 +172,17 @@
 	</div>
 	<div class="frame chat_main" id="chat_messages">
 		<div id="chat_display">
-		{% set prev_level = 0 %}
+		{% set prev_y = 0 %}
 		{% for message in chat.messages %}
-			{% if not loop.first and prev_level >= message.level %}
-				{% for i in message.level..prev_level %}
+			{% if not loop.first and prev_y >= message.y_dim %}
+				{% for i in message.y_dim..prev_y %}
 					</div>
 				{% endfor %}
 			{% endif %}
 			{% if message.responseto == 0 %}
-			<div class="response_to_0 mssg_cont level_{{message.level}} parent_{{message.parent}}" id="mssg_cont_{{message.id}}" style="display:none;">
+			<div class="response_to_0 mssg_cont y_{{message.y_dim}} parent_{{message.parent}}" id="mssg_cont_{{message.id}}" style="display:none;">
 			{% else %}
-			<div class="response_to_{{message.responseto}} mssg_cont level_{{message.level}} parent_{{message.parent}} pad_l_20" id="mssg_cont_{{message.id}}" style="display:none;">
+			<div class="response_to_{{message.responseto}} mssg_cont y_{{message.y_dim}} parent_{{message.parent}} pad_l_20" id="mssg_cont_{{message.id}}" style="display:none;">
 			{% endif %}
 				<div class="chat_mssg" id="message_{{message.id}}">
 					<div class="row" style="margin:0;">
@@ -258,10 +258,10 @@
 						</div>
 					</div>
 				</div>
-			{% set prev_level = message.level %}
+			{% set prev_y = message.y_dim %}
 			{% if loop.last %}
-				{% if message.level > 0 %}
-					{% for i in 0..message.level %}
+				{% if message.y_dim > 0 %}
+					{% for i in 0..message.y_dim %}
 						</div>
 					{% endfor %}
 				{% else %}

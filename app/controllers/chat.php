@@ -222,7 +222,8 @@ class Chat extends BaseController {
 		$view['mods'] = $mods;
 		if($mssg_id){
 			$message = Messages::find($mssg_id);
-			$view['messages'] = Messages::where('path','LIKE',"$message->path%")->where('h_level','<=','6')->where('level','<=',$message->level + 2)->orderBy('path')->get();
+			$omitted = Messages::where('path','LIKE',"$message->path%")->where('res_num','=','7')->where('y_dim','=',$message->y_dim + 1)->first();
+			$view['messages'] = Messages::where('path','LIKE',"$message->path%")->where('path','<',$omitted->path)->where('y_dim','<=',$message->y_dim + 2)->orderBy('path')->take(1000)->get();
 			$view['recursive'] = 0;
 		}else{
 			$view['messages'] = $chat->messagesPaginate();
@@ -236,12 +237,27 @@ class Chat extends BaseController {
 		if(!$message){
 			return App::abort(500,'Message does not exist');
 		}
-		if($message->level > 2){
+		if($message->y_dim > 1){
 			$messages = Messages::where('path','LIKE',"$message->path%")->where('path','!=',$message->path)->orderBy('path')->take(1000)->get();
 		}else{
-			$messages = Messages::where('path','LIKE',"$message->path%")->where('path','!=',$message->path)->orderBy('path')->skip(7)->take(1000)->get();
+			$omitted = Messages::where('path','LIKE',"$message->path%")->where('res_num','=','7')->where('y_dim','=',$message->y_dim + 1)->first();
+			$previous = count(Messages::where('path','LIKE',"$message->path%")->where('path','<',$omitted->path)->where('path','!=',$message->path)->take(1000)->get());
+			$messages = Messages::where('path','LIKE',"$message->path%")->where('path','!=',$message->path)->orderBy('path')->skip($previous)->take(1000)->get();
 		}
-		return $messages->toArray();
+		$mssg_upvoted = array();
+		$mssg_downvoted = array();
+		if(Auth::check()){
+			foreach(Auth::user()->upvotedMessages() as $upvote){
+				$mssg_upvoted[] = $upvote->message_id;
+			}
+			foreach(Auth::user()->downvotedMessages() as $downvote){
+				$mssg_downvoted[] = $downvote->message_id;
+			}
+		}
+		$messages = $messages->toArray();
+		$messages['upvoted'] = $mssg_upvoted;
+		$messages['downvoted'] = $mssg_downvoted;
+		return $messages;
 	}
 
 	public function getPmLog(){
@@ -271,15 +287,15 @@ class Chat extends BaseController {
 			if(Input::get('reply_to')){
 				$parent_mssg = Messages::find(Input::get('reply_to'));
 				$message->responseto = $parent_mssg->id;
-				if($parent_mssg->level == 0){
+				if($parent_mssg->y_dim == 0){
 					$message->parent = $parent_mssg->id;
 				}else{
 					$message->parent = $parent_mssg->parent;	
 				}
-				$message->level = $parent_mssg->level + 1;
+				$message->y_dim = $parent_mssg->y_dim + 1;
 				$message->save();
 				$message->path = $parent_mssg->path . '.' . str_repeat('0', 8 - strlen((string)$message->id)) . $message->id;
-				$message->h_level = $parent_mssg->responses + 1;
+				$message->res_num = $parent_mssg->responses + 1;
 				$message->readable = 1;
 				$message->save();
 				$parent_mssg->responses = $parent_mssg->responses + 1;

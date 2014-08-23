@@ -85,11 +85,11 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 	}
 
 	public function upvotedChats(){
-		return ChatsVoted::wheremember_id($this->id)->wherestatus(1)->get();
+		return ChatsVoted::wheremember_id($this->id)->wherestatus(1)->take(1000)->get();
 	}
 
 	public function downvotedChats(){
-		return ChatsVoted::wheremember_id($this->id)->wherestatus(2)->get();
+		return ChatsVoted::wheremember_id($this->id)->wherestatus(2)->take(1000)->get();
 	}
 
 	public function upvotedMessages(){

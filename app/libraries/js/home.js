@@ -17,12 +17,23 @@ $(document).ready(function(){
 			url:url,
 			success:function(hresp){
 				var res_len = hresp.length;
+				var upvoted = hresp.upvoted;
+				var downvoted = hresp.downvoted;
+				var prev_y = 0;
+				delete hresp['upvoted'];
+				delete hresp['downvoted']
 				$this.remove();
+				var res = '';
 				$.each(hresp,function(index,val){
-					var res = '';
-					res += '<div class="response_to_' + val.responseto + ' mssg_cont level_' + val.level + ' parent_' + val.parent + ' pad_l_10" id="mssg_cont_' + val.id + '">';
+					res += '<div class="response_to_' + val.responseto + ' mssg_cont y_' + val.y_dim + ' parent_' + val.parent + ' pad_l_10" id="mssg_cont_' + val.id + '">';
 					res += '<div class="mssg_cont_inner"><div class="chat_mssg" id="response_' + val.id + '"> <div class="row" style="margin:0;"> <div class="mssg_body_cont"> <div class="chat_vote_box">';
-					res += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + val.id + '">' + (val.upvotes - val.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span></div>';
+					if(upvoted.indexOf(val.id) != -1){
+						res += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + val.id + '" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + val.id + '">' + (val.upvotes - val.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span></div>';
+					}else if(downvoted.indexOf(val.id) != -1){
+						res += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + val.id + '">' + (val.upvotes - val.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + val.id + '" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span></div>';
+					}else{
+						res += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + val.id + '">' + (val.upvotes - val.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span></div>';
+					}
 					res += '<div class="mssg_body author_' + val.author + '">';
 					res += '<div id="toggle_' + val.id + '" class="toggle_responses"> <span class="caret caret_tooltip" id="caret_' + val.id + '" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span> </div>';
 					if(val.message != 'This response has been deleted' && (module.serial_tracker == val.author || module.user_tracker == val.author)){
@@ -37,9 +48,19 @@ $(document).ready(function(){
 						res += '<div class="reply"><a href="#" class="reply_link" data-mssg-id="' + val.id + '"><strong>Reply</strong></a></div>';
 					}
 					res += '<div class="time" id="' + val.created_at + '" title="' + val.created_at + ' UTC">' + moment.utc(val.created_at).fromNow() + '</div></div>';
-					res += '</div></div></div></div></div></div>';
-					cont.append(res);
+					res += '</div></div></div></div>';
+					if(val.responses == 0){
+						if(val.y_dim == prev_y || index == 0){
+							res += '</div></div>';
+						}else{
+							for(var i = 0;i < prev_y - val.y_dim;i++){
+								res += '</div></div>';
+							}
+						}
+					}
+					prev_y = val.y_dim;
 				});
+				cont.append(res);
 			},
 			error:function(){}
 		});

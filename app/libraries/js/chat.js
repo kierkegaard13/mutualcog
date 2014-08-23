@@ -625,9 +625,9 @@ module.socket.on('check_live',function(live){
 
 generateMssg = function(info,is_mssg){
 	if(is_mssg){
-		var tmp = "<div class='response_to_0 mssg_cont level_0 parent_0' id='mssg_cont_" + info.id + "'><div class='chat_mssg' id='message_" + info.id + "'>";
+		var tmp = "<div class='response_to_0 mssg_cont y_0 parent_0' id='mssg_cont_" + info.id + "'><div class='chat_mssg' id='message_" + info.id + "'>";
 	}else{
-		var tmp = "<div class='response_to_" + info.responseto + " mssg_cont level_" + info.level + " parent_" + info.parent + " pad_l_20' id='mssg_cont_" + info.id + "'><div class='chat_mssg' id='message_" + info.id + "'>";
+		var tmp = "<div class='response_to_" + info.responseto + " mssg_cont y_" + info.y_dim + " parent_" + info.parent + " pad_l_20' id='mssg_cont_" + info.id + "'><div class='chat_mssg' id='message_" + info.id + "'>";
 	}
 	tmp += "<div class='row' style='margin:0;'> <div class='mssg_body_cont'><div class='vote_box'>";
 	if(module.user_tracker == info.author || module.serial_tracker == info.author){
@@ -704,16 +704,17 @@ $('#message').keyup(function(e){
 				if($('#message').val().trim() != ""){
 					if(module.connected){
 						if($('#message').attr('class') == 'global'){
-							module.socket.emit('message_sent',{message:$('#message').val(),responseto:0,level:0,parent:0});
+							module.socket.emit('message_sent',{message:$('#message').val(),responseto:0,y_dim:0,parent:0});
 						}else{
 							var responseto = $('#message').attr('class').replace('message_','');
-							var level = parseInt($('#mssg_cont_' + responseto).attr('class').split(" ")[2].replace('level_','')) + 1;
+							var y_dim = parseInt($('#mssg_cont_' + responseto).attr('class').split(" ")[2].replace('y_','')) + 1;
+							console.log(y_dim);
 							if($('#mssg_cont_' + responseto).attr('class').split(" ")[3].replace('parent_','') == 0){
 								var resp_parent = responseto;
 							}else{
 								var resp_parent = $('#mssg_cont_' + responseto).parents('.mssg_cont').last().attr('id').replace('mssg_cont_','');
 							}
-							module.socket.emit('message_sent',{message:$('#message').val(),responseto:responseto,level:level,parent:resp_parent});	
+							module.socket.emit('message_sent',{message:$('#message').val(),responseto:responseto,y_dim:y_dim,parent:resp_parent});	
 						}
 						$('#message').val("");
 					}else{
