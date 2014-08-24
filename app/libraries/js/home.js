@@ -5,8 +5,6 @@ $(document).ready(function(){
 	$('.chat_status_indicator').tooltip();
 	$('.advanced_cog').tooltip();
 	$('#pause_chat').tooltip();
-	$('.mssg_upvote').on('click',upvoteMssg);
-	$('.mssg_downvote').on('click',downvoteMssg);
 	$('.chat_content').on('click','.mssg_icon',deleteIt);
 	$('.load_more').on('click',function(){
 		var url = $(this).attr('href');
@@ -128,6 +126,12 @@ $(document).ready(function(){
 		}
 		return false;
 	});
+});
+
+module.socket.on('connect',function() {
+	console.log('Client has connected');
+	module.connected = 1;
+	module.socket.emit('room',module.chat_id);
 });
 
 function cookiesEnabled() {
@@ -377,56 +381,6 @@ $('.big_downvote').click(function(e){
 		error:function(){ }
 	});
 });
-
-upvoteMssg = function(e){
-	e.stopPropagation();
-	var message_id = $(this).attr('id').replace('mssg_upvote_','');
-	var url = '//mutualcog.com/chat/message-upvote';
-	$.ajax({
-		type:'POST',
-		data:{id:message_id},
-		url:url,
-		success:function(hresp){
-			if(hresp.status == 1 || hresp.status == 3){
-				$('#mssg_upvote_' + message_id).css('color','#57bf4b');
-				$('#mssg_downvote_' + message_id).css('color','');
-				$('#mssg_votes_' + message_id).text(hresp.upvotes);
-			}else if(hresp.status == 2){
-				$('#mssg_upvote_' + message_id).css('color','');
-				$('#mssg_downvote_' + message_id).css('color','');
-				$('#mssg_votes_' + message_id).text(hresp.upvotes);
-			}else{
-				$('#mssg_upvote_' + message_id).tooltip('show');
-			}
-		},
-		error:function(){}
-	});
-};
-
-downvoteMssg = function(e){
-	e.stopPropagation();
-	var message_id = $(this).attr('id').replace('mssg_downvote_','');
-	var url = '//mutualcog.com/chat/message-downvote';
-	$.ajax({
-		type:'POST',
-		data:{id:message_id},
-		url:url,
-		success:function(hresp){
-			if(hresp.status == 1 || hresp.status == 3){
-				$('#mssg_downvote_' + message_id).css('color','red');
-				$('#mssg_upvote_' + message_id).css('color','');
-				$('#mssg_votes_' + message_id).text(hresp.upvotes);
-			}else if(hresp.status == 2){
-				$('#mssg_upvote_' + message_id).css('color','');
-				$('#mssg_downvote_' + message_id).css('color','');
-				$('#mssg_votes_' + message_id).text(hresp.upvotes);
-			}else{
-				$('#mssg_downvote_' + message_id).tooltip('show');
-			}
-		},
-		error:function(){ }
-	});
-};
 
 $(window).on('click',function(e){
 	$('#tag_dropdown').hide();

@@ -48,90 +48,6 @@ $('.big_downvote').click(function(e){
 	});
 });
 
-module.socket.on('updateVotes',function(info) {
-	$('#mssg_votes_' + info.message_id).text(info.response.upvotes);
-});
-
-upvoteMssg = function(e){
-	e.stopPropagation();
-	var message_id = $(this).attr('id').replace('mssg_upvote_','');
-	var url = '//mutualcog.com/chat/message-upvote';
-	$.ajax({
-		type:'POST',
-		data:{id:message_id},
-		url:url,
-		success:function(hresp){
-			if(hresp.status == 1 || hresp.status == 3){
-				if(hresp.status == 1){
-					module.downvoted.splice(module.downvoted.indexOf(message_id.toString()),1);						
-					module.upvoted.push(message_id.toString());
-				}else{
-					module.upvoted.push(message_id.toString());
-				}
-				if($('#mssg_cont_' + message_id).hasClass('mssg_cont')){
-					module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:'global'});
-				}else{
-					module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:$('#message').attr('class')});
-				}
-				$('#mssg_upvote_' + message_id).css('color','#57bf4b');
-				$('#mssg_downvote_' + message_id).css('color','');
-			}else if(hresp.status == 2){
-				module.upvoted.splice(module.upvoted.indexOf(message_id.toString()),1);
-				if($('#mssg_cont_' + message_id).hasClass('mssg_cont')){
-					module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:'global'});
-				}else{
-					module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:$('#message').attr('class')});
-				}
-				$('#mssg_upvote_' + message_id).css('color','');
-				$('#mssg_downvote_' + message_id).css('color','');
-			}else{
-				$('#mssg_upvote_' + message_id).tooltip('show');
-			}
-		},
-		error:function(){}
-	});
-};
-
-downvoteMssg = function(e){
-	e.stopPropagation();
-	var message_id = $(this).attr('id').replace('mssg_downvote_','');
-	var url = '//mutualcog.com/chat/message-downvote';
-	$.ajax({
-		type:'POST',
-		data:{id:message_id},
-		url:url,
-		success:function(hresp){
-			if(hresp.status == 1 || hresp.status == 3){
-				if(hresp.status == 1){
-					module.upvoted.splice(module.downvoted.indexOf(message_id.toString()),1);						
-					module.downvoted.push(message_id.toString());
-				}else{
-					module.downvoted.push(message_id.toString());
-				}
-				if($('#mssg_cont_' + message_id).hasClass('mssg_cont')){
-					module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:'global'});
-				}else{
-					module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:$('#message').attr('class')});
-				}
-				$('#mssg_downvote_' + message_id).css('color','red');
-				$('#mssg_upvote_' + message_id).css('color','');
-			}else if(hresp.status == 2){
-				module.downvoted.splice(module.downvoted.indexOf(message_id.toString()),1);
-				if($('#mssg_cont_' + message_id).hasClass('mssg_cont')){
-					module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:'global'});
-				}else{
-					module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:$('#message').attr('class')});
-				}
-				$('#mssg_upvote_' + message_id).css('color','');
-				$('#mssg_downvote_' + message_id).css('color','');
-			}else{
-				$('#mssg_downvote_' + message_id).tooltip('show');
-			}
-		},
-		error:function(){ }
-	});
-};
-
 $(window).on('click',function(e){
 	$('#tag_dropdown').hide();
 	$('#members_box').hide('blind');
@@ -201,7 +117,7 @@ $(document).ready(function(){
 		$('#description_modal').modal('hide');
 		$.ajax({
 			type:'POST',
-			data: {details:$('#detail_text').val(),id:$('.chat_id').attr('id')},
+			data: {details:$('#detail_text').val(),id:module.chat_id},
 			url:'//mutualcog.com/chat/details',
 			success:function(hresp){
 				$('#curr_details').html(hresp);
@@ -220,8 +136,6 @@ $(document).ready(function(){
 			return false;
 		});
 	}
-	$('.mssg_upvote').on('click',upvoteMssg);
-	$('.mssg_downvote').on('click',downvoteMssg);
 	$('.caret_tooltip').tooltip();
 	$('#permalink').tooltip();
 	$('#show_members').tooltip();
@@ -437,7 +351,7 @@ notifyMessage = function(){
 module.socket.on('connect',function() {
 	console.log('Client has connected');
 	module.connected = 1;
-	module.socket.emit('room',$('.chat_id').attr('id'));
+	module.socket.emit('room',module.chat_id);
 	if($('.enter_hint').text() == 'You are disconnected'){
 		$('.enter_hint').text("Press Shift+Enter for new line");
 		$('.response_hint').text("Click on a message to respond to it");

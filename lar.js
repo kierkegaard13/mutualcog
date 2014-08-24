@@ -521,6 +521,7 @@ io.sockets.on('connection', function(client) {
 
 	client.on('delete_message',function(mssg_info){
 		var replace = '<em>This message has been deleted</em>';
+		console.log(client.room);
 		conn.where({id:mssg_info.id}).get('messages',function(err,rows){
 			if(err)console.log(err);
 			var message = rows[0];

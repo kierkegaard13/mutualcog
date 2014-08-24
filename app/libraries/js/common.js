@@ -4,7 +4,7 @@ module = function(){
 	var pm_scroll_inactive = {};
 	var title_blinking = typ_cnt = connected = recent = banned = stop_scroll = scroll_button_clicked = scroll_top = 0;
 	var clicked_on = -1;
-	var chat_id = $('.chat_id').attr('id');
+	var chat_id = $('.chat_id').attr('id').replace('chat_','');
 	if($('#up_arr').length){
 		var upvoted = jQuery.parseJSON($('#up_arr').text());
 		var downvoted = jQuery.parseJSON($('#down_arr').text());
@@ -102,6 +102,8 @@ $(document).ready(function(){
 	$.each($('.pm_message'),function(index,val){
 		$('.pm_message').eq(index).attr('title',moment.utc($('.pm_message').eq(index).attr('title')).local().format('hh:mma'));
 	});
+	$('.mssg_upvote').on('click',upvoteMssg);
+	$('.mssg_downvote').on('click',downvoteMssg);
 	$('#mssg_requests').popover({html:true});
 	$('#global_requests').popover({html:true});
 	$('#friend_requests').popover({html:true});
@@ -203,6 +205,90 @@ $(document).ready(function(){
 			$(this).parent().find('.pm_text').css('display','none');
 		}
 	});
+});
+
+upvoteMssg = function(e){
+	e.stopPropagation();
+	var message_id = $(this).attr('id').replace('mssg_upvote_','');
+	var url = '//mutualcog.com/chat/message-upvote';
+	$.ajax({
+		type:'POST',
+		data:{id:message_id},
+		url:url,
+		success:function(hresp){
+			if(hresp.status == 1 || hresp.status == 3){
+				if(hresp.status == 1){
+					module.downvoted.splice(module.downvoted.indexOf(message_id.toString()),1);						
+					module.upvoted.push(message_id.toString());
+				}else{
+					module.upvoted.push(message_id.toString());
+				}
+				if($('#mssg_cont_' + message_id).hasClass('mssg_cont')){
+					module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:'global'});
+				}else{
+					module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:$('#message').attr('class')});
+				}
+				$('#mssg_upvote_' + message_id).css('color','#57bf4b');
+				$('#mssg_downvote_' + message_id).css('color','');
+			}else if(hresp.status == 2){
+				module.upvoted.splice(module.upvoted.indexOf(message_id.toString()),1);
+				if($('#mssg_cont_' + message_id).hasClass('mssg_cont')){
+					module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:'global'});
+				}else{
+					module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:$('#message').attr('class')});
+				}
+				$('#mssg_upvote_' + message_id).css('color','');
+				$('#mssg_downvote_' + message_id).css('color','');
+			}else{
+				$('#mssg_upvote_' + message_id).tooltip('show');
+			}
+		},
+		error:function(){}
+	});
+};
+
+downvoteMssg = function(e){
+	e.stopPropagation();
+	var message_id = $(this).attr('id').replace('mssg_downvote_','');
+	var url = '//mutualcog.com/chat/message-downvote';
+	$.ajax({
+		type:'POST',
+		data:{id:message_id},
+		url:url,
+		success:function(hresp){
+			if(hresp.status == 1 || hresp.status == 3){
+				if(hresp.status == 1){
+					module.upvoted.splice(module.downvoted.indexOf(message_id.toString()),1);						
+					module.downvoted.push(message_id.toString());
+				}else{
+					module.downvoted.push(message_id.toString());
+				}
+				if($('#mssg_cont_' + message_id).hasClass('mssg_cont')){
+					module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:'global'});
+				}else{
+					module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:$('#message').attr('class')});
+				}
+				$('#mssg_downvote_' + message_id).css('color','red');
+				$('#mssg_upvote_' + message_id).css('color','');
+			}else if(hresp.status == 2){
+				module.downvoted.splice(module.downvoted.indexOf(message_id.toString()),1);
+				if($('#mssg_cont_' + message_id).hasClass('mssg_cont')){
+					module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:'global'});
+				}else{
+					module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:$('#message').attr('class')});
+				}
+				$('#mssg_upvote_' + message_id).css('color','');
+				$('#mssg_downvote_' + message_id).css('color','');
+			}else{
+				$('#mssg_downvote_' + message_id).tooltip('show');
+			}
+		},
+		error:function(){ }
+	});
+};
+
+module.socket.on('updateVotes',function(info) {
+	$('#mssg_votes_' + info.message_id).text(info.response.upvotes);
 });
 
 function validateLogin(username,password){

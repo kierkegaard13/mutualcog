@@ -90,18 +90,10 @@
 {% endif %}
 <div class="static_chat_title">
 	<div id="chat_admin_info" style="display:none;">{{chat.admin}}</div>
-	{% if chat.seen %}
-		{% if chat.link %}
-			<a href="{{chat.link}}" style="color:purple;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
-		{% else %}
-			<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:purple;">{{chat.title}}</a>
-		{% endif %}
+	{% if chat.link %}
+		<a class="chat_id" id="chat_{{chat.id}}" href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
 	{% else %}
-		{% if chat.link %}
-			<a href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
-		{% else %}
-			<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
-		{% endif %}
+		<a class="chat_id" id="chat_{{chat.id}}" href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
 	{% endif %}
 	{% if chat.admin % 16777259 == 0 %}
 		<div class="chat_info">Created by <a href="{{site}}/u/{{chat.admin}}" style="color:gray;"><strong>{{chat.admin}}</strong></a>, 
@@ -172,6 +164,8 @@
 </form>
 </div>
 <div class="big_content_box" style="margin-top:15px;margin-bottom:15px;">
+<div id="up_arr" style="display:none;">{{mssg_upvoted | json_encode()}}</div>
+<div id="down_arr" style="display:none;">{{mssg_downvoted | json_encode()}}</div>
 	<div class="content_right">
 	<div class="content_left">
 		<div class="chat_content">
