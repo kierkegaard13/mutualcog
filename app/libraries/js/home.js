@@ -68,6 +68,7 @@ $(document).ready(function(){
 		module.socket.emit('change_user_props',{props:$(this).val()});
 	});
 	var reply_form = $('#reply_form').clone();
+	$('.remove_mod').tooltip();
 	$('#request_friend').click(function(){
 		module.socket.emit('request_friend',{user_id:$(this).attr('data-user-id'),user:$(this).attr('data-user-name'),sender_id:module.user_id,sender:module.user_tracker});
 		$(this).removeClass('btn-primary');
@@ -97,6 +98,11 @@ $(document).ready(function(){
 		$('#form_chat_id').val(chat_cont.find('.chat_id_str').text());
 		$('#edit_modal').modal();
 		return false;
+	});
+	$('.remove_mod').click(function(e){
+		var tag_id = $(this).attr('id').split('_')[3];
+		var user_id = $(this).attr('id').split('_')[2];
+		window.location.href = '//mutualcog.com/tags/remove-mod/' + user_id + '/' + tag_id; 
 	});
 	$('a.remove_chat_link').click(function(e){
 		var remove_link = $('#remove_modal').find('#remove_chat_final');
@@ -131,7 +137,9 @@ $(document).ready(function(){
 module.socket.on('connect',function() {
 	console.log('Client has connected');
 	module.connected = 1;
-	module.socket.emit('room',module.chat_id);
+	if(module.chat_id){
+		module.socket.emit('room',module.chat_id);
+	}
 });
 
 function cookiesEnabled() {

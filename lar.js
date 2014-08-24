@@ -371,12 +371,11 @@ io.sockets.on('connection', function(client) {
 						if(rows.length == 0){
 							conn.insert('requests',{type:0,global_type:'mod',user_id:info.user_id,sender_id:client.user_id,sender:client.user,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
 								if(err)console.log(err);
-								var message = "<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/u/" + request_info.sender + "'>" + request_info.sender + "</a> has requested you as a mod for <a class='chat_link' href='//mutualcog.com/t/" + request_info.tag_name + "'>/t/"  + request_info.tag_name + "</a> </div> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/tags/accept-mod/" + info.insertId + "/" + request_info.tag_id + "'>Accept</a> / <a class='chat_link' href='//mutualcog.com/tags/decline-mod/" + info.insertId + "/" + request_info.tag_id + "'>Decline</a> </div> </div>";
+								var message = "<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/u/" + client.user + "'>" + client.user + "</a> has requested you as a mod for <a class='chat_link' href='//mutualcog.com/t/" + request_info.tag_name + "'>/t/"  + request_info.tag_name + "</a> </div> <div class='request_text'> <a class='chat_link accept_mod' id='accept_mod_" + client.user + "_" + info.insertId + "' href='//mutualcog.com/tags/accept-mod/" + info.insertId + "/" + request_info.tag_id + "'>Accept</a> / <a class='chat_link decline_mod' id='decline_mod_" + client.user + "_" + info.insertId + "' href='//mutualcog.com/tags/decline-mod/" + info.insertId + "/" + request_info.tag_id + "'>Decline</a> </div> </div>";
 								var request_id = info.insertId;
 								conn.where({id:request_id}).update('requests',{message:message},function(err,info){
-									console.log(info);
 									if(err)console.log(err);
-									io.sockets.in('user_' + request_info.user_id).emit('displayGlobalRequests',{id:request_id,sender:client.user,sender_id:client.user_id,tag_name:request_info.tag_name,tag_id:request_info.tag_id,type:'mod'});
+									io.sockets.in('user_' + request_info.user_id).emit('displayGlobalRequests',{id:request_id,sender:client.user,sender_id:client.user_id,message:message,type:'mod'});
 									fn();
 								});
 							});

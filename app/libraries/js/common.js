@@ -4,7 +4,11 @@ module = function(){
 	var pm_scroll_inactive = {};
 	var title_blinking = typ_cnt = connected = recent = banned = stop_scroll = scroll_button_clicked = scroll_top = 0;
 	var clicked_on = -1;
-	var chat_id = $('.chat_id').attr('id').replace('chat_','');
+	if($('.chat_id').length){
+		var chat_id = $('.chat_id').attr('id').replace('chat_','');
+	}else{
+		var chat_id = '';
+	}
 	if($('#up_arr').length){
 		var upvoted = jQuery.parseJSON($('#up_arr').text());
 		var downvoted = jQuery.parseJSON($('#down_arr').text());
@@ -609,7 +613,6 @@ module.socket.on('receive_pm',function(info){
 
 module.socket.on('displayFriendRequests',function(request_info){
 	var friend_count = $('#friend_requests_count');
-	var f_content = "";
 	if(friend_count.text().length > 0){
 		friend_count.text(parseInt(friend_count.text()) + 1);
 	}else{
@@ -617,9 +620,24 @@ module.socket.on('displayFriendRequests',function(request_info){
 		friend_count.text('1');
 	}
 	if($('#friend_requests').attr('data-content').indexOf('No friend requests') >= 0){
-		$('#friend_requests').attr('data-content',"<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/u/" + request_info.sender + "'>" + request_info.sender + "</a> has requested your friendship </div> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/profile/accept/" + request_info.id + "'>Accept</a> / <a class='chat_link' href='//mutualcog.com/profile/decline/" + request_info.id + "'>Decline</a> </div> </div>");
+		$('#friend_requests').attr('data-content',"<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/u/" + request_info.sender + "'>" + request_info.sender + "</a> has requested your friendship </div> <div class='request_text'> <a class='chat_link accept_friendship' id='accept_friendship_" + request_info.sender + "_" + request_info.id + "' href='//mutualcog.com/profile/accept/" + request_info.id + "'>Accept</a> / <a class='chat_link decline_friendship' id='decline_friendship_" + request_info.sender + "_" + request_info.id + "' href='//mutualcog.com/profile/decline/" + request_info.id + "'>Decline</a> </div> </div>");
 	}else{
 		$('#friend_requests').attr('data-content',$('#friend_requests').attr('data-content').prepend("<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/u/" + request_info.sender + "'>" + request_info.sender + "</a> has requested your friendship </div> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/profile/accept/" + request_info.id + "'>Accept</a> / <a class='chat_link' href='//mutualcog.com/profile/decline/" + request_info.id + "'>Decline</a> </div> </div>"));
+	}
+});
+
+module.socket.on('displayGlobalRequests',function(request_info){
+	var global_count = $('#global_requests_count');
+	if(global_count.text().length > 0){
+		global_count.text(parseInt(global_count.text()) + 1);
+	}else{
+		$('#global_request_glyph').addClass('pull-left');
+		global_count.text('1');
+	}
+	if($('#global_requests').attr('data-content').indexOf('No global requests') >= 0){
+		$('#global_requests').attr('data-content',request_info.message);
+	}else{
+		$('#global_requests').attr('data-content',$('#global_requests').attr('data-content').prepend(request_info.message));
 	}
 });
 
