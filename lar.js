@@ -478,28 +478,28 @@ io.sockets.on('connection', function(client) {
 	});
 
 	// Success!  Now listen to messages to be received
-	client.on('message_sent',function(event){ 
-		if(io.sockets.clients(client.room)[client.arr_index].live && !client.banned && event.message.replace(/^\s+|\s+$/g,'') != '' && event.message.length < 2500){
-			event.message = processMessage(event.message);
-			conn.insert('messages',{message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:event.responseto,level:event.level,parent:event.parent,author:client.user,serial:client.serial},function(err,info){
+	client.on('message_sent',function(mssg_info){ 
+		if(io.sockets.clients(client.room)[client.arr_index].live && !client.banned && mssg_info.message.replace(/^\s+|\s+$/g,'') != '' && mssg_info.message.length < 2500){
+			mssg_info.message = processMessage(mssg_info.message);
+			conn.insert('messages',{message:mssg_info.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:mssg_info.responseto,y_dim:mssg_info.y_dim,parent:mssg_info.parent,author:client.user,serial:client.serial},function(err,info){
 				if(err) console.log(err);
-				io.sockets.in(client.room).emit('publishMessage',{id:info.insertId,message:event.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),responseto:event.responseto,author:client.user,serial:client.serial,level:event.level,parent:event.parent});
 				var insert_id = info.insertId;
-				if(event.responseto == 0){
-					conn.where({id:info.insertId}).update('messages',{path:"0" + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id,readable:1},function(err,info){
+				io.sockets.in(client.room).emit('publishMessage',{id:insert_id,message:mssg_info.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),responseto:mssg_info.responseto,author:client.user,serial:client.serial,y_dim:mssg_info.y_dim,parent:mssg_info.parent});
+				if(mssg_info.responseto == 0){
+					conn.where({id:insert_id}).update('messages',{path:"0" + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id,readable:1},function(err,info){
 						if(err)console.log(err);
 					});
 				}else{  //if it is a response
-					conn.where({id:event.responseto}).get('messages',function(err,rows){  //update response count, message path, and he_level and alert user to response
+					conn.where({id:mssg_info.responseto}).get('messages',function(err,rows){  //update response count, message path, and he_level and alert user to response
 						if(err)console.log(err);
-						conn.where({id:insert_id}).update('messages',{path:rows[0].path + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id,h_level:rows[0].responses + 1,readable:1},function(err,info){
+						conn.where({id:insert_id}).update('messages',{path:rows[0].path + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id,res_num:rows[0].responses + 1,readable:1},function(err,info){
 							if(err)console.log(err);
 						});
-						conn.where({id:event.responseto}).update('messages',{responses:rows[0].responses + 1},function(err,info){
+						conn.where({id:mssg_info.responseto}).update('messages',{responses:rows[0].responses + 1},function(err,info){
 							if(err)console.log(err);
-							io.sockets.in(client.room).emit('updateResponseCount',{count:rows[0].responses + 1,id:event.responseto,serial:rows[0].serial});
+							io.sockets.in(client.room).emit('updateResponseCount',{count:rows[0].responses + 1,id:mssg_info.responseto,serial:rows[0].serial});
 							if(rows[0].author != client.serial || rows[0].author != client.user){
-								io.sockets.in(client.room + '_member_' + rows[0].author).emit('alertUserToResponse',{mssg_id:event.responseto,resp_id:insert_id,parent:event.parent});
+								io.sockets.in(client.room + '_member_' + rows[0].author).emit('alertUserToResponse',{mssg_id:mssg_info.responseto,resp_id:insert_id,parent:mssg_info.parent});
 							}
 						});
 					});
@@ -523,10 +523,11 @@ io.sockets.on('connection', function(client) {
 		var replace = '<em>This message has been deleted</em>';
 		conn.where({id:mssg_info.id}).get('messages',function(err,rows){
 			if(err)console.log(err);
+			var message = rows[0];
 			if(rows[0].member_id == client.memb_id){
-				conn.where({id:mssg_info.id}).update('messages',{message:replace},function(err){
+				conn.where({id:mssg_info.id}).update('messages',{message:replace},function(err,info){
 					if(err)console.log(err);
-					io.sockets.in(client.room).emit('softDelete',{id:mssg_info.id,user:mssg_info.user,serial:mssg_info.serial,responses:mssg_info.responses});
+					io.sockets.in(client.room).emit('softDelete',{id:mssg_info.id,user:mssg_info.user,mssg_serial:message.serial,serial:mssg_info.serial,responses:mssg_info.responses});
 				});
 			}
 		});

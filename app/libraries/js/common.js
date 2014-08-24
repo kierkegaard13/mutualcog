@@ -639,25 +639,21 @@ $('body').on('keyup','.pm_text',function(e){
 	return true;
 });
 
+module.socket.on('softDelete',function(mssg_info){
+	if($('#message_' + mssg_info.id + '.chat_mssg').length){
+		$('.mssg_icon').tooltip('hide');
+		$('.mssg_icon').tooltip();
+		$('#message_' + mssg_info.id + '.chat_mssg').find('.mssg_body').html("<strong class='mssg_op' id='" + mssg_info.user + "' style='color:" + module.color_arr[mssg_info.mssg_serial % 7] + ";'>" + mssg_info.user + " (<span class='response_count' id='" + mssg_info.id + "'>" + mssg_info.responses + "</span>)</strong> : <em>This message has been deleted</em>");
+	}
+});
+
 deleteIt = function(e){
 	e.stopPropagation();
 	var mssg_id = $(this).parents('.chat_mssg').first().attr('id').replace('message_','');
 	if($('#logged_in').text() == 1){
-		module.socket.emit('delete_message',{id:mssg_id,user:module.user_tracker,serial:$(this).attr('data-mssg-serial'),responses:$(this).parent().find('.response_count').text()},function(mssg_info){
-			if($('#message_' + mssg_info.id + '.chat_mssg').length){
-				$('.mssg_icon').tooltip('hide');
-				$('.mssg_icon').tooltip();
-				$('#message_' + mssg_info.id + '.chat_mssg').find('.mssg_body').html("<strong class='mssg_op' id='" + mssg_info.user + "' style='color:" + module.color_arr[mssg_info.serial % 7] + ";'>" + mssg_info.user + " (<span class='response_count' id='" + mssg_info.id + "'>" + mssg_info.responses + "</span>)</strong> : <em>This message has been deleted</em>");
-			}
-		});
+		module.socket.emit('delete_message',{id:mssg_id,user:module.user_tracker,serial:$(this).attr('data-mssg-serial'),responses:$(this).parent().find('.response_count').text()});
 	}else{
-		module.socket.emit('delete_message',{id:mssg_id,user:module.serial_tracker,serial:$(this).attr('data-mssg-serial'),responses:$(this).parent().find('.response_count').text()},function(mssg_info){	
-			if($('#message_' + mssg_info.id + '.chat_mssg').length){
-				$('.mssg_icon').tooltip('hide');
-				$('.mssg_icon').tooltip();
-				$('#message_' + mssg_info.id + '.chat_mssg').find('.mssg_body').html("<strong class='mssg_op' id='" + mssg_info.user + "' style='color:" + module.color_arr[mssg_info.serial % 7] + ";'>" + mssg_info.user + " (<span class='response_count' id='" + mssg_info.id + "'>" + mssg_info.responses + "</span>)</strong> : <em>This message has been deleted</em>");
-			}
-		});
+		module.socket.emit('delete_message',{id:mssg_id,user:module.serial_tracker,serial:$(this).attr('data-mssg-serial'),responses:$(this).parent().find('.response_count').text()});	
 	}
 };
 
