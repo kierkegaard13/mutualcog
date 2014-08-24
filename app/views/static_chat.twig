@@ -194,57 +194,55 @@
 			{% block static_mssg_cont %}
 				{{parent()}}
 			{% endblock %}
-		{% if recursive %}
-		{% for response in message.descendants %}
-			{% if not loop.first and prev_y == response.y_dim %}
-				{% for i in response.y_dim..prev_y %}
-					{% if prev_mssg.responses > 6 or (prev_mssg.y_dim == 2 and prev_mssg.responses > 0) %} <!-- closes previous message -->
-						<a class="load_more" href="{{site}}/chat/load-more/{{prev_mssg.id}}"><strong>Load more</strong></a>
-					{% endif %}
-					</div>
-					</div>
-				{% endfor %}
-			{% elseif not loop.first and prev_y > response.y_dim %}
-				{% for i in response.y_dim..prev_y %}
-					{% if loop.last %}
-						{% if prev_mssg.mssgParent.responses > 6 %} <!-- closes previous message -->
-							<a class="load_more" href="{{site}}/chat/load-more/{{prev_mssg.responseto}}"><strong>Load more</strong></a>
-						{% endif %}
-					{% else %}
-						{% if prev_mssg.y_dim == 2 and prev_mssg.responses > 0 %} <!-- closes previous message -->
+			{% for response in message.descendants %}
+				{% if not loop.first and prev_y == response.y_dim %}
+					{% for i in response.y_dim..prev_y %}
+						{% if prev_mssg.responses > 6 or (prev_mssg.y_dim == 2 and prev_mssg.responses > 0) %} <!-- closes previous message -->
 							<a class="load_more" href="{{site}}/chat/load-more/{{prev_mssg.id}}"><strong>Load more</strong></a>
-						{% endif %}
-					{% endif %}
-					</div>
-					</div>
-				{% endfor %}
-			{% endif %}
-			<div class="response_to_{{response.responseto}} mssg_cont y_{{response.y_dim}} parent_{{response.parent}} {% if response.y_dim > 3 %}hidden-xs {% endif %}{% if response.y_dim > 5 %}hidden-sm {% endif %}{% if response.y_dim > 8 %}hidden-md {% endif %}{% if response.y_dim > 12 %}hidden-lg {% endif %}pad_l_10" id="mssg_cont_{{response.id}}">
-				{% block static_resp_cont %}
-					{{parent()}}
-				{% endblock %}
-			{% set prev_y = response.y_dim %}
-			{% if loop.last %}
-				{% if response.y_dim > 1 %}
-					{% for i in 1..response.y_dim %}
-						{% if response.responses > 1 %}
-							<a class="load_more" href="{{site}}/chat/load-more/{{response.id}}"><strong>Load more</strong></a>
 						{% endif %}
 						</div>
 						</div>
 					{% endfor %}
-				{% else %}
-					{% if response.responses > 6 %}
-						<a class="load_more" href="{{site}}/chat/load-more/{{response.id}}"><strong>Load more</strong></a>
-					{% endif %}
-					</div>
-					</div>
+				{% elseif not loop.first and prev_y > response.y_dim %}
+					{% for i in response.y_dim..prev_y %}
+						{% if loop.last %}
+							{% if prev_mssg.mssgParent.responses > 6 %} <!-- closes previous message -->
+								<a class="load_more" href="{{site}}/chat/load-more/{{prev_mssg.responseto}}"><strong>Load more</strong></a>
+							{% endif %}
+						{% else %}
+							{% if prev_mssg.y_dim == 2 and prev_mssg.responses > 0 %} <!-- closes previous message -->
+								<a class="load_more" href="{{site}}/chat/load-more/{{prev_mssg.id}}"><strong>Load more</strong></a>
+							{% endif %}
+						{% endif %}
+						</div>
+						</div>
+					{% endfor %}
 				{% endif %}
-			{% endif %}
-			{% set prev_mssg = response %}
-		{% else %}
-		{% endfor %}
-		{% endif %}
+				<div class="response_to_{{response.responseto}} mssg_cont y_{{response.y_dim}} parent_{{response.parent}} {% if response.y_dim > 3 %}hidden-xs {% endif %}{% if response.y_dim > 5 %}hidden-sm {% endif %}{% if response.y_dim > 8 %}hidden-md {% endif %}{% if response.y_dim > 12 %}hidden-lg {% endif %}pad_l_10" id="mssg_cont_{{response.id}}">
+					{% block static_resp_cont %}
+						{{parent()}}
+					{% endblock %}
+				{% set prev_y = response.y_dim %}
+				{% if loop.last %}
+					{% if response.y_dim > 1 %}
+						{% for i in 1..response.y_dim %}
+							{% if response.responses > 1 %}
+								<a class="load_more" href="{{site}}/chat/load-more/{{response.id}}"><strong>Load more</strong></a>
+							{% endif %}
+							</div>
+							</div>
+						{% endfor %}
+					{% else %}
+						{% if response.responses > 6 %}
+							<a class="load_more" href="{{site}}/chat/load-more/{{response.id}}"><strong>Load more</strong></a>
+						{% endif %}
+						</div>
+						</div>
+					{% endif %}
+				{% endif %}
+				{% set prev_mssg = response %}
+			{% else %}
+			{% endfor %}
 		{% if message.responses > 6 %}
 			<a class="load_more" href="{{site}}/chat/load-more/{{message.id}}"><strong>Load more</strong></a>
 		{% endif %}

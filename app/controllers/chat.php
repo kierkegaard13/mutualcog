@@ -221,13 +221,11 @@ class Chat extends BaseController {
 		$view['chat'] = $chat;
 		$view['mods'] = $mods;
 		if($mssg_id){
-			$message = Messages::find($mssg_id);
-			$omitted = Messages::where('path','LIKE',"$message->path%")->where('res_num','=','7')->where('y_dim','=',$message->y_dim + 1)->first();
-			$view['messages'] = Messages::where('path','LIKE',"$message->path%")->where('path','<',$omitted->path)->where('y_dim','<=',$message->y_dim + 2)->orderBy('path')->take(1000)->get();
-			$view['recursive'] = 0;
+			$mssg_arr = array();
+			$mssg_arr[] = Messages::with('descendants')->wherereadable('1')->orderBy('path')->find($mssg_id); 
+			$view['messages'] = $mssg_arr; 
 		}else{
 			$view['messages'] = $chat->messagesPaginate();
-			$view['recursive'] = 1;
 		}
                 return $view;
 	}
