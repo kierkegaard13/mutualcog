@@ -26,7 +26,7 @@ $(document).ready(function(){
 				var res = '';
 				$.each(hresp,function(index,val){
 					res += '<div class="response_to_' + val.responseto + ' mssg_cont y_' + val.y_dim + ' parent_' + val.parent + ' pad_l_10" id="mssg_cont_' + val.id + '">';
-					res += '<div class="mssg_cont_inner"><div class="chat_mssg" id="response_' + val.id + '"> <div class="row" style="margin:0;"> <div class="mssg_body_cont"> <div class="chat_vote_box">';
+					res += '<div class="mssg_cont_inner"><div class="chat_mssg" id="message_' + val.id + '"> <div class="row" style="margin:0;"> <div class="mssg_body_cont"> <div class="chat_vote_box">';
 					if(upvoted.indexOf(val.id) != -1){
 						res += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + val.id + '" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + val.id + '">' + (val.upvotes - val.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span></div>';
 					}else if(downvoted.indexOf(val.id) != -1){
@@ -114,10 +114,10 @@ $(document).ready(function(){
 	$('.reply_link').on('click',function(){
 		if(!$('#message_' + $(this).attr('data-mssg-id')).find('#reply_form_' + $(this).attr('data-mssg-id')).length){
 			$(this).html('<strong>Cancel</strong>');
+			reply_form = $('#reply_form').clone();
 			$('#message_' + $(this).attr('data-mssg-id')).append(reply_form);	
 			$('#message_' + $(this).attr('data-mssg-id')).find('#reply_form').attr('id','reply_form_' + $(this).attr('data-mssg-id'));	
 			$('#reply_form_' + $(this).attr('data-mssg-id')).children('#reply_to').val($(this).attr('data-mssg-id'));
-			reply_form = $('#reply_form').clone();
 		}else{
 			$('#message_' + $(this).attr('data-mssg-id')).find('#reply_form_' + $(this).attr('data-mssg-id')).toggle();	
 			if($(this).children().text() == 'Reply'){
