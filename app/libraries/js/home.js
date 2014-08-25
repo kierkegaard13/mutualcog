@@ -1,5 +1,6 @@
 var selected_tag = -1;
 var selected_mod = -1;
+var selected_admin = -1;
 
 $(document).ready(function(){
 	$('.chat_status_indicator').tooltip();
@@ -514,11 +515,24 @@ $('#mod_input').on('keydown',function(e){
 	if(e.keyCode == 13){  /*enter key*/
 		if(selected_mod != -1){
 			var request_info = {tag_id:$(this).attr('data-tag-id'),tag_name:$(this).attr('data-tag-name'),user_id:$('.suggested_mods').eq(selected_mod).attr('id')};
-			module.socket.emit('request_mod',request_info,function(){
+			module.socket.emit('request_mod',request_info,function(success){
+				if(success == 1){
+					$('#mod_request_sent').text('Request sent');
+					if(!$('#mod_request_sent').hasClass('base_green_color')){
+						$('#mod_request_sent').removeClass('base_red_color');
+						$('#mod_request_sent').addClass('base_green_color');
+					}
+				}else{
+					$('#mod_request_sent').text('Limit reached');
+					if(!$('#mod_request_sent').hasClass('base_red_color')){
+						$('#mod_request_sent').removeClass('base_green_color');
+						$('#mod_request_sent').addClass('base_red_color');
+					}
+				}
 				$('#mod_request_sent').show('fade','slow',function(){
 					window.setTimeout(function(){
 						$('#mod_request_sent').hide('fade','slow');	
-					},1500);	
+					},1500);
 				});
 			});
 			$(this).popover('destroy');
@@ -565,7 +579,7 @@ $('#mod_input').on('keyup',function(e){
 			$.ajax({
 				type:'GET',
 				data: {mod:mod,tag_id:tag_id},
-				url:'//mutualcog.com/tags/similar-user',
+				url:'//mutualcog.com/tags/similar-mod',
 				success:function(hresp){
 					var content = '';
 					$.each(hresp,function(index,value){
@@ -578,11 +592,24 @@ $('#mod_input').on('keyup',function(e){
 							mod_input.popover('show');
 							$('.suggested_mods').click(function(){
 								var request_info = {tag_id:mod_input.attr('data-tag-id'),tag_name:mod_input.attr('data-tag-name'),user_id:$('.suggested_mods').eq(selected_mod).attr('id')};
-								module.socket.emit('request_mod',request_info,function(){
+								module.socket.emit('request_mod',request_info,function(success){
+									if(success){
+										$('#mod_request_sent').text('Request sent');
+										if(!$('#mod_request_sent').hasClass('base_green_color')){
+											$('#mod_request_sent').removeClass('base_red_color');
+											$('#mod_request_sent').addClass('base_green_color');
+										}
+									}else{
+										$('#mod_request_sent').text('Limit reached');
+										if(!$('#mod_request_sent').hasClass('base_red_color')){
+											$('#mod_request_sent').removeClass('base_green_color');
+											$('#mod_request_sent').addClass('base_red_color');
+										}
+									}
 									$('#mod_request_sent').show('fade','slow',function(){
 										window.setTimeout(function(){
 											$('#mod_request_sent').hide('fade','slow');	
-										},1500);	
+										},1500);
 									});
 								});
 								mod_input.focus();
@@ -599,11 +626,24 @@ $('#mod_input').on('keyup',function(e){
 								$('.suggested_mods').off('click');
 								$('.suggested_mods').click(function(){
 									var request_info = {tag_id:mod_input.attr('data-tag-id'),tag_name:mod_input.attr('data-tag-name'),user_id:$('.suggested_mods').eq(selected_mod).attr('id')};
-									module.socket.emit('request_mod',request_info,function(){
+									module.socket.emit('request_mod',request_info,function(success){
+										if(success){
+											$('#mod_request_sent').text('Request sent');
+											if(!$('#mod_request_sent').hasClass('base_green_color')){
+												$('#mod_request_sent').removeClass('base_red_color');
+												$('#mod_request_sent').addClass('base_green_color');
+											}
+										}else{
+											$('#mod_request_sent').text('Limit reached');
+											if(!$('#mod_request_sent').hasClass('base_red_color')){
+												$('#mod_request_sent').removeClass('base_green_color');
+												$('#mod_request_sent').addClass('base_red_color');
+											}
+										}
 										$('#mod_request_sent').show('fade','slow',function(){
 											window.setTimeout(function(){
 												$('#mod_request_sent').hide('fade','slow');	
-											},1500);	
+											},1500);
 										});
 									});
 									mod_input.focus();
@@ -623,6 +663,162 @@ $('#mod_input').on('keyup',function(e){
 		}else{
 			$(this).popover('destroy');
 			selected_mod = -1;
+		}
+	}
+});
+
+$('#admin_input').on('keydown',function(e){
+	if(e.keyCode == 13){  /*enter key*/
+		if(selected_admin != -1){
+			var request_info = {tag_id:$(this).attr('data-tag-id'),tag_name:$(this).attr('data-tag-name'),user_id:$('.suggested_admin').eq(selected_admin).attr('id')};
+			module.socket.emit('request_admin',request_info,function(success){
+				if(success == 1){
+					$('#admin_request_sent').text('Request sent');
+					if(!$('#admin_request_sent').hasClass('base_green_color')){
+						$('#admin_request_sent').removeClass('base_red_color');
+						$('#admin_request_sent').addClass('base_green_color');
+					}
+				}else{
+					$('#admin_request_sent').text('Limit reached');
+					if(!$('#admin_request_sent').hasClass('base_red_color')){
+						$('#admin_request_sent').removeClass('base_green_color');
+						$('#admin_request_sent').addClass('base_red_color');
+					}
+				}
+				$('#admin_request_sent').show('fade','slow',function(){
+					window.setTimeout(function(){
+						$('#admin_request_sent').hide('fade','slow');	
+					},1500);
+				});
+			});
+			$(this).popover('destroy');
+			$(this).focus();
+			selected_admin = -1;
+		}
+		return false;
+	}else if(e.keyCode == 38){  /*up arrow*/
+		if($('.popover').length != 0){
+			if(selected_admin != 0){
+				selected_admin += 1;
+				$('.suggested_admin').css('color','');
+				$('.suggested_admin').eq(selected_admin).css('color','#57bf4b');
+			}
+		}
+		return false;
+	}else if(e.keyCode == 40){  /*down arrow*/
+		if($('.popover').length != 0){
+			if(selected_admin != $('.suggested_admin').length - 1){
+				selected_admin -= 1;
+				$('.suggested_admin').css('color','');
+				$('.suggested_admin').eq(selected_admin).css('color','#57bf4b');
+			}
+		}
+		return false;
+	}
+});
+
+$('#admin_input').on('keyup',function(e){
+	if(e.keyCode == 32 || e.keyCode == 13){  /*space bar*/
+		return false;
+	}else if(e.keyCode == 38 || e.keyCode == 40){  /*up arrow or down arrow*/
+		return false;
+	}else{
+		var admin = $(this).val();
+		var tag_id = $(this).attr('data-tag-id');
+		if(admin.length > 2){
+			var admin_input = $(this);
+			$(this).on('blur',function(){
+				if($('.popover').length){
+					$(this).popover('hide');
+				}
+			});
+			$.ajax({
+				type:'GET',
+				data: {admin:admin,tag_id:tag_id},
+				url:'//mutualcog.com/tags/similar-admin',
+				success:function(hresp){
+					var content = '';
+					$.each(hresp,function(index,value){
+						content += '<div class="suggested_admin" id="' + value.id + '">' + value.name + '</div>';
+					});
+					if($('.popover').length == 0){
+						if(content){
+							admin_input.popover({html:true});
+							admin_input.attr('data-content',content);
+							admin_input.popover('show');
+							$('.suggested_admin').click(function(){
+								var request_info = {tag_id:admin_input.attr('data-tag-id'),tag_name:admin_input.attr('data-tag-name'),user_id:$('.suggested_admin').eq(selected_admin).attr('id')};
+								module.socket.emit('request_admin',request_info,function(success){
+									if(success){
+										$('#admin_request_sent').text('Request sent');
+										if(!$('#admin_request_sent').hasClass('base_green_color')){
+											$('#admin_request_sent').removeClass('base_red_color');
+											$('#admin_request_sent').addClass('base_green_color');
+										}
+									}else{
+										$('#admin_request_sent').text('Limit reached');
+										if(!$('#admin_request_sent').hasClass('base_red_color')){
+											$('#admin_request_sent').removeClass('base_green_color');
+											$('#admin_request_sent').addClass('base_red_color');
+										}
+									}
+									$('#admin_request_sent').show('fade','slow',function(){
+										window.setTimeout(function(){
+											$('#admin_request_sent').hide('fade','slow');	
+										},1500);
+									});
+								});
+								admin_input.focus();
+								admin_input.popover('destroy');
+								selected_admin = -1;
+							});
+							selected_admin = -1;
+						}
+					}else{
+						if(content){
+							if($('.popover-content').html() != content){
+								$('.popover-content').html(content);
+								selected_admin = -1;
+								$('.suggested_admin').off('click');
+								$('.suggested_admin').click(function(){
+									var request_info = {tag_id:admin_input.attr('data-tag-id'),tag_name:admin_input.attr('data-tag-name'),user_id:$('.suggested_admin').eq(selected_admin).attr('id')};
+									module.socket.emit('request_admin',request_info,function(success){
+										if(success){
+											$('#admin_request_sent').text('Request sent');
+											if(!$('#admin_request_sent').hasClass('base_green_color')){
+												$('#admin_request_sent').removeClass('base_red_color');
+												$('#admin_request_sent').addClass('base_green_color');
+											}
+										}else{
+											$('#admin_request_sent').text('Limit reached');
+											if(!$('#admin_request_sent').hasClass('base_red_color')){
+												$('#admin_request_sent').removeClass('base_green_color');
+												$('#admin_request_sent').addClass('base_red_color');
+											}
+										}
+										$('#admin_request_sent').show('fade','slow',function(){
+											window.setTimeout(function(){
+												$('#admin_request_sent').hide('fade','slow');	
+											},1500);
+										});
+									});
+									admin_input.focus();
+									admin_input.popover('destroy');
+									selected_admin = -1;
+								});
+							}
+						}else{
+							admin_input.popover('destroy');
+							selected_admin = -1;
+						}
+					}
+				},
+				error:function(){
+				}
+			});
+		}else{
+			$(this).popover('destroy');
+			selected_admin = -1;
 		}
 	}
 });

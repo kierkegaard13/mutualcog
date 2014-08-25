@@ -81,7 +81,7 @@
 	</div>
 {% else %}
 	{% if user.owned < 1 and user_subscribed %}
-		<a href="{{site}}/tags/assign-admin/{{user.id}}/{{curr_tag_id}}" style="font-size:14px;margin-left:10px;">Become the admin</a>
+		<a href="{{site}}/tags/assign-admin/{{curr_tag_id}}" style="font-size:14px;margin-left:10px;">Become the admin</a>
 	{% else %}
 		<div style="font-size:14px;margin-left:10px;">No Admin</div>
 	{% endif %}

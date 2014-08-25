@@ -363,24 +363,33 @@ io.sockets.on('connection', function(client) {
 	client.on('request_mod',function(info,fn){
 		if(client.authorized){
 			var request_info = info;
-			conn.where({user_id:client.user_id,tag_id:info.tag_id}).get('users_to_tags',function(err,rows){
+			conn.where({tag_id:info.tag_id,is_mod:1}).get('users_to_tags',function(err,rows){  //check for mod limit
 				if(err)console.log(err);
-				if(rows[0].is_admin){
-					conn.where({type:0,global_type:'mod',user_id:info.user_id,sender_id:client.user_id}).get('requests',function(err,rows){
+				if(rows.length <= 20){  //mod count must be max of 20
+					conn.where({user_id:client.user_id,tag_id:request_info.tag_id}).get('users_to_tags',function(err,rows){  //check if sender is admin
 						if(err)console.log(err);
-						if(rows.length == 0){
-							conn.insert('requests',{type:0,global_type:'mod',user_id:info.user_id,sender_id:client.user_id,sender:client.user,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
+						if(rows[0].is_admin){
+							conn.where({type:0,global_type:'mod',user_id:info.user_id,sender_id:client.user_id}).get('requests',function(err,rows){  
 								if(err)console.log(err);
-								var message = "<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/u/" + client.user + "'>" + client.user + "</a> has requested you as a mod for <a class='chat_link' href='//mutualcog.com/t/" + request_info.tag_name + "'>/t/"  + request_info.tag_name + "</a> </div> <div class='request_text'> <a class='chat_link accept_mod' id='accept_mod_" + client.user + "_" + info.insertId + "' href='//mutualcog.com/tags/accept-mod/" + info.insertId + "/" + request_info.tag_id + "'>Accept</a> / <a class='chat_link decline_mod' id='decline_mod_" + client.user + "_" + info.insertId + "' href='//mutualcog.com/tags/decline-mod/" + info.insertId + "/" + request_info.tag_id + "'>Decline</a> </div> </div>";
-								var request_id = info.insertId;
-								conn.where({id:request_id}).update('requests',{message:message},function(err,info){
-									if(err)console.log(err);
-									io.sockets.in('user_' + request_info.user_id).emit('displayGlobalRequests',{id:request_id,sender:client.user,sender_id:client.user_id,message:message,type:'mod'});
-									fn();
-								});
+								if(rows.length == 0){  //check if request already exists
+									conn.insert('requests',{type:0,global_type:'mod',user_id:info.user_id,sender_id:client.user_id,sender:client.user,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
+										if(err)console.log(err);
+										var message = "<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/u/" + client.user + "'>" + client.user + "</a> has requested you as a mod for <a class='chat_link' href='//mutualcog.com/t/" + request_info.tag_name + "'>/t/"  + request_info.tag_name + "</a> </div> <div class='request_text'> <a class='chat_link accept_mod' id='accept_mod_" + client.user + "_" + info.insertId + "' href='//mutualcog.com/tags/accept-mod/" + info.insertId + "/" + request_info.tag_id + "'>Accept</a> / <a class='chat_link decline_mod' id='decline_mod_" + client.user + "_" + info.insertId + "' href='//mutualcog.com/tags/decline-mod/" + info.insertId + "/" + request_info.tag_id + "'>Decline</a> </div> </div>";
+										var request_id = info.insertId;
+										conn.where({id:request_id}).update('requests',{message:message},function(err,info){
+											if(err)console.log(err);
+											io.sockets.in('user_' + request_info.user_id).emit('displayGlobalRequests',{id:request_id,sender:client.user,sender_id:client.user_id,message:message,type:'mod'});
+											fn(1);
+										});
+									});
+								}else{
+									fn(1)
+								}
 							});
 						}
 					});
+				}else{
+					fn(0);
 				}
 			});
 		}

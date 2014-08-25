@@ -65,20 +65,25 @@ $(document).ready(function(){
 			$('#stop_scroll').attr('data-original-title','Stop scrollbar');
 		}else if(scroll_mod_active){
 			module.stop_scroll = 1;
+			module.chat_scroll_timer = 10;
 			if($('#stop_scroll').hasClass('highlight_red')){
 			}else{
 				$('#stop_scroll').addClass('highlight_red');
 				$('#stop_scroll').attr('data-original-title','Resume scrolling');
 			}	
-			window.setTimeout(function(){
-				if(module.scroll_button_clicked == 0){
-					$('#stop_scroll').removeClass('highlight_red');	
-					$('#stop_scroll').attr('data-original-title','Stop scrollbar');
-					module.stop_scroll = 0;
-				}
-			},10000);
 		}
 	}}});	
+	window.setInterval(function(){
+		if(module.chat_scroll_timer == 0){
+			if(module.scroll_button_clicked == 0 && module.stop_scroll){
+				$('#stop_scroll').removeClass('highlight_red');	
+				$('#stop_scroll').attr('data-original-title','Stop scrollbar');
+				module.stop_scroll = 0;
+			}
+		}else{
+			module.chat_scroll_timer--;
+		}
+	},1000);
 	$('.mssg_cont').show();
 	$('#chat_messages').click(function(){
 		if(module.scroll_mod_active == 0){

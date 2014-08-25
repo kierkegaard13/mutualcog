@@ -2,11 +2,12 @@
 
 class TagsController extends BaseController {
 
-	public function getAssignAdmin($user_id,$tag_id){
+	public function getAssignAdmin($tag_id){
 		if(Auth::check()){
 			$tag = Tags::find($tag_id);
-			$user_to_tag = UsersToTags::whereuser_id($user_id)->wheretag_id($tag_id)->first();
-			if(Auth::user()->owned() < 1 && $tag && Auth::user()->id == $user_id && $user_to_tag){
+			$user_to_tag = UsersToTags::whereuser_id(Auth::user()->id)->wheretag_id($tag_id)->first();
+			$owner = UsersToTags::wheretag_id($tag_id)->whereis_admin('1')->first();
+			if(Auth::user()->owned() < 1 && $user_to_tag && !$owner){
 				if($user_to_tag->is_mod){
 					$user_to_tag->is_mod = 0;
 				}
@@ -26,11 +27,14 @@ class TagsController extends BaseController {
 		}
 		$request = Requests::find($request_id);
 		if(Auth::check() && $request){
-			$friend_id = $request->sender_id;
-			if(Auth::user()->id != $friend_id && Auth::user()->id == $request->user_id){
+			$sender_id = $request->sender_id;
+			if(Auth::user()->id != $sender_id && Auth::user()->id == $request->user_id){
 				$user_to_tag = UsersToTags::whereuser_id(Auth::user()->id)->wheretag_id($tag_id)->first();
-				$user_to_tag->is_mod = 1;
-				$user_to_tag->save();
+				$tag = Tags::find($tag_id);
+				if($user_to_tag && count($tag->moderators()) <= 20){
+					$user_to_tag->is_mod = 1;
+					$user_to_tag->save();
+				}
 				$request->delete();
 			}
 		}
@@ -98,14 +102,26 @@ class TagsController extends BaseController {
 		return $res_arr;
 	}
 
-	public function getSimilarUser(){
+	public function getSimilarMod(){
 		$mod_input = htmlentities(Input::get('mod'));
 		$tag_id = htmlentities(Input::get('tag_id'));
 		$res_arr = array();
 		$mod = new User();
-		$mod = $mod->select('users.*')->where('name','LIKE','%' . $mod_input . '%')->join('users_to_tags','users_to_tags.user_id','=','users.id')->where('users_to_tags.tag_id',$tag_id)->where('users_to_tags.is_admin','0')->take(5)->get();
+		$mod = $mod->select('users.*')->where('name','LIKE','%' . $mod_input . '%')->join('users_to_tags','users_to_tags.user_id','=','users.id')->where('users_to_tags.tag_id',$tag_id)->where('users_to_tags.is_admin','0')->where('users_to_tags.is_mod','0')->take(5)->get();
 		foreach($mod as $m){
 			$res_arr[] = array('id' => $m->id,'name' => $m->name);
+		}
+		return $res_arr;
+	}
+
+	public function getSimilarAdmin(){
+		$admin_input = htmlentities(Input::get('admin'));
+		$tag_id = htmlentities(Input::get('tag_id'));
+		$res_arr = array();
+		$admin = new User();
+		$admin = $admin->select('users.*')->where('name','LIKE','%' . $admin_input . '%')->join('users_to_tags','users_to_tags.user_id','=','users.id')->where('users_to_tags.tag_id',$tag_id)->where('users_to_tags.is_admin','0')->take(5)->get();
+		foreach($admin as $a){
+			$res_arr[] = array('id' => $a->id,'name' => $a->name);
 		}
 		return $res_arr;
 	}
