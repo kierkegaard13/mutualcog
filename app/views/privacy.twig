@@ -1,4 +1,9 @@
-{% extends 'info_header.twig' %}
+{% extends 'info.twig' %}
+{% use 'common.twig' %}
+
+{% block header %}
+	{{parent()}}
+{% endblock %}
 
 {% block content %}
 <div>
