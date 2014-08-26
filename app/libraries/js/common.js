@@ -143,7 +143,8 @@ $(document).ready(function(){
 		var friend_id = $(this).attr('data-friend-id');
 		var pm_id = $(this).attr('data-pm-chat-id');
 		var friend_status_class = $(this).find('#friend_' + friend_id + '_status').attr('class').replace('friend_status','');
-		if($('#pm_' + friend_id + '_' + pm_id).length == 0){
+		console.log($(window).width());
+		if($('.pm_bar').width() < $(window).width() - 500 && $('#pm_' + friend_id + '_' + pm_id).length == 0){
 			module.socket.emit('join_pm',{friend_id:friend_id,friend_name:friend_name,pm_id:pm_id},function(info){
 				$('#pm_' + info.friend_name).attr('id','pm_' + info.friend_id + '_' + info.pm_id);
 			});
@@ -152,7 +153,7 @@ $(document).ready(function(){
 				data:{pm_id:pm_id},
 				url:'//mutualcog.com/chat/pm-log',
 				success:function(hresp){	
-					var chat_box = '<div class="pm_cont" id="pm_' + friend_id + '_' + pm_id + '">';
+					var chat_box = '<div class="pm_cont pm_visible" id="pm_' + friend_id + '_' + pm_id + '" style="visibility:hidden;">';
 					chat_box += '<div class="pm_header"><div class="' + friend_status_class + ' pm_status"></div><div class="glyphicon glyphicon-remove pm_remove"></div><div class="pm_name">' + friend_name + '</div></div>';
 					chat_box += '<div class="pm_body"><div class="pm_body_mssgs">'
 					$.each(hresp,function(index,val){
@@ -166,7 +167,21 @@ $(document).ready(function(){
 					chat_box += '<textarea rows=1 class="pm_text"></textarea>';
 					chat_box += '</div>'; 
 					$('.pm_bar').prepend(chat_box);
-					$('.pm_cont').resizable({handles:"nw",ghost:false,maxHeight:450,maxWidth:400,minHeight:330,minWidth:240,resize:function(e,ui){
+					$('.pm_body').eq(0).mCustomScrollbar({theme:'light-2',callbacks:{onScroll:function(){
+						var $this = $(this);
+						var par_id = $this.parent().attr('id');
+						var scrollBottom = this.mcs.draggerTop + $this.find('.mCSB_dragger').height();
+						if(scrollBottom == $this.height()){
+							module.pm_scroll_inactive[par_id] = 0;
+						}else{
+							module.pm_scroll_inactive[par_id] = 1;
+						}
+					}}});	
+					$('.pm_body').eq(0).mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
+					window.setTimeout(function(){
+						$('.pm_visible').css('visibility','');	
+					},50);
+					$('.pm_cont').eq(0).resizable({handles:"nw",ghost:false,maxHeight:450,maxWidth:400,minHeight:330,minWidth:240,resize:function(e,ui){
 						var ui_height = ui.size.height;
 						var ui_width = ui.size.width - 10;
 						$(this).css('left','0');
@@ -480,7 +495,6 @@ $('#search_input').on('focus',function(e){
 var selected_term = -1;
 
 $('#search_input').on('keydown',function(e){
-	console.log(selected_term);
 	if(e.keyCode == 13){  /*enter key*/
 		if(selected_term == -1){
 		}else{
@@ -736,7 +750,6 @@ $('body').on('keyup','.pm_text',function(e){
 				mssg += '<div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment().format("hh:mma") + '">' + $(this).val() + '</div>';
 				mssg += '</div>'; 
 				$('#pm_' + module.pm_info[1] + '_' + module.pm_info[2]).find('.pm_body_mssgs').append(mssg);
-				console.log(module.pm_scroll_inactive);
 				if(module.pm_scroll_inactive[chat_cont.attr('id')] == 0 || !(chat_cont.attr('id') in module.pm_scroll_inactive)){
 					var pm_body = chat_cont.find('.pm_body');
 					window.setTimeout(function(){

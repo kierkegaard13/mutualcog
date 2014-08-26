@@ -423,39 +423,22 @@ class Chat extends BaseController {
 		return false;
 	}
 
-	public function getValidateLink(){
-		$validator = Validator::make(
-				array(
-					'link' => htmlentities(Input::get('link')) 
-				     ),
-				array(
-					'link' => 'required|active_url'
-				     )
-				);
-		if($validator->fails()){
-			return 0;
-		}else{
-			return 1;
-		}
-	}
-
 	public function postNewChat(){
 		$validated = 0;
 		$title = htmlentities(Input::get('title'));
 		$link = htmlentities(Input::get('link'));
 		$details = htmlentities(Input::get('description'));
 		$live_status = htmlentities(Input::get('live_status'));
+		$nsfw = htmlentities(Input::get('nsfw'));
 		$tags = htmlentities(Input::get('tags'));
 		$validator = Validator::make(
 				array(
 					'title' => $title,
-					'link' => $link,
 					'description' => $details,
 					'tags' => $tags
 				     ),
 				array(
 					'title' => "required|between:5,$this->max_title_length",
-					'link' => 'active_url',
 					'description' => "max:$this->max_static_length",
 					'tags' => 'max:120'
 				     )
@@ -473,10 +456,13 @@ class Chat extends BaseController {
 			}else{
 				$temp_date = date('Y:m:d:H:i',strtotime($serial->last_post));
 				list($t_year,$t_month,$t_day,$t_hour,$t_minute) = explode(':',$temp_date);
-				if(($year > $t_year || $month > $t_month || $day > $t_day || ($hour * 60 + $minute) > ($t_hour * 60 + $t_minute) + 1)){
+				if(($year > $t_year || $month > $t_month || $day > $t_day || ($hour * 60 + $minute) > ($t_hour * 60 + $t_minute) + 1)){  //2 minutes between posts
 					$serial->last_post = date(DATE_ATOM);
 					$serial->save();
 					$validated = 1;
+				}else{
+					$validated = 1;
+					//TODO change validated back to 0
 				}
 			}
 			if(htmlentities(Input::get('js_key')) != 'js_enabled'){
@@ -525,8 +511,15 @@ class Chat extends BaseController {
 					$chat->raw_details = $details;
 					$chat->details = $this->parseText($details);
 				}
-				if($live_status == 1 || $live_status == 0){
-					$chat->live = $live_status;
+				if($live_status == 'on'){
+					$chat->live = 1;
+				}else{
+					$chat->live = 0;
+				}
+				if($nsfw == 'on'){
+					$chat->nsfw = 1;
+				}else{
+					$chat->nsfw = 0;
 				}
 				if($duplicate){
 					$chat = $duplicate;
@@ -589,17 +582,16 @@ class Chat extends BaseController {
 		$link = htmlentities(Input::get('link'));
 		$details = htmlentities(Input::get('description'));
 		$live_status = htmlentities(Input::get('live_status'));
+		$nsfw = htmlentities(Input::get('nsfw'));
 		$tags = htmlentities(Input::get('tags'));
 		$validator = Validator::make(
 				array(
 					'title' => $title,
-					'link' => $link,
 					'description' => $details,
 					'tags' => $tags
 				     ),
 				array(
 					'title' => "required|between:5,$this->max_title_length",
-					'link' => 'active_url',
 					'description' => "max:$this->max_static_length",
 					'tags' => 'max:120'
 				     )
@@ -656,8 +648,15 @@ class Chat extends BaseController {
 					$chat->raw_details = $details;
 					$chat->details = $this->parseText($details);
 				}
-				if($live_status == 1 || $live_status == 0){
-					$chat->live = $live_status;
+				if($live_status == 'on'){
+					$chat->live = 1;
+				}else{
+					$chat->live = 0;
+				}
+				if($nsfw == 'on'){
+					$chat->nsfw = 1;
+				}else{
+					$chat->nsfw = 0;
 				}
 				$tags = explode(' ',$tags);
 				$tag_found = 0;

@@ -144,11 +144,17 @@
 						<label for="description">Description <small>(optional)</small></label>
 						<textarea name="description" data-toggle="tooltip" data-placement="top" data-original-title="Descriptions have a max length of {{max_static_length}} characters" data-trigger="focus" class="form-control" id="description" rows="5" maxlength="{{max_static_length}}"></textarea>
 					</div>
-					<div id="live_group" class="form-group">
-						<select class="form-control" name="live_status">
-							<option value="1">Live</option>
-							<option value="0">Static</option>
-						</select>
+					<div class="row">
+						<div id="live_group" class="checkbox col-xs-6">
+							<label>
+								<input type="checkbox" name="live_status" id="live_status_v2" checked> Live
+							</label>
+						</div>
+						<div id="nsfw_group" class="checkbox col-xs-6" style="margin-top:10px;">
+							<label>
+								<input type="checkbox" name="nsfw" id="nsfw_v2"> nsfw?
+							</label>
+						</div>
 					</div>
 				</fieldset>
 			</div>
@@ -311,11 +317,17 @@
 						<label for="description">Description <small>(optional)</small></label>
 						<textarea name="description" data-toggle="tooltip" data-placement="top" data-original-title="Descriptions have a max length of {{max_static_length}} characters" data-trigger="focus" class="form-control" id="description_v3" rows="5" maxlength="{{max_static_length}}"></textarea>
 					</div>
-					<div id="live_group" class="form-group">
-						<select class="form-control" name="live_status" id="live_status_v3">
-							<option value="1">Live</option>
-							<option value="0">Static</option>
-						</select>
+					<div class="row">
+						<div id="live_group" class="checkbox col-xs-6">
+							<label>
+								<input type="checkbox" name="live_status" id="live_status_v3" checked> Live
+							</label>
+						</div>
+						<div id="nsfw_group" class="checkbox col-xs-6" style="margin-top:10px;">
+							<label>
+								<input type="checkbox" name="nsfw" id="nsfw_v3"> nsfw?
+							</label>
+						</div>
 					</div>
 				</fieldset>
 			</div>
@@ -440,6 +452,7 @@
 		<div class="chat_title_str" style="display:none;">{{chat.title}}</div>
 		<div class="chat_desc_str" style="display:none;">{{chat.raw_details}}</div>
 		<div class="chat_live_str" style="display:none;">{{chat.live}}</div>
+		<div class="chat_nsfw_str" style="display:none;">{{chat.nsfw}}</div>
 		<div class="chat_id_str" style="display:none;">{{chat.id}}</div>
 		<div class="chat_title">
 			{% if chat.seen %}
@@ -521,6 +534,9 @@
 				<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:gray;"><strong>{{chat.messages | length }} comments</strong></a>
 			</div>
 			<div class="more_options">
+				{% if chat.nsfw %}
+					<span class="brighter_red_color">NSFW</span>
+				{% endif %}
 				{% if user.name == chat.admin %}
 					<span><a href="#" data-toggle="modal" class="edit_chat_link" data-target="edit_modal"><strong>Edit</strong></a></span>
 				{% endif %}
@@ -569,7 +585,7 @@
 					{% if message.author in mods %}
 						<span class="glyphicon glyphicon-tower"></span>	
 					{% endif %}
-					<strong class="mssg_op" data-author="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}} (<span class="response_count" id="{{message.id}}">{{message.responses}}</span>)</strong> : {{message.message | raw}}
+					<strong class="mssg_op" data-author="{{message.author}}"><a href="{{site}}/u/{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}}</a> (<span class="response_count" id="{{message.id}}">{{message.responses}}</span>)</strong> : {{message.message | raw}}
 					<div class="time_box">
 						{% if not chat.live %}<div class="reply"><a href="#" class="reply_link" data-mssg-id="{{message.id}}"><strong>Reply</strong></a></div>{% endif %}
 						{% set time_passed = server_time|date('U') - message.created_at|date('U') %}
@@ -648,7 +664,7 @@
 					{% if response.author in mods %}
 						<span class="glyphicon glyphicon-tower"></span>	
 					{% endif %}
-					<strong class="mssg_op" data-author="{{response.author}}" style="color:{{color_arr[response.serial % 7]}}"> {{response.author}} (<span class="response_count" id="{{response.id}}">{{response.responses}}</span>)</strong> : {{response.message | raw}}
+					<strong class="mssg_op" data-author="{{response.author}}"><a href="{{site}}/u/{{response.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{response.author}}</a> (<span class="response_count" id="{{response.id}}">{{response.responses}}</span>)</strong> : {{response.message | raw}}
 					<div class="time_box">
 						{% if not chat.live %}<div class="reply"><a href="#" class="reply_link" data-mssg-id="{{response.id}}"><strong>Reply</strong></a></div>{% endif %}
 						{% set time_passed = server_time|date('U') - response.created_at|date('U') %}

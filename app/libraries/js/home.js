@@ -103,8 +103,19 @@ $(document).ready(function(){
 		$('#Link_v3').val(chat_cont.find('.chat_link_str').text());
 		$('#Tags_v3').val(chat_cont.find('.chat_tag_str').text());
 		$('#description_v3').val(chat_cont.find('.chat_desc_str').text());
-		$('#live_status_v3').val(chat_cont.find('.chat_live_str').text());
 		$('#form_chat_id').val(chat_cont.find('.chat_id_str').text());
+		console.log(chat_cont.find('.chat_live_str').text() + ' : ' + chat_cont.find('.chat_nsfw_str').text());
+		if(chat_cont.find('.chat_live_str').text()){
+			$('#live_status_v3').prop('checked','true');
+		}else{
+			$('#live_status_v3').prop('checked','false');
+		}
+		if(chat_cont.find('.chat_nsfw_str').text()){
+			console.log('hooray');
+			$('#nsfw_v3').prop('checked','true');
+		}else{
+			$('#nsfw_v3').prop('checked','false');
+		}
 		$('#edit_modal').modal();
 		return false;
 	});
@@ -172,20 +183,6 @@ function cookiesEnabled() {
 	return true;
 }
 
-function validateLink(link){
-	var response = $.ajax({
-		type:'GET',
-		data:{link:link},
-		url:'//mutualcog.com/chats/validate-link',
-		async:false,
-	}).responseText;
-	if(response == 1){
-		return 1;
-	}else{
-		return 0;
-	}
-}
-
 $('#home_form_v2').submit(function(){
 	if(cookiesEnabled()){
 		var title = $('#Title_v2').val();
@@ -199,14 +196,6 @@ $('#home_form_v2').submit(function(){
 			$('#Title_v2').tooltip('show');
 			$('#title_group_v2').attr('class','form-group has-error');
 			return false;
-		}
-		if(link.length > 0){
-			var res = validateLink(link);
-			if(!res){
-				$('#link_group_v2').attr('class','form-group has-error');
-				$('#Link_v2').tooltip('show');
-				return false;
-			}
 		}
 		if(tags.split(' ')[0] == "" || tags.split(' ').length > 5){
 			$('#tags_group_v2').attr('class','form-group has-error');		
@@ -252,14 +241,6 @@ $('#home_form_v3').submit(function(){
 		$('#Title_v3').tooltip('show');
 		$('#title_group_v3').attr('class','form-group has-error');
 		return false;
-	}
-	if(link.length > 0){
-		var res = validateLink(link);
-		if(!res){
-			$('#link_group_v3').attr('class','form-group has-error');
-			$('#Link_v3').tooltip('show');
-			return false;
-		}
 	}
 	if(tags.split(' ')[0] == "" || tags.split(' ').length > 5){
 		$('#tags_group_v3').attr('class','form-group has-error');		
