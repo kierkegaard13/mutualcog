@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Aug 14, 2014 at 10:57 AM
+-- Generation Time: Aug 26, 2014 at 06:57 PM
 -- Server version: 5.5.38
 -- PHP Version: 5.3.10-1ubuntu3.13
 
@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS `chats` (
   `removed` int(11) NOT NULL DEFAULT '0',
   `members` int(11) NOT NULL DEFAULT '0',
   `group` int(11) NOT NULL DEFAULT '0',
+  `nsfw` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `title` (`title`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=9 ;
@@ -54,14 +55,14 @@ CREATE TABLE IF NOT EXISTS `chats` (
 -- Dumping data for table `chats`
 --
 
-INSERT INTO `chats` (`id`, `title`, `admin`, `admin_id`, `live`, `details`, `raw_details`, `created_at`, `updated_at`, `type`, `upvotes`, `downvotes`, `link`, `image`, `site_name`, `views`, `removed`, `members`, `group`) VALUES
-(1, 'A new test chat', 'Omnium', 1, 1, NULL, NULL, '2014-01-12 05:59:23', '2014-08-05 04:46:17', 'open', 0, 0, NULL, NULL, NULL, 50, 1, 0, 0),
-(2, 'A test chat', 'Omnium', 1, 0, '', '', '2014-01-12 22:02:41', '2014-03-14 22:27:39', 'open', 0, 0, NULL, NULL, NULL, 839, 0, 0, 0),
-(3, 'Testing images', 'Omnium', 1, 0, '<p>Just a test description with some <em>markdown</em> basics in it and a link<br />\nto the author of course <a class=''chat_link'' href=''\\/\\/mutualcog.com/p/Omnium''>/p/Omnium</a><br />\nwhat happens if I put another line in here? <strong>hmmmm</strong></p>', 'Just a test description with some *markdown* basics in it and a link\nto the author of course /p/Omnium\nwhat happens if I put another line in here? **hmmmm**', '2014-03-10 16:28:56', '2014-08-13 16:47:27', 'live', 0, 0, 'http://i.imgur.com/LJ8zguP.jpg', 'http://i.imgur.com/LJ8zguP.jpg', 'i.imgur.com', 280, 0, 0, 0),
-(4, 'Testing the advanced controls and stuff', 'Omnium', 1, 1, 'Just a description <em>with</em> some markdown <a class=''chat_link'' href=''\\/\\/mutualcog.com/p/Omnium''>/p/Omnium</a>', 'Just a description *with* some markdown /p/Omnium', '2014-03-13 03:26:10', '2014-08-05 19:27:41', 'open', 0, 0, NULL, NULL, NULL, 14, 0, 0, 0),
-(5, 'Creating a static chat', 'Omnium', 1, 1, 'Hello <a class=''chat_link'' href=''\\/\\/mutualcog.com/p/Omnium''>@Omnium</a>', 'Hello @Omnium', '2014-03-13 03:29:03', '2014-08-05 04:46:07', 'open', 0, 0, NULL, NULL, NULL, 459, 1, 0, 0),
-(6, 'testing static stuff', 'Omnium', 1, 1, NULL, NULL, '2014-03-13 03:37:28', '2014-08-13 23:25:51', 'open', 0, 0, NULL, NULL, NULL, 192, 0, 0, 0),
-(8, 'A second chat', 'Bob', 4, 1, NULL, NULL, '2014-04-06 20:35:38', '2014-08-13 18:03:31', 'open', 0, 0, NULL, NULL, NULL, 163, 0, 0, 0);
+INSERT INTO `chats` (`id`, `title`, `admin`, `admin_id`, `live`, `details`, `raw_details`, `created_at`, `updated_at`, `type`, `upvotes`, `downvotes`, `link`, `image`, `site_name`, `views`, `removed`, `members`, `group`, `nsfw`) VALUES
+(1, 'A new test chat', 'Omnium', 1, 1, NULL, NULL, '2014-01-12 05:59:23', '2014-08-26 05:15:40', 'open', 0, 0, NULL, NULL, NULL, 52, 1, 0, 0, 0),
+(2, 'A test chat', 'Omnium', 1, 0, '', '', '2014-01-12 22:02:41', '2014-03-14 22:27:39', 'open', 0, 0, NULL, NULL, NULL, 839, 0, 0, 0, 0),
+(3, 'Testing images', 'Omnium', 1, 1, 'Just a test description with some <em>markdown</em> basics in it and a link<br />\nto the author of course <a class=''chat_link'' href=''\\/\\/mutualcog.com/u/Omnium''>/u/Omnium</a><br />\nwhat happens if I put another line in here? <strong>hmmmm</strong>', 'Just a test description with some *markdown* basics in it and a link\r\nto the author of course /p/Omnium\r\nwhat happens if I put another line in here? **hmmmm**', '2014-03-10 16:28:56', '2014-08-26 19:50:10', 'live', 0, 0, 'http://i.imgur.com/LJ8zguP.jpg', 'http://i.imgur.com/LJ8zguP.jpg', 'i.imgur.com', 288, 0, 0, 0, 0),
+(4, 'Testing the advanced controls and stuff', 'Omnium', 1, 1, 'Just a description <em>with</em> some markdown <a class=''chat_link'' href=''\\/\\/mutualcog.com/p/Omnium''>/p/Omnium</a>', 'Just a description *with* some markdown /p/Omnium', '2014-03-13 03:26:10', '2014-08-05 19:27:41', 'open', 0, 0, NULL, NULL, NULL, 14, 0, 0, 0, 0),
+(5, 'Creating a static chat', 'Omnium', 1, 1, 'Hello <a class=''chat_link'' href=''\\/\\/mutualcog.com/p/Omnium''>@Omnium</a>', 'Hello @Omnium', '2014-03-13 03:29:03', '2014-08-05 04:46:07', 'open', 0, 0, NULL, NULL, NULL, 459, 1, 0, 0, 0),
+(6, 'testing static stuff', 'Omnium', 1, 1, NULL, NULL, '2014-03-13 03:37:28', '2014-08-13 23:25:51', 'open', 0, 0, NULL, NULL, NULL, 192, 0, 0, 0, 0),
+(8, 'A second chat', 'Bob', 4, 1, NULL, NULL, '2014-04-06 20:35:38', '2014-08-26 20:02:10', 'open', 0, 0, NULL, NULL, NULL, 232, 0, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -76,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `chats_to_tags` (
   `removed` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `chat_id` (`chat_id`,`tag_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=38 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=39 ;
 
 --
 -- Dumping data for table `chats_to_tags`
@@ -119,7 +120,8 @@ INSERT INTO `chats_to_tags` (`id`, `chat_id`, `tag_id`, `removed`) VALUES
 (34, 5, 1, 0),
 (35, 6, 1, 0),
 (36, 7, 1, 0),
-(37, 8, 1, 0);
+(37, 8, 1, 0),
+(38, 9, 3, 0);
 
 -- --------------------------------------------------------
 
@@ -132,17 +134,20 @@ CREATE TABLE IF NOT EXISTS `chats_voted` (
   `chat_id` int(11) NOT NULL,
   `member_id` int(11) NOT NULL,
   `status` int(11) NOT NULL DEFAULT '0',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
 
 --
 -- Dumping data for table `chats_voted`
 --
 
-INSERT INTO `chats_voted` (`id`, `chat_id`, `member_id`, `status`) VALUES
-(1, 1, 1, 1),
-(2, 7, 4, 1),
-(3, 8, 4, 1);
+INSERT INTO `chats_voted` (`id`, `chat_id`, `member_id`, `status`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 1, NULL, NULL),
+(2, 7, 4, 1, NULL, NULL),
+(3, 8, 4, 1, NULL, NULL),
+(4, 9, 1, 1, '2014-08-26 19:50:56', '2014-08-26 19:50:56');
 
 -- --------------------------------------------------------
 
@@ -169,8 +174,8 @@ CREATE TABLE IF NOT EXISTS `interaction_users` (
 --
 
 INSERT INTO `interaction_users` (`id`, `user_id`, `entity_id`, `type`, `friended`, `created_at`, `updated_at`, `bond`) VALUES
-(1, 4, 1, 0, 1, '2014-05-25 20:47:34', '2014-08-13 23:23:03', 51),
-(2, 1, 4, 0, 1, '2014-05-25 20:47:34', '2014-07-13 18:07:32', 129);
+(1, 4, 1, 0, 1, '2014-05-25 20:47:34', '2014-08-26 00:23:17', 129),
+(2, 1, 4, 0, 1, '2014-05-25 20:47:34', '2014-08-26 00:23:17', 179);
 
 -- --------------------------------------------------------
 
@@ -190,7 +195,7 @@ CREATE TABLE IF NOT EXISTS `members_to_chats` (
   PRIMARY KEY (`id`),
   KEY `chat_id` (`chat_id`,`member_id`),
   KEY `author` (`user`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=34 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=41 ;
 
 --
 -- Dumping data for table `members_to_chats`
@@ -200,7 +205,7 @@ INSERT INTO `members_to_chats` (`id`, `chat_id`, `member_id`, `is_mod`, `is_admi
 (1, 8, 1, 0, 0, 'Omnium', 0, 0),
 (2, 5, 1, 0, 1, 'Omnium', 0, 0),
 (3, 8, 155, 0, 0, '137880073', 1, 0),
-(4, 8, 4, 0, 1, 'Bob', 1, 0),
+(4, 8, 4, 0, 1, 'Bob', 0, 0),
 (5, 8, 156, 0, 0, '169693618', 1, 0),
 (6, 8, 161, 0, 0, '145867030', 1, 0),
 (7, 8, 162, 0, 0, '104808579', 0, 0),
@@ -229,7 +234,14 @@ INSERT INTO `members_to_chats` (`id`, `chat_id`, `member_id`, `is_mod`, `is_admi
 (30, 3, 1, 0, 1, 'Omnium', 0, 0),
 (31, 3, 231, 0, 0, '56770169', 0, 0),
 (32, 6, 234, 0, 0, '205801104', 0, 0),
-(33, 6, 4, 0, 0, 'Bob', 0, 0);
+(33, 6, 4, 0, 0, 'Bob', 0, 0),
+(34, 8, 242, 0, 0, '72100981', 0, 0),
+(35, 3, 242, 0, 0, '72100981', 0, 0),
+(36, 3, 4, 0, 0, 'Bob', 0, 0),
+(37, 8, 244, 0, 0, '18716786', 0, 0),
+(38, 8, 248, 0, 0, '79472836', 0, 0),
+(39, 1, 1, 0, 1, 'Omnium', 0, 0),
+(40, 9, 1, 0, 1, 'Omnium', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -246,8 +258,8 @@ CREATE TABLE IF NOT EXISTS `messages` (
   `updated_at` datetime DEFAULT NULL,
   `responseto` int(11) NOT NULL,
   `parent` int(11) NOT NULL DEFAULT '0',
-  `level` int(11) NOT NULL DEFAULT '0',
-  `h_level` int(11) NOT NULL DEFAULT '0',
+  `y_dim` int(11) NOT NULL DEFAULT '0',
+  `res_num` int(11) NOT NULL DEFAULT '0',
   `responses` int(11) NOT NULL DEFAULT '0',
   `author` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `serial` int(11) NOT NULL,
@@ -261,49 +273,30 @@ CREATE TABLE IF NOT EXISTS `messages` (
   KEY `member_idx` (`member_id`),
   KEY `responseto` (`responseto`),
   KEY `author` (`author`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=37 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=18 ;
 
 --
 -- Dumping data for table `messages`
 --
 
-INSERT INTO `messages` (`id`, `message`, `chat_id`, `member_id`, `created_at`, `updated_at`, `responseto`, `parent`, `level`, `h_level`, `responses`, `author`, `serial`, `upvotes`, `downvotes`, `path`, `readable`, `type`) VALUES
-(1, '&gt;<img style="height:18px;" src="//localhost/laravel/app/emoji/disappointed.png"></img>', 7, 199, '2014-07-26 20:56:07', '2014-07-26 20:56:07', 0, 0, 0, 0, 0, '117667229', 117667229, 0, 0, '0.00000001', 1, 'public'),
-(2, '<img style="height:18px;" src="//localhost/laravel/app/emoji/angry.png"></img> <img style="height:18px;" src="//localhost/laravel/app/emoji/rage.png"></img> <img style="height:18px;" src="//localhost/laravel/app/emoji/heart.png"></img> <img style="height:18px;" src="//localhost/laravel/app/emoji/smile.png"></img> <img style="height:18px;" src="//localhost/laravel/app/emoji/smiley.png"></img> <img style="height:18px;" src="//localhost/laravel/app/emoji/neutral_face.png"></img> <img style="height:18px;" src="//localhost/laravel/app/emoji/cry.png"></img> <img style="height:18px;" src="//localhost/laravel/app/emoji/open_mouth.png"></img> <img style="height:18px;" src="//localhost/laravel/app/emoji/stuck_out_tongue_closed_eyes.png"></img> <img style="height:18px;" src="//localhost/laravel/app/emoji/sob.png"></img> <img style="height:18px;" src="//localhost/laravel/app/emoji/disappointed.png"></img> <img style="height:18px;" src="//localhost/laravel/app/emoji/confused.png"></img>', 7, 199, '2014-07-26 20:57:37', '2014-07-26 20:57:37', 0, 0, 0, 0, 0, '117667229', 117667229, 0, 0, '0.00000002', 1, 'public'),
-(3, 'testing', 6, 1, '2014-08-01 19:20:15', '2014-08-01 19:20:15', 0, 0, 0, 0, 0, 'Omnium', 193240867, 0, 0, '0.00000003', 1, 'public'),
-(4, 'test', 6, 1, '2014-08-01 19:20:15', '2014-08-01 19:20:15', 0, 0, 0, 0, 0, 'Omnium', 193240867, 0, 0, '0.00000004', 1, 'public'),
-(5, 'tester', 6, 1, '2014-08-01 19:20:17', '2014-08-01 19:20:17', 0, 0, 0, 0, 1, 'Omnium', 193240867, 0, 0, '0.00000005', 1, 'public'),
-(6, 'bleh', 6, 1, '2014-08-01 19:20:19', '2014-08-01 19:20:19', 0, 0, 0, 0, 0, 'Omnium', 193240867, 0, 0, '0.00000006', 1, 'public'),
-(7, 'mah', 6, 1, '2014-08-01 19:20:20', '2014-08-01 19:20:20', 0, 0, 0, 0, 0, 'Omnium', 193240867, 0, 0, '0.00000007', 1, 'public'),
-(8, 'ima', 6, 1, '2014-08-01 19:20:23', '2014-08-01 19:20:23', 0, 0, 0, 0, 0, 'Omnium', 193240867, 0, 0, '0.00000008', 1, 'public'),
-(9, 'go', 6, 1, '2014-08-01 19:20:23', '2014-08-01 19:20:23', 0, 0, 0, 0, 0, 'Omnium', 193240867, 0, 0, '0.00000009', 1, 'public'),
-(10, 'on', 6, 1, '2014-08-01 19:20:24', '2014-08-01 19:20:24', 0, 0, 0, 0, 0, 'Omnium', 193240867, 0, 0, '0.00000010', 1, 'public'),
-(11, 'an adventure', 6, 1, '2014-08-01 19:20:26', '2014-08-01 19:20:26', 0, 0, 0, 0, 0, 'Omnium', 193240867, 0, 0, '0.00000011', 1, 'public'),
-(12, 'starting', 6, 1, '2014-08-01 19:20:27', '2014-08-01 19:20:27', 0, 0, 0, 0, 0, 'Omnium', 193240867, 0, 0, '0.00000012', 1, 'public'),
-(13, 'tomorrow', 6, 1, '2014-08-01 19:20:28', '2014-08-01 19:20:28', 0, 0, 0, 0, 0, 'Omnium', 193240867, 0, 0, '0.00000013', 1, 'public'),
-(14, 'morning', 6, 1, '2014-08-01 19:20:30', '2014-08-01 19:20:30', 0, 0, 0, 0, 0, 'Omnium', 193240867, 0, 0, '0.00000014', 1, 'public'),
-(15, 'don&#39;t ya', 6, 1, '2014-08-01 19:20:31', '2014-08-01 19:20:31', 0, 0, 0, 0, 0, 'Omnium', 193240867, 0, 0, '0.00000015', 1, 'public'),
-(16, 'know', 6, 1, '2014-08-01 19:20:32', '2014-08-01 19:20:32', 0, 0, 0, 0, 0, 'Omnium', 193240867, 0, 0, '0.00000016', 1, 'public'),
-(17, 'testing stuff', 8, 213, '2014-08-03 03:29:02', '2014-08-03 03:29:02', 0, 0, 0, 0, 0, '31541016', 31541016, 0, 0, '0.00000017', 1, 'public'),
-(18, 'Hello world', 8, 213, '2014-08-03 03:49:23', '2014-08-03 03:49:23', 0, 0, 0, 0, 0, '31541016', 31541016, 0, 0, '0.00000018', 1, 'public'),
-(19, 'Hello world', 8, 213, '2014-08-03 03:50:16', '2014-08-03 03:50:16', 0, 0, 0, 0, 0, '31541016', 31541016, 0, 0, '0.00000019', 1, 'public'),
-(20, 'stuff', 6, 214, '2014-08-03 18:54:10', '2014-08-03 18:54:10', 0, 0, 0, 0, 0, '260324891', 260324891, 0, 0, '0.00000020', 1, 'public'),
-(21, 'more stuff', 6, 214, '2014-08-03 18:54:25', '2014-08-03 18:54:25', 0, 0, 0, 0, 0, '260324891', 260324891, 0, 0, '0.00000021', 1, 'public'),
-(22, 'testing', 6, 1, '2014-08-03 22:08:22', '2014-08-03 22:08:22', 0, 0, 0, 0, 0, 'Omnium', 239022661, 0, 0, '0.00000022', 1, 'public'),
-(23, 'test', 6, 1, '2014-08-03 22:08:24', '2014-08-03 22:08:24', 0, 0, 0, 0, 0, 'Omnium', 239022661, 0, 0, '0.00000023', 1, 'public'),
-(24, 'moar test', 6, 1, '2014-08-03 22:08:28', '2014-08-03 22:08:28', 0, 0, 0, 0, 1, 'Omnium', 239022661, 0, 0, '0.00000024', 1, 'public'),
-(25, '<em>This message has been deleted</em>', 6, 1, '2014-08-03 22:08:32', '2014-08-03 22:08:32', 0, 0, 0, 0, 0, 'Omnium', 239022661, 0, 0, '0.00000025', 1, 'public'),
-(26, '<em>bold</em>', 6, 220, '2014-08-04 19:06:20', '2014-08-04 19:06:20', 0, 0, 0, 0, 0, '164434223', 164434223, 0, 0, '0.00000026', 1, 'public'),
-(27, '<strong>bold</strong>', 6, 220, '2014-08-04 19:06:24', '2014-08-04 19:06:24', 0, 0, 0, 0, 0, '164434223', 164434223, 0, 0, '0.00000027', 1, 'public'),
-(28, '<em>bold?</em>', 6, 220, '2014-08-04 19:06:37', '2014-08-04 19:06:37', 0, 0, 0, 0, 0, '164434223', 164434223, 0, 0, '0.00000028', 1, 'public'),
-(29, '<strong><em>bold</em></strong>', 6, 220, '2014-08-04 19:06:42', '2014-08-04 19:06:42', 0, 0, 0, 0, 0, '164434223', 164434223, 0, 0, '0.00000029', 1, 'public'),
-(30, '~strikethrough~', 6, 220, '2014-08-04 19:07:46', '2014-08-04 19:07:46', 0, 0, 0, 0, 0, '164434223', 164434223, 0, 0, '0.00000030', 1, 'public'),
-(31, 'bold</p>\n<hr>', 6, 220, '2014-08-04 19:08:38', '2014-08-04 19:08:38', 0, 0, 0, 0, 0, '164434223', 164434223, 0, 0, '0.00000031', 1, 'public'),
-(32, '<hr>', 6, 220, '2014-08-04 19:08:42', '2014-08-04 19:08:42', 0, 0, 0, 0, 0, '164434223', 164434223, 0, 0, '0.00000032', 1, 'public'),
-(33, 'bold_', 6, 220, '2014-08-04 19:08:46', '2014-08-04 19:08:46', 0, 0, 0, 0, 0, '164434223', 164434223, 0, 0, '0.00000033', 1, 'public'),
-(34, '<h1 id="bold">bold</h1>', 6, 220, '2014-08-04 19:08:55', '2014-08-04 19:08:55', 0, 0, 0, 0, 0, '164434223', 164434223, 0, 0, '0.00000034', 1, 'public'),
-(35, 'test', 6, 4, '2014-08-13 23:24:13', '2014-08-13 23:24:13', 5, 5, 1, 1, 0, 'Bob', 205801104, 0, 0, '0.00000005.00000035', 1, 'public'),
-(36, 'another response', 6, 4, '2014-08-13 23:24:38', '2014-08-13 23:24:38', 24, 24, 1, 1, 0, 'Bob', 205801104, 0, 0, '0.00000024.00000036', 1, 'public');
+INSERT INTO `messages` (`id`, `message`, `chat_id`, `member_id`, `created_at`, `updated_at`, `responseto`, `parent`, `y_dim`, `res_num`, `responses`, `author`, `serial`, `upvotes`, `downvotes`, `path`, `readable`, `type`) VALUES
+(1, 'test1', 8, 1, '2014-08-24 16:25:44', '2014-08-24 16:34:07', 0, 0, 0, 0, 0, 'Omnium', 18716786, 2, 1, '0.00000001', 1, 'public'),
+(2, 'test2', 8, 1, '2014-08-24 16:25:46', '2014-08-24 16:25:46', 0, 0, 0, 0, 0, 'Omnium', 18716786, 0, 0, '0.00000002', 1, 'public'),
+(3, 'test3', 8, 1, '2014-08-24 16:25:47', '2014-08-24 16:25:47', 0, 0, 0, 0, 0, 'Omnium', 18716786, 0, 0, '0.00000003', 1, 'public'),
+(4, 'test4', 8, 1, '2014-08-24 16:25:47', '2014-08-25 17:20:41', 0, 0, 0, 0, 3, 'Omnium', 18716786, 3, 0, '0.00000004', 1, 'public'),
+(5, 'test5', 8, 1, '2014-08-24 16:25:49', '2014-08-24 16:25:49', 0, 0, 0, 0, 0, 'Omnium', 18716786, 0, 0, '0.00000005', 1, 'public'),
+(6, 'test6', 8, 1, '2014-08-24 16:25:51', '2014-08-24 16:25:51', 0, 0, 0, 0, 0, 'Omnium', 18716786, 0, 0, '0.00000006', 1, 'public'),
+(7, 'test7', 8, 1, '2014-08-24 16:25:53', '2014-08-24 16:25:53', 0, 0, 0, 0, 0, 'Omnium', 18716786, 0, 0, '0.00000007', 1, 'public'),
+(8, 'test8', 8, 1, '2014-08-24 16:25:55', '2014-08-24 16:25:55', 0, 0, 0, 0, 0, 'Omnium', 18716786, 0, 0, '0.00000008', 1, 'public'),
+(9, 'test message', 8, 4, '2014-08-24 16:28:12', '2014-08-24 16:28:12', 0, 0, 0, 0, 0, 'Bob', 18716786, 0, 0, '0.00000009', 1, 'public'),
+(10, 'res1', 8, 4, '2014-08-25 17:30:46', '2014-08-26 19:59:09', 4, 4, 1, 1, 1, 'Bob', 79472836, 0, 0, '0.00000004.00000010', 1, 'public'),
+(11, 'res2', 8, 4, '2014-08-25 17:30:47', '2014-08-25 17:30:47', 4, 4, 1, 2, 0, 'Bob', 79472836, 0, 0, '0.00000004.00000011', 1, 'public'),
+(12, 'res3', 8, 4, '2014-08-25 17:30:48', '2014-08-25 17:30:48', 4, 4, 1, 3, 0, 'Bob', 79472836, 10, 0, '0.00000004.00000012', 1, 'public'),
+(13, 'nres1', 8, 4, '2014-08-25 17:30:52', '2014-08-25 17:30:52', 10, 4, 2, 1, 0, 'Bob', 79472836, 0, 0, '0.00000004.00000010.00000013', 1, 'public'),
+(14, 'test more', 8, 4, '2014-08-25 17:47:23', '2014-08-25 17:47:23', 0, 0, 0, 0, 0, 'Bob', 79472836, 0, 0, '0.00000014', 1, 'public'),
+(15, 'testing button', 8, 4, '2014-08-25 17:47:36', '2014-08-25 17:47:36', 0, 0, 0, 0, 0, 'Bob', 79472836, 0, 0, '0.00000015', 1, 'public'),
+(16, 'test comment', 3, 1, '2014-08-26 05:09:50', '2014-08-26 05:09:50', 0, 0, 0, 0, 0, 'Omnium', 238896752, 0, 0, '0.00000016', 1, 'public'),
+(17, 'dirty dirty porn', 9, 1, '2014-08-26 19:51:04', '2014-08-26 19:51:04', 0, 0, 0, 0, 0, 'Omnium', 155806296, 0, 0, '0.00000017', 1, 'public');
 
 -- --------------------------------------------------------
 
@@ -316,37 +309,10 @@ CREATE TABLE IF NOT EXISTS `messages_voted` (
   `message_id` int(11) NOT NULL,
   `member_id` int(11) NOT NULL,
   `status` int(11) NOT NULL DEFAULT '0',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=24 ;
-
---
--- Dumping data for table `messages_voted`
---
-
-INSERT INTO `messages_voted` (`id`, `message_id`, `member_id`, `status`) VALUES
-(1, 1, 1, 0),
-(2, 33, 1, 1),
-(3, 34, 1, 1),
-(4, 3, 1, 1),
-(5, 4, 1, 1),
-(6, 5, 1, 1),
-(7, 6, 1, 1),
-(8, 7, 1, 1),
-(9, 8, 1, 1),
-(10, 9, 1, 1),
-(11, 10, 1, 1),
-(12, 11, 1, 1),
-(13, 12, 1, 1),
-(14, 13, 1, 1),
-(15, 14, 1, 1),
-(16, 15, 1, 1),
-(17, 16, 1, 1),
-(18, 22, 1, 1),
-(19, 23, 1, 1),
-(20, 24, 1, 1),
-(21, 25, 1, 1),
-(22, 35, 4, 1),
-(23, 36, 4, 1);
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -381,9 +347,30 @@ CREATE TABLE IF NOT EXISTS `node_auth` (
 --
 
 INSERT INTO `node_auth` (`id`, `user_id`, `user`, `serial`, `serial_id`, `sid`, `authorized`) VALUES
-(1, 1, 'Omnium', '205801104', 234, '66f159d3ebb32b16bf7d1832d6c358c4fa63944d', 1),
-(2, 4, 'Bob', '205801104', 234, '639ee004ddb85b7a38fb087bb1a9824fec6fdd7f', 0),
+(1, 1, 'Omnium', '155806296', 252, 'd7750816eae72f1419e0950d1fb362c98813b14f', 1),
+(2, 4, 'Bob', '238896752', 251, '4e44f192055783f02bde8b44015206242742f547', 0),
 (3, 6, 'Auros', '', 0, '', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE IF NOT EXISTS `notifications` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `type` int(11) NOT NULL DEFAULT '0',
+  `global_type` varchar(255) DEFAULT NULL,
+  `message` text,
+  `seen` int(11) NOT NULL DEFAULT '0',
+  `sender_id` int(11) NOT NULL DEFAULT '0',
+  `sender` varchar(255) DEFAULT NULL,
+  `sender_type` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -465,27 +452,6 @@ INSERT INTO `private_messages` (`id`, `message`, `chat_id`, `author`, `author_id
 -- --------------------------------------------------------
 
 --
--- Table structure for table `requests`
---
-
-CREATE TABLE IF NOT EXISTS `requests` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `type` int(11) NOT NULL DEFAULT '0',
-  `global_type` varchar(255) DEFAULT NULL,
-  `message` text,
-  `seen` int(11) NOT NULL DEFAULT '0',
-  `sender_id` int(11) NOT NULL DEFAULT '0',
-  `sender` varchar(255) DEFAULT NULL,
-  `sender_type` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `serials`
 --
 
@@ -496,7 +462,7 @@ CREATE TABLE IF NOT EXISTS `serials` (
   `updated_at` datetime DEFAULT NULL,
   `last_post` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=242 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=255 ;
 
 --
 -- Dumping data for table `serials`
@@ -743,7 +709,20 @@ INSERT INTO `serials` (`id`, `serial_id`, `created_at`, `updated_at`, `last_post
 (238, 146410330, '2014-08-14 15:53:40', '2014-08-14 15:53:40', '0'),
 (239, 117534213, '2014-08-14 15:53:42', '2014-08-14 15:53:42', '0'),
 (240, 148278560, '2014-08-14 15:53:46', '2014-08-14 15:53:46', '0'),
-(241, 54942914, '2014-08-14 15:54:02', '2014-08-14 15:54:02', '0');
+(241, 54942914, '2014-08-14 15:54:02', '2014-08-14 15:54:02', '0'),
+(242, 72100981, '2014-08-24 01:15:52', '2014-08-24 01:22:49', '0'),
+(243, 208072034, '2014-08-24 16:08:24', '2014-08-24 16:08:24', '0'),
+(244, 18716786, '2014-08-24 16:08:26', '2014-08-24 16:28:12', '0'),
+(245, 109761890, '2014-08-25 00:13:14', '2014-08-25 00:13:14', '0'),
+(246, 90228263, '2014-08-25 00:13:14', '2014-08-25 00:13:14', '0'),
+(247, 46393870, '2014-08-25 17:16:11', '2014-08-25 17:16:11', '0'),
+(248, 79472836, '2014-08-25 17:16:13', '2014-08-25 17:47:36', '0'),
+(249, 256620084, '2014-08-25 22:07:11', '2014-08-25 22:07:11', '0'),
+(250, 226225594, '2014-08-25 22:07:11', '2014-08-25 22:07:11', '0'),
+(251, 238896752, '2014-08-26 04:33:10', '2014-08-26 04:33:10', '0'),
+(252, 155806296, '2014-08-26 18:56:54', '2014-08-26 19:51:04', '2014-08-26T19:50:56+00:00'),
+(253, 14578219, '2014-08-26 18:56:54', '2014-08-26 18:56:54', '0'),
+(254, 171840958, '2014-08-26 23:56:11', '2014-08-26 23:56:11', '0');
 
 -- --------------------------------------------------------
 
@@ -761,6 +740,7 @@ CREATE TABLE IF NOT EXISTS `tags` (
   `description` text COLLATE utf8_unicode_ci,
   `info` text COLLATE utf8_unicode_ci,
   `raw_info` text COLLATE utf8_unicode_ci,
+  `nsfw` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `tag` (`name`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=15 ;
@@ -769,21 +749,21 @@ CREATE TABLE IF NOT EXISTS `tags` (
 -- Dumping data for table `tags`
 --
 
-INSERT INTO `tags` (`id`, `name`, `created_at`, `updated_at`, `popularity`, `admin`, `description`, `info`, `raw_info`) VALUES
-(1, 'testing', NULL, '2014-08-06 21:16:44', 22, 'Omnium', '', '<strong>General Info</strong><br />\nA community for:</p>\n<ol>\n<li>testing</li>\n<li>more testing</li>\n<li>even more testing</li>\n</ol>', '**General Info**\r\nA community for:\r\n1. testing\r\n2. more testing\r\n3. even more testing\r\n\r\n\r\n\r\n'),
-(2, 'test', NULL, '2014-03-11 18:52:52', 4, 'Omnium', NULL, NULL, ''),
-(3, 'science', NULL, '2014-01-10 23:08:30', 0, 'Omnium', NULL, NULL, ''),
-(4, 'philosophy', NULL, NULL, 0, '0', NULL, NULL, ''),
-(5, 'nature', NULL, NULL, 0, '0', NULL, NULL, ''),
-(6, 'something', NULL, NULL, 0, '0', NULL, NULL, ''),
-(7, 'technology', NULL, NULL, 0, '0', NULL, NULL, ''),
-(8, 'physics', NULL, NULL, 0, '0', NULL, NULL, ''),
-(9, 'probability', NULL, NULL, 0, '0', NULL, NULL, ''),
-(10, 'asfasdfasdfasdf', NULL, NULL, 0, '0', NULL, NULL, ''),
-(11, 'asffdsweffdwe', NULL, NULL, 0, '0', NULL, NULL, ''),
-(12, 'sdfwefdsasdfwf', NULL, NULL, 0, '0', NULL, NULL, ''),
-(13, 'sdfewfasdwef', NULL, NULL, 0, '0', NULL, NULL, ''),
-(14, 'asdfsdfdsfewdffs', NULL, NULL, 0, '0', NULL, NULL, '');
+INSERT INTO `tags` (`id`, `name`, `created_at`, `updated_at`, `popularity`, `admin`, `description`, `info`, `raw_info`, `nsfw`) VALUES
+(1, 'testing', NULL, '2014-08-06 21:16:44', 22, 'Omnium', '', '<strong>General Info</strong><br />\nA community for:</p>\n<ol>\n<li>testing</li>\n<li>more testing</li>\n<li>even more testing</li>\n</ol>', '**General Info**\r\nA community for:\r\n1. testing\r\n2. more testing\r\n3. even more testing\r\n\r\n\r\n\r\n', 0),
+(2, 'test', NULL, '2014-08-25 23:36:20', 4, 'Omnium', '', '', '', 0),
+(3, 'science', NULL, '2014-08-26 19:50:56', 1, 'Omnium', NULL, NULL, '', 0),
+(4, 'philosophy', NULL, NULL, 0, '0', NULL, NULL, '', 0),
+(5, 'nature', NULL, NULL, 0, '0', NULL, NULL, '', 0),
+(6, 'something', NULL, NULL, 0, '0', NULL, NULL, '', 0),
+(7, 'technology', NULL, NULL, 0, '0', NULL, NULL, '', 0),
+(8, 'physics', NULL, NULL, 0, '0', NULL, NULL, '', 0),
+(9, 'probability', NULL, NULL, 0, '0', NULL, NULL, '', 0),
+(10, 'asfasdfasdfasdf', NULL, NULL, 0, '0', NULL, NULL, '', 0),
+(11, 'asffdsweffdwe', NULL, NULL, 0, '0', NULL, NULL, '', 0),
+(12, 'sdfwefdsasdfwf', NULL, NULL, 0, '0', NULL, NULL, '', 0),
+(13, 'sdfewfasdwef', NULL, NULL, 0, '0', NULL, NULL, '', 0),
+(14, 'asdfsdfdsfewdffs', NULL, NULL, 0, '0', NULL, NULL, '', 0);
 
 -- --------------------------------------------------------
 
@@ -826,10 +806,10 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 
 INSERT INTO `users` (`id`, `created_at`, `updated_at`, `name`, `password`, `email`, `serial_id`, `cognizance`, `total_cognizance`, `level`, `next_level`, `last_login`, `is_admin`, `about`, `about_raw`, `page`, `chat_id`, `anonymous`, `evaluated`, `disconnecting`, `disconnect_time`, `online`, `ip_address`, `tag_mod`, `tag_admin`) VALUES
-(1, NULL, '2014-08-14 02:44:03', 'Omnium', 'eyJpdiI6IjUwekpFZzRqWkxYdW05U1hmSTN5ZjRQb0QwdEM0QUZiRUd1dFNNN3VJUGM9IiwidmFsdWUiOiIwbitaQU5tMmZsdkFkYkJ5cEYyUTQzMEhVU0FIaHRCM0VkaGU4VmhOY2xNPSIsIm1hYyI6IjlhNmI4MjdmMzFhNDI4ZWE3YjE4ZmZjMWRmNzFlMmE3ODVhZDlkOTM4YmE0MWYzZDgwZDYzYzM5OGJjMDJkZWIifQ==', NULL, 234, 30, 23, 0, 120, '2014-08-14 02:23:52', 1, '<strong>Name</strong> : Gavin Sellers</p>\n<p><!--<strong>Birthday</strong> : --></p>\n<p><!--<strong>Location</strong> : --></p>\n<p><!--<strong>Interests</strong> : --></p>\n<p><!--<strong>About Me</strong> : -->', '**Name** : Gavin Sellers\n\n[comment]**Birthday** : [/comment]\n\n[comment]**Location** : [/comment]\n\n[comment]**Interests** : [/comment]\n\n[comment]**About Me** : [/comment]', 'home', 0, 0, 1, 0, '2014-08-14 02:43:19', 1, NULL, 0, 0),
+(1, NULL, '2014-08-26 20:23:04', 'Omnium', 'eyJpdiI6IjUwekpFZzRqWkxYdW05U1hmSTN5ZjRQb0QwdEM0QUZiRUd1dFNNN3VJUGM9IiwidmFsdWUiOiIwbitaQU5tMmZsdkFkYkJ5cEYyUTQzMEhVU0FIaHRCM0VkaGU4VmhOY2xNPSIsIm1hYyI6IjlhNmI4MjdmMzFhNDI4ZWE3YjE4ZmZjMWRmNzFlMmE3ODVhZDlkOTM4YmE0MWYzZDgwZDYzYzM5OGJjMDJkZWIifQ==', NULL, 252, 30, 23, 0, 120, '2014-08-26 19:07:52', 1, '<strong>Name</strong> : Gavin Sellers</p>\n<p><!--<strong>Birthday</strong> : --></p>\n<p><!--<strong>Location</strong> : --></p>\n<p><!--<strong>Interests</strong> : --></p>\n<p><!--<strong>About Me</strong> : -->', '**Name** : Gavin Sellers\n\n[comment]**Birthday** : [/comment]\n\n[comment]**Location** : [/comment]\n\n[comment]**Interests** : [/comment]\n\n[comment]**About Me** : [/comment]', 'home', 0, 0, 1, 0, '2014-08-26 20:13:57', 0, NULL, 0, 0),
 (2, NULL, NULL, 'Gavin', 'eyJpdiI6IkJkR0hQZWtxTktOdWdYc3NmNGFRYk1lekdkXC9SQmppa1lnVHE4RWlzMGh3PSIsInZhbHVlIjoibnFBdHFEQjBrV3JJZGVCVStUMTlCUCtvVDNmNVk2R1hLUW42STBIYWxZUT0iLCJtYWMiOiIxNDE3ZWI3NDg1MWIzYjdiNjU0MGEyZTYxMGFhYWNjYjM4YmU2NTk0NjNmMmUzNGMyMmVkMjAwMDM5YmZkNjM2In0=', NULL, 0, 0, 0, 0, 120, '2014-01-01 19:41:19', 0, NULL, NULL, 'home', 0, 0, 1, 0, NULL, 0, NULL, 0, 0),
 (3, NULL, NULL, 'B105920', 'eyJpdiI6InFrM0MwYUtGdnJMZ1lnUytLczVHQ1JvTGdSa3N0MzBIQVVqdGR4eVNBajQ9IiwidmFsdWUiOiI5bGM4dkRENVpMejd6bFBpTEVZbWVuWUJiNDFyU3JFaEpFZ3h5clBka0tJPSIsIm1hYyI6IjA3NWMwYTBhYTZkZmEyMzUyOTRjY2VhMWFmN2UwNjg2ZGNkOWE1NDAzZmM2ZmEyNTY3NzI2MjMwZmM4MzQ5Y2UifQ==', NULL, 0, 0, 0, 0, 120, '2013-12-19 20:29:40', 0, NULL, NULL, 'home', 0, 0, 1, 0, NULL, 0, NULL, 0, 0),
-(4, NULL, '2014-08-13 23:25:51', 'Bob', 'eyJpdiI6IkdjVHFRbm00VGtMRG9cL3MyMk9BZHlRYlZZT1wvNWtQSTkybkFDZ2ZZU2F5QT0iLCJ2YWx1ZSI6IlwvQ0RcL2lteUhqSVBnSXZnOEpiOFZLb1RsSDA3bWt1Nyt6R0Z3MGhGenFwWT0iLCJtYWMiOiIyNmNlNDMzZDgxNGI2MTJiZThjYzc5NDU1MjZhYzI0ZGQzMDRlZDhkYTIxMmFhMzI2OGZiMWZjMTc0NjNmYTM0In0=', NULL, 234, 0, 0, 0, 120, '2014-08-13 23:23:03', 0, NULL, NULL, 'home', 6, 0, 1, 1, '2014-08-13 23:25:51', 1, NULL, 0, 0),
+(4, NULL, '2014-08-26 19:59:09', 'Bob', 'eyJpdiI6IkdjVHFRbm00VGtMRG9cL3MyMk9BZHlRYlZZT1wvNWtQSTkybkFDZ2ZZU2F5QT0iLCJ2YWx1ZSI6IlwvQ0RcL2lteUhqSVBnSXZnOEpiOFZLb1RsSDA3bWt1Nyt6R0Z3MGhGenFwWT0iLCJtYWMiOiIyNmNlNDMzZDgxNGI2MTJiZThjYzc5NDU1MjZhYzI0ZGQzMDRlZDhkYTIxMmFhMzI2OGZiMWZjMTc0NjNmYTM0In0=', NULL, 251, 1, 0, 0, 120, '2014-08-26 04:34:20', 0, NULL, NULL, 'test', 0, 0, 1, 0, '2014-08-26 04:34:22', 0, NULL, 2, 0),
 (5, NULL, NULL, 'Test', 'eyJpdiI6IkExTXFrVFVmbWlpcmJINENNSytQRlwvSG5IYklVcXpYR1VMVUFpTGtUaHVBPSIsInZhbHVlIjoidXVEY2pxdHViYkN2eTRFbHI2SUlnM0w0WXA5YWt6dzluT0I1UENBTTQ1WT0iLCJtYWMiOiJmNGVkODJiNTFjOWYzN2E1NThkYjU0Y2YyMzNjN2Q4ODVlMjg1NjUxZmQ2MGZmODM3ODIxZmNiZDM2ZWE3ODhkIn0=', NULL, 0, 0, 0, 0, 120, '2014-01-12 23:22:57', 0, NULL, NULL, 'home', 0, 0, 1, 0, NULL, 0, NULL, 0, 0),
 (6, '2014-07-28 21:00:29', '2014-07-28 21:02:09', 'Auros', 'eyJpdiI6IkErbUxtdXJOSitGQ3IyM0pSRE15alFXUmtkWlg0RnpYazE2c2JKZEpzeEk9IiwidmFsdWUiOiJ5ejlVZ0pPMStQME4wYUM5MEVYOTJweDlLZzJPTFN6QVNSVHlMUFdmc1JnPSIsIm1hYyI6IjEzZTY5ZjBjYTQwMTAwZDU3Y2YxZTA0YmRhZTNjNjIyOTE1ODJmZmYzODIxNmM3NzAxZjQyZTgwOWZjYTFlYmUifQ==', NULL, 200, 0, 0, 0, 120, '2014-07-28 21:00:29', 0, NULL, NULL, 'home', 0, 0, 1, 0, NULL, 1, '127.0.0.1', 0, 0);
 
@@ -877,17 +857,19 @@ CREATE TABLE IF NOT EXISTS `users_to_tags` (
   PRIMARY KEY (`id`),
   KEY `user_idx` (`user_id`),
   KEY `tag_idx` (`tag_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=11 ;
 
 --
 -- Dumping data for table `users_to_tags`
 --
 
 INSERT INTO `users_to_tags` (`id`, `user_id`, `tag_id`, `score`, `created_at`, `updated_at`, `is_mod`, `is_admin`) VALUES
-(5, 1, 2, 11, '2014-01-10 23:08:27', '2014-08-06 21:19:01', 0, 1),
-(6, 1, 3, 5, '2014-01-10 23:08:31', '2014-08-06 18:09:14', 0, 1),
+(5, 1, 2, 52, '2014-01-10 23:08:27', '2014-08-26 19:08:05', 0, 1),
+(6, 1, 3, 9, '2014-01-10 23:08:31', '2014-08-26 19:54:11', 0, 1),
 (7, 1, 4, 10, '2014-01-10 23:08:33', '2014-08-06 18:20:15', 0, 0),
-(8, 1, 1, 16, '2014-08-06 21:16:44', '2014-08-13 17:26:14', 0, 1);
+(8, 1, 1, 51, '2014-08-06 21:16:44', '2014-08-26 19:50:10', 0, 0),
+(9, 4, 1, 31, '2014-08-24 16:44:30', '2014-08-25 22:20:47', 0, 1),
+(10, 4, 2, 30, '2014-08-24 16:44:34', '2014-08-26 04:44:20', 0, 0);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
