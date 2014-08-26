@@ -100,20 +100,20 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 		return MessagesVoted::wheremember_id($this->id)->wherestatus(2)->get();
 	}
 
-	public function requests(){
-		return $this->hasMany('Requests','user_id');
+	public function notifications(){
+		return $this->hasMany('Notifications','user_id');
 	}
 
-	public function globalRequests(){
-		return $this->hasMany('Requests','user_id')->wheretype(0)->take(5);
+	public function globalNotifications(){
+		return $this->hasMany('Notifications','user_id')->wheretype(0)->take(5);
 	}
 
-	public function mssgRequests(){
-		return $this->hasMany('Requests','user_id')->wheretype(1)->take(5);
+	public function mssgNotifications(){
+		return $this->hasMany('Notifications','user_id')->wheretype(1)->take(5);
 	}
 
-	public function friendRequests(){
-		return $this->hasMany('Requests','user_id')->wheretype(2)->take(5);
+	public function friendNotifications(){
+		return $this->hasMany('Notifications','user_id')->wheretype(2)->take(5);
 	}
 
 	public function online_score(){

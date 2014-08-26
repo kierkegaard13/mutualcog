@@ -18,7 +18,7 @@ class U extends BaseController {
 		}	
 		$requested = 0;
 		if(Auth::check()){
-			$requested = count(Requests::wheresender_id(Auth::user()->id)->whereuser_id($user->id)->wheretype(2)->first());
+			$requested = count(Notifications::wheresender_id(Auth::user()->id)->whereuser_id($user->id)->wheretype(2)->first());
 			foreach(Auth::user()->upvotedChats() as $upvote){
 				$upvoted[] = $upvote->chat_id;
 			}

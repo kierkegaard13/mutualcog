@@ -1,8 +1,8 @@
 <?php
 
-class Requests extends EloquentBridge 
+class Notifications extends EloquentBridge 
 {
-	protected $table = "requests";
+	protected $table = "notifications";
 	public $timestamps = true;
 
 	public function sender(){

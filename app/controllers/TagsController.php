@@ -25,7 +25,7 @@ class TagsController extends BaseController {
 		if(!isset($request_id) || !isset($tag_id)){
 			return App::abort(404,'You seem to have entered an invalid URL');
 		}
-		$request = Requests::find($request_id);
+		$request = Notifications::find($request_id);
 		if(Auth::check() && $request){
 			$sender_id = $request->sender_id;
 			if(Auth::user()->id != $sender_id && Auth::user()->id == $request->user_id){
@@ -48,10 +48,54 @@ class TagsController extends BaseController {
 		if(!isset($request_id) || !isset($tag_id)){
 			return App::abort(404,'You seem to have entered an invalid URL');
 		}
-		$request = Requests::find($request_id);
+		$request = Notifications::find($request_id);
 		if(Auth::check() && $request){
-			$friend_id = $request->sender_id;
-			if(Auth::user()->id != $friend_id && Auth::user()->id == $request->user_id){
+			$sender_id = $request->sender_id;
+			if(Auth::user()->id != $sender_id && Auth::user()->id == $request->user_id){
+				$request->delete();
+			}
+		}
+		if(Session::has('curr_page')){
+			return Redirect::to(Session::get('curr_page'));
+		}
+		return Redirect::to('home');
+	}
+
+	public function getAcceptAdmin($request_id,$tag_id){
+		if(!isset($request_id) || !isset($tag_id)){
+			return App::abort(404,'You seem to have entered an invalid URL');
+		}
+		$request = Notifications::find($request_id);
+		if(Auth::check() && $request){
+			$sender_id = $request->sender_id;
+			if(Auth::user()->id != $sender_id && Auth::user()->id == $request->user_id){
+				$user_to_tag = UsersToTags::whereuser_id(Auth::user()->id)->wheretag_id($tag_id)->first();
+				$tag = Tags::find($tag_id);
+				$owner = UsersToTags::wheretag_id($tag_id)->whereis_admin('1')->first();
+				if($user_to_tag && $owner){
+					$owner->is_admin = 0;
+					$owner->save();
+					$user_to_tag->is_mod = 0;
+					$user_to_tag->is_admin = 1;
+					$user_to_tag->save();
+				}
+				$request->delete();
+			}
+		}
+		if(Session::has('curr_page')){
+			return Redirect::to(Session::get('curr_page'));
+		}
+		return Redirect::to('home');
+	}
+
+	public function getDeclineAdmin($request_id,$tag_id){
+		if(!isset($request_id) || !isset($tag_id)){
+			return App::abort(404,'You seem to have entered an invalid URL');
+		}
+		$request = Notifications::find($request_id);
+		if(Auth::check() && $request){
+			$sender_id = $request->sender_id;
+			if(Auth::user()->id != $sender_id && Auth::user()->id == $request->user_id){
 				$request->delete();
 			}
 		}

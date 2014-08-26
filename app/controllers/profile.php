@@ -12,22 +12,37 @@ class Profile extends BaseController {
 		}
 	}
 
+	public function getDismiss($request_id){
+		if(Auth::check()){
+			$request = Notifications::find($request_id);
+			if($request){
+				if(Auth::user()->id == $request->user_id){
+					$request->delete();
+				}
+			}
+		}
+		if(Session::has('curr_page')){
+			return Redirect::to(Session::get('curr_page'));
+		}
+		return Redirect::to('home');
+	}
+
 	public function getAccept($request_id){
 		if(!isset($request_id)){
 			return App::abort(404,'You seem to have entered an invalid URL');
 		}
-		$request = Requests::find($request_id);
+		$request = Notifications::find($request_id);
 		if(Auth::check() && $request){
 			$friend_id = $request->sender_id;
 			if(Auth::user()->id != $friend_id && Auth::user()->id == $request->user_id){
 				$interaction_user = InteractionUsers::whereuser_id(Auth::user()->id)->whereentity_id($friend_id)->wheretype(0)->first();
 				if($interaction_user){
 					$interaction_user->friended = 1;
-					$interaction_user->bond = $interaction->bond + 50;
+					$interaction_user->bond = $interaction_user->bond + 50;
 					$interaction_user->save();
 					$interaction_friend = InteractionUsers::whereentity_id(Auth::user()->id)->whereuser_id($friend_id)->wheretype(0)->first();
 					$interaction_friend->friended = 1;
-					$interaction_friend->bond = $interaction->bond + 50;
+					$interaction_friend->bond = $interaction_user->bond + 50;
 					$interaction_friend->save();
 				}else{
 					$inter_user = new InteractionUsers();
@@ -57,7 +72,7 @@ class Profile extends BaseController {
 			return App::abort(404,'You seem to have entered an invalid URL');
 		}
 		if(Auth::check()){
-			$request = Requests::find($request_id);
+			$request = Notifications::find($request_id);
 			$request->delete();
 		}
 		if(Session::has('curr_page')){
@@ -75,11 +90,11 @@ class Profile extends BaseController {
 				$interaction_user = InteractionUsers::whereuser_id(Auth::user()->id)->whereentity_id($friend_id)->wheretype(0)->first();
 				if($interaction_user && $interaction_user->friended == 1){
 					$interaction_user->friended = 0;
-					$interaction_user->bond = $interaction->bond - 50;
+					$interaction_user->bond = $interaction_user->bond - 50;
 					$interaction_user->save();
 					$interaction_friend = InteractionUsers::whereentity_id(Auth::user()->id)->whereuser_id($friend_id)->wheretype(0)->first();
 					$interaction_friend->friended = 0;
-					$interaction_friend->bond = $interaction->bond - 50;
+					$interaction_friend->bond = $interaction_user->bond - 50;
 					$interaction_friend->save();
 				}
 			}
@@ -178,15 +193,17 @@ class Profile extends BaseController {
 	}
 
 	public function getLogout(){
-		$node = new NodeAuth();
-		$node->user_id = Auth::user()->id;
-		$node->user = Auth::user()->name;
-		if($node->findAll()){
-			$node = $node->findAll();
+		if(Auth::check()){
+			$node = new NodeAuth();
+			$node->user_id = Auth::user()->id;
+			$node->user = Auth::user()->name;
+			if($node->findAll()){
+				$node = $node->findAll();
+			}
+			$node->authorized = 0;
+			$node->save();
+			Auth::logout();
 		}
-		$node->authorized = 0;
-		$node->save();
-		Auth::logout();
 		if(Session::has('curr_page')){
 			return Redirect::to(Session::get('curr_page'));
 		}

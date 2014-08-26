@@ -350,12 +350,52 @@ io.sockets.on('connection', function(client) {
 		}
 	});
 
+	client.on('request_answered',function(info){
+		if(client.authorized){
+			var request_info = info;
+			var type = 0;
+			if(info.type == 'friendship'){
+				type = 2;
+			}
+			conn.insert('notifications',{type:type,user_id:info.user_id,sender:client.user,sender_id:client.user_id,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
+				if(err)console.log(err);
+				var message = "<div class='request_cont'><div class='request_text'><a class='chat_link' href='//mutualcog.com/u/" + client.user_id + "'>" + client.user + "</a> has ";
+				var request_id = info.insertId;
+				if(request_info.accepted){
+					message += "accepted your ";
+				}else{
+					message += "declined your ";
+				}
+				if(request_info.type == 'friendship'){
+						message += "friend request</div><div class='request_text'><a class='chat_link' href='//mutualcog.com/profile/dismiss/" + info.insertId + "'>Dismiss</a></div></div>";
+				}else if(request_info.type == 'mod'){
+						message += "mod request</div><div class='request_text'><a class='chat_link' href='//mutualcog.com/profile/dismiss/" + info.insertId + "'>Dismiss</a></div></div>";
+				}else{
+						message += "admin request</div><div class='request_text'><a class='chat_link' href='//mutualcog.com/profile/dismiss/" + info.insertId + "'>Dismiss</a></div></div>";
+				}
+				conn.where({id:info.insertId}).update('notifications',{message:message},function(err,info){
+					if(err)console.log(err);
+					if(type == 2){
+						io.sockets.in('user_' + request_info.user_id).emit('displayFriendRequests',{id:request_id,sender:client.user,sender_id:client.user_id,message:message});
+					}else{
+						io.sockets.in('user_' + request_info.user_id).emit('displayGlobalRequests',{id:request_id,sender:client.user,sender_id:client.user_id,message:message,type:request_info.type});
+					}
+				});
+			});
+		}
+	});
+
 	client.on('request_friend',function(info){  //type: 2 is friend, 1 is mssg, 0 is global
 		if(client.authorized){
 			var request_info = info;
-			conn.insert('requests',{type:2,user_id:info.user_id,sender_id:info.sender_id,sender:info.sender,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
+			conn.insert('notifications',{type:2,user_id:info.user_id,sender_id:client.user_id,sender:client.user,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
 				if(err)console.log(err);
-				io.sockets.in('user_' + request_info.user_id).emit('displayFriendRequests',{id:info.insertId,sender:client.user,sender_id:client.user_id});
+				var request_id = info.insertId;
+				var message = "<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/u/" + client.user + "'>" + client.user + "</a> has requested your friendship </div> <div class='request_text'> <a class='chat_link accept_request' id='accept_friendship_" + client.user_id + "' href='//mutualcog.com/profile/accept/" + request_id + "'>Accept</a> / <a class='chat_link decline_request' id='decline_friendship_" + client.user_id + "' href='//mutualcog.com/profile/decline/" + request_id + "'>Decline</a> </div> </div>";
+				conn.where({id:info.insertId}).update('notifications',{message:message},function(err,info){
+					if(err)console.log(err);
+					io.sockets.in('user_' + request_info.user_id).emit('displayFriendRequests',{id:request_id,sender:client.user,sender_id:client.user_id,message:message});
+				});
 			});
 		}
 	});
@@ -369,16 +409,51 @@ io.sockets.on('connection', function(client) {
 					conn.where({user_id:client.user_id,tag_id:request_info.tag_id}).get('users_to_tags',function(err,rows){  //check if sender is admin
 						if(err)console.log(err);
 						if(rows[0].is_admin){
-							conn.where({type:0,global_type:'mod',user_id:info.user_id,sender_id:client.user_id}).get('requests',function(err,rows){  
+							conn.where({type:0,global_type:'mod',user_id:info.user_id,sender_id:client.user_id}).get('notifications',function(err,rows){  
 								if(err)console.log(err);
 								if(rows.length == 0){  //check if request already exists
-									conn.insert('requests',{type:0,global_type:'mod',user_id:info.user_id,sender_id:client.user_id,sender:client.user,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
+									conn.insert('notifications',{type:0,global_type:'mod',user_id:info.user_id,sender_id:client.user_id,sender:client.user,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
 										if(err)console.log(err);
-										var message = "<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/u/" + client.user + "'>" + client.user + "</a> has requested you as a mod for <a class='chat_link' href='//mutualcog.com/t/" + request_info.tag_name + "'>/t/"  + request_info.tag_name + "</a> </div> <div class='request_text'> <a class='chat_link accept_mod' id='accept_mod_" + client.user + "_" + info.insertId + "' href='//mutualcog.com/tags/accept-mod/" + info.insertId + "/" + request_info.tag_id + "'>Accept</a> / <a class='chat_link decline_mod' id='decline_mod_" + client.user + "_" + info.insertId + "' href='//mutualcog.com/tags/decline-mod/" + info.insertId + "/" + request_info.tag_id + "'>Decline</a> </div> </div>";
+										var message = "<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/u/" + client.user + "'>" + client.user + "</a> has requested you as a mod for <a class='chat_link' href='//mutualcog.com/t/" + request_info.tag_name + "'>/t/"  + request_info.tag_name + "</a> </div> <div class='request_text'> <a class='chat_link accept_request' id='accept_mod_" + client.user_id + "' href='//mutualcog.com/tags/accept-mod/" + info.insertId + "/" + request_info.tag_id + "'>Accept</a> / <a class='chat_link decline_request' id='decline_mod_" + client.user_id + "' href='//mutualcog.com/tags/decline-mod/" + info.insertId + "/" + request_info.tag_id + "'>Decline</a> </div> </div>";
 										var request_id = info.insertId;
-										conn.where({id:request_id}).update('requests',{message:message},function(err,info){
+										conn.where({id:request_id}).update('notifications',{message:message},function(err,info){
 											if(err)console.log(err);
 											io.sockets.in('user_' + request_info.user_id).emit('displayGlobalRequests',{id:request_id,sender:client.user,sender_id:client.user_id,message:message,type:'mod'});
+											fn(1);
+										});
+									});
+								}else{
+									fn(1)
+								}
+							});
+						}
+					});
+				}else{
+					fn(0);
+				}
+			});
+		}
+	});
+
+	client.on('request_admin',function(info,fn){
+		if(client.authorized){
+			var request_info = info;
+			conn.where({tag_id:info.tag_id,is_mod:1}).get('users_to_tags',function(err,rows){  //check for mod limit
+				if(err)console.log(err);
+				if(rows.length <= 20){  //mod count must be max of 20
+					conn.where({user_id:client.user_id,tag_id:request_info.tag_id}).get('users_to_tags',function(err,rows){  //check if sender is admin
+						if(err)console.log(err);
+						if(rows[0].is_admin){
+							conn.where({type:0,global_type:'admin',user_id:info.user_id,sender_id:client.user_id}).get('notifications',function(err,rows){  
+								if(err)console.log(err);
+								if(rows.length == 0){  //check if request already exists
+									conn.insert('notifications',{type:0,global_type:'admin',user_id:info.user_id,sender_id:client.user_id,sender:client.user,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
+										if(err)console.log(err);
+										var message = "<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/u/" + client.user + "'>" + client.user + "</a> has requested you as an admin for <a class='chat_link' href='//mutualcog.com/t/" + request_info.tag_name + "'>/t/"  + request_info.tag_name + "</a> </div> <div class='request_text'> <a class='chat_link accept_request' id='accept_admin_" + client.user_id + "' href='//mutualcog.com/tags/accept-admin/" + info.insertId + "/" + request_info.tag_id + "'>Accept</a> / <a class='chat_link decline_request' id='decline_admin_" + client.user_id + "' href='//mutualcog.com/tags/decline-admin/" + info.insertId + "/" + request_info.tag_id + "'>Decline</a> </div> </div>";
+										var request_id = info.insertId;
+										conn.where({id:request_id}).update('notifications',{message:message},function(err,info){
+											if(err)console.log(err);
+											io.sockets.in('user_' + request_info.user_id).emit('displayGlobalRequests',{id:request_id,sender:client.user,sender_id:client.user_id,message:message,type:'admin'});
 											fn(1);
 										});
 									});
