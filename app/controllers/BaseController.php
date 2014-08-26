@@ -95,6 +95,13 @@ class BaseController extends Controller {
 		return $text;
 	}
 
+	public function returnToCurrPage(){
+		if(Session::has('curr_page')){
+			return Redirect::to(Session::get('curr_page'));
+		}
+		return Redirect::to('home');
+	}
+
 	protected function setupLayout()
 	{
 		if ( ! is_null($this->layout))

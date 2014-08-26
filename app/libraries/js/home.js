@@ -7,6 +7,14 @@ $(document).ready(function(){
 	$('.advanced_cog').tooltip();
 	$('#pause_chat').tooltip();
 	$('.chat_content').on('click','.mssg_icon',deleteIt);
+	$.each($('.interaction_time'),function(index,value){
+		$(this).text(moment.utc($(this).attr('id')).fromNow());
+	});
+	$('body').on('click','.p_chat_mssg',function(){
+		var chat_id = $(this).find('.p_mssg_body').attr('class').split(' ')[0].split('_')[2];
+		var mssg_id = $(this).attr('id');
+		window.location.href = '//mutualcog.com/chat/static/' + chat_id + '/' + mssg_id;
+	});
 	$('.load_more').on('click',function(){
 		var url = $(this).attr('href');
 		var cont = $(this).parent();

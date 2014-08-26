@@ -311,10 +311,7 @@ class Chat extends BaseController {
 				$mssg_voted->status = 1;
 				$mssg_voted->save();
 			}
-			if(Session::has('curr_page')){
-				return Redirect::to(Session::get('curr_page'));
-			}
-			return Redirect::to('home');
+			return $this->returnToCurrPage();
 		}
 		return Redirect::to(action('chat@getLive',$chat_id));
 	}
@@ -326,17 +323,14 @@ class Chat extends BaseController {
 				$chat->live = 0;
 				$chat->save();
 			}else{
-				return Redirect::to(Session::get('curr_page'));
+				return $this->returnToCurrPage();
 			}	
 		}else{
 			if(Session::get('unique_serial') == $chat->admin){
 				$chat->live = 0;
 				$chat->save();
 			}else{
-				if(Session::has('curr_page')){
-					return Redirect::to(Session::get('curr_page'));
-				}
-				return Redirect::to('home');
+				return $this->returnToCurrPage();
 			}
 		}	
 		return Redirect::to(action('chat@getStatic',$chat_id));
@@ -349,17 +343,14 @@ class Chat extends BaseController {
 				$chat->live = 1;
 				$chat->save();
 			}else{
-				return Redirect::to(Session::get('curr_page'));
+				return $this->returnToCurrPage();
 			}	
 		}else{
 			if(Session::get('unique_serial') == $chat->admin){
 				$chat->live = 1;
 				$chat->save();
 			}else{
-				if(Session::has('curr_page')){
-					return Redirect::to(Session::get('curr_page'));
-				}
-				return Redirect::to('home');
+				return $this->returnToCurrPage();
 			}
 		}	
 		return Redirect::to(action('chat@getLive',$chat_id));
@@ -396,10 +387,7 @@ class Chat extends BaseController {
 				}
 			}
 		}
-		if(Session::has('curr_page')){
-			return Redirect::to(Session::get('curr_page'));
-		}
-		return Redirect::to('home');
+		return $this->returnToCurrPage();
 	}
 
 	public function getSoftRemove($chat_id,$tag_id = null){
@@ -418,10 +406,7 @@ class Chat extends BaseController {
 				}
 			}
 		}
-		if(Session::has('curr_page')){
-			return Redirect::to(Session::get('curr_page'));
-		}
-		return Redirect::to('home');
+		return $this->returnToCurrPage();
 	}
 
 	public function postDetails(){
@@ -595,11 +580,7 @@ class Chat extends BaseController {
 				}
 			}
 		}
-		if(Session::has('curr_page')){
-			return Redirect::to(Session::get('curr_page'));
-		}else{
-			return Redirect::to('home');
-		}
+		return $this->returnToCurrPage();
 	}
 
 	public function postEditChat(){
@@ -721,11 +702,7 @@ class Chat extends BaseController {
 				$chat->save();
 			}
 		}
-		if(Session::has('curr_page')){
-			return Redirect::to(Session::get('curr_page'));
-		}else{
-			return Redirect::to('home');
-		}
+		return $this->returnToCurrPage();
 	}
 
 	public function postUpvote(){

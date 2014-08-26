@@ -22,70 +22,18 @@
 {% endblock %}
 
 {% block side_2 %}
-                        <div class="small_content_box">
-				<div class="content_right">
-				<div class="content_left">
-					<div class="content side_content" id="create_cont">
-<form method="post" action="{{site}}/chat/new-chat" class="mutual_form" id="home_form">
-<fieldset>
-	<a class="btn btn-default btn-xs advanced_create" id="advanced_create" href="#" data-toggle="modal" data-target="advanced_modal"><div class="glyphicon glyphicon-cog advanced_cog" data-toggle="tooltip" data-original-title="Advanced options" data-container="body" data-placement="top"></div></a>
-	<legend>Create a new Chat</legend>
-	<div id="title_group" class="form-group">
-		<input class="form-control" data-toggle="tooltip" data-placement="left" data-original-title="Title must be longer than 2 characters but less than 180" data-trigger="focus" data-container="body" type="text" name="title" id="Title" placeholder="What's this chat about?">
-	</div>
-	<div id="link_group" class="form-group">
-		<input class="form-control" type="text" name="link" id="Link" placeholder="Add a link (optional)">
-	</div>
-	<div id="tags_group" class="form-group">
-		<input class="form-control tags_input" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Tags" data-container="body" data-placement="bottom" type="text" name="tags" id="Tags" placeholder="Use spaces to separate tags (max: 5)" autocomplete="off">
-	</div>
-	<input class="form-control" type="hidden" name="live_status" value="1">
-	<button class="btn btn-primary" type="Submit" style="width:100%;">Create</button>
-</fieldset>
-</form>
-					</div>
-                                </div>
-				</div>
-                        </div>
-<div class="modal fade" id="advanced_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="continue_modalLabel">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Advanced Chat Options</h4>
-			</div>
-			<div class="modal-body">
-				<form method="post" action="{{site}}/chat/new-chat" class="mutual_form" id="home_form_v2">
-				<fieldset>
-					<div id="title_group_v2" class="form-group">
-						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Title must be longer than 2 characters but less than 180" data-trigger="focus" type="text" name="title" id="Title_v2" placeholder="What's this chat about?">
-					</div>
-					<div id="link_group_v2" class="form-group">
-						<input class="form-control" type="text" name="link" id="Link_v2" placeholder="Add a link (optional)">
-					</div>
-					<div id="tags_group_v2" class="form-group">
-						<input class="form-control tags_input" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Tags" data-placement="bottom" type="text" name="tags" id="Tags_v2" placeholder="Use spaces to separate tags (max: 5)" autocomplete="off">
-					</div>
-					<div id="description_group" class="form-group">
-						<label for="description">Description</label>
-						<textarea name="description" class="form-control" id="description" rows="5"></textarea>
-					</div>
-					<div id="live_group" class="form-group">
-						<select class="form-control" name="live_status">
-							<option value="1">Live</option>
-							<option value="0">Static</option>
-						</select>
-					</div>
-				</fieldset>
-			</div>
-			<div class="modal-footer">
-				<button class="btn btn-primary" type="Submit">Create</button>
-				<button type="button" class="btn" data-dismiss="modal">Close</button>
-				</form>
-			</div>
-		</div>
-	</div>	
+	<div class="small_content_box">
+		<div class="content side_content" id="subscribe">
+<div style="margin-top:5px;">
+	<btn class="btn btn-primary" style="width:100%;" data-toggle="modal" data-target="#chat_modal">Create Chat</btn>
 </div>
+{% if not curr_tag_id and user %}
+	<div style="margin-top:10px;">
+		<btn class="btn btn-primary" style="width:100%;" data-toggle="modal" data-target="#tag_create_modal">Create Community</btn>
+	</div>
+{% endif %}
+		</div>
+	</div>
 {% endblock %}
 
 {% block content %}
@@ -108,37 +56,14 @@
 	</div>
 </div>
 <ul id="profileTabs" class="nav nav-tabs nav-justified">
-	<li class="active"><a href="#about" data-toggle="tab" style="color:#075de9">About Me</a></li>
-	<li><a href="#posts" data-toggle="tab" style="color:#075de9">Posts</a></li>
+	<li class="active"><a href="#posts" data-toggle="tab" style="color:#075de9">Posts</a></li>
 	<li><a href="#comments" data-toggle="tab" style="color:#075de9">Comments</a></li>
 	<li><a href="#friendships" data-toggle="tab" style="color:#075de9">Friendships</a></li>
 </ul>
 
 <div id="tab_content" class="tab-content">
 
-<div class="tab-pane fade active in" id="about">
-	<div style="height:620px;margin-top:10px;">
-		<div class="{% if user.id == profile.id %} edit_about {% endif %}" id="about_details" data-toggle="tooltip" data-placement="top" data-original-title="Click to edit about me" data-container="body">
-			{{profile.about | raw}}
-		</div>
-		{% if user.id == profile.id %}
-			<div id="edit_box" style="display:none;">
-<textarea rows="24" id="detail_text">{% if not profile.about %}[comment]**Name** : [/comment]
-
-[comment]**Birthday** : [/comment]
-
-[comment]**Location** : [/comment]
-
-[comment]**Interests** : [/comment]
-
-[comment]**About Me** : [/comment]{% else %}{{profile.about_raw | raw}}{% endif %}</textarea>
-				<button class="btn btn-success" id="save_about" style="margin-top:9px;">Save About Me</button>
-			</div>
-		{% endif %}
-	</div>
-</div>
-
-<div class="tab-pane fade in" id="posts">
+<div class="tab-pane fade active in" id="posts">
 	<div class="frame" style="height:620px;padding:0;white-space:normal;">
 		<div id="chat_list">
 			{% for chat in profile.chats %}
@@ -223,7 +148,7 @@
 			<div class="col-lg-3 interaction">
 				<a href="{{site}}/u/{{friendship.entity.name}}" style="color:black;"><strong>{{friendship.entity.name}}</strong></a>
 				<div style="font-size:14px;">
-					<div>Last Interaction : <span class="interaction_time" id="{{friendship.entityship.updated_at}}"></span></div>
+					<div>Last Interaction : <span class="interaction_time" id="{{friendship.entity.updated_at}}"></span></div>
 				</div>
 			</div>
 		{% endfor %}

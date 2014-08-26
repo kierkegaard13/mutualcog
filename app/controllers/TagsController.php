@@ -15,10 +15,7 @@ class TagsController extends BaseController {
 				$user_to_tag->save();
 			}
 		}
-		if(Session::has('curr_page')){
-			return Redirect::to(Session::get('curr_page'));
-		}
-		return Redirect::to('home');
+		return $this->returnToCurrPage();
 	}
 
 	public function getAcceptMod($request_id,$tag_id){
@@ -38,10 +35,7 @@ class TagsController extends BaseController {
 				$request->delete();
 			}
 		}
-		if(Session::has('curr_page')){
-			return Redirect::to(Session::get('curr_page'));
-		}
-		return Redirect::to('home');
+		return $this->returnToCurrPage();
 	}
 
 	public function getDeclineMod($request_id,$tag_id){
@@ -55,10 +49,7 @@ class TagsController extends BaseController {
 				$request->delete();
 			}
 		}
-		if(Session::has('curr_page')){
-			return Redirect::to(Session::get('curr_page'));
-		}
-		return Redirect::to('home');
+		return $this->returnToCurrPage();
 	}
 
 	public function getAcceptAdmin($request_id,$tag_id){
@@ -82,10 +73,7 @@ class TagsController extends BaseController {
 				$request->delete();
 			}
 		}
-		if(Session::has('curr_page')){
-			return Redirect::to(Session::get('curr_page'));
-		}
-		return Redirect::to('home');
+		return $this->returnToCurrPage();
 	}
 
 	public function getDeclineAdmin($request_id,$tag_id){
@@ -99,10 +87,7 @@ class TagsController extends BaseController {
 				$request->delete();
 			}
 		}
-		if(Session::has('curr_page')){
-			return Redirect::to(Session::get('curr_page'));
-		}
-		return Redirect::to('home');
+		return $this->returnToCurrPage();
 	}
 
 	public function getRemoveMod($mod_id,$tag_id){
@@ -113,10 +98,7 @@ class TagsController extends BaseController {
 				$user_to_tag->save();
 			}
 		}
-		if(Session::has('curr_page')){
-			return Redirect::to(Session::get('curr_page'));
-		}
-		return Redirect::to('home');
+		return $this->returnToCurrPage();
 	}
 
 	public function getSimilarTag(){
@@ -178,10 +160,7 @@ class TagsController extends BaseController {
 			$usertag->score = 1;
 			$usertag->save();
 		}
-		if(Session::has('curr_page')){
-			return Redirect::to(Session::get('curr_page'));
-		}
-		return Redirect::to('home');
+		return $this->returnToCurrPage();
 	}
 
 	public function getUnsubscribe($tag_id){
@@ -196,10 +175,7 @@ class TagsController extends BaseController {
 				$usertag->delete();
 			}
 		}
-		if(Session::has('curr_page')){
-			return Redirect::to(Session::get('curr_page'));
-		}
-		return Redirect::to('home');
+		return $this->returnToCurrPage();
 	}
 
 	public function getValidateName(){
@@ -247,10 +223,7 @@ class TagsController extends BaseController {
 				}
 			}
 		}
-		if(Session::has('curr_page')){
-			return Redirect::to(Session::get('curr_page'));
-		}
-		return Redirect::to('home');
+		return $this->returnToCurrPage();
 	}
 
 	public function postCreateTag(){

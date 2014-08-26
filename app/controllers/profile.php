@@ -21,10 +21,7 @@ class Profile extends BaseController {
 				}
 			}
 		}
-		if(Session::has('curr_page')){
-			return Redirect::to(Session::get('curr_page'));
-		}
-		return Redirect::to('home');
+		return $this->returnToCurrPage();
 	}
 
 	public function getAccept($request_id){
@@ -61,10 +58,7 @@ class Profile extends BaseController {
 				$request->delete();
 			}
 		}
-		if(Session::has('curr_page')){
-			return Redirect::to(Session::get('curr_page'));
-		}
-		return Redirect::to('home');
+		return $this->returnToCurrPage();
 	}
 
 	public function getDecline($request_id){
@@ -75,10 +69,7 @@ class Profile extends BaseController {
 			$request = Notifications::find($request_id);
 			$request->delete();
 		}
-		if(Session::has('curr_page')){
-			return Redirect::to(Session::get('curr_page'));
-		}
-		return Redirect::to('home');
+		return $this->returnToCurrPage();
 	}
 
 	public function getUnfriend($friend_id){
@@ -99,10 +90,7 @@ class Profile extends BaseController {
 				}
 			}
 		}
-		if(Session::has('curr_page')){
-			return Redirect::to(Session::get('curr_page'));
-		}
-		return Redirect::to('home');
+		return $this->returnToCurrPage();
 	}
 
 	public function getProfileVisit(){
@@ -204,10 +192,7 @@ class Profile extends BaseController {
 			$node->save();
 			Auth::logout();
 		}
-		if(Session::has('curr_page')){
-			return Redirect::to(Session::get('curr_page'));
-		}
-		return Redirect::to('home');
+		return $this->returnToCurrPage();
 	}
 
 	public function postRegister(){
@@ -265,10 +250,7 @@ class Profile extends BaseController {
 				$node->save();
 			}
 		}		
-		if(Session::has('curr_page')){
-			return Redirect::to(Session::get('curr_page'));
-		}
-		return Redirect::to('home');
+		return $this->returnToCurrPage();
 	}
 
 	public function postLogin(){
@@ -312,10 +294,7 @@ class Profile extends BaseController {
 				}
 			}
 		}
-		if(Session::has('curr_page')){
-			return Redirect::to(Session::get('curr_page'));
-		}
-		return Redirect::to('home');
+		return $this->returnToCurrPage();
 	}
 
 }

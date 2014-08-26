@@ -480,6 +480,7 @@ $('#search_input').on('focus',function(e){
 var selected_term = -1;
 
 $('#search_input').on('keydown',function(e){
+	console.log(selected_term);
 	if(e.keyCode == 13){  /*enter key*/
 		if(selected_term == -1){
 		}else{
@@ -495,7 +496,7 @@ $('#search_input').on('keydown',function(e){
 		}
 		return false;
 	}else if(e.keyCode == 40){  /*down arrow*/
-		if(selected_term != $('#tag_dropdown').children().length - 1){
+		if(selected_term != $('.tag_results').length - 1){
 			selected_term++;
 			$('.tag_results').css('background-color','');
 			$('li#search_' + selected_term).css('background-color','#ddd');
@@ -517,10 +518,16 @@ $('#search_input').on('keyup',function(e){
 				url:'//mutualcog.com/tags/similar-entity',
 				success:function(hresp){
 					var content = '';
+					var transition = 0;
+					content += '<div class="search_res_type">Tags</div>';
 					$.each(hresp,function(index,value){
 						if(value.type == 'tag'){
 							content += '<li id="search_' + index + '" class="tag_results"><a href="//mutualcog.com/t/' + value.name + '">' + value.name + '</a></li>';
 						}else{
+							if(transition == 0){
+								content += '<div class="search_res_type">Users</div>';
+								transition++;
+							}
 							content += '<li id="search_' + index + '" class="tag_results"><a href="//mutualcog.com/u/' + value.name + '">' + value.name + '</a></li>';
 						}
 					});
