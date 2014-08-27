@@ -43,7 +43,7 @@
 			{% if user.tag_admin == curr_tag_id and curr_tag_id | length > 0 %}
 				<a class="btn btn-default btn-xs advanced_create" id="tag_edit" href="#" data-toggle="modal" data-target="tag_edit_modal"><div class="glyphicon glyphicon-cog advanced_cog" data-toggle="tooltip" data-original-title="Manage Community" data-container="body" data-placement="top"></div></a>
 			{% endif %}
-			<div><a href="{{site}}/t/{{curr_tag.name}}" style="font-size:20px;color:#333;">{{curr_tag.name}}{% if tag_admin.user_id == user.id %} (Admin) {% elseif user.id in curr_tag.moderators %} (Mod) {% endif %}</a></div>
+			<div><a href="{{site}}/t/{{curr_tag.name}}" style="font-size:20px;color:#333;">{{curr_tag.name}}{% if user %}{% if tag_admin.user_id == user.id %} (Admin) {% elseif user.id in curr_tag.moderators %} (Mod) {% endif %}{% endif %}</a></div>
 			<div style="margin:4px 0;">
 				{% if logged_in %}
 					{% if user_subscribed %}
