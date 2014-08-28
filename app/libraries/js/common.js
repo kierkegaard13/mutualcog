@@ -735,6 +735,7 @@ $('body').on('keyup','.pm_text',function(e){
 				module.socket.emit('not_typing',{pm_id:module.pm_info[2],friend_id:module.pm_info[1],user_id:module.user_id});
 			}
 			if($(this).val().trim() != ""){
+				console.log($(this).val());
 				module.socket.emit('send_pm',{message:$(this).val(),pm_id:module.pm_info[2],friend_id:module.pm_info[1],user_id:module.user_id},function(info){
 					var chat_cont = $('#pm_' + info.friend_id + '_' + info.pm_id);
 					var tmp_message = chat_cont.find('.tmp_message');

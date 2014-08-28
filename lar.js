@@ -252,7 +252,7 @@ io.sockets.on('connection', function(client) {
 	});
 
 	client.on('send_pm',function(pm_info,fn){
-		if(client.authorized && pm_info.length < 10000){
+		if(client.authorized && pm_info.message.length < 10000){
 			pm_info.message = processMessage(pm_info.message);
 			var mssg_id = 0;
 			/* Figure out if recipient has disconnected */
