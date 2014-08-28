@@ -30,7 +30,7 @@ function sanitize(text) {
 }
 
 function emoji(text){
-	var mapArr = ['\\&lt\\;3',':\\)',':\\(',':D',":\\&\\#39\\;\\(",'spec_face_angr','spec_face_rage',':\\/',':\\|',':O',':P','T_T'];
+	var mapArr = ['\\&lt\\;3',':\\)',':\\(',':D',":\\&\\#39\\;\\(",'spec_face_angr','spec_face_rage',':\\|',':O',':P','T_T'];
 
 	var mapObj = {
 		'&lt;3':'<img style="height:18px;" src="//localhost/laravel/app/emoji/heart.png"></img>',
@@ -38,7 +38,7 @@ function emoji(text){
 		':)':'<img style="height:18px;" src="//localhost/laravel/app/emoji/smiley.png"></img>',
 		':(':'<img style="height:18px;" src="//localhost/laravel/app/emoji/disappointed.png"></img>',
 		':|':'<img style="height:18px;" src="//localhost/laravel/app/emoji/neutral_face.png"></img>',
-		':/':'<img style="height:18px;" src="//localhost/laravel/app/emoji/confused.png"></img>',
+		//':/':'<img style="height:18px;" src="//localhost/laravel/app/emoji/confused.png"></img>',
 		":&#39;(":'<img style="height:18px;" src="//localhost/laravel/app/emoji/cry.png"></img>',
 		':O':'<img style="height:18px;" src="//localhost/laravel/app/emoji/open_mouth.png"></img>',
 		':P':'<img style="height:18px;" src="//localhost/laravel/app/emoji/stuck_out_tongue_closed_eyes.png"></img>',
@@ -49,15 +49,13 @@ function emoji(text){
 
 	var re = new RegExp(mapArr.join("|"),"gi");
 	text = text.replace(re, function(matched){
-		console.log(matched);
 		return mapObj[matched];
 	});
 	return text;
 }
 
 function processMessage(message){
-	var url_reg = /(\s)(https?:\/\/)?([\da-z-]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/g;
-	var url_reg2 = /^(https?:\/\/)?([\da-z-]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/g;
+	var url_reg = /(\b)(https?:\/\/)?([\da-z-]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/g;
 	var url_reg3 = /(img)(\s)(src\=)/g;
 	var t_reg = /\/t\/([^\s]*)(\s*)/g; 
 	var p_reg = /\/p\/([^\s]*)(\s*)/g; 
@@ -68,6 +66,7 @@ function processMessage(message){
 	message = hashHtml(message);
 	message = message.replace('>:|','spec_face_angr');
 	message = message.replace('>:(','spec_face_rage');
+	message = message.replace(url_reg,"$1<a class='chat_link' href='\/\/$3\.$4$5'>$3\.$4$5</a>");
 	message = marked(message);
 	if(message.length){
 		message = message.replace(/^\s+|\s+$/g,'');
@@ -77,8 +76,6 @@ function processMessage(message){
 		message = message.replace(t_reg,"<a class='chat_link' href='\/\/mutualcog.com/t/$1'>\/t\/$1</a>$2");
 		message = message.replace(at_reg,"<a class='chat_link' href='\/\/mutualcog.com/u/$1'>@$1</a>$2");
 		message = message.replace(hash_reg,"<a class='chat_link' href='\/\/mutualcog.com/t/$1'>#$1</a>$2");
-		message = message.replace(url_reg,"$1<a class='chat_link' href='\/\/$3\.$4$5'>$3\.$4$5</a>");
-		message = message.replace(url_reg2,"<a class='chat_link' href='\/\/$2\.$3$4'>$2\.$3$4</a>");
 		message = message.replace(url_reg3,"$1$2style='max-width:300px;max-height:200px;margin-bottom:5px;' $3");
 	}
 	message = emoji(message);

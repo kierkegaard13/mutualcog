@@ -18,10 +18,10 @@ class Home extends BaseController {
 	public function getIndex()
 	{
 		$view = View::make('home');
-		$chats = Chats::select('*',DB::raw('(case when (upvotes - downvotes > 0) then log(upvotes - downvotes) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 when (upvotes - downvotes = 0) then log(1) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 else log(1/abs(upvotes - downvotes)) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 end) AS score'))->whereremoved('0')->wherensfw('0')->orderBy(DB::raw('score'),'desc')->paginate(25);
-		$chats_new = Chats::whereremoved('0')->wherensfw('0')->orderBy('created_at','desc')->paginate(25);
-		$chats_rising = Chats::select('*',DB::raw('(upvotes - downvotes) - views AS score'))->wherensfw('0')->whereremoved('0')->orderBy(DB::raw('score'),'desc')->paginate(25);
-		$chats_contr = Chats::whereRaw('abs(upvotes - downvotes) < 10')->whereremoved('0')->wherensfw('0')->orderBy('created_at','desc')->paginate(25);
+		$chats = Chats::select('*',DB::raw('(case when (upvotes - downvotes > 0) then log(upvotes - downvotes) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 when (upvotes - downvotes = 0) then log(1) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 else log(1/abs(upvotes - downvotes)) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 end) AS score'))->whereremoved('0')->wherensfw('0')->orderBy('sticky','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
+		$chats_new = Chats::whereremoved('0')->wherensfw('0')->orderBy('sticky','desc')->orderBy('created_at','desc')->paginate(25);
+		$chats_rising = Chats::select('*',DB::raw('(upvotes - downvotes) - views AS score'))->wherensfw('0')->whereremoved('0')->orderBy('sticky','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
+		$chats_contr = Chats::whereRaw('abs(upvotes - downvotes) < 10')->whereremoved('0')->wherensfw('0')->orderBy('sticky','desc')->orderBy('created_at','desc')->paginate(25);
 		$tags = Tags::take(20)->orderBy('popularity','desc')->paginate(25);
 		$upvoted = array();
 		$downvoted = array();

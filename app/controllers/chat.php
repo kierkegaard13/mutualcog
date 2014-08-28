@@ -267,7 +267,7 @@ class Chat extends BaseController {
 
 	public function postMessage($chat_id){
 		$chat = Chats::find($chat_id);
-		$mssg_content = htmlentities(Input::get('mssg_content'));
+		$mssg_content = Input::get('mssg_content');
 		if(!$chat->live && strlen($mssg_content) < $this->max_static_length){
 			$message = new Messages();
 			$message->chat_id = htmlentities($chat_id);
@@ -412,9 +412,9 @@ class Chat extends BaseController {
 	public function postDetails(){
 		$chat = Chats::find(Input::get('id'));
 		if($chat){
-			$details = htmlentities(Input::get('details'));
+			$details = Input::get('details');
 			if((Session::get('unique_serial') == $chat->admin || Auth::user()->name == $chat->admin) && strlen($details) < 2000){
-				$chat->raw_details = $details;
+				$chat->raw_details = htmlentities($details);
 				$chat->details = $this->parseText($details);
 				$chat->save();
 				return $chat->details;	
@@ -427,7 +427,7 @@ class Chat extends BaseController {
 		$validated = 0;
 		$title = htmlentities(Input::get('title'));
 		$link = htmlentities(Input::get('link'));
-		$details = htmlentities(Input::get('description'));
+		$details = Input::get('description');
 		$live_status = htmlentities(Input::get('live_status'));
 		$nsfw = htmlentities(Input::get('nsfw'));
 		$tags = htmlentities(Input::get('tags'));
@@ -508,7 +508,7 @@ class Chat extends BaseController {
 				}
 				$duplicate = Chats::wheretitle($title)->wherelink($link)->first();
 				if($details){
-					$chat->raw_details = $details;
+					$chat->raw_details = htmlentities($details);
 					$chat->details = $this->parseText($details);
 				}
 				if($live_status == 'on'){
@@ -580,7 +580,7 @@ class Chat extends BaseController {
 		$validated = 1;
 		$title = htmlentities(Input::get('title'));
 		$link = htmlentities(Input::get('link'));
-		$details = htmlentities(Input::get('description'));
+		$details = Input::get('description');
 		$live_status = htmlentities(Input::get('live_status'));
 		$nsfw = htmlentities(Input::get('nsfw'));
 		$tags = htmlentities(Input::get('tags'));
@@ -645,7 +645,7 @@ class Chat extends BaseController {
 					}
 				}
 				if($details){
-					$chat->raw_details = $details;
+					$chat->raw_details = htmlentities($details);
 					$chat->details = $this->parseText($details);
 				}
 				if($live_status == 'on'){
