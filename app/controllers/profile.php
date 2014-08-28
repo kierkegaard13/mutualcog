@@ -187,9 +187,10 @@ class Profile extends BaseController {
 			$node->user = Auth::user()->name;
 			if($node->findAll()){
 				$node = $node->findAll();
+				foreach($node as $n){
+					$n->delete();
+				}
 			}
-			$node->authorized = 0;
-			$node->save();
 			Auth::logout();
 		}
 		return $this->returnToCurrPage();
@@ -278,20 +279,15 @@ class Profile extends BaseController {
 				$node = new NodeAuth();
 				$node->user_id = $user->id;
 				$node->user = $user->name;
+				$node->serial_id = $user->serial_id;
 				if($node->findAll()){
 					$node = $node->findAll();
-					$node->serial = Session::get('unique_serial');
-					$node->serial_id = Session::get('serial_id');
-					$node->sid = Session::getId();
-					$node->authorized = 1;
-					$node->save();
-				}else{
-					$node->serial = Session::get('unique_serial');
-					$node->serial_id = Session::get('serial_id');
-					$node->sid = Session::getId();
-					$node->authorized = 1;
-					$node->save();
 				}
+				$node->serial = Session::get('unique_serial');
+				$node->serial_id = Session::get('serial_id');
+				$node->sid = Session::getId();
+				$node->authorized = 1;
+				$node->save();
 			}
 		}
 		return $this->returnToCurrPage();
