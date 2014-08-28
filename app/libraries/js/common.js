@@ -120,6 +120,7 @@ $(document).ready(function(){
 	});
 	$('body').on('click','.mssg_upvote',upvoteMssg);
 	$('body').on('click','.mssg_downvote',downvoteMssg);
+	$('#chat_display').on('click','.toggle_responses',getResponses);
 	$('body').on('click','.accept_request',function(){
 		var info = $(this).attr('id').split('_');
 		var type = info[1];
@@ -793,4 +794,18 @@ deleteIt = function(e){
 		module.socket.emit('delete_message',{id:mssg_id,user:module.serial_tracker,serial:$(this).attr('data-mssg-serial'),responses:$(this).parent().find('.response_count').text()});	
 	}
 };
+
+getResponses = function(e){
+	e.stopPropagation();
+	var mssg_id = $(this).attr('id').replace('toggle_','');
+	if($(this).hasClass('dropup')){
+		$(this).removeClass('dropup');
+		$(this).find('.caret').attr('data-original-title','Hide Responses');
+		$('#mssg_cont_' + mssg_id).children('.mssg_cont').show();	
+	}else{
+		$(this).addClass('dropup');
+		$(this).find('.caret').attr('data-original-title','Show Responses');
+		$('#mssg_cont_' + mssg_id).children('.mssg_cont').hide();	
+	}
+}
 

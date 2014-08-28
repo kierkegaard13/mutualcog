@@ -280,20 +280,6 @@ setClicked = function(e){
 	}
 };
 
-getResponses = function(e){
-	e.stopPropagation();
-	var mssg_id = $(this).attr('id').replace('toggle_','');
-	if($(this).hasClass('dropup')){
-		$(this).removeClass('dropup');
-		$(this).find('.caret').attr('data-original-title','Hide Responses');
-		$('#mssg_cont_' + mssg_id).children('.mssg_cont').show();	
-	}else{
-		$(this).addClass('dropup');
-		$(this).find('.caret').attr('data-original-title','Show Responses');
-		$('#mssg_cont_' + mssg_id).children('.mssg_cont').hide();	
-	}
-}
-
 find_top_notifications = function(){
 	var min = Math.min.apply(Math,module.notifications_top_positions);
 	var min_id = module.notifications_top_ids[module.notifications_top_positions.indexOf(min)];
@@ -538,7 +524,6 @@ module.socket.on('check_live',function(live){
 	$('#chat_display').on('click','.mssg_upvote',upvoteMssg);
 	$('#chat_display').on('click','.mssg_downvote',downvoteMssg);
 	$('#chat_display').on('click','.chat_mssg',setClicked);
-	$('#chat_display').on('click','.toggle_responses',getResponses);
 	$('#chat_display').on('click','.chat_link',function(e){e.stopPropagation();});
 });
 
