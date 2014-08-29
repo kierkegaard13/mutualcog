@@ -7,6 +7,7 @@ $(document).ready(function(){
 	$('.advanced_cog').tooltip();
 	$('#pause_chat').tooltip();
 	$('.chat_content').on('click','.mssg_icon',deleteIt);
+	$('.glyphicon-info-sign').tooltip();
 	$.each($('.interaction_time'),function(index,value){
 		$(this).text(moment.utc($(this).attr('id')).fromNow());
 	});

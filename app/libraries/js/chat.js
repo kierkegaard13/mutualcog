@@ -96,7 +96,8 @@ $(document).ready(function(){
 			module.stop_scroll = 0;
 		}
 		$('#message').attr('class','global');
-		$('.chat_mssg').css('background-color','');
+		$('.chat_mssg').removeClass('bright_blue_background');;
+		$('.chat_mssg').find('.reply_link').find('strong').text('Reply');
 		var permalink = $('#permalink').attr('data-page-link');
 		if(permalink.split('/').length - 1 == 5){
 		}else{
@@ -259,8 +260,10 @@ setClicked = function(e){
 		permalink = permalink.substring(0,permalink.lastIndexOf('/'));
 		$('#permalink').attr('data-page-link',permalink + '/' + module.clicked_on);
 	}
-	$('.chat_mssg').css('background-color','');
-	$(this).css('background-color','#ddd');
+	$('.chat_mssg').removeClass('bright_blue_background');;
+	$('.chat_mssg').find('.reply_link').find('strong').text('Reply');
+	$(this).addClass('bright_blue_background');
+	$(this).find('.reply_link').find('strong').text('Replying');
 	$('#message').attr('class',$(this).attr('id').replace('message_',''));
 	if(module.stop_scroll == 0){
 		$('#stop_scroll').addClass('highlight_red');
@@ -548,7 +551,7 @@ generateMssg = function(info,is_mssg){
 	}else if(module.mods.indexOf(info.author) != -1){
 		tmp += "<span class='glyphicon glyphicon-tower'></span>";	
 	}
-	tmp += "<strong class='mssg_op' data-author='" + info.author + "' style='color:" + module.color_arr[info.serial % 7] + ";'> " + info.author + " (<span class='response_count' id='" + info.id + "'>0</span>)</strong> : " + info.message + "<div class='time_box'><div class='time' id='" + info.created_at + "'>" + moment.utc(info.created_at).fromNow() + "</div></div></div></div></div></div></div>"	
+	tmp += "<strong class='mssg_op' data-author='" + info.author + "' style='color:" + module.color_arr[info.serial % 7] + ";'> " + info.author + " (<span class='response_count' id='" + info.id + "'>0</span>)</strong> : " + info.message + "<div class='time_box'><div class='reply'><a href='#' class='reply_link' data-mssg-id='" + info.id + "'><strong>Reply</strong></a></div><div class='time' id='" + info.created_at + "'>" + moment.utc(info.created_at).fromNow() + "</div></div></div></div></div></div></div>"	
 	return tmp;
 }
 

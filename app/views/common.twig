@@ -25,6 +25,8 @@
 				<ul class="dropdown-menu" role="menu">
 					{% for sub in user.subscriptions %}
 						<li><a href="{{site}}/t/{{sub.name}}">{{sub.name}}</a></li>
+					{% else %}
+						<li>No subscriptions</li>
 					{% endfor %}
 				</ul>
 			</li>
@@ -147,12 +149,12 @@
 					<div class="row">
 						<div id="live_group" class="checkbox col-xs-6">
 							<label>
-								<input type="checkbox" name="live_status" id="live_status_v2" checked> Live
+								<input type="checkbox" name="live_status" id="live_status_v2" checked> Live <div class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-original-title="Live chats don't need to be refreshed to see new comments but are not filtered" style="margin-left:5px;"></div>
 							</label>
 						</div>
 						<div id="nsfw_group" class="checkbox col-xs-6" style="margin-top:10px;">
 							<label>
-								<input type="checkbox" name="nsfw" id="nsfw_v2"> nsfw?
+								<input type="checkbox" name="nsfw" id="nsfw_v2"> nsfw <div class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-original-title="NSFW posts don't show up on the front page and only show pictures in nsfw communities" style="margin-left:5px;"></div>
 							</label>
 						</div>
 					</div>
@@ -320,12 +322,12 @@
 					<div class="row">
 						<div id="live_group" class="checkbox col-xs-6">
 							<label>
-								<input type="checkbox" name="live_status" id="live_status_v3" checked> Live
+								<input type="checkbox" name="live_status" id="live_status_v3" checked> Live <div class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-original-title="Live chats don't need to be refreshed to see new comments but are not filtered" style="margin-left:5px;"></div>
 							</label>
 						</div>
 						<div id="nsfw_group" class="checkbox col-xs-6" style="margin-top:10px;">
 							<label>
-								<input type="checkbox" name="nsfw" id="nsfw_v3"> nsfw?
+								<input type="checkbox" name="nsfw" id="nsfw_v3"> nsfw <div class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-original-title="NSFW posts don't show up on the front page and only show pictures in nsfw communities" style="margin-left:5px;"></div>
 							</label>
 						</div>
 					</div>
@@ -544,6 +546,27 @@
 					<span><a href="#" data-toggle="modal" data-remove-link="{{site}}/chat/hard-remove/{{chat.id}}/{{curr_tag_id}}" class="remove_chat_link" data-target="remove_modal"><strong>Remove</strong></a></span>
 				{% elseif user.is_admin or ((user.tag_admin == curr_tag_id or user.tag_mod == curr_tag_id) and (curr_tag_id|length > 0)) %}
 					<span><a href="#" data-toggle="modal" data-remove-link="{{site}}/chat/soft-remove/{{chat.id}}/{{curr_tag_id}}" class="remove_chat_link" data-target="remove_modal"><strong>Remove</strong></a></span>
+				{% endif %}
+				{% if curr_tag_id %}
+					{% if chat.tag_pinned %}
+						{% if user.tag_admin == curr_tag_id %}
+							<span><a href="{{site}}/tags/unpin-post/{{chat.id}}/{{curr_tag_id}}"><strong>UnPin</strong></span>
+						{% else %}
+							<span><strong>Pinned</strong></span>
+						{% endif %}
+					{% elseif user.tag_admin == curr_tag_id %}
+						<span><a href="{{site}}/tags/pin-post/{{chat.id}}/{{curr_tag_id}}"><strong>Pin</strong></span>
+					{% endif %}
+				{% else %}
+					{% if chat.pinned %}
+						{% if user.is_admin %}
+							<span><a href="{{site}}/chat/unpin-post/{{chat.id}}"><strong>UnPin</strong></span>
+						{% else %}
+							<span><strong>Pinned</strong></span>
+						{% endif %}
+					{% elseif user.is_admin %}
+						<span><a href="{{site}}/chat/pin-post/{{chat.id}}"><strong>Pin</strong></span>
+					{% endif %}
 				{% endif %}
 				<span><a href="{{site}}/chat/static/{{chat.id}}"><strong>Static</strong></a></span>
 			</div>
