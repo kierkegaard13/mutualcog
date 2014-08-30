@@ -20,17 +20,20 @@ buildify.task({
 	task:function(){
 		buildify().load('home.min.js')
 			.perform(function(content){
-				return content.replace(/mutualcog\.com/g,'www.mutualcog.com');
+				content = content.replace(/mutualcog\.com/g,'www.mutualcog.com');
+				return content.replace(/localhost/g,'dev.mutualcog.com');
 			})
 			.save('home.min.js');
 		buildify().load('chat.min.js')
 			.perform(function(content){
-				return content.replace(/mutualcog\.com/g,'www.mutualcog.com');
+				content = content.replace(/mutualcog\.com/g,'www.mutualcog.com');
+				return content.replace(/localhost/g,'dev.mutualcog.com');
 			})
 			.save('chat.min.js');
 		buildify().load('info.min.js')
 			.perform(function(content){
-				return content.replace(/mutualcog\.com/g,'www.mutualcog.com');
+				content = content.replace(/mutualcog\.com/g,'www.mutualcog.com');
+				return content.replace(/localhost/g,'dev.mutualcog.com');
 			})
 			.save('info.min.js');
 	}

@@ -457,17 +457,17 @@
 		<div class="chat_nsfw_str" style="display:none;">{{chat.nsfw}}</div>
 		<div class="chat_id_str" style="display:none;">{{chat.id}}</div>
 		<div class="chat_title">
-			{% if chat.pinned %}
+			{% if chat.pinned and not curr_tag_id %}
 				{% if chat.link %}
-					<a class="title_red_color" href="{{chat.link}}" >{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+					<a class="title_red_link" href="{{chat.link}}" >{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
 				{% else %}
-					<a class="title_red_color" href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}">{{chat.title}}</a>
+					<a class="title_red_link" href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}">{{chat.title}}</a>
 				{% endif %}
 			{% elseif chat.tag_pinned %}
 				{% if chat.link %}
-					<a class="base_green_color" href="{{chat.link}}">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+					<a class="base_green_link" href="{{chat.link}}">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
 				{% else %}
-					<a class="base_green_color" href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}">{{chat.title}}</a>
+					<a class="base_green_link" href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}">{{chat.title}}</a>
 				{% endif %}
 			{% elseif chat.seen %}
 				{% if chat.link %}

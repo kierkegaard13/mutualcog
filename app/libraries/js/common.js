@@ -121,6 +121,8 @@ $(document).ready(function(){
 	$('body').on('click','.mssg_upvote',upvoteMssg);
 	$('body').on('click','.mssg_downvote',downvoteMssg);
 	$('#chat_display').on('click','.toggle_responses',getResponses);
+	$('.chat_content').on('click','.toggle_responses',getStaticResponses);
+	$('.caret_tooltip').tooltip();
 	$('body').on('click','.accept_request',function(){
 		var info = $(this).attr('id').split('_');
 		var type = info[1];
@@ -806,6 +808,20 @@ getResponses = function(e){
 		$(this).addClass('dropup');
 		$(this).find('.caret').attr('data-original-title','Show Responses');
 		$('#mssg_cont_' + mssg_id).children('.mssg_cont').hide();	
+	}
+}
+
+getStaticResponses = function(e){
+	e.stopPropagation();
+	var mssg_id = $(this).attr('id').replace('toggle_','');
+	if($(this).hasClass('dropup')){
+		$(this).removeClass('dropup');
+		$(this).find('.caret').attr('data-original-title','Hide Responses');
+		$('#mssg_cont_' + mssg_id).find('.mssg_cont').show();	
+	}else{
+		$(this).addClass('dropup');
+		$(this).find('.caret').attr('data-original-title','Show Responses');
+		$('#mssg_cont_' + mssg_id).find('.mssg_cont').hide();	
 	}
 }
 

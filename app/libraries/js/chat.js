@@ -142,7 +142,6 @@ $(document).ready(function(){
 			return false;
 		});
 	}
-	$('.caret_tooltip').tooltip();
 	$('#permalink').tooltip();
 	$('#show_members').tooltip();
 	$('#stop_scroll').tooltip();
