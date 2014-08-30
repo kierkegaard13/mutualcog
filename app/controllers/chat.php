@@ -258,10 +258,32 @@ class Chat extends BaseController {
 		return $messages;
 	}
 
+	public function getPinPost($chat_id){
+		$chat = Chats::find($chat_id);
+		if($chat){
+			$chat->pinned = 1;
+			$chat->save();
+		}
+		return $this->returnToCurrPage();
+	}
+
+	public function getUnpinPost($chat_id){
+		$chat = Chats::find($chat_id);
+		if($chat){
+			$chat->pinned = 0;
+			$chat->save();
+		}
+		return $this->returnToCurrPage();
+	}
+
 	public function getPmLog(){
 		$pm_id = Input::get('pm_id');
 		$chat = PrivateChats::find($pm_id);
-		$messages = $chat->messages;
+		if($chat){
+			$messages = $chat->messages;
+		}else{
+			$messages = '';
+		}
 		return $messages;
 	}
 
@@ -425,7 +447,7 @@ class Chat extends BaseController {
 
 	public function postNewChat(){
 		$validated = 0;
-		$title = htmlentities(Input::get('title'));
+		$title = ucfirst(htmlentities(Input::get('title')));
 		$link = htmlentities(Input::get('link'));
 		$details = Input::get('description');
 		$live_status = htmlentities(Input::get('live_status'));

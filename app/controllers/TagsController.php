@@ -101,6 +101,24 @@ class TagsController extends BaseController {
 		return $this->returnToCurrPage();
 	}
 
+	public function getPinPost($chat_id,$tag_id){
+		$chat = ChatsToTags::wherechat_id($chat_id)->wheretag_id($tag_id)->first();
+		if($chat){
+			$chat->pinned = 1;
+			$chat->save();
+		}
+		return $this->returnToCurrPage();
+	}
+
+	public function getUnpinPost($chat_id,$tag_id){
+		$chat = ChatsToTags::wherechat_id($chat_id)->wheretag_id($tag_id)->first();
+		if($chat){
+			$chat->pinned = 0;
+			$chat->save();
+		}
+		return $this->returnToCurrPage();
+	}
+
 	public function getSimilarTag(){
 		$input = htmlentities(Input::get('tag'));
 		$res_arr = array();
