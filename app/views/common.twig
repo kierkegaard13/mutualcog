@@ -345,7 +345,7 @@
 
 {% block welcome %}
 <div style="display:none;" id="sid" data-sid="{{sid}}"></div>
-<div style="margin-bottom:10px;">Welcome, 
+<div {% if not logged_in %}style="margin-bottom:5px;"{% endif %}>Welcome, 
 {% if not user %}
 	<div id="serial_id" style="display:none;">{{serial_id}}</div>
 	<span id="serial_tracker">{{serial}}</span>
@@ -364,17 +364,16 @@
 	<form method="post" action="{{site}}/profile/login" class="mutual_form" id="login_form">
 	<fieldset>
 		<div id="user_group" class="form-group">
-			<input class="form-control" data-toggle="tooltip" data-placement="auto top" data-original-title="Username or password incorrect" data-trigger="focus" data-container="body" type="text" name="username" id="username" placeholder="Enter your username" maxlength="{{max_user_length}}">
+			<input class="form-control input-sm" data-toggle="tooltip" data-placement="auto top" data-original-title="Username or password incorrect" data-trigger="focus" data-container="body" type="text" name="username" id="username" placeholder="Enter your username" maxlength="{{max_user_length}}">
 		</div>
 		<div id="pass1_group" class="form-group">
-			<input class="form-control" type="password" name="pass" id="pass" placeholder="Enter your password" maxlength="30">
+			<input class="form-control input-sm" type="password" name="pass" id="pass" placeholder="Enter your password" maxlength="30">
 		</div>
 		<button class="btn btn-primary" type="Submit" style="width:100%;">Login</button>
 	</fieldset>
 	</form>
 {% else %}
-	<div class="last_login" id="{{user.last_login}}"><strong>Last login:</strong></div>
-	<div>Cognizance: {{user.cognizance}}/{{user.next_level}} (Level: {{user.level}})</div>
+	<div style="font-size:14px;">Cognizance: {{user.cognizance}}/{{user.next_level}} (Level: {{user.level}})</div>
 	<div class="progress progress-striped active">
 		<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{user.cognizance}}" aria-valuemin="0" aria-valuemax="{{user.next_level}}" style="width:{{user.cognizance}}%;">
 			<span class="sr-only">Only {{user.cognizance}}% Complete</span>

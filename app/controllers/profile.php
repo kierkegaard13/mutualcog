@@ -187,8 +187,12 @@ class Profile extends BaseController {
 			$node->user = Auth::user()->name;
 			if($node->findAll()){
 				$node = $node->findAll();
-				foreach($node as $n){
-					$n->delete();
+				if(sizeof($node) > 1){
+					foreach($node as $n){
+						$n->delete();
+					}
+				}else{
+					$node->delete();
 				}
 			}
 			Auth::logout();
