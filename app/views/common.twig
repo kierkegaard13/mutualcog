@@ -353,7 +353,8 @@
 	<div id="serial_id" style="display:none;">{{serial_id}}</div>
 	<div id="serial_tracker" style="display:none;">{{serial}}</div>
 	<div id="user_id" style="display:none;">{{user.id}}</div>
-	<a class="pull-right" href="{{site}}/profile/logout">Logout</a>
+	<a class="pull-right btn btn-default btn-xs user_tooltip" href="{{site}}/profile/logout" data-toggle="tooltip" data-container="body" data-original-title="Logout"><div class="glyphicon glyphicon-log-out"></div></a>
+	<a style="margin-right:5px;" class="pull-right btn btn-default btn-xs user_tooltip" href="#" data-toggle="tooltip" data-container="body" data-original-title="Settings"><div class="glyphicon glyphicon-cog"></div></a>
 	<span><a href="{{site}}/u/{{user.name}}" style="color:{{color_arr[serial % 7]}};"><strong id="user_tracker">{{user.name}}</strong></a></span>
 {% endif %}
 {% if not user %}
