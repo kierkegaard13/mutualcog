@@ -600,29 +600,41 @@ var keys = new Array();
 
 $('#message').keydown(function(e){
 	keys.push(e.which);
+	if(e.which == 13){  /*enter key*/
+		if(keys.indexOf(16) == -1){  /*shift key not pressed*/
+			return false;
+		}
+	}
 });
 
 $('#message').keyup(function(e){
 	if(module.live && module.banned == 0){
+		$('.enter_hint').text("");
 		if(e.which == 13){  /*enter key*/
 			if(keys.indexOf(16) == -1){  /*shift key not pressed*/
 				keys.splice(keys.indexOf(e.which),1);
-				if($('#message').val().trim() != ""){
+				var mssg_sent = $('#message').val();
+				if(mssg_sent.trim() != ""){
 					if(module.connected){
+						$('#message').val("");
 						if($('#message').attr('class') == 'global'){
-							module.socket.emit('message_sent',{message:$('#message').val(),responseto:0,y_dim:0,parent:0});
+							$('.enter_hint').text('Sending...');
+							module.socket.emit('message_sent',{message:mssg_sent,responseto:0,y_dim:0,parent:0},function(){
+								$('.enter_hint').text('Sent');
+							});
 						}else{
 							var responseto = $('#message').attr('class').replace('message_','');
 							var y_dim = parseInt($('#mssg_cont_' + responseto).attr('class').split(" ")[2].replace('y_','')) + 1;
-							console.log(y_dim);
 							if($('#mssg_cont_' + responseto).attr('class').split(" ")[3].replace('parent_','') == 0){
 								var resp_parent = responseto;
 							}else{
 								var resp_parent = $('#mssg_cont_' + responseto).parents('.mssg_cont').last().attr('id').replace('mssg_cont_','');
 							}
-							module.socket.emit('message_sent',{message:$('#message').val(),responseto:responseto,y_dim:y_dim,parent:resp_parent});	
+							$('.enter_hint').text('Sending...');
+							module.socket.emit('message_sent',{message:mssg_sent,responseto:responseto,y_dim:y_dim,parent:resp_parent},function(){
+								$('.enter_hint').text('Sent');
+							});	
 						}
-						$('#message').val("");
 					}else{
 						$('.enter_hint').text('You are disconnected');
 					}

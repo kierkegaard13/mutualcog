@@ -328,20 +328,9 @@ io.sockets.on('connection', function(client) {
 		io.sockets.in('user_' + info.friend_id).emit('not_typing',{pm_id:info.pm_id,friend_id:info.user_id});
 	});
 
-	client.on('change_user_props',function(info){
+	client.on('change_stealth',function(info){
 		if(client.authorized){
-			var anon = 0;
-			var eval = 0;
-			switch(info.props){
-				case '0':
-					eval = 1;
-					break;	
-				case '1':
-					eval = 1;
-					anon = 1;
-					break;
-			}
-			conn.where({id:client.user_id}).update('users',{anonymous:anon,evaluated:eval},function(err,info){
+			conn.where({id:client.user_id}).update('users',{stealth:info.stealth},function(err,info){
 				if(err)console.log(err);
 			});
 		}
@@ -558,13 +547,14 @@ io.sockets.on('connection', function(client) {
 	});
 
 	// Success!  Now listen to messages to be received
-	client.on('message_sent',function(mssg_info){ 
+	client.on('message_sent',function(mssg_info,fn){ 
 		if(io.sockets.clients(client.room)[client.arr_index].live && !client.banned && mssg_info.message.replace(/^\s+|\s+$/g,'') != '' && mssg_info.message.length < 2500){
 			mssg_info.message = processMessage(mssg_info.message);
 			conn.insert('messages',{message:mssg_info.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:mssg_info.responseto,y_dim:mssg_info.y_dim,parent:mssg_info.parent,author:client.user,serial:client.serial},function(err,info){
 				if(err) console.log(err);
 				var insert_id = info.insertId;
 				io.sockets.in(client.room).emit('publishMessage',{id:insert_id,message:mssg_info.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),responseto:mssg_info.responseto,author:client.user,serial:client.serial,y_dim:mssg_info.y_dim,parent:mssg_info.parent});
+				fn();
 				if(mssg_info.responseto == 0){
 					conn.where({id:insert_id}).update('messages',{path:"0" + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id,readable:1},function(err,info){
 						if(err)console.log(err);

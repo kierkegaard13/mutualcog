@@ -74,9 +74,6 @@ $(document).ready(function(){
 		});
 		return false;
 	});
-	$('#user_props').change(function(){
-		module.socket.emit('change_user_props',{props:$(this).val()});
-	});
 	var reply_form = $('#reply_form').clone();
 	$('.remove_mod').tooltip();
 	$('#request_friend').click(function(){

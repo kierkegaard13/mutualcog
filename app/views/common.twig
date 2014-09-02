@@ -353,7 +353,8 @@
 	<div id="serial_id" style="display:none;">{{serial_id}}</div>
 	<div id="serial_tracker" style="display:none;">{{serial}}</div>
 	<div id="user_id" style="display:none;">{{user.id}}</div>
-	<span id="user_tracker">{{user.name}}</span>
+	<a class="pull-right" href="{{site}}/profile/logout">Logout</a>
+	<span><a href="{{site}}/u/{{user.name}}" style="color:{{color_arr[serial % 7]}};"><strong id="user_tracker">{{user.name}}</strong></a></span>
 {% endif %}
 {% if not user %}
 <span class="pull-right"><a href="#" data-toggle="modal" class="register_link" data-target="#register_modal">Register?</a></span>
@@ -379,10 +380,6 @@
 			<span class="sr-only">Only {{user.cognizance}}% Complete</span>
 		</div>
 	</div>
-	<select class="form-control input-sm" id="user_props">
-		<option value="0" {% if user.anonymous == 0 and user.evaluated == 1 %}selected{% endif %}>Visible and Evaluated</option>
-		<option value="1" {% if user.anonymous == 1 and user.evaluated == 1 %}selected{% endif %}>Anonymous and Evaluated</option>
-	</select>
 	<div class="row" style="margin:10px 0 0 0;">
 		<button class="btn btn-sm col-xs-3 btn-default" id="friend_requests" data-toggle="popover" data-content="
 			{% for request in user.friendNotifications %}
@@ -411,10 +408,6 @@
 			<div class="glyphicon glyphicon-globe request_glyph {% if user.globalNotifications|length > 0 %}pull-left{% endif %}" id="global_request_glyph"></div>
 			<span class="badge pull-right" id="global_requests_count">{% if user.globalNotifications|length > 0 %}{{user.globalNotifications|length}}{% endif %}</span>
 		</button>
-	</div>
-	<div class="row" style="margin:10px 0 0 0;">
-		<a class="btn btn-success col-xs-3 btn-sm" href="{{site}}/u/{{user.name}}">My Profile</a>
-		<a class="btn btn-primary col-xs-offset-6 col-xs-3 btn-sm" href="{{site}}/profile/logout">Logout</a>
 	</div>
 {% endif %}
 {% endblock %}
