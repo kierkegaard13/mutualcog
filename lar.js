@@ -562,6 +562,19 @@ io.sockets.on('connection', function(client) {
 				}else{  //if it is a response
 					conn.where({id:mssg_info.responseto}).get('messages',function(err,rows){  //update response count, message path, and he_level and alert user to response
 						if(err)console.log(err);
+							var message = "<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/u/" + client.user + "'>" + client.user + "</a> has requested you as an admin for <a class='chat_link' href='//mutualcog.com/t/" + request_info.tag_name + "'>/t/"  + request_info.tag_name + "</a> </div> <div class='request_text'> <a class='chat_link accept_request' id='accept_admin_" + client.user_id + "' href='//mutualcog.com/tags/accept-admin/" + info.insertId + "/" + request_info.tag_id + "'>Accept</a> / <a class='chat_link decline_request' id='decline_admin_" + client.user_id + "' href='//mutualcog.com/tags/decline-admin/" + info.insertId + "/" + request_info.tag_id + "'>Decline</a> </div> </div>";
+						if(rows[0].author.match(/\D/g)){
+							conn.where({id:rows[0].member_id}).get('users',function(err,rows){
+								if(err)console.log(err);
+								if(rows[0].chat_id != client.chat_id){
+									var message = "<div class='request_cont request_link' data-request-link='//mutualcog.com/chat/static/" + client.chat_id + "/" + insert_id + "><div class='request_text'><a class='chat_link' href='//mutualcog.com/u/" + client.user + "'>" + client.user + "</a> has responded to your message</div></div>";
+									conn.insert('notifications',{type:0,user_id:rows[0].id,sender_id:client.user_id,sender:client.user,global_type:'response',created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
+										if(err)console.log(err);
+										io.sockets.in('user_' + rows[0].id).emit('displayGlobalRequests',{id:info.insertId,sender:client.user,sender_id:client.user_id,message:message,type:'response'});
+									});
+								}
+							});
+						}
 						conn.where({id:insert_id}).update('messages',{path:rows[0].path + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id,res_num:rows[0].responses + 1,readable:1},function(err,info){
 							if(err)console.log(err);
 						});

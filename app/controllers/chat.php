@@ -510,7 +510,7 @@ class Chat extends BaseController {
 					}
 					if(substr($link,-4,4) == '.png' || substr($link,-4,4) == '.gif' || substr($link,-4,4) == '.jpg' || substr($link,-5,5) == '.jpeg'){
 						$site_name = str_replace('http://','',$link);
-						$site_name = str_replace('https://','',$link);
+						$site_name = str_replace('https://','',$site_name);
 						$site_name = explode('/',$site_name);
 						$site_name = $site_name[0];
 						$chat->link = $link;
@@ -650,6 +650,7 @@ class Chat extends BaseController {
 					}
 					if(substr($link,-4,4) == '.png' || substr($link,-4,4) == '.gif' || substr($link,-4,4) == '.jpg' || substr($link,-5,5) == '.jpeg'){
 						$site_name = str_replace('http://','',$link);
+						$site_name = str_replace('https://','',$site_name);
 						$site_name = explode('/',$site_name);
 						$site_name = $site_name[0];
 						$chat->link = $link;

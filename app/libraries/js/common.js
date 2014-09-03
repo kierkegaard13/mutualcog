@@ -122,6 +122,12 @@ $(document).ready(function(){
 	$('body').on('click','.mssg_downvote',downvoteMssg);
 	$('#chat_display').on('click','.toggle_responses',getResponses);
 	$('.chat_content').on('click','.toggle_responses',getStaticResponses);
+	$('.request_btn').on('click',function(){  //TODO complete seen func
+		
+	});
+	$('body').on('click','.request_link',function(){
+		window.location.href = $(this).attr('data-request-link');
+	});
 	$('.user_tooltip').tooltip();
 	$('.caret_tooltip').tooltip();
 	$('body').on('click','.accept_request',function(){

@@ -382,7 +382,7 @@
 		</div>
 	</div>
 	<div class="row" style="margin:10px 0 0 0;">
-		<button class="btn btn-sm col-xs-3 btn-default" id="friend_requests" data-toggle="popover" data-content="
+		<button class="btn btn-sm col-xs-3 btn-default request_btn" id="friend_requests" data-toggle="popover" data-content="
 			{% for request in user.friendNotifications %}
 				{{request.message}}
 			{% else %}
@@ -391,16 +391,16 @@
 			<div class="glyphicon glyphicon-user request_glyph {% if user.friendNotifications|length > 0 %}pull-left{% endif %}" id="friend_request_glyph"></div>
 			<span class="badge pull-right" id="friend_requests_count">{% if user.friendNotifications|length > 0 %}{{user.friendNotifications|length}}{% endif %}</span>
 		</button>
-		<button class="btn btn-sm col-xs-offset-1 col-xs-4 btn-default" id="mssg_requests" data-toggle="popover" data-content="
+		<button class="btn btn-sm col-xs-offset-1 col-xs-4 btn-default request_btn" id="mssg_requests" data-toggle="popover" data-content="
 			{% for request in user.mssgNotifications %}
-				<div class='request_text'>Hello</div>
+				{{request.message}}
 			{% else %}
 				<div class='request_text'>No messages</div>
 			{% endfor %}" data-container="body" data-placement="bottom">
 			<div class="glyphicon glyphicon-envelope request_glyph {% if user.mssgNotifications|length > 0 %}pull-left{% endif %}" id="message_request_glyph"></div>
 			<span class="badge pull-right" id="mssg_requests_count">{% if user.mssgNotifications|length > 0 %}{{user.mssgNotifications|length}}{% endif %}</span>
 		</button>
-		<button class="btn btn-sm col-xs-offset-1 col-xs-3 btn-default" id="global_requests" data-toggle="popover" data-content="
+		<button class="btn btn-sm col-xs-offset-1 col-xs-3 btn-default request_btn" id="global_requests" data-toggle="popover" data-content="
 			{% for request in user.globalNotifications %}
 				{{request.message}}
 			{% else %}
