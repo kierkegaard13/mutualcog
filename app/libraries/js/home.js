@@ -123,14 +123,8 @@ $(document).ready(function(){
 		window.location.href = '//mutualcog.com/tags/remove-mod/' + user_id + '/' + tag_id; 
 	});
 	$('a.remove_chat_link').click(function(e){
-		var remove_link = $('#remove_modal').find('#remove_chat_final');
-		var remove_link_href = remove_link.attr('href');
-		if($(this).attr('data-chat-id').split('_')[0] == 'soft'){
-			remove_link.attr('href',remove_link_href.substring(0,remove_link_href.lastIndexOf('/') - 11) + 'soft-remove/' + $(this).attr('data-chat-id').split('_')[1]);
-		}else{
-			remove_link.attr('href',remove_link_href.substring(0,remove_link_href.lastIndexOf('/') - 11) + 'hard-remove/' + $(this).attr('data-chat-id').split('_')[1]);
-		}
 		$('#remove_modal').modal();
+		$('#remove_chat_final').attr('href',$(this).attr('data-remove-link'));
 		return false;
 	});
 	$('.reply_link').on('click',function(){

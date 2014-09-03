@@ -287,7 +287,7 @@ find_top_notifications = function(){
 	var min_id = module.notifications_top_ids[module.notifications_top_positions.indexOf(min)];
 	module.notifications_top_ids.splice(module.notifications_top_positions.indexOf(min),1);
 	module.notifications_top_positions.splice(module.notifications_top_positions.indexOf(min),1);
-	$('.chat_main').mCustomScrollbar('scrollTo',min,{scrollInertia:50});	
+	$('.chat_main').mCustomScrollbar('scrollTo',min,{scrollInertia:0});	
 	setTimeout(function(){
 		$('#message_' + min_id).addClass('highlight_background','800');
 	},100);
@@ -308,7 +308,7 @@ find_bottom_notifications = function(){
 	var min_id = module.notifications_bottom_ids[module.notifications_bottom_positions.indexOf(min)];
 	module.notifications_bottom_ids.splice(module.notifications_bottom_positions.indexOf(min),1);
 	module.notifications_bottom_positions.splice(module.notifications_bottom_positions.indexOf(min),1);
-	$('.chat_main').mCustomScrollbar('scrollTo',min,{scrollInertia:50});	
+	$('.chat_main').mCustomScrollbar('scrollTo',min);	
 	setTimeout(function(){
 		$('#message_' + min_id).addClass('highlight_background','800');
 	},100);

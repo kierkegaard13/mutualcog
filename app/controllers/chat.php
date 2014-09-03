@@ -520,7 +520,7 @@ class Chat extends BaseController {
 						$image = get(file_get_contents($link), "<img src=", " ");
 						$image = str_replace('"','',$image);
 						$site_name = str_replace('http://','',$link);
-						$site_name = str_replace('https://','',$link);
+						$site_name = str_replace('https://','',$site_name);
 						$site_name = explode('/',$site_name);
 						$site_name = $site_name[0];
 						$chat->link = $link;
@@ -659,6 +659,7 @@ class Chat extends BaseController {
 						$image = get(file_get_contents($link), "<img src=", " ");
 						$image = str_replace('"','',$image);
 						$site_name = str_replace('http://','',$link);
+						$site_name = str_replace('https://','',$site_name);
 						$site_name = explode('/',$site_name);
 						$site_name = $site_name[0];
 						$chat->link = $link;
