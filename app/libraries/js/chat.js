@@ -364,7 +364,8 @@ module.socket.on('alertUserToResponse',function(info){
 	}else{
 		var resp_pos = $('#mssg_cont_' + info.resp_id).position().top;
 	}
-	var result_top = resp_pos - module.scroll_top + 12;
+	var scaling = $('#chat_display').height()/$('.chat_main').height();
+	var result_top = resp_pos - (module.scroll_top * scaling) + 12;
 	if(result_top > 0){}else{
 		module.notifications_top_positions.push(resp_pos);
 		module.notifications_top_ids.push(info.resp_id);
@@ -377,7 +378,7 @@ module.socket.on('alertUserToResponse',function(info){
 			$('#notify_cont_top').show('blind');	
 		}
 	}
-	var result_bottom = resp_pos - module.scroll_top - $('#chat_messages').height();
+	var result_bottom = resp_pos - (module.scroll_top * scaling) - $('#chat_messages').height();
 	if(result_bottom > 0){
 		module.notifications_bottom_positions.push(resp_pos);
 		module.notifications_bottom_ids.push(info.resp_id);

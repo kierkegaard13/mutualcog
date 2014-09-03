@@ -74,43 +74,46 @@
 }
 .notify_position_top {
   position:absolute;
+  height:66px;
   top:0px;
   right:15px;
 }
 .notify_position_bottom {
   position:absolute;
+  height:66px;
   bottom:0px;
   right:15px;
 }
 .notify_bubble {
   font-size:60px;
-  color:#075de9;
+  color:@highlight_blue;
   cursor:pointer;
   z-index:3;
-  opacity:.9;
   transition:color .5s;
   -webkit-transition:color .5s;
 }
 .notify_bubble:hover {
-  color:#022254;
+  color:@base_blue;
 }
 #notify_text_top {
+  font-size:14px;
   background-color:white;
-  border-radius:10px;
-  padding:0px 7px;
+  border-radius:13px;
+  padding:3px 9px;
   position:absolute;
   z-index:2;
   top:28px;
-  right:33px;
+  right:32px;
 }
 #notify_text_bottom {
+  font-size:14px;
   background-color:white;
-  border-radius:10px;
-  padding:0px 7px;
+  border-radius:13px;
+  padding:3px 9px;
   position:absolute;
   z-index:2;
   bottom:32px;
-  right:33px;
+  right:32px;
 }
 .vote_box {
   position:relative;
