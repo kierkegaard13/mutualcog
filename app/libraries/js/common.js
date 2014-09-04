@@ -153,30 +153,31 @@ $(document).ready(function(){
 		var friend_id = $(this).attr('data-friend-id');
 		var pm_id = $(this).attr('data-pm-chat-id');
 		var friend_status_class = $(this).find('#friend_' + friend_id + '_status').attr('class').replace('friend_status','');
-		console.log($(window).width());
 		if($('.pm_bar').width() < $(window).width() - 500 && $('#pm_' + friend_id + '_' + pm_id).length == 0){
-			module.socket.emit('join_pm',{friend_id:friend_id,friend_name:friend_name,pm_id:pm_id},function(info){
-				$('#pm_' + info.friend_name).attr('id','pm_' + info.friend_id + '_' + info.pm_id);
-			});
+			var chat_box = '<div class="pm_cont pm_visible" id="pm_' + friend_id + '_' + pm_id + '" style="visibility:hidden;">';
+			chat_box += '<div class="pm_header"><div class="' + friend_status_class + ' pm_status"></div><div class="glyphicon glyphicon-remove pm_remove"></div><div class="pm_name">' + friend_name + '</div></div>';
+			chat_box += '<div class="pm_body"><div class="pm_body_mssgs">'
+			chat_box += '</div><div class="pm_body_alerts"> <div class="pm_mssg_alert pm_unseen" style="display:none;">Not seen</div> <div class="pm_mssg_alert pm_typing" style="display:none;">' + friend_name + ' is typing...</div> </div></div>';
+			chat_box += '<textarea rows=1 class="pm_text"></textarea>';
+			chat_box += '</div>'; 
+			$('.pm_bar').prepend(chat_box);
 			$.ajax({
 				type:'GET',
 				data:{pm_id:pm_id},
 				url:'//mutualcog.com/chat/pm-log',
 				success:function(hresp){	
-					var chat_box = '<div class="pm_cont pm_visible" id="pm_' + friend_id + '_' + pm_id + '" style="visibility:hidden;">';
-					chat_box += '<div class="pm_header"><div class="' + friend_status_class + ' pm_status"></div><div class="glyphicon glyphicon-remove pm_remove"></div><div class="pm_name">' + friend_name + '</div></div>';
-					chat_box += '<div class="pm_body"><div class="pm_body_mssgs">'
+					var chat_messages = '';
 					$.each(hresp,function(index,val){
 						if(val.author_id == module.user_id){
-							chat_box += '<div class="pm_mssg_cont"> <div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment.utc(val.created_at).local().format('hh:mma') + '"> ' + val.message + ' </div> </div>';
+							chat_messages += '<div class="pm_mssg_cont"> <div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment.utc(val.created_at).local().format('hh:mma') + '"> ' + val.message + ' </div> </div>';
 						}else{
-							chat_box += '<div class="pm_mssg_cont"> <div class="pm_message pull-left" style="background-color:#7badfc;margin-right:30px;margin-left:5px;" title="' + moment.utc(val.created_at).local().format('hh:mma') + '"> ' + val.message + ' </div> </div>';
+							chat_messages += '<div class="pm_mssg_cont"> <div class="pm_message pull-left" style="background-color:#7badfc;margin-right:30px;margin-left:5px;" title="' + moment.utc(val.created_at).local().format('hh:mma') + '"> ' + val.message + ' </div> </div>';
 						}
 					});
-					chat_box += '</div><div class="pm_body_alerts"> <div class="pm_mssg_alert pm_unseen" style="display:none;">Not seen</div> <div class="pm_mssg_alert pm_typing" style="display:none;">' + friend_name + ' is typing...</div> </div></div>';
-					chat_box += '<textarea rows=1 class="pm_text"></textarea>';
-					chat_box += '</div>'; 
-					$('.pm_bar').prepend(chat_box);
+					$('#pm_' + friend_id + '_' + pm_id).find('.pm_body_mssgs').append(chat_messages);
+					module.socket.emit('join_pm',{friend_id:friend_id,friend_name:friend_name,pm_id:pm_id},function(info){
+						$('#pm_' + info.friend_name + '_' + info.prev_id).attr('id','pm_' + info.friend_id + '_' + info.pm_id);
+					});
 					$('.pm_body').eq(0).mCustomScrollbar({theme:'light-2',callbacks:{onScroll:function(){
 						var $this = $(this);
 						var par_id = $this.parent().attr('id');

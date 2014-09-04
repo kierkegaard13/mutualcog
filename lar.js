@@ -208,14 +208,14 @@ io.sockets.on('connection', function(client) {
 					conn.where({id:pm_info.pm_id}).get('private_chats',function(err,rows){
 						if(err)console.log(err);
 						client.pm_obj[pm_info.friend_id] = pm_info.pm_id;
-						fn({pm_id:pm_info.pm_id,friend_name:pm_info.friend_name,friend_id:pm_info.friend_id});
+						fn({pm_id:pm_info.pm_id,prev_id:pm_info.pm_id,friend_name:pm_info.friend_name,friend_id:pm_info.friend_id});
 					});
 				});
 			}else{
 				conn.insert('private_chats',{created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
 					if(err)console.log(err);
 					client.pm_obj[pm_info.friend_id] = info.insertId;
-					fn({pm_id:info.insertId,friend_name:pm_info.friend_name,friend_id:pm_info.friend_id});
+					fn({pm_id:info.insertId,prev_id:pm_info.pm_id,friend_name:pm_info.friend_name,friend_id:pm_info.friend_id});
 					conn.insert('users_to_private_chats',{chat_id:info.insertId,user_id:client.user_id,entity_id:pm_info.friend_id},function(err,info){
 						if(err)console.log(err);
 					});
@@ -273,10 +273,11 @@ io.sockets.on('connection', function(client) {
 			conn.where({user_id:pm_info.friend_id,entity_id:client.user_id,entity_type:0}).get('users_to_private_chats',function(err,rows){
 				if(err)console.log(err);
 				var visibility = rows[0].visible;
+				var user_to_private = rows[0];
 				conn.where({id:pm_info.friend_id}).get('users',function(err,rows){
 					if(err)console.log(err);
 					var friend_online = rows[0].online;
-					conn.insert('private_messages',{message:pm_info.message,author:client.user,author_id:client.user_id,chat_id:pm_info.pm_id,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
+					conn.insert('private_messages',{message:pm_info.message,author:client.user,author_id:client.user_id,chat_id:user_to_private.chat_id,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
 						if(err)console.log(err);
 						mssg_id = info.insertId;
 						/* Check whether recipient is online */
@@ -294,6 +295,12 @@ io.sockets.on('connection', function(client) {
 								if(err)console.log(err);
 							});
 						}
+					});
+				});
+				conn.where({id:rows[0].chat_id}).get('private_chats',function(err,rows){
+					if(err)console.log(err);
+					conn.where({id:rows[0].id}).update('private_chats',{total_messages:rows[0].total_messages + 1},function(err,info){
+						if(err)console.log(err);
 					});
 				});
 			});
