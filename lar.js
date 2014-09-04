@@ -208,14 +208,14 @@ io.sockets.on('connection', function(client) {
 					conn.where({id:pm_info.pm_id}).get('private_chats',function(err,rows){
 						if(err)console.log(err);
 						client.pm_obj[pm_info.friend_id] = pm_info.pm_id;
-						fn({pm_id:pm_info.pm_id,prev_id:pm_info.pm_id,friend_name:pm_info.friend_name,friend_id:pm_info.friend_id});
+						fn({pm_id:pm_info.pm_id,friend_name:pm_info.friend_name,friend_id:pm_info.friend_id});
 					});
 				});
 			}else{
 				conn.insert('private_chats',{created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
 					if(err)console.log(err);
 					client.pm_obj[pm_info.friend_id] = info.insertId;
-					fn({pm_id:info.insertId,prev_id:pm_info.pm_id,friend_name:pm_info.friend_name,friend_id:pm_info.friend_id});
+					fn({pm_id:info.insertId,friend_name:pm_info.friend_name,friend_id:pm_info.friend_id});
 					conn.insert('users_to_private_chats',{chat_id:info.insertId,user_id:client.user_id,entity_id:pm_info.friend_id},function(err,info){
 						if(err)console.log(err);
 					});
@@ -273,11 +273,10 @@ io.sockets.on('connection', function(client) {
 			conn.where({user_id:pm_info.friend_id,entity_id:client.user_id,entity_type:0}).get('users_to_private_chats',function(err,rows){
 				if(err)console.log(err);
 				var visibility = rows[0].visible;
-				var user_to_private = rows[0];
 				conn.where({id:pm_info.friend_id}).get('users',function(err,rows){
 					if(err)console.log(err);
 					var friend_online = rows[0].online;
-					conn.insert('private_messages',{message:pm_info.message,author:client.user,author_id:client.user_id,chat_id:user_to_private.chat_id,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
+					conn.insert('private_messages',{message:pm_info.message,author:client.user,author_id:client.user_id,chat_id:pm_info.pm_id,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
 						if(err)console.log(err);
 						mssg_id = info.insertId;
 						/* Check whether recipient is online */
@@ -288,10 +287,7 @@ io.sockets.on('connection', function(client) {
 							io.sockets.in('user_' + pm_info.friend_id).emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.friend_id,friend_id:pm_info.user_id,friend_name:client.user,state:visibility,time:moment.utc().format(),mssg_id:mssg_id});
 							fn({message:pm_info.message,unseen:1,pm_id:pm_info.pm_id,friend_id:pm_info.friend_id});
 							/* You need to set unseen for the recipient for when they come back online and need to emit chats seen */
-							conn.where({user_id:pm_info.friend_id,entity_id:client.user_id,entity_type:0}).update('users_to_private_chats',{visible:1},function(err,rows){
-								if(err)console.log(err);
-							});
-							conn.where({entity_id:pm_info.friend_id,user_id:client.user_id,entity_type:0}).update('users_to_private_chats',{unseen:1},function(err,rows){
+							conn.where({user_id:pm_info.friend_id,entity_id:client.user_id,entity_type:0}).update('users_to_private_chats',{unseen:1,visible:1},function(err,rows){
 								if(err)console.log(err);
 							});
 							conn.where({id:pm_info.pm_id}).update('private_chats',{seen:0},function(err,info){
@@ -300,19 +296,13 @@ io.sockets.on('connection', function(client) {
 						}
 					});
 				});
-				conn.where({id:rows[0].chat_id}).get('private_chats',function(err,rows){
-					if(err)console.log(err);
-					conn.where({id:rows[0].id}).update('private_chats',{total_messages:rows[0].total_messages + 1},function(err,info){
-						if(err)console.log(err);
-					});
-				});
 			});
 		}
 	});
 
 	client.on('seen_chats',function(){
 		if(client.authorized){
-			conn.where({entity_id:client.user_id,entity_type:0,unseen:1}).get('users_to_private_chats',function(err,rows){
+			conn.where({user_id:client.user_id,unseen:1}).get('users_to_private_chats',function(err,rows){
 				if(err)console.log(err);
 				for(var i = 0; i < rows.length; i++){
 					io.sockets.in('user_' + rows[i].entity_id).emit('chat_seen',{pm_id:rows[i].chat_id,friend_id:client.user_id});
@@ -320,7 +310,7 @@ io.sockets.on('connection', function(client) {
 						if(err)console.log(err);
 					});
 				}
-				conn.where({entity_id:client.user_id,entity_type:0,unseen:1}).update('users_to_private_chats',{unseen:0},function(err,info){
+				conn.where({user_id:client.user_id,unseen:1}).update('users_to_private_chats',{unseen:0},function(err,info){
 					if(err)console.log(err);
 				});
 			});
@@ -576,10 +566,13 @@ io.sockets.on('connection', function(client) {
 							conn.where({id:rows[0].member_id}).get('users',function(err,rows){
 								if(err)console.log(err);
 								if(rows[0].chat_id != client.chat_id){
-									var message = "<div class='request_cont request_link' data-request-link='//mutualcog.com/chat/static/" + client.chat_id + "/" + insert_id + "><div class='request_text'><a class='chat_link' href='//mutualcog.com/u/" + client.user + "'>" + client.user + "</a> has responded to your message</div></div>";
 									conn.insert('notifications',{type:0,user_id:rows[0].id,sender_id:client.user_id,sender:client.user,global_type:'response',created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
 										if(err)console.log(err);
+										var message = "<div class='request_cont request_link' data-request-link='//mutualcog.com/chat/static/" + client.chat_id + "/" + insert_id + "><div class='request_text'><a class='chat_link' href='//mutualcog.com/u/" + client.user + "'>" + client.user + "</a> has responded to your message</div></div>";
 										io.sockets.in('user_' + rows[0].id).emit('displayGlobalRequests',{id:info.insertId,sender:client.user,sender_id:client.user_id,message:message,type:'response'});
+										conn.where({id:info.insertId}).update('notifications',{message:message},function(err,info){
+											if(err)console.log(err);
+										});
 									});
 								}
 							});
