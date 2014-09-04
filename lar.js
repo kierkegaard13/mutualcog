@@ -288,7 +288,10 @@ io.sockets.on('connection', function(client) {
 							io.sockets.in('user_' + pm_info.friend_id).emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.friend_id,friend_id:pm_info.user_id,friend_name:client.user,state:visibility,time:moment.utc().format(),mssg_id:mssg_id});
 							fn({message:pm_info.message,unseen:1,pm_id:pm_info.pm_id,friend_id:pm_info.friend_id});
 							/* You need to set unseen for the recipient for when they come back online and need to emit chats seen */
-							conn.where({user_id:pm_info.friend_id,entity_id:client.user_id,entity_type:0}).update('users_to_private_chats',{unseen:1,visible:1},function(err,rows){
+							conn.where({user_id:pm_info.friend_id,entity_id:client.user_id,entity_type:0}).update('users_to_private_chats',{visible:1},function(err,rows){
+								if(err)console.log(err);
+							});
+							conn.where({entity_id:pm_info.friend_id,user_id:client.user_id,entity_type:0}).update('users_to_private_chats',{unseen:1},function(err,rows){
 								if(err)console.log(err);
 							});
 							conn.where({id:pm_info.pm_id}).update('private_chats',{seen:0},function(err,info){
@@ -309,7 +312,7 @@ io.sockets.on('connection', function(client) {
 
 	client.on('seen_chats',function(){
 		if(client.authorized){
-			conn.where({user_id:client.user_id,unseen:1}).get('users_to_private_chats',function(err,rows){
+			conn.where({entity_id:client.user_id,entity_type:0,unseen:1}).get('users_to_private_chats',function(err,rows){
 				if(err)console.log(err);
 				for(var i = 0; i < rows.length; i++){
 					io.sockets.in('user_' + rows[i].entity_id).emit('chat_seen',{pm_id:rows[i].chat_id,friend_id:client.user_id});
@@ -317,7 +320,7 @@ io.sockets.on('connection', function(client) {
 						if(err)console.log(err);
 					});
 				}
-				conn.where({user_id:client.user_id,unseen:1}).update('users_to_private_chats',{unseen:0},function(err,info){
+				conn.where({entity_id:client.user_id,entity_type:0,unseen:1}).update('users_to_private_chats',{unseen:0},function(err,info){
 					if(err)console.log(err);
 				});
 			});
