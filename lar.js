@@ -568,7 +568,11 @@ io.sockets.on('connection', function(client) {
 								if(rows[0].chat_id != client.chat_id){
 									conn.insert('notifications',{type:0,user_id:rows[0].id,sender_id:client.user_id,sender:client.user,global_type:'response',created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
 										if(err)console.log(err);
-										var message = "<div class='request_cont request_link' data-request-link='//mutualcog.com/chat/static/" + client.chat_id + "/" + insert_id + "><div class='request_text'><a class='chat_link' href='//mutualcog.com/u/" + client.user + "'>" + client.user + "</a> has responded to your message</div></div>";
+										if(client.authorized){
+											var message = "<div class='request_cont request_link' data-request-link='//mutualcog.com/chat/static/" + client.chat_id + "/" + mssg_info.responseto + "' data-request-id='" + info.insertId + "'><div class='request_text'><a class='chat_link' href='//mutualcog.com/u/" + client.user + "'>" + client.user + "</a> has responded to your message</div></div>";
+										}else{
+											var message = "<div class='request_cont request_link' data-request-link='//mutualcog.com/chat/static/" + client.chat_id + "/" + mssg_info.responseto + "' data-request-id='" + info.insertId + "'><div class='request_text'>" + client.user + " has responded to your message</div></div>";
+										}
 										io.sockets.in('user_' + rows[0].id).emit('displayGlobalRequests',{id:info.insertId,sender:client.user,sender_id:client.user_id,message:message,type:'response'});
 										conn.where({id:info.insertId}).update('notifications',{message:message},function(err,info){
 											if(err)console.log(err);
@@ -604,9 +608,30 @@ io.sockets.on('connection', function(client) {
 		}
 	});
 
+	client.on('notify_response',function(mssg_id){
+		conn.where({id:mssg_id}).get('messages',function(err,rows){
+			if(err)console.log(err);
+			var user = rows[0].author;
+			var user_id = rows[0].member_id;
+			if(user.match(/\D/g)){
+				conn.insert('notifications',{type:0,user_id:user_id,sender_id:client.user_id,sender:client.user,global_type:'response',created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
+					if(err)console.log(err);
+					if(client.authorized){
+						var message = "<div class='request_cont request_link' data-request-link='//mutualcog.com/chat/static/" + client.chat_id + "/" + mssg_id + "' data-request-id='" + info.insertId + "'><div class='request_text'><a class='chat_link' href='//mutualcog.com/u/" + client.user + "'>" + client.user + "</a> has responded to your message</div></div>";
+					}else{
+						var message = "<div class='request_cont request_link' data-request-link='//mutualcog.com/chat/static/" + client.chat_id + "/" + mssg_id + "' data-request-id='" + info.insertId + "'><div class='request_text'>" + client.user + " has responded to your message</div></div>";
+					}
+					io.sockets.in('user_' + user_id).emit('displayGlobalRequests',{id:info.insertId,sender:client.user,sender_id:client.user_id,message:message,type:'response'});
+					conn.where({id:info.insertId}).update('notifications',{message:message},function(err,info){
+						if(err)console.log(err);
+					});
+				});
+			}
+		});
+	});
+
 	client.on('delete_message',function(mssg_info){
 		var replace = '<em>This message has been deleted</em>';
-		console.log(client.room);
 		conn.where({id:mssg_info.id}).get('messages',function(err,rows){
 			if(err)console.log(err);
 			var message = rows[0];

@@ -144,6 +144,9 @@ $(document).ready(function(){
 		}
 		return false;
 	});
+	$('body').on('submit','.reply_forms',function(){
+		module.socket.emit('notify_response',$(this).children('#reply_to').val());
+	});
 });
 
 module.socket.on('connect',function() {

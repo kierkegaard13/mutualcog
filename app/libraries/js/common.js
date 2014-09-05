@@ -126,7 +126,15 @@ $(document).ready(function(){
 		
 	});
 	$('body').on('click','.request_link',function(){
-		window.location.href = $(this).attr('data-request-link');
+		var $this = $(this);
+		$.ajax({
+			type:'GET',
+			data:{note_id:$(this).attr('data-request-id')},
+			url:'//mutualcog.com/profile/remove-notification',
+			success:function(){	
+				window.location.href = $this.attr('data-request-link');
+			}
+		});
 	});
 	$('.user_tooltip').tooltip();
 	$('.caret_tooltip').tooltip();

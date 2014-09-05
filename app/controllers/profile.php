@@ -2,6 +2,17 @@
 
 class Profile extends BaseController {
 
+	public function getRemoveNotification(){
+		$note_id = Input::get('note_id');
+		if($note_id){
+			$notification = Notifications::find($note_id);
+			if($notification){
+				$notification->delete();
+			}
+		}
+		return 1;
+	}
+
 	public function postUpdateOnlineStatus(){
 		if(Auth::check()){
 			$user_id = Input::get('user_id');
