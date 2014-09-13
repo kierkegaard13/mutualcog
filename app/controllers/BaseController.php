@@ -100,26 +100,45 @@ class BaseController extends Controller {
 		return Redirect::to('home');
 	}
 
-	public function votePost($type){
-		$chat_id = Input::get('id');
+	public function voteEntity($type,$entity_type){
+		$entity_id = Input::get('id');
 		$member = Auth::user()->id;
-		$chat = Chats::find($chat_id);
-		$voted = new ChatsVoted();
 		$status = 0;
-		$temp = $voted->wheremember_id($member)->wherechat_id($chat_id)->first();
-		if($temp){
-			$voted = $temp;
-			$status = $voted->status;
-		}else{
-			$voted->member_id = $member;
-			$voted->chat_id = $chat_id;
-		}
 		$user_exists = 0;
-		if(preg_match('/[a-zA-Z]/',$chat->admin)){
-			$user = new User();
-			$user->name = $chat->admin;
-			$user = $user->findAll();
-			$user_exists = 1;
+		if($entity_type){  //Voting on a chat
+			$entity = Chats::find($entity_id);
+			$voted = new ChatsVoted();
+			$temp = $voted->wheremember_id($member)->wherechat_id($entity_id)->first();
+			if($temp){
+				$voted = $temp;
+				$status = $voted->status;
+			}else{
+				$voted->member_id = $member;
+				$voted->chat_id = $entity_id;
+			}
+			if(preg_match('/[a-zA-Z]/',$entity->admin)){
+				$user = new User();
+				$user->name = $entity->admin;
+				$user = $user->findAll();
+				$user_exists = 1;
+			}
+		}else{  //voting on a message
+			$entity = Messages::find($entity_id);
+			$voted = new MessagesVoted();
+			$temp = $voted->wheremember_id($member)->wheremessage_id($entity_id)->first();
+			if($temp){
+				$voted = $temp;
+				$status = $voted->status;
+			}else{
+				$voted->member_id = $member;
+				$voted->message_id = $entity_id;
+			}
+			if(preg_match('/[a-zA-Z]/',$entity->author)){
+				$user = new User();
+				$user->name = $entity->author;
+				$user = $user->findAll();
+				$user_exists = 1;
+			}
 		}
 		if($user_exists){
 			if($user->level == 0){
@@ -168,201 +187,58 @@ class BaseController extends Controller {
 			}
 			$user->save();
 		}
-		if($type && $status == 2){  //downvoted previously and now upvoted
-			foreach($chat->tags as $tag){
+		if($entity_type){
+			foreach($entity->tags as $tag){
 				$usertag = UsersToTags::wheretag_id($tag->id)->whereuser_id(Auth::user()->id)->first();
 				if($usertag){
-					$usertag->score = $usertag->score + 2;
+					$usertag->score = $usertag->score - $status + $type;
 					$usertag->save();
 				}
-				$tag->popularity = $tag->popularity + 2;
+				$tag->popularity = $tag->popularity - $status + $type;
 				$tag->save();
 			}
-			$chat->upvotes = $chat->upvotes + 1;
-			$chat->downvotes = $chat->downvotes - 1;
+		}
+		if($type == 1 && $status == -1){  //downvoted previously and now upvoted
+			$entity->upvotes = $entity->upvotes + 1;
+			$entity->downvotes = $entity->downvotes - 1;
 			$voted->status = 1;
 			$voted->save();
-			$chat->save();
-			return array('status' => 1,'upvotes' => $chat->upvotes - $chat->downvotes);
-		}elseif(!$type && $status == 1){ // upvoted previously and now downvoted
-			foreach($chat->tags as $tag){
-				$usertag = UsersToTags::wheretag_id($tag->id)->whereuser_id(Auth::user()->id)->first();
-				if($usertag){
-					$usertag->score = $usertag->score - 2;
-					$usertag->save();
-				}
-				$tag->popularity = $tag->popularity - 2;
-				$tag->save();
-			}
-			$chat->upvotes = $chat->upvotes - 1;
-			$chat->downvotes = $chat->downvotes + 1;
+			$entity->save();
+			return array('status' => 1,'upvotes' => $entity->upvotes - $entity->downvotes);
+		}elseif($type == -1 && $status == 1){ // upvoted previously and now downvoted
+			$entity->upvotes = $entity->upvotes - 1;
+			$entity->downvotes = $entity->downvotes + 1;
 			$voted->status = -1;
 			$voted->save();
-			$chat->save();
-			return array('status' => 1,'upvotes' => $chat->upvotes - $chat->downvotes);
-		}elseif(($status == 1 && $type) || ($status == 0 && !$type)){  //upvoted previously or first time downvoting
-			foreach($chat->tags as $tag){
-				$usertag = UsersToTags::wheretag_id($tag->id)->whereuser_id(Auth::user()->id)->first();
-				if($usertag){
-					$usertag->score = $usertag->score - 1;
-					$usertag->save();
-				}
-				$tag->popularity = $tag->popularity - 1;
-				$tag->save();
-			}
-			if($type){
-				$chat->upvotes = $chat->upvotes - 1;
+			$entity->save();
+			return array('status' => 1,'upvotes' => $entity->upvotes - $entity->downvotes);
+		}elseif(($status == 1 && $type == 1) || ($status == 0 && $type == -1)){  //upvoted previously or first time downvoting
+			if($type == 1){
+				$entity->upvotes = $entity->upvotes - 1;
 				$voted->status = 0;
 				$voted->save();
-				$chat->save();
-				return array('status' => 2,'upvotes' => $chat->upvotes - $chat->downvotes);
+				$entity->save();
+				return array('status' => 2,'upvotes' => $entity->upvotes - $entity->downvotes);
 			}else{
-				$chat->downvotes = $chat->downvotes + 1;
+				$entity->downvotes = $entity->downvotes + 1;
 				$voted->status = -1;	
 				$voted->save();
-				$chat->save();
-				return array('status' => 3,'upvotes' => $chat->upvotes - $chat->downvotes);
+				$entity->save();
+				return array('status' => 3,'upvotes' => $entity->upvotes - $entity->downvotes);
 			}
 		}else{  //first time upvoting or downvoted previously now downvoted
-			foreach($chat->tags as $tag){
-				$usertag = UsersToTags::wheretag_id($tag->id)->whereuser_id(Auth::user()->id)->first();
-				if($usertag){
-					$usertag->score = $usertag->score + 1;
-					$usertag->save();
-				}
-				$tag->popularity = $tag->popularity + 1;
-				$tag->save();
-			}
-			if($type){
-				$chat->upvotes = $chat->upvotes + 1;
+			if($type == 1){
+				$entity->upvotes = $entity->upvotes + 1;
 				$voted->status = 1;	
 				$voted->save();
-				$chat->save();
-				return array('status' => 3,'upvotes' => $chat->upvotes - $chat->downvotes);
+				$entity->save();
+				return array('status' => 3,'upvotes' => $entity->upvotes - $entity->downvotes);
 			}else{
-				$chat->downvotes = $chat->downvotes - 1;
+				$entity->downvotes = $entity->downvotes - 1;
 				$voted->status = 0;
 				$voted->save();
-				$chat->save();
-				return array('status' => 2,'upvotes' => $chat->upvotes - $chat->downvotes);
-			}
-		}
-	}
-
-	public function voteMssg($type){
-		$message_id = Input::get('id');
-		$member = Auth::user()->id;
-		$message = Messages::find($message_id);
-		$voted = new MessagesVoted();
-		$status = 0;
-		$temp = $voted->wheremember_id($member)->wheremessage_id($message_id)->first();
-		if($temp){
-			$voted = $temp;
-			$status = $voted->status;
-		}else{
-			$voted->member_id = $member;
-			$voted->message_id = $message_id;
-		}
-		$user_exists = 0;
-		if(preg_match('/[a-zA-Z]/',$message->author)){
-			$user = new User();
-			$user->name = $message->author;
-			$user = $user->findAll();
-			$user_exists = 1;
-		}
-		if($type && $status == 2){  //downvoted previously now upvote
-			if($user_exists){
-				$user->total_cognizance = $user->total_cognizance + 2;
-				if($user->cognizance + 2 >= $user->next_level){
-					$user->cognizance = ($user->cognizance + 2) % $user->next_level;
-					$user->level = $user->level + 1;
-					$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
-				}else{
-					$user->cognizance = ($user->cognizance + 2) % $user->next_level;
-				}
-				$user->save();
-			}
-			$message->upvotes = $message->upvotes + 1;
-			$message->downvotes = $message->downvotes - 1;
-			$voted->status = 1;
-			$voted->save();
-			$message->save();
-			return array('status' => 1,'upvotes' => $message->upvotes - $message->downvotes);
-		}elseif(!$type && $status == 1){ // upvoted previously and now downvoted
-			if($user_exists){
-				$user->total_cognizance = $user->total_cognizance - 2;
-				if($user->level > 0 && $user->cognizance - 2 < 0){
-					$user->level = $user->level - 1;
-					$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
-					$user->cognizance = $user->next_level - 2;
-				}else if($user->level == 0){
-					if($user->cognizance - 2 > -1){
-						$user->cognizance = $user->cognizance - 2;
-					}else if($user->cognizance - 1 > -1){
-						$user->cognizance = $user->cognizance - 1;
-					}else{}
-				}else{
-					$user->cognizance = $user->cognizance - 1;
-				}
-				$user->save();
-			}
-			$message->upvotes = $message->upvotes - 1;
-			$message->downvotes = $message->downvotes + 1;
-			$voted->status = 2;
-			$voted->save();
-			$message->save();
-			return array('status' => 1,'upvotes' => $message->upvotes - $message->downvotes);
-		}elseif($status == 1){  //upvoted previously or first time downvote
-			if($user_exists){
-				$user->total_cognizance = $user->total_cognizance - 1;
-				if($user->level > 0 && $user->cognizance - 1 < 0){
-					$user->level = $user->level - 1;
-					$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
-					$user->cognizance = $user->next_level - 1;
-				}else if($user->level == 0){
-					$user->cognizance = ($user->cognizance - 1 < 0) ? $user->cognizance : $user->cognizance - 1;
-				}else{
-					$user->cognizance = $user->cognizance - 1;
-				}
-				$user->save();
-			}
-			if($type){
-				$message->upvotes = $message->upvotes - 1;
-				$voted->status = 0;
-				$voted->save();
-				$message->save();
-				return array('status' => 2,'upvotes' => $message->upvotes - $message->downvotes);
-			}else{
-				$message->downvotes = $message->downvotes + 1;
-				$voted->status = 2;	
-				$voted->save();
-				$message->save();
-				return array('status' => 3,'upvotes' => $message->upvotes - $message->downvotes);
-			}
-		}else{  //first time upvoting or downvoted now downvote
-			if($user_exists){
-				$user->total_cognizance = $user->total_cognizance + 1;
-				if($user->cognizance + 1 >= $user->next_level){
-					$user->cognizance = ($user->cognizance + 1) % $user->next_level;
-					$user->level = $user->level + 1;
-					$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
-				}else{
-					$user->cognizance = ($user->cognizance + 1) % $user->next_level;
-				}
-				$user->save();
-			}
-			if($type){
-				$message->upvotes = $message->upvotes + 1;
-				$voted->status = 1;	
-				$voted->save();
-				$message->save();
-				return array('status' => 3,'upvotes' => $message->upvotes - $message->downvotes);
-			}else{
-				$message->downvotes = $message->downvotes - 1;
-				$voted->status = 0;
-				$voted->save();
-				$message->save();
-				return array('status' => 2,'upvotes' => $message->upvotes - $message->downvotes);
+				$entity->save();
+				return array('status' => 2,'upvotes' => $entity->upvotes - $entity->downvotes);
 			}
 		}
 	}

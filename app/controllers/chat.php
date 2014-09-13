@@ -730,7 +730,7 @@ class Chat extends BaseController {
 
 	public function postUpvote(){
 		if(Auth::check()){
-			return $this->votePost(1);
+			return $this->voteEntity(1,1);
 		}else{
 			return array('status' => 0,'upvotes' => 0);
 		}
@@ -738,7 +738,7 @@ class Chat extends BaseController {
 
 	public function postDownvote(){
 		if(Auth::check()){
-			return $this->votePost(-1);
+			return $this->voteEntity(-1,1);
 		}else{
 			return array('status' => 0,'upvotes' => 0);
 		}
@@ -746,7 +746,7 @@ class Chat extends BaseController {
 
 	public function postMessageUpvote(){
 		if(Auth::check()){
-			return $this->voteMssg(1);
+			return $this->voteEntity(1,0);
 		}else{
 			return array('status' => 0,'upvotes' => 0);
 		}
@@ -754,7 +754,7 @@ class Chat extends BaseController {
 
 	public function postMessageDownvote(){
 		if(Auth::check()){
-			return $this->voteMssg(-1);
+			return $this->voteEntity(-1,0);
 		}else{
 			return array('status' => 0,'upvotes' => 0);
 		}

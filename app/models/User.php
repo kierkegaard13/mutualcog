@@ -89,7 +89,7 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 	}
 
 	public function downvotedChats(){
-		return ChatsVoted::wheremember_id($this->id)->wherestatus(2)->take(1000)->get();
+		return ChatsVoted::wheremember_id($this->id)->wherestatus(-1)->take(1000)->get();
 	}
 
 	public function upvotedMessages(){
@@ -97,7 +97,7 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 	}
 
 	public function downvotedMessages(){
-		return MessagesVoted::wheremember_id($this->id)->wherestatus(2)->get();
+		return MessagesVoted::wheremember_id($this->id)->wherestatus(-1)->get();
 	}
 
 	public function notifications(){
