@@ -46,30 +46,6 @@ class Chat extends BaseController {
 				}
 				$mem_to_chat->active = 1;
 				$mem_to_chat->save();
-				$all_mems = MembersToChats::wherechat_id($chat_id)->get();
-				foreach($all_mems as $mem){
-					if(preg_match('/[a-zA-Z]/',$mem->user) && $mem->member_id != Auth::user()->id){
-						$interaction_user = InteractionUsers::whereuser_id(Auth::user()->id)->whereentity_id($mem->member_id)->wheretype(0)->first();
-						if($interaction_user){
-							$interaction_user->bond = $interaction_user->bond + 1;
-							$interaction_user->save();
-							$interaction_friend = InteractionUsers::whereentity_id(Auth::user()->id)->whereuser_id($mem->member_id)->wheretype(0)->first();
-							$interaction_friend->bond = $interaction_friend->bond + 1;
-							$interaction_friend->save();
-						}else{
-							$inter_user = new InteractionUsers();
-							$inter_user->user_id = Auth::user()->id;
-							$inter_user->entity_id = $mem->member_id;
-							$inter_user->bond = 1;
-							$inter_user->save();
-							$inter_friend = new InteractionUsers();
-							$inter_friend->user_id = $mem->member_id;
-							$inter_friend->entity_id = Auth::user()->id;
-							$inter_friend->bond = 1;
-							$inter_friend->save();
-						}
-					}
-				}
 			}else{  //have been in chat before
 				$mem_to_chat = $mem_to_chat->findAll();
 				if($mem_to_chat->banned){
@@ -77,30 +53,6 @@ class Chat extends BaseController {
 				}
 				$mem_to_chat->active = 1;
 				$mem_to_chat->save();
-				$all_mems = MembersToChats::wherechat_id($chat_id)->get();
-				foreach($all_mems as $mem){
-					if(preg_match('/[a-zA-Z]/',$mem->user) && $mem->member_id != Auth::user()->id){
-						$interaction = InteractionUsers::whereuser_id(Auth::user()->id)->whereentity_id($mem->member_id)->wheretype(0)->first();
-						//$interaction = Interactions::join('interaction_users','interaction_users.interaction_id','=','interactions.id')
-						//	->with('users')
-						//	->where('interaction_users.user_id', Auth::user()->id)
-						//	->orWhere('interaction_users.user_id', $mem->id)
-						//	->first();
-						if($interaction){
-						}else{
-							$inter_user = new InteractionUsers();
-							$inter_user->user_id = Auth::user()->id;
-							$inter_user->entity_id = $mem->member_id;
-							$inter_user->bond = 1;
-							$inter_user->save();
-							$inter_friend = new InteractionUsers();
-							$inter_friend->user_id = $mem->member_id;
-							$inter_friend->entity_id = Auth::user()->id;
-							$inter_friend->bond = 1;
-							$inter_friend->save();
-						}
-					}
-				}
 			}
 		}else{  //not logged in
 			$mem_to_chat = new MembersToChats();

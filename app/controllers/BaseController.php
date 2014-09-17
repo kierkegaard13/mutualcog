@@ -140,7 +140,39 @@ class BaseController extends Controller {
 				$user_exists = 1;
 			}
 		}
+		/* MODIFY USER COGNIZANCE BASED ON UP OR DOWN VOTE */
 		if($user_exists){
+			if($user->name != Auth::user()->name){  // create/modify asymmetric interaction
+				$interaction_user = InteractionUsers::whereuser_id(Auth::user()->id)->whereentity_id($user->id)->wheretype(0)->first();
+				if($interaction_user){
+					$interaction_user->bond = $interaction_user->bond - $status + $type;
+					if($interaction_user->bond < 1){
+						$interaction_user->delete();
+					}else{
+						$interaction_user->save();
+					}
+					$interaction_friend = InteractionUsers::whereentity_id(Auth::user()->id)->whereuser_id($user->id)->wheretype(0)->first();
+					if($interaction_friend->bond < 1){
+						$interaction_friend->delete();
+					}else{
+						$interaction_friend->save();
+					}
+					$interaction_friend->save();
+				}else{
+					if($type - $status > 0){
+						$inter_user = new InteractionUsers();
+						$inter_user->user_id = Auth::user()->id;
+						$inter_user->entity_id = $user->id;
+						$inter_user->bond = $type - $status;
+						$inter_user->save();
+						$inter_friend = new InteractionUsers();
+						$inter_friend->user_id = $user->id;
+						$inter_friend->entity_id = Auth::user()->id;
+						$inter_friend->bond = 1;
+						$inter_friend->save();
+					}
+				}
+			}
 			if($user->level == 0){
 				if($type == -1 && ($status == 0 || $status == -1)){
 				}else if($type == 1 && $status == -1){
@@ -198,6 +230,7 @@ class BaseController extends Controller {
 				$tag->save();
 			}
 		}
+		/* MODIFY MESSAGE OR CHAT UPVOTES AND DOWNVOTES */
 		if($type == 1 && $status == -1){  //downvoted previously and now upvoted
 			$entity->upvotes = $entity->upvotes + 1;
 			$entity->downvotes = $entity->downvotes - 1;
