@@ -554,22 +554,22 @@
 				{% endif %}
 				{% if curr_tag_id %}
 					{% if chat.tag_pinned %}
-						{% if user.tag_admin == curr_tag_id %}
+						{% if user.tag_admin == curr_tag_id or user.tag_mod == curr_tag_id %}
 							<span><a href="{{site}}/tags/unpin-post/{{chat.id}}/{{curr_tag_id}}"><strong>UnPin</strong></span>
 						{% else %}
 							<span><strong>Pinned</strong></span>
 						{% endif %}
-					{% elseif user.tag_admin == curr_tag_id %}
+					{% elseif user.tag_admin == curr_tag_id or user.tag_mod == curr_tag_id %}
 						<span><a href="{{site}}/tags/pin-post/{{chat.id}}/{{curr_tag_id}}"><strong>Pin</strong></span>
 					{% endif %}
 				{% else %}
 					{% if chat.pinned %}
-						{% if user.is_admin %}
+						{% if user.is_admin or user.is_mod %}
 							<span><a href="{{site}}/chat/unpin-post/{{chat.id}}"><strong>UnPin</strong></span>
 						{% else %}
 							<span><strong>Pinned</strong></span>
 						{% endif %}
-					{% elseif user.is_admin %}
+					{% elseif user.is_admin or user.is_mod %}
 						<span><a href="{{site}}/chat/pin-post/{{chat.id}}"><strong>Pin</strong></span>
 					{% endif %}
 				{% endif %}
