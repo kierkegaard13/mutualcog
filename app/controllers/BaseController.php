@@ -235,20 +235,20 @@ class BaseController extends Controller {
 		if($entity_type){
 			$chat_to_tag = ChatsToTags::wherechat_id($entity->id)->wheretag_id($tag->id)->first();
 			if($chat_to_tag){
-				$chat_to_tag->upvotes = ($type == $status && $type == 1) ? $chat_to_tag->upvotes - 1 : ($type != $status && $type == 1) ? $chat_to_tag->upvotes + 1 : ($status == 1 && $type == -1) ? $chat_to_tag->upvotes - 1 : $chat_to_tag->upvotes;
-				$chat_to_tag->downvotes = ($type == $status && $type == -1) ? $chat_to_tag->downvotes - 1 : ($type != $status && $type == -1) ? $chat_to_tag->downvotes + 1 : ($status == -1 && $type == 1) ? $chat_to_tag->downvotes - 1 : $chat_to_tag->downvotes;
+				$chat_to_tag->upvotes = ($type == $status && $type == 1) ? $chat_to_tag->upvotes - 1 : (($type != $status && $type == 1) ? $chat_to_tag->upvotes + 1 : (($status == 1 && $type == -1) ? $chat_to_tag->upvotes - 1 : $chat_to_tag->upvotes));
+				$chat_to_tag->downvotes = ($type == $status && $type == -1) ? $chat_to_tag->downvotes - 1 : (($type != $status && $type == -1) ? $chat_to_tag->downvotes + 1 : (($status == -1 && $type == 1) ? $chat_to_tag->downvotes - 1 : $chat_to_tag->downvotes));
 				$chat_to_tag->save();
 			}else{
 				$chat_to_tags = ChatsToTags::wherechat_id($chat_to_tag->id)->get();
 				foreach($chat_to_tags as $chat_to_tag){
-					$chat_to_tag->upvotes = ($type == $status && $type == 1) ? $chat_to_tag->upvotes - 1 : ($type != $status && $type == 1) ? $chat_to_tag->upvotes + 1 : ($status == 1 && $type == -1) ? $chat_to_tag->upvotes - 1 : $chat_to_tag->upvotes;
-					$chat_to_tag->downvotes = ($type == $status && $type == -1) ? $chat_to_tag->downvotes - 1 : ($type != $status && $type == -1) ? $chat_to_tag->downvotes + 1 : ($status == -1 && $type == 1) ? $chat_to_tag->downvotes - 1 : $chat_to_tag->downvotes;
+					$chat_to_tag->upvotes = ($type == $status && $type == 1) ? $chat_to_tag->upvotes - 1 : (($type != $status && $type == 1) ? $chat_to_tag->upvotes + 1 : (($status == 1 && $type == -1) ? $chat_to_tag->upvotes - 1 : $chat_to_tag->upvotes));
+					$chat_to_tag->downvotes = ($type == $status && $type == -1) ? $chat_to_tag->downvotes - 1 : (($type != $status && $type == -1) ? $chat_to_tag->downvotes + 1 : (($status == -1 && $type == 1) ? $chat_to_tag->downvotes - 1 : $chat_to_tag->downvotes));
 					$chat_to_tag->save();
 				}
 			}
 		}
-		$entity->upvotes = ($type == $status && $type == 1) ? $entity->upvotes - 1 : ($type != $status && $type == 1) ? $entity->upvotes + 1 : ($status == 1 && $type == -1) ? $entity->upvotes - 1 : $entity->upvotes;
-		$entity->downvotes = ($type == $status && $type == -1) ? $entity->downvotes - 1 : ($type != $status && $type == -1) ? $entity->downvotes + 1 : ($status == -1 && $type == 1) ? $entity->downvotes - 1 : $entity->downvotes;
+		$entity->upvotes = ($type == $status && $type == 1) ? $entity->upvotes - 1 : (($type != $status && $type == 1) ? $entity->upvotes + 1 : (($status == 1 && $type == -1) ? $entity->upvotes - 1 : $entity->upvotes));
+		$entity->downvotes = ($type == $status && $type == -1) ? $entity->downvotes - 1 : (($type != $status && $type == -1) ? $entity->downvotes + 1 : (($status == -1 && $type == 1) ? $entity->downvotes - 1 : $entity->downvotes));
 		$entity->save();
 		if($type == 1 && $status == -1){  //downvoted previously and now upvoted
 			$voted->status = 1;

@@ -38,13 +38,16 @@
 
 {% block content %}
 <div class="p_main_content" id="main_cont">
-<h1 class="profile_name" id="{{profile.id}}" style="margin-top:0px;">{{profile.name}}</h1>
-{% if logged_in and profile.id != user.id and not friended and not requested%}
-	<button class="btn btn-primary add_friend" id="request_friend" data-user-id="{{profile.id}}" data-user-name="{{profile.name}}"><div class="glyphicon glyphicon-plus" id="request_glyph"></div> Send Friend Request</button>
+<h2 class="profile_name" id="{{profile.id}}" style="margin-top:0px;">{{profile.name}}</h2>
+{% if profile.id != user.id %}
+	<btn class="btn btn-primary pull-right" data-toggle="modal" data-target="#message_modal"><div class="glyphicon glyphicon-envelope"> </div> Message</btn>
+{% endif %}
+{% if logged_in and profile.id != user.id and not friended and not requested %}
+	<button class="btn btn-primary add_friend" id="request_friend" data-user-id="{{profile.id}}" data-user-name="{{profile.name}}"><div class="glyphicon glyphicon-plus" id="request_glyph"> </div> Send Friend Request</button>
 {% elseif requested %}
-	<button class="btn btn-success add_friend"><div class="glyphicon glyphicon-check" id="request_glyph"></div> Request Sent</button>
+	<button class="btn btn-success add_friend"><div class="glyphicon glyphicon-check" id="request_glyph"> </div> Request Sent</button>
 {% elseif friended %}
-	<a class="btn btn-danger add_friend" href="{{site}}/profile/unfriend/{{profile.id}}"><div class="glyphicon glyphicon-minus" id="request_glyph"></div> Remove Friend</a>
+	<a class="btn btn-danger add_friend" href="{{site}}/profile/unfriend/{{profile.id}}"><div class="glyphicon glyphicon-minus" id="request_glyph"> </div> Remove Friend</a>
 {% endif %}
 <div>Posts: {{profile.posts | length}}</div>
 <div>Comments: {{profile.messages | length}}</div>
@@ -59,6 +62,7 @@
 	<li class="active"><a href="#posts" data-toggle="tab" style="color:#075de9">Posts</a></li>
 	<li><a href="#comments" data-toggle="tab" style="color:#075de9">Comments</a></li>
 	<li><a href="#friendships" data-toggle="tab" style="color:#075de9">Friendships</a></li>
+	<li><a href="#inbox" data-toggle="tab" style="color:#075de9">Inbox</a></li>
 </ul>
 
 <div id="tab_content" class="tab-content">
@@ -154,6 +158,12 @@
 		{% endfor %}
 	</div>
 </div>
+
+<div class="tab-pane fade in" id="inbox">
+	<div class="frame" style="height:620px;padding:0;white-space:normal;">
+	</div>
+</div>
+
 </div>
 
 </div>
