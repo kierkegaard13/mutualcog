@@ -161,7 +161,7 @@ $(document).ready(function(){
 		var friend_id = $(this).attr('data-friend-id');
 		var pm_id = $(this).attr('data-pm-chat-id');
 		var friend_status_class = $(this).find('#friend_' + friend_id + '_status').attr('class').replace('friend_status','');
-		if($('.pm_bar').width() < $(window).width() - 500 && $('#pm_' + friend_id + '_' + pm_id).length == 0){
+		if($('.pm_bar').width() < $(window).width() - 500 /*&& $('#pm_' + friend_id + '_' + pm_id).length == 0*/){
 			var chat_box = '<div class="pm_cont pm_visible" id="pm_' + friend_id + '_' + pm_id + '" style="visibility:hidden;">';
 			chat_box += '<div class="pm_header"><div class="' + friend_status_class + ' pm_status"></div><div class="glyphicon glyphicon-remove pm_remove"></div><div class="pm_name">' + friend_name + '</div></div>';
 			chat_box += '<div class="pm_body"><div class="pm_body_mssgs">'
@@ -220,7 +220,15 @@ $(document).ready(function(){
 				},
 				error:function(){}	
 			});
+		}else{
+			if($('.pm_list_footer').length == 0){
+				$('.pm_bar').prepend('<div class="dropup pm_list_footer_cont"><div class="pm_list_footer dropdown-toggle" data-toggle="dropdown"><div class="glyphicon glyphicon-comment" style="color:white;float:left;"> ...</div></div><ul class="dropdown-menu pm_dropup" role="menu"></ul></div>');
+			}else{
+			}
 		}
+	});
+	$('body').on('click','.pm_list_footer',function(){
+		console.log('hihi');
 	});
 	$('.pm_cont').resizable({handles:"nw",ghost:false,maxHeight:450,maxWidth:400,minHeight:330,minWidth:240,resize:function(e,ui){
 		var ui_height = ui.size.height;
