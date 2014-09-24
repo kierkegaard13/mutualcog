@@ -55,6 +55,16 @@ updateTimes = function(){
 	});
 }();
 
+function newPmChat(friend_id,pm_id,friend_status_class,friend_name){
+	var chat_box = '<div class="pm_cont pm_visible" id="pm_' + friend_id + '_' + pm_id + '" style="visibility:hidden;">';
+	chat_box += '<div class="pm_header"><div class="' + friend_status_class + ' pm_status"></div><div class="glyphicon glyphicon-remove pm_remove"></div><div class="pm_name">' + friend_name + '</div></div>';
+	chat_box += '<div class="pm_body"><div class="pm_body_mssgs">'
+	chat_box += '</div><div class="pm_body_alerts"> <div class="pm_mssg_alert pm_unseen" style="display:none;">Not seen</div> <div class="pm_mssg_alert pm_typing" style="display:none;">' + friend_name + ' is typing...</div> </div></div>';
+	chat_box += '<textarea rows=1 class="pm_text"></textarea>';
+	chat_box += '</div>'; 
+	return chat_box;
+}
+
 $(document).ready(function(){
 	if(module.user_id.length){
 		window.setInterval(function(){
@@ -162,12 +172,7 @@ $(document).ready(function(){
 		var pm_id = $(this).attr('data-pm-chat-id');
 		var friend_status_class = $(this).find('#friend_' + friend_id + '_status').attr('class').replace('friend_status','');
 		if($('.pm_bar').width() < $(window).width() - 500 /*&& $('#pm_' + friend_id + '_' + pm_id).length == 0*/){
-			var chat_box = '<div class="pm_cont pm_visible" id="pm_' + friend_id + '_' + pm_id + '" style="visibility:hidden;">';
-			chat_box += '<div class="pm_header"><div class="' + friend_status_class + ' pm_status"></div><div class="glyphicon glyphicon-remove pm_remove"></div><div class="pm_name">' + friend_name + '</div></div>';
-			chat_box += '<div class="pm_body"><div class="pm_body_mssgs">'
-			chat_box += '</div><div class="pm_body_alerts"> <div class="pm_mssg_alert pm_unseen" style="display:none;">Not seen</div> <div class="pm_mssg_alert pm_typing" style="display:none;">' + friend_name + ' is typing...</div> </div></div>';
-			chat_box += '<textarea rows=1 class="pm_text"></textarea>';
-			chat_box += '</div>'; 
+			var chat_box = newPmChat(friend_id,pm_id,friend_status_class,friend_name);
 			$('.pm_bar').prepend(chat_box);
 			$.ajax({
 				type:'GET',
@@ -222,13 +227,16 @@ $(document).ready(function(){
 			});
 		}else{
 			if($('.pm_list_footer').length == 0){
-				$('.pm_bar').prepend('<div class="dropup pm_list_footer_cont"><div class="pm_list_footer dropdown-toggle" data-toggle="dropdown"><div class="glyphicon glyphicon-comment" style="color:white;float:left;"> ...</div></div><ul class="dropdown-menu pm_dropup" role="menu"></ul></div>');
+				$('.pm_bar').prepend('<div class="dropup pm_list_footer_cont"><div class="pm_list_footer dropdown-toggle" data-toggle="dropdown"><div class="glyphicon glyphicon-comment" style="color:white;float:left;"> ...</div></div><ul class="dropdown-menu pm_dropup" role="menu"><li><a class="switch_pm" href="#">' + friend_name + '</a></li></ul></div>');
 			}else{
+				$('.pm_dropup').prepend('<li><a class="switch_pm" href="#" data-pm-info="' + friend_id + '_' + pm_id + '_' + friend_status_class + '_' + friend_name + '">' + friend_name + '</a></li>');
 			}
 		}
 	});
-	$('body').on('click','.pm_list_footer',function(){
+	$('body').on('click','.switch_pm',function(){
+		$('.pm_cont').first().remove();
 		console.log('hihi');
+		return false;
 	});
 	$('.pm_cont').resizable({handles:"nw",ghost:false,maxHeight:450,maxWidth:400,minHeight:330,minWidth:240,resize:function(e,ui){
 		var ui_height = ui.size.height;
