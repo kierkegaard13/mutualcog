@@ -227,15 +227,24 @@ $(document).ready(function(){
 			});
 		}else{
 			if($('.pm_list_footer').length == 0){
-				$('.pm_bar').prepend('<div class="dropup pm_list_footer_cont"><div class="pm_list_footer dropdown-toggle" data-toggle="dropdown"><div class="glyphicon glyphicon-comment" style="color:white;float:left;"> ...</div></div><ul class="dropdown-menu pm_dropup" role="menu"><li><a class="switch_pm" href="#">' + friend_name + '</a></li></ul></div>');
+				$('.pm_bar').prepend('<div class="dropup pm_list_footer_cont"><div class="pm_list_footer dropdown-toggle" data-toggle="dropdown"><div class="glyphicon glyphicon-comment" style="color:white;float:left;"> ...</div></div><ul class="dropdown-menu pm_dropup" role="menu"><li><a class="switch_pm" href="#" data-friend-id="' + friend_id + '" data-friend-name="' + friend_name + '" data-pm-id="' + pm_id + '" data-status="' + friend_status_class + '">' + friend_name + '</a></li></ul></div>');
 			}else{
-				$('.pm_dropup').prepend('<li><a class="switch_pm" href="#" data-pm-info="' + friend_id + '_' + pm_id + '_' + friend_status_class + '_' + friend_name + '">' + friend_name + '</a></li>');
+				$('.pm_dropup').prepend('<li><a class="switch_pm" href="#" data-friend-id="' + friend_id + '" data-friend-name="' + friend_name + '" data-pm-id="' + pm_id + '" data-status="' + friend_status_class + '">' + friend_name + '</a></li>');
 			}
 		}
 	});
 	$('body').on('click','.switch_pm',function(){
+		$(this).remove();
+		$('.pm_dropup').prepend('hihi');
 		$('.pm_cont').first().remove();
-		console.log('hihi');
+		var friend_id = $(this).attr('data-friend-id');;
+		var pm_id = $(this).attr('data-pm-id');
+		var friend_status_class = $(this).attr('data-status');
+		var friend_name = $(this).attr('data-friend-name');
+		console.log(friend_id + ' : ' + pm_id + ' : ' + friend_status_class + ' : ' + friend_name);
+		var chat_box = newPmChat(friend_id,pm_id,friend_status_class,friend_name);
+		$('.pm_cont').first().before(chat_box);
+		$('.pm_visible').css('visibility','');
 		return false;
 	});
 	$('.pm_cont').resizable({handles:"nw",ghost:false,maxHeight:450,maxWidth:400,minHeight:330,minWidth:240,resize:function(e,ui){
