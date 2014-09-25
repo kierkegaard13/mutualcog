@@ -132,7 +132,7 @@ $(document).ready(function(){
 	$('body').on('click','.mssg_downvote',downvoteMssg);
 	$('#chat_display').on('click','.toggle_responses',getResponses);
 	$('.chat_content').on('click','.toggle_responses',getStaticResponses);
-	$('.request_btn').on('click',function(){  //TODO complete seen func
+	$('.request_btn').on('click',function(){  //TODO complete seen notification func
 		
 	});
 	$('body').on('click','.request_link',function(){
@@ -174,7 +174,7 @@ $(document).ready(function(){
 		if($('.pm_bar').width() < $(window).width() - 500 /*&& $('#pm_' + friend_id + '_' + pm_id).length == 0*/){
 			var chat_box = newPmChat(friend_id,pm_id,friend_status_class,friend_name);
 			$('.pm_bar').prepend(chat_box);
-			$.ajax({
+			$.ajax({  //TODO: rewrite, causes error when chat doesn't exist
 				type:'GET',
 				data:{pm_id:pm_id},
 				url:'//mutualcog.com/chat/pm-log',
@@ -235,16 +235,77 @@ $(document).ready(function(){
 	});
 	$('body').on('click','.switch_pm',function(){
 		$(this).remove();
-		$('.pm_dropup').prepend('hihi');
-		$('.pm_cont').first().remove();
+		var first = $('.pm_cont').first();
+		var first_fr_id = first.attr('id').split('_')[1];
+		var first_pm_id = first.attr('id').split('_')[2];
+		var first_stat = first.find('.pm_status').attr('class').split(' ')[0];
+		var first_name = first.find('.pm_name').text();
+		$('.pm_dropup').prepend('<li><a class="switch_pm" href="#" data-friend-id="' + first_fr_id + '" data-friend-name="' + first_name + '" data-pm-id="' + first_pm_id + '" data-status="' + first_stat + '">' + first_name + '</a></li>');
+		$('.pm_cont').first().css('display','none');
 		var friend_id = $(this).attr('data-friend-id');;
 		var pm_id = $(this).attr('data-pm-id');
 		var friend_status_class = $(this).attr('data-status');
 		var friend_name = $(this).attr('data-friend-name');
-		console.log(friend_id + ' : ' + pm_id + ' : ' + friend_status_class + ' : ' + friend_name);
-		var chat_box = newPmChat(friend_id,pm_id,friend_status_class,friend_name);
-		$('.pm_cont').first().before(chat_box);
-		$('.pm_visible').css('visibility','');
+		if($('#pm_' + friend_id + '_' + pm_id).length == 0){
+			var chat_box = newPmChat(friend_id,pm_id,friend_status_class,friend_name);
+			$('.pm_cont').first().before(chat_box);
+			$.ajax({
+				type:'GET',
+				data:{pm_id:pm_id},
+				url:'//mutualcog.com/chat/pm-log',
+				success:function(hresp){	
+					var chat_messages = '';
+					$.each(hresp,function(index,val){
+						if(val.author_id == module.user_id){
+							chat_messages += '<div class="pm_mssg_cont"> <div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment.utc(val.created_at).local().format('hh:mma') + '"> ' + val.message + ' </div> </div>';
+						}else{
+							chat_messages += '<div class="pm_mssg_cont"> <div class="pm_message pull-left" style="background-color:#7badfc;margin-right:30px;margin-left:5px;" title="' + moment.utc(val.created_at).local().format('hh:mma') + '"> ' + val.message + ' </div> </div>';
+						}
+					});
+					$('#pm_' + friend_id + '_' + pm_id).find('.pm_body_mssgs').append(chat_messages);
+					module.socket.emit('join_pm',{friend_id:friend_id,friend_name:friend_name,pm_id:pm_id},function(info){
+						$('#pm_' + info.friend_name + '_' + info.prev_id).attr('id','pm_' + info.friend_id + '_' + info.pm_id);
+					});
+					$('.pm_body').eq(0).mCustomScrollbar({theme:'light-2',callbacks:{onScroll:function(){
+						var $this = $(this);
+						var par_id = $this.parent().attr('id');
+						var scrollBottom = this.mcs.draggerTop + $this.find('.mCSB_dragger').height();
+						if(scrollBottom == $this.height()){
+							module.pm_scroll_inactive[par_id] = 0;
+						}else{
+							module.pm_scroll_inactive[par_id] = 1;
+						}
+					}}});	
+					$('.pm_body').eq(0).mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
+					window.setTimeout(function(){
+						$('.pm_visible').css('visibility','');	
+					},50);
+					$('.pm_cont').eq(0).resizable({handles:"nw",ghost:false,maxHeight:450,maxWidth:400,minHeight:330,minWidth:240,resize:function(e,ui){
+						var ui_height = ui.size.height;
+						var ui_width = ui.size.width - 10;
+						$(this).css('left','0');
+						$(this).css('top','0');
+						$(this).find('.pm_header').width(ui_width);
+						$(this).find('.pm_body').height(ui_height - 64);
+						$(this).find('.pm_body').width($(this).find('.pm_header').width() + 6);
+						$(this).find('.pm_text').width($(this).find('.pm_header').width() - 2);
+					}});
+					var chat_cont = $('#pm_' + friend_id + '_' + pm_id);
+					if(module.pm_scroll_inactive[chat_cont.attr('id')] == 0 || !(chat_cont.attr('id') in module.pm_scroll_inactive)){
+						var pm_body = chat_cont.find('.pm_body');
+						window.setTimeout(function(){
+							pm_body.mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
+						},20);
+					}
+				},
+				error:function(){}	
+			});
+		}else{
+			var chat_box = $('#pm_' + friend_id + '_' + pm_id).clone();
+			$('#pm_' + friend_id + '_' + pm_id).remove();
+			chat_box.css('display','');
+			$('.pm_cont').first().before(chat_box);
+		}
 		return false;
 	});
 	$('.pm_cont').resizable({handles:"nw",ghost:false,maxHeight:450,maxWidth:400,minHeight:330,minWidth:240,resize:function(e,ui){
