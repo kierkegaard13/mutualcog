@@ -56,7 +56,11 @@ updateTimes = function(){
 }();
 
 function newPmChat(friend_id,pm_id,friend_status_class,friend_name){
-	var chat_box = '<div class="pm_cont pm_visible" id="pm_' + friend_id + '_' + pm_id + '" style="visibility:hidden;">';
+	if(pm_id == 0){
+		var chat_box = '<div class="pm_cont pm_visible" id="pm_' + friend_name + '_0" style="visibility:hidden;">';
+	}else{
+		var chat_box = '<div class="pm_cont pm_visible" id="pm_' + friend_id + '_' + pm_id + '" style="visibility:hidden;">';
+	}
 	chat_box += '<div class="pm_header"><div class="' + friend_status_class + ' pm_status"></div><div class="glyphicon glyphicon-remove pm_remove"></div><div class="pm_name">' + friend_name + '</div></div>';
 	chat_box += '<div class="pm_body"><div class="pm_body_mssgs">'
 	chat_box += '</div><div class="pm_body_alerts"> <div class="pm_mssg_alert pm_unseen" style="display:none;">Not seen</div> <div class="pm_mssg_alert pm_typing" style="display:none;">' + friend_name + ' is typing...</div> </div></div>';
@@ -172,59 +176,92 @@ $(document).ready(function(){
 		var pm_id = $(this).attr('data-pm-chat-id');
 		var friend_status_class = $(this).find('#friend_' + friend_id + '_status').attr('class').replace('friend_status','');
 		if($('.pm_bar').width() < $(window).width() - 500 /*&& $('#pm_' + friend_id + '_' + pm_id).length == 0*/){
-			var chat_box = newPmChat(friend_id,pm_id,friend_status_class,friend_name);
-			$('.pm_bar').prepend(chat_box);
-			$.ajax({  //TODO: rewrite, causes error when chat doesn't exist
-				type:'GET',
-				data:{pm_id:pm_id},
-				url:'//mutualcog.com/chat/pm-log',
-				success:function(hresp){	
-					var chat_messages = '';
-					$.each(hresp,function(index,val){
-						if(val.author_id == module.user_id){
-							chat_messages += '<div class="pm_mssg_cont"> <div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment.utc(val.created_at).local().format('hh:mma') + '"> ' + val.message + ' </div> </div>';
-						}else{
-							chat_messages += '<div class="pm_mssg_cont"> <div class="pm_message pull-left" style="background-color:#7badfc;margin-right:30px;margin-left:5px;" title="' + moment.utc(val.created_at).local().format('hh:mma') + '"> ' + val.message + ' </div> </div>';
-						}
-					});
-					$('#pm_' + friend_id + '_' + pm_id).find('.pm_body_mssgs').append(chat_messages);
-					module.socket.emit('join_pm',{friend_id:friend_id,friend_name:friend_name,pm_id:pm_id},function(info){
-						$('#pm_' + info.friend_name + '_' + info.prev_id).attr('id','pm_' + info.friend_id + '_' + info.pm_id);
-					});
-					$('.pm_body').eq(0).mCustomScrollbar({theme:'light-2',callbacks:{onScroll:function(){
-						var $this = $(this);
-						var par_id = $this.parent().attr('id');
-						var scrollBottom = this.mcs.draggerTop + $this.find('.mCSB_dragger').height();
-						if(scrollBottom == $this.height()){
-							module.pm_scroll_inactive[par_id] = 0;
-						}else{
-							module.pm_scroll_inactive[par_id] = 1;
-						}
-					}}});	
-					$('.pm_body').eq(0).mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
-					window.setTimeout(function(){
-						$('.pm_visible').css('visibility','');	
-					},50);
-					$('.pm_cont').eq(0).resizable({handles:"nw",ghost:false,maxHeight:450,maxWidth:400,minHeight:330,minWidth:240,resize:function(e,ui){
-						var ui_height = ui.size.height;
-						var ui_width = ui.size.width - 10;
-						$(this).css('left','0');
-						$(this).css('top','0');
-						$(this).find('.pm_header').width(ui_width);
-						$(this).find('.pm_body').height(ui_height - 64);
-						$(this).find('.pm_body').width($(this).find('.pm_header').width() + 6);
-						$(this).find('.pm_text').width($(this).find('.pm_header').width() - 2);
-					}});
-					var chat_cont = $('#pm_' + friend_id + '_' + pm_id);
-					if(module.pm_scroll_inactive[chat_cont.attr('id')] == 0 || !(chat_cont.attr('id') in module.pm_scroll_inactive)){
-						var pm_body = chat_cont.find('.pm_body');
+			if(pm_id != '0'){
+				var chat_box = newPmChat(friend_id,pm_id,friend_status_class,friend_name);
+				$('.pm_bar').prepend(chat_box);
+				$.ajax({  //TODO: rewrite, causes error when chat doesn't exist
+					type:'GET',
+					data:{pm_id:pm_id},
+					url:'//mutualcog.com/chat/pm-log',
+					success:function(hresp){	
+						var chat_messages = '';
+						$.each(hresp,function(index,val){
+							if(val.author_id == module.user_id){
+								chat_messages += '<div class="pm_mssg_cont"> <div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment.utc(val.created_at).local().format('hh:mma') + '"> ' + val.message + ' </div> </div>';
+							}else{
+								chat_messages += '<div class="pm_mssg_cont"> <div class="pm_message pull-left" style="background-color:#7badfc;margin-right:30px;margin-left:5px;" title="' + moment.utc(val.created_at).local().format('hh:mma') + '"> ' + val.message + ' </div> </div>';
+							}
+						});
+						$('#pm_' + friend_id + '_' + pm_id).find('.pm_body_mssgs').append(chat_messages);
+						module.socket.emit('join_pm',{friend_id:friend_id,friend_name:friend_name,pm_id:pm_id},function(info){
+						});
+						$('.pm_body').eq(0).mCustomScrollbar({theme:'light-2',callbacks:{onScroll:function(){
+							var $this = $(this);
+							var par_id = $this.parent().attr('id');
+							var scrollBottom = this.mcs.draggerTop + $this.find('.mCSB_dragger').height();
+							if(scrollBottom == $this.height()){
+								module.pm_scroll_inactive[par_id] = 0;
+							}else{
+								module.pm_scroll_inactive[par_id] = 1;
+							}
+						}}});	
+						$('.pm_body').eq(0).mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
 						window.setTimeout(function(){
-							pm_body.mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
-						},20);
+							$('.pm_visible').css('visibility','');	
+							$('#pm_' + friend_id + '_' + pm_id).find('.pm_text').focus();
+						},50);
+						$('.pm_cont').eq(0).resizable({handles:"nw",ghost:false,maxHeight:450,maxWidth:400,minHeight:330,minWidth:240,resize:function(e,ui){
+							var ui_height = ui.size.height;
+							var ui_width = ui.size.width - 10;
+							$(this).css('left','0');
+							$(this).css('top','0');
+							$(this).find('.pm_header').width(ui_width);
+							$(this).find('.pm_body').height(ui_height - 64);
+							$(this).find('.pm_body').width($(this).find('.pm_header').width() + 6);
+							$(this).find('.pm_text').width($(this).find('.pm_header').width() - 2);
+						}});
+						/*var chat_cont = $('#pm_' + friend_id + '_' + pm_id);
+						if(module.pm_scroll_inactive[chat_cont.attr('id')] == 0 || !(chat_cont.attr('id') in module.pm_scroll_inactive)){
+							var pm_body = chat_cont.find('.pm_body');
+							window.setTimeout(function(){
+								pm_body.mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
+							},20);
+						}*/
+					},
+					error:function(){}	
+				});
+			}else{
+				var chat_box = newPmChat(friend_id,0,friend_status_class,friend_name);
+				$('.pm_bar').prepend(chat_box);
+				module.socket.emit('join_pm',{friend_id:friend_id,friend_name:friend_name,pm_id:pm_id},function(info){
+					$('#pm_' + info.friend_name + '_0').attr('id','pm_' + info.friend_id + '_' + info.pm_id);
+				});
+				$('.pm_body').eq(0).mCustomScrollbar({theme:'light-2',callbacks:{onScroll:function(){
+					var $this = $(this);
+					var par_id = $this.parent().attr('id');
+					var scrollBottom = this.mcs.draggerTop + $this.find('.mCSB_dragger').height();
+					if(scrollBottom == $this.height()){
+						module.pm_scroll_inactive[par_id] = 0;
+					}else{
+						module.pm_scroll_inactive[par_id] = 1;
 					}
-				},
-				error:function(){}	
-			});
+				}}});	
+				$('.pm_body').eq(0).mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
+				window.setTimeout(function(){
+					$('.pm_visible').css('visibility','');	
+					$('#pm_' + friend_id + '_' + pm_id).find('.pm_text').focus();
+				},50);
+				$('.pm_cont').eq(0).resizable({handles:"nw",ghost:false,maxHeight:450,maxWidth:400,minHeight:330,minWidth:240,resize:function(e,ui){
+					var ui_height = ui.size.height;
+					var ui_width = ui.size.width - 10;
+					$(this).css('left','0');
+					$(this).css('top','0');
+					$(this).find('.pm_header').width(ui_width);
+					$(this).find('.pm_body').height(ui_height - 64);
+					$(this).find('.pm_body').width($(this).find('.pm_header').width() + 6);
+					$(this).find('.pm_text').width($(this).find('.pm_header').width() - 2);
+				}});
+			}
 		}else{
 			if($('.pm_list_footer').length == 0){
 				$('.pm_bar').prepend('<div class="dropup pm_list_footer_cont"><div class="pm_list_footer dropdown-toggle" data-toggle="dropdown"><div class="glyphicon glyphicon-comment" style="color:white;float:left;"> ...</div></div><ul class="dropdown-menu pm_dropup" role="menu"><li><a class="switch_pm" href="#" data-friend-id="' + friend_id + '" data-friend-name="' + friend_name + '" data-pm-id="' + pm_id + '" data-status="' + friend_status_class + '">' + friend_name + '</a></li></ul></div>');
@@ -264,7 +301,6 @@ $(document).ready(function(){
 					});
 					$('#pm_' + friend_id + '_' + pm_id).find('.pm_body_mssgs').append(chat_messages);
 					module.socket.emit('join_pm',{friend_id:friend_id,friend_name:friend_name,pm_id:pm_id},function(info){
-						$('#pm_' + info.friend_name + '_' + info.prev_id).attr('id','pm_' + info.friend_id + '_' + info.pm_id);
 					});
 					$('.pm_body').eq(0).mCustomScrollbar({theme:'light-2',callbacks:{onScroll:function(){
 						var $this = $(this);
@@ -279,6 +315,7 @@ $(document).ready(function(){
 					$('.pm_body').eq(0).mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
 					window.setTimeout(function(){
 						$('.pm_visible').css('visibility','');	
+						$('#pm_' + friend_id + '_' + pm_id).find('.pm_text').focus();
 					},50);
 					$('.pm_cont').eq(0).resizable({handles:"nw",ghost:false,maxHeight:450,maxWidth:400,minHeight:330,minWidth:240,resize:function(e,ui){
 						var ui_height = ui.size.height;
@@ -304,6 +341,7 @@ $(document).ready(function(){
 			var chat_box = $('#pm_' + friend_id + '_' + pm_id).clone();
 			$('#pm_' + friend_id + '_' + pm_id).remove();
 			chat_box.css('display','');
+			$('#pm_' + friend_id + '_' + pm_id).find('.pm_text').focus();
 			$('.pm_cont').first().before(chat_box);
 		}
 		return false;
