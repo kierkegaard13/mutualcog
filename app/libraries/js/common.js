@@ -1,6 +1,7 @@
 module = function(){
 	var focused = live = scroll_mod_active = 1;
 	var pm_info = '';
+	var crit_len = new Array();
 	var pm_scroll_inactive = {};
 	var title_blinking = chat_scroll_timer = typ_cnt = connected = recent = banned = stop_scroll = scroll_button_clicked = scroll_top = 0;
 	var clicked_on = -1;
@@ -37,7 +38,7 @@ module = function(){
 	var max_description_length = 100;
 	var max_info_length = 10000;
 
-	return {chat_scroll_timer:chat_scroll_timer,max_title_length:max_title_length,max_user_length:max_user_length,max_static_length:max_static_length,max_chat_mssg_length:max_chat_mssg_length,max_description_length:max_description_length,max_info_length:max_info_length,pm_scroll_inactive:pm_scroll_inactive,connected:connected,recent:recent,typ_cnt:typ_cnt,pm_info:pm_info,focused:focused,live:live,title_blinking:title_blinking,banned:banned,stop_scroll:stop_scroll,scroll_mod_active:scroll_mod_active,scroll_button_clicked:scroll_button_clicked,scroll_top:scroll_top,clicked_on:clicked_on,chat_id:chat_id,upvoted:upvoted,downvoted:downvoted,socket:socket,color_arr:color_arr,mems:mems,mods:mods,admin:admin,notifications_top_positions:notifications_top_positions,notifications_bottom_positions:notifications_bottom_positions,notifications_top_ids:notifications_top_ids,notifications_bottom_ids:notifications_bottom_ids,serial_id:serial_id,serial_tracker:serial_tracker,user_id:user_id,user_tracker:user_tracker};
+	return {crit_len:crit_len,chat_scroll_timer:chat_scroll_timer,max_title_length:max_title_length,max_user_length:max_user_length,max_static_length:max_static_length,max_chat_mssg_length:max_chat_mssg_length,max_description_length:max_description_length,max_info_length:max_info_length,pm_scroll_inactive:pm_scroll_inactive,connected:connected,recent:recent,typ_cnt:typ_cnt,pm_info:pm_info,focused:focused,live:live,title_blinking:title_blinking,banned:banned,stop_scroll:stop_scroll,scroll_mod_active:scroll_mod_active,scroll_button_clicked:scroll_button_clicked,scroll_top:scroll_top,clicked_on:clicked_on,chat_id:chat_id,upvoted:upvoted,downvoted:downvoted,socket:socket,color_arr:color_arr,mems:mems,mods:mods,admin:admin,notifications_top_positions:notifications_top_positions,notifications_bottom_positions:notifications_bottom_positions,notifications_top_ids:notifications_top_ids,notifications_bottom_ids:notifications_bottom_ids,serial_id:serial_id,serial_tracker:serial_tracker,user_id:user_id,user_tracker:user_tracker};
 }();
 
 updateChatTimes = function(){
@@ -68,6 +69,25 @@ function newPmChat(friend_id,pm_id,friend_status_class,friend_name){
 	chat_box += '</div>'; 
 	return chat_box;
 }
+
+$(window).resize(function(){
+	if($('.pm_bar').width() > $(window).width() - 150 && $(window).width() > 10){
+		module.crit_len.push($(window).width());
+		$.each($('.pm_cont'),function(index,val){
+			if($('.pm_cont').eq(index).css('display') != 'none'){
+				$('.pm_cont').eq(index).css('display','none');
+				return false;
+			}
+		});
+	}else if($(window).width() > module.crit_len[module.crit_len.length - 1] && $('.pm_cont').eq(0).css('display') == 'none' && $(window).width() > 10){
+		module.crit_len.pop();
+		$.each($('.pm_cont'),function(index,val){
+			if($('.pm_cont').eq(index).css('display') != 'none' && index > 0){
+				$('.pm_cont').eq(index - 1).css('display','');
+			}
+		});
+	}
+});
 
 $(document).ready(function(){
 	if(module.user_id.length){
@@ -175,7 +195,7 @@ $(document).ready(function(){
 		var friend_id = $(this).attr('data-friend-id');
 		var pm_id = $(this).attr('data-pm-chat-id');
 		var friend_status_class = $(this).find('#friend_' + friend_id + '_status').attr('class').replace('friend_status','');
-		if($('.pm_bar').width() < $(window).width() - 500 /*&& $('#pm_' + friend_id + '_' + pm_id).length == 0*/){
+		if($('.pm_bar').width() < $(window).width() - 400 /*&& $('#pm_' + friend_id + '_' + pm_id).length == 0*/){
 			if(pm_id != '0'){
 				var chat_box = newPmChat(friend_id,pm_id,friend_status_class,friend_name);
 				$('.pm_bar').prepend(chat_box);
@@ -279,6 +299,7 @@ $(document).ready(function(){
 		var first_name = first.find('.pm_name').text();
 		$('.pm_dropup').prepend('<li><a class="switch_pm" href="#" data-friend-id="' + first_fr_id + '" data-friend-name="' + first_name + '" data-pm-id="' + first_pm_id + '" data-status="' + first_stat + '">' + first_name + '</a></li>');
 		$('.pm_cont').first().css('display','none');
+		$('.pm_cont').first().css('visibility','hidden');
 		var friend_id = $(this).attr('data-friend-id');;
 		var pm_id = $(this).attr('data-pm-id');
 		var friend_status_class = $(this).attr('data-status');
@@ -302,7 +323,7 @@ $(document).ready(function(){
 					$('#pm_' + friend_id + '_' + pm_id).find('.pm_body_mssgs').append(chat_messages);
 					module.socket.emit('join_pm',{friend_id:friend_id,friend_name:friend_name,pm_id:pm_id},function(info){
 					});
-					$('.pm_body').eq(0).mCustomScrollbar({theme:'light-2',callbacks:{onScroll:function(){
+					$('#pm_' + friend_id + '_' + pm_id).find('.pm_body').mCustomScrollbar({theme:'light-2',callbacks:{onScroll:function(){
 						var $this = $(this);
 						var par_id = $this.parent().attr('id');
 						var scrollBottom = this.mcs.draggerTop + $this.find('.mCSB_dragger').height();
@@ -312,12 +333,12 @@ $(document).ready(function(){
 							module.pm_scroll_inactive[par_id] = 1;
 						}
 					}}});	
-					$('.pm_body').eq(0).mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
+					$('#pm_' + friend_id + '_' + pm_id).find('.pm_body').mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
 					window.setTimeout(function(){
-						$('.pm_visible').css('visibility','');	
+						$('#pm_' + friend_id + '_' + pm_id).css('visibility','');	
 						$('#pm_' + friend_id + '_' + pm_id).find('.pm_text').focus();
 					},50);
-					$('.pm_cont').eq(0).resizable({handles:"nw",ghost:false,maxHeight:450,maxWidth:400,minHeight:330,minWidth:240,resize:function(e,ui){
+					$('#pm_' + friend_id + '_' + pm_id).resizable({handles:"nw",ghost:false,maxHeight:450,maxWidth:400,minHeight:330,minWidth:240,resize:function(e,ui){
 						var ui_height = ui.size.height;
 						var ui_width = ui.size.width - 10;
 						$(this).css('left','0');
@@ -327,22 +348,47 @@ $(document).ready(function(){
 						$(this).find('.pm_body').width($(this).find('.pm_header').width() + 6);
 						$(this).find('.pm_text').width($(this).find('.pm_header').width() - 2);
 					}});
-					var chat_cont = $('#pm_' + friend_id + '_' + pm_id);
+					/*var chat_cont = $('#pm_' + friend_id + '_' + pm_id);
 					if(module.pm_scroll_inactive[chat_cont.attr('id')] == 0 || !(chat_cont.attr('id') in module.pm_scroll_inactive)){
 						var pm_body = chat_cont.find('.pm_body');
 						window.setTimeout(function(){
 							pm_body.mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
 						},20);
-					}
+					}*/
 				},
 				error:function(){}	
 			});
 		}else{
+			console.log('hihi');
 			var chat_box = $('#pm_' + friend_id + '_' + pm_id).clone();
 			$('#pm_' + friend_id + '_' + pm_id).remove();
 			chat_box.css('display','');
-			$('#pm_' + friend_id + '_' + pm_id).find('.pm_text').focus();
 			$('.pm_cont').first().before(chat_box);
+			$('#pm_' + friend_id + '_' + pm_id).find('.pm_body').mCustomScrollbar({theme:'light-2',callbacks:{onScroll:function(){
+				var $this = $(this);
+				var par_id = $this.parent().attr('id');
+				var scrollBottom = this.mcs.draggerTop + $this.find('.mCSB_dragger').height();
+				if(scrollBottom == $this.height()){
+					module.pm_scroll_inactive[par_id] = 0;
+				}else{
+					module.pm_scroll_inactive[par_id] = 1;
+				}
+			}}});	
+			$('#pm_' + friend_id + '_' + pm_id).find('.pm_body').mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
+			window.setTimeout(function(){
+				$('#pm_' + friend_id + '_' + pm_id).css('visibility','');	
+				$('#pm_' + friend_id + '_' + pm_id).find('.pm_text').focus();
+			},50);
+			$('#pm_' + friend_id + '_' + pm_id).resizable({handles:"nw",ghost:false,maxHeight:450,maxWidth:400,minHeight:330,minWidth:240,resize:function(e,ui){
+				var ui_height = ui.size.height;
+				var ui_width = ui.size.width - 10;
+				$(this).css('left','0');
+				$(this).css('top','0');
+				$(this).find('.pm_header').width(ui_width);
+				$(this).find('.pm_body').height(ui_height - 64);
+				$(this).find('.pm_body').width($(this).find('.pm_header').width() + 6);
+				$(this).find('.pm_text').width($(this).find('.pm_header').width() - 2);
+			}});
 		}
 		return false;
 	});
