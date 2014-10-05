@@ -71,11 +71,12 @@ function newPmChat(friend_id,pm_id,friend_status_class,friend_name){
 }
 
 $(window).resize(function(){
-	if($('.pm_bar').width() > $(window).width() - 100 && $(window).width() > 10){
-		module.crit_len.push($(window).width());
+	if($('.pm_bar').width() > $(window).width() - 30){
+		module.crit_len.push($(window).width() + 30);
 		$.each($('.pm_cont'),function(index,val){
 			if($('.pm_cont').eq(index).css('display') != 'none'){
 				$('.pm_cont').eq(index).css('display','none');
+				$('.pm_cont').eq(index).css('visibility','hidden');
 				var chat_box = $('.pm_cont').eq(index);
 				var friend_id = chat_box.attr('id').split('_')[1];
 				var pm_id = chat_box.attr('id').split('_')[2];
@@ -89,21 +90,35 @@ $(window).resize(function(){
 				return false;
 			}
 		});
-	}else if($(window).width() > module.crit_len[module.crit_len.length - 1] && $('.pm_cont').eq(0).css('display') == 'none' && $(window).width() > 10){
+	}else if(((module.crit_len.length > 0 && $(window).width() > module.crit_len[module.crit_len.length - 1]) || (module.crit_len.length == 0 && $('.pm_bar').width() <= $(window).width() - 30)) && $('.pm_cont').eq(0).css('display') == 'none'){
 		module.crit_len.pop();
 		$.each($('.pm_cont'),function(index,val){
 			if($('.pm_cont').eq(index).css('display') != 'none' && index > 0){
-				$('.pm_cont').eq(index - 1).css('display','');
 				var chat_box = $('.pm_cont').eq(index - 1);
 				var friend_id = chat_box.attr('id').split('_')[1];
 				var pm_id = chat_box.attr('id').split('_')[2];
 				$('#switch_' + friend_id + '_' + pm_id).remove();
+				if($('.pm_dropup').children().length == 0){
+					$('.pm_list_footer_cont').remove();
+				}
+				$('.pm_cont').eq(index - 1).css('display','');
+				$('.pm_cont').eq(index - 1).find('.pm_body').mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
+				window.setTimeout(function(){
+					$('.pm_cont').eq(index - 1).css('visibility','');	
+				},50);
 			}else if(index == $('.pm_cont').length - 1){
-				$('.pm_cont').eq(index).css('display','');
 				var chat_box = $('.pm_cont').eq(index);
 				var friend_id = chat_box.attr('id').split('_')[1];
 				var pm_id = chat_box.attr('id').split('_')[2];
 				$('#switch_' + friend_id + '_' + pm_id).remove();
+				if($('.pm_dropup').children().length == 0){
+					$('.pm_list_footer_cont').remove();
+				}
+				$('.pm_cont').eq(index).css('display','');
+				$('.pm_cont').eq(index).find('.pm_body').mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
+				window.setTimeout(function(){
+					$('.pm_cont').eq(index).css('visibility','');	
+				},50);
 			}
 		});
 	}
@@ -138,6 +153,25 @@ $(document).ready(function(){
 		});
 	}
 	if($('.pm_body').length){
+		if($('.pm_bar').width() > $(window).width() - 30){
+			$.each($('.pm_cont'),function(index,val){
+				$('.pm_cont').eq(index).css('display','none');
+				$('.pm_cont').eq(index).removeClass('pm_visible');
+				var chat_box = $('.pm_cont').eq(index);
+				var friend_id = chat_box.attr('id').split('_')[1];
+				var pm_id = chat_box.attr('id').split('_')[2];
+				var friend_status_class = chat_box.find('.pm_status').attr('class').split(' ')[0];
+				var friend_name = chat_box.find('.pm_name').text();
+				if($('.pm_list_footer').length == 0){
+					$('.pm_bar').prepend('<div class="dropup pm_list_footer_cont"><div class="pm_list_footer dropdown-toggle" data-toggle="dropdown"><div class="glyphicon glyphicon-comment" style="color:white;float:left;"> ...</div></div><ul class="dropdown-menu pm_dropup" role="menu"><li id="switch_' + friend_id + '_' + pm_id + '"><a class="switch_pm" href="#" data-friend-id="' + friend_id + '" data-friend-name="' + friend_name + '" data-pm-id="' + pm_id + '" data-status="' + friend_status_class + '">' + friend_name + '</a></li></ul></div>');
+				}else{
+					$('.pm_dropup').prepend('<li id="switch_' + friend_id + '_' + pm_id + '"><a class="switch_pm" href="#" data-friend-id="' + friend_id + '" data-friend-name="' + friend_name + '" data-pm-id="' + pm_id + '" data-status="' + friend_status_class + '">' + friend_name + '</a></li>');
+				}
+				if($('.pm_bar').width() <= $(window).width() - 30){
+					return false;
+				}
+			});
+		}
 		$('.pm_body').mCustomScrollbar({theme:'light-2',callbacks:{onScroll:function(){
 			var $this = $(this);
 			var par_id = $this.parent().attr('id');
@@ -151,6 +185,11 @@ $(document).ready(function(){
 		$('.pm_body').mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
 		window.setTimeout(function(){
 			$('.pm_visible').css('visibility','');	
+			$.each($('.pm_cont'),function(index,val){
+				if(!$('.pm_cont').eq(index).hasClass('pm_visible')){
+					$('.pm_cont').eq(index).addClass('pm_visible');
+				}
+			});
 		},50);
 	}
 	updateChatTimes;
@@ -215,7 +254,7 @@ $(document).ready(function(){
 		var friend_id = $(this).attr('data-friend-id');
 		var pm_id = $(this).attr('data-pm-chat-id');
 		var friend_status_class = $(this).find('#friend_' + friend_id + '_status').attr('class').replace('friend_status','');
-		if($('.pm_bar').width() < $(window).width() - 400 /*&& $('#pm_' + friend_id + '_' + pm_id).length == 0*/){
+		if($('.pm_bar').width() < $(window).width() - 370 /*&& $('#pm_' + friend_id + '_' + pm_id).length == 0*/){
 			if(pm_id != '0'){
 				var chat_box = newPmChat(friend_id,pm_id,friend_status_class,friend_name);
 				$('.pm_bar').prepend(chat_box);
