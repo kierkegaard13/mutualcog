@@ -62,7 +62,9 @@
 	<li class="active"><a href="#posts" data-toggle="tab" style="color:#075de9">Posts</a></li>
 	<li><a href="#comments" data-toggle="tab" style="color:#075de9">Comments</a></li>
 	<li><a href="#friendships" data-toggle="tab" style="color:#075de9">Friendships</a></li>
-	<li><a href="#inbox" data-toggle="tab" style="color:#075de9">Inbox</a></li>
+	{% if user.id == profile.id %}
+		<li><a href="#inbox" data-toggle="tab" style="color:#075de9">Inbox</a></li>
+	{% endif %}
 </ul>
 
 <div id="tab_content" class="tab-content">
@@ -159,10 +161,15 @@
 	</div>
 </div>
 
-<div class="tab-pane fade in" id="inbox">
-	<div class="frame" style="height:620px;padding:0;white-space:normal;">
+{% if user.id == profile.id %}
+	<div class="tab-pane fade in" id="inbox">
+		<div class="frame" style="height:620px;padding:0;white-space:normal;">
+			{% for chat in profile.inbox %}
+				1
+			{% endfor %}
+		</div>
 	</div>
-</div>
+{% endif %}
 
 </div>
 

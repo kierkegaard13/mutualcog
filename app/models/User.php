@@ -65,11 +65,15 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 	}
 
 	public function privateChats(){
-		return $this->belongsToMany('PrivateChats','users_to_private_chats','user_id','chat_id')->where('visible','!=','0')->withPivot('visible','unseen');
+		return $this->belongsToMany('PrivateChats','users_to_private_chats','user_id','chat_id')->whereinboxed(0)->where('visible','!=','0')->withPivot('visible','unseen');
 	}
 
 	public function privateChatF(){
-		return $this->belongsToMany('PrivateChats','users_to_private_chats','entity_id','chat_id')->whereuser_id(Auth::user()->id)->whereentity_type(0);
+		return $this->belongsToMany('PrivateChats','users_to_private_chats','entity_id','chat_id')->whereinboxed(0)->whereuser_id(Auth::user()->id)->whereentity_type(0);
+	}
+
+	public function inbox(){
+		return $this->belongsToMany('PrivateChats','users_to_private_chats','user_id','chat_id')->whereinboxed(1)->withPivot('unseen');
 	}
 
 	public function chats(){

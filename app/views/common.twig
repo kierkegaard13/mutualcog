@@ -262,10 +262,12 @@
 				<h4 class="modal-title">Create new message</h4>
 			</div>
 			<div class="modal-body">
-				<textarea rows=5></textarea>
+				<form method="post" action="{{site}}/profile/message-user/" id="message_user_form">
+				<textarea id="message_body" name="message_body" rows=5></textarea>
 			</div>
 			<div class="modal-footer">
-				<a href="{{site}}/profile/message-user/" class="btn btn-primary" id="message_user" type="Submit">Send</a>
+				<button class="btn btn-primary" type="Submit">Send</button>
+				</form>
 			</div>
 		</div>
 	</div>	

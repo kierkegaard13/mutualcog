@@ -35,6 +35,56 @@ class Profile extends BaseController {
 		return $this->returnToCurrPage();
 	}
 
+	public function postMessageUser($user_id){
+		if(Auth::check()){
+			$message_body = htmlentities(Input::get('message_body'));
+			$user_to_chat = UsersToPrivateChats::whereuser_id(Auth::user()->id)->whereentity_id($user_id)->first();
+			if($user_to_chat){
+				$friend_to_chat = UsersToPrivateChats::whereentity_id(Auth::user()->id)->whereuser_id($user_id)->first();
+				$friend_to_chat->unseen = 1;
+				$friend_to_chat->save();
+				$chat = PrivateChats::find($user_to_chat->chat_id);
+				$message = new PrivateMessages();
+				$message->chat_id = $chat->id;
+				$message->author = Auth::user()->name;
+				$message->author_id = Auth::user()->id;
+				$message->message = $message_body;
+				$message->save();
+			}else{
+				$interaction = InteractionUsers::whereuser_id(Auth::user()->id)->whereentity_id($user_id)->first();
+				$chat = new PrivateChats();
+				$chat->total_messages = 1;
+				if($interaction){
+					if(!$interaction->friended){
+						$chat->inboxed = 1;
+					}
+				}else{
+					$chat->inboxed = 1;
+				}
+				$chat->save();
+				$chat = $chat->findAll();
+				$user_to_chat = new UsersToPrivateChats();
+				$user_to_chat->user_id = Auth::user()->id;
+				$user_to_chat->entity_id = $user_id;
+				$user_to_chat->chat_id = $chat->id;
+				$user_to_chat->save();
+				$friend_to_chat = new UsersToPrivateChats();
+				$friend_to_chat->entity_id = Auth::user()->id;
+				$friend_to_chat->user_id = $user_id;
+				$friend_to_chat->chat_id = $chat->id;
+				$friend_to_chat->unseen = 1;
+				$friend_to_chat->save();
+				$message = new PrivateMessages();
+				$message->chat_id = $chat->id;
+				$message->author = Auth::user()->name;
+				$message->author_id = Auth::user()->id;
+				$message->message = $message_body;
+				$message->save();
+			}
+		}
+		return $this->returnToCurrPage();
+	}
+
 	public function getAccept($request_id){
 		if(!isset($request_id)){
 			return App::abort(404,'You seem to have entered an invalid URL');
@@ -65,6 +115,12 @@ class Profile extends BaseController {
 					$inter_friend->friended = 1;
 					$inter_friend->bond = 50;
 					$inter_friend->save();
+				}
+				$user_to_chat = UsersToPrivateChats::whereuser_id(Auth::user()->id)->whereentity_id($user_id)->first();
+				if($user_to_chat){
+					$chat = PrivateChats::find($user_to_chat->chat_id);
+					$chat->inboxed = 0;
+					$chat->save();
 				}
 				$request->delete();
 			}

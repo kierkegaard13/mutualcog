@@ -16,6 +16,14 @@ $(document).ready(function(){
 		var mssg_id = $(this).attr('id');
 		window.location.href = '//mutualcog.com/chat/static/' + chat_id + '/' + mssg_id;
 	});
+	$('#message_user_form').submit(function(){
+		if($(this).find('#message_body').val() != ''){
+			$(this).attr('action',$(this).attr('action') + $('.profile_name').attr('id')); 
+			return true;
+		}else{
+			return false;
+		}
+	});
 	$('.load_more').on('click',function(){
 		var url = $(this).attr('href');
 		var cont = $(this).parent();
