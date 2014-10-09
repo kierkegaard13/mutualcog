@@ -193,6 +193,8 @@ class Profile extends BaseController {
 
 	public function getLogout(){
 		if(Auth::check()){
+			Auth::user()->online = 0;
+			Auth::user()->save();
 			$node = new NodeAuth();
 			$node->user_id = Auth::user()->id;
 			$node->user = Auth::user()->name;
@@ -289,6 +291,7 @@ class Profile extends BaseController {
 			if(Crypt::decrypt($user->password) == $pass){
 				$user->last_login = date(DATE_ATOM);
 				$user->serial_id = Session::get('serial_id');
+				$user->online = 1;
 				$user->save();
 				Auth::login($user);
 				$node = new NodeAuth();

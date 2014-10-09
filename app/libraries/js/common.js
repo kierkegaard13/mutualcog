@@ -152,6 +152,7 @@ $(document).ready(function(){
 			module.recent = 0;
 		});
 	}
+	module.socket.emit('seen_chats');
 	if($('.pm_body').length){
 		if($('.pm_bar').width() > $(window).width() - 30){
 			$.each($('.pm_cont'),function(index,val){
@@ -254,11 +255,11 @@ $(document).ready(function(){
 		var friend_id = $(this).attr('data-friend-id');
 		var pm_id = $(this).attr('data-pm-chat-id');
 		var friend_status_class = $(this).find('#friend_' + friend_id + '_status').attr('class').replace('friend_status','');
-		if($('.pm_bar').width() < $(window).width() - 370 /*&& $('#pm_' + friend_id + '_' + pm_id).length == 0*/){
+		if($('.pm_bar').width() < $(window).width() - 370 && $('#pm_' + friend_id + '_' + pm_id).length == 0){
 			if(pm_id != '0'){
 				var chat_box = newPmChat(friend_id,pm_id,friend_status_class,friend_name);
 				$('.pm_bar').prepend(chat_box);
-				$.ajax({  //TODO: rewrite, causes error when chat doesn't exist
+				$.ajax({  
 					type:'GET',
 					data:{pm_id:pm_id},
 					url:'//mutualcog.com/chat/pm-log',
