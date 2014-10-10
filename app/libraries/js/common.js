@@ -197,8 +197,30 @@ $(document).ready(function(){
 	updateTimes;
 	setInterval(updateTimes,60000);
 	setInterval(updateChatTimes,60000);
+	if(document.URL.indexOf("#") != -1 && $('.nav-tabs').length != 0){
+		var tab_name = document.URL.substring(document.URL.indexOf("#"));
+		$('.nav-tabs').find('a[href="' + tab_name + '"]').tab('show');
+	}
 	$.each($('.pm_message'),function(index,val){
-		$('.pm_message').eq(index).attr('title',moment.utc($('.pm_message').eq(index).attr('title')).local().format('hh:mma'));
+		if(moment().local().format('D:M:YYYY') == moment.utc($('.pm_message').eq(index).attr('title')).local().format('D:M:YYYY')){
+			$('.pm_message').eq(index).attr('title',moment.utc($('.pm_message').eq(index).attr('title')).local().format('[Today at] h:mma'));
+		}else{
+			$('.pm_message').eq(index).attr('title',moment.utc($('.pm_message').eq(index).attr('title')).local().format('D/M/YY [at] h:mma'));
+		}
+	});
+	$.each($('.chat_time'),function(index,val){
+		if(moment().local().format('D:M:YYYY') == moment.utc($('.chat_time').eq(index).attr('title')).local().format('D:M:YYYY')){
+			$('.chat_time').eq(index).attr('title',moment.utc($('.chat_time').eq(index).attr('title')).local().format('[Today at] h:mma'));
+		}else{
+			$('.chat_time').eq(index).attr('title',moment.utc($('.chat_time').eq(index).attr('title')).local().format('D/M/YY [at] h:mma'));
+		}
+	});
+	$.each($('.time'),function(index,val){
+		if(moment().local().format('D:M:YYYY') == moment.utc($('.time').eq(index).attr('title')).local().format('D:M:YYYY')){
+			$('.time').eq(index).attr('title',moment.utc($('.time').eq(index).attr('title')).local().format('[Today at] h:mma'));
+		}else{
+			$('.time').eq(index).attr('title',moment.utc($('.time').eq(index).attr('title')).local().format('D/M/YY [at] h:mma'));
+		}
 	});
 	$('#mssg_requests').popover({html:true});
 	$('#global_requests').popover({html:true});
@@ -267,9 +289,9 @@ $(document).ready(function(){
 						var chat_messages = '';
 						$.each(hresp,function(index,val){
 							if(val.author_id == module.user_id){
-								chat_messages += '<div class="pm_mssg_cont"> <div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment.utc(val.created_at).local().format('hh:mma') + '"> ' + val.message + ' </div> </div>';
+								chat_messages += '<div class="pm_mssg_cont"> <div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment.utc(val.created_at).local().format('[Today at] h:mma') + '"> ' + val.message + ' </div> </div>';
 							}else{
-								chat_messages += '<div class="pm_mssg_cont"> <div class="pm_message pull-left" style="background-color:#7badfc;margin-right:30px;margin-left:5px;" title="' + moment.utc(val.created_at).local().format('hh:mma') + '"> ' + val.message + ' </div> </div>';
+								chat_messages += '<div class="pm_mssg_cont"> <div class="pm_message pull-left" style="background-color:#7badfc;margin-right:30px;margin-left:5px;" title="' + moment.utc(val.created_at).local().format('[Today at] h:mma') + '"> ' + val.message + ' </div> </div>';
 							}
 						});
 						$('#pm_' + friend_id + '_' + pm_id).find('.pm_body_mssgs').append(chat_messages);
@@ -375,9 +397,9 @@ $(document).ready(function(){
 					var chat_messages = '';
 					$.each(hresp,function(index,val){
 						if(val.author_id == module.user_id){
-							chat_messages += '<div class="pm_mssg_cont"> <div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment.utc(val.created_at).local().format('hh:mma') + '"> ' + val.message + ' </div> </div>';
+							chat_messages += '<div class="pm_mssg_cont"> <div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment.utc(val.created_at).local().format('[Today at] h:mma') + '"> ' + val.message + ' </div> </div>';
 						}else{
-							chat_messages += '<div class="pm_mssg_cont"> <div class="pm_message pull-left" style="background-color:#7badfc;margin-right:30px;margin-left:5px;" title="' + moment.utc(val.created_at).local().format('hh:mma') + '"> ' + val.message + ' </div> </div>';
+							chat_messages += '<div class="pm_mssg_cont"> <div class="pm_message pull-left" style="background-color:#7badfc;margin-right:30px;margin-left:5px;" title="' + moment.utc(val.created_at).local().format('[Today at] h:mma') + '"> ' + val.message + ' </div> </div>';
 						}
 					});
 					$('#pm_' + friend_id + '_' + pm_id).find('.pm_body_mssgs').append(chat_messages);
@@ -849,9 +871,9 @@ module.socket.on('receive_pm',function(info){
 				chat_box += '<div class="pm_body"><div class="pm_body_mssgs">';
 				$.each(hresp,function(index,val){
 					if(val.author_id == module.user_id){
-						chat_box += '<div class="pm_mssg_cont"> <div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment.utc(val.created_at).local().format('hh:mma') + '"> ' + val.message + ' </div> </div>';
+						chat_box += '<div class="pm_mssg_cont"> <div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment.utc(val.created_at).local().format('[Today at] h:mma') + '"> ' + val.message + ' </div> </div>';
 					}else{
-						chat_box += '<div class="pm_mssg_cont"> <div class="pm_message pull-left" style="background-color:#7badfc;margin-right:30px;margin-left:5px;" title="' + moment.utc(val.created_at).local().format('hh:mma') + '"> ' + val.message + ' </div> </div>';
+						chat_box += '<div class="pm_mssg_cont"> <div class="pm_message pull-left" style="background-color:#7badfc;margin-right:30px;margin-left:5px;" title="' + moment.utc(val.created_at).local().format('[Today at] h:mma') + '"> ' + val.message + ' </div> </div>';
 					}
 				});
 				chat_box += '</div><div class="pm_body_alerts"> <div class="pm_mssg_alert pm_unseen" style="display:none;">Not seen</div> <div class="pm_mssg_alert pm_typing" style="display:none;">' + info.friend_name + ' is typing...</div> </div></div>';
@@ -859,7 +881,7 @@ module.socket.on('receive_pm',function(info){
 				chat_box += '</div>'; 
 				$('.pm_bar').prepend(chat_box);
 				var mssg = '<div class="pm_mssg_cont">';
-				mssg += '<div class="pm_message pull-left" style="background-color:#7badfc;margin-right:30px;margin-left:5px;" title="' + moment.utc(info.time).local().format('hh:mma') + '">' + info.message + '</div>';
+				mssg += '<div class="pm_message pull-left" style="background-color:#7badfc;margin-right:30px;margin-left:5px;" title="' + moment.utc(info.time).local().format('[Today at] h:mma') + '">' + info.message + '</div>';
 				mssg += '</div>'; 
 				chat_cont = $('#pm_' + info.friend_id + '_' + info.pm_id);
 				chat_cont.find('.pm_body_mssgs').append(mssg);
@@ -877,12 +899,12 @@ module.socket.on('receive_pm',function(info){
 		chat_cont.parent().find('.pm_body').css('display','');
 		chat_cont.parent().find('.pm_text').css('display','');
 		var mssg = '<div class="pm_mssg_cont">';
-		mssg += '<div class="pm_message pull-left" style="background-color:#7badfc;margin-right:30px;margin-left:5px;" title="' + moment.utc(info.time).local().format('hh:mma') + '">' + info.message + '</div>';
+		mssg += '<div class="pm_message pull-left" style="background-color:#7badfc;margin-right:30px;margin-left:5px;" title="' + moment.utc(info.time).local().format('[Today at] h:mma') + '">' + info.message + '</div>';
 		mssg += '</div>'; 
 		chat_cont.find('.pm_body_mssgs').append(mssg);
 	}else{
 		var mssg = '<div class="pm_mssg_cont">';
-		mssg += '<div class="pm_message pull-left" style="background-color:#7badfc;margin-right:30px;margin-left:5px;" title="' + moment.utc(info.time).local().format('hh:mma') + '">' + info.message + '</div>';
+		mssg += '<div class="pm_message pull-left" style="background-color:#7badfc;margin-right:30px;margin-left:5px;" title="' + moment.utc(info.time).local().format('[Today at] h:mma') + '">' + info.message + '</div>';
 		mssg += '</div>'; 
 		chat_cont.find('.pm_body_mssgs').append(mssg);
 	}

@@ -81,6 +81,16 @@ class Profile extends BaseController {
 				$message->message = $message_body;
 				$message->save();
 			}
+			$user = User::find($user_id);
+			$notification = new Notifications();
+			$notification->sender = Auth::user()->name;
+			$notification->sender_id = Auth::user()->id;
+			$notification->type = 1;
+			$notification->user_id = $user_id;
+			$notification->save();
+			$notification = $notification->findAll();
+			$notification->message = "<a href='//mutualcog.com/p/" . Auth::user()->name . "'>" . Auth::user()->name . "</a> has sent you a <a href='//mutualcog.com/p/" + $user->name + "#inbox'>new message</a><div><a href='//mutualcog.com/profile/dismiss/" . $notification->id . "'>Dismiss</a></div>";
+			$notification->save();
 		}
 		return $this->returnToCurrPage();
 	}

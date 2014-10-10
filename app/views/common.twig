@@ -512,7 +512,7 @@
 				<div class="chat_info">Created by <strong>{{chat.admin}}</strong>, 
 			{% endif %}
 				{% set time_passed = server_time|date('U') - chat.created_at|date('U') %}
-				<span class="chat_time" id="{{chat.created_at}}" title="{{chat.created_at}} UTC">
+				<span class="chat_time" id="{{chat.created_at}}" title="{{chat.created_at}}">
 					{% if time_passed < 45 %}
 						seconds ago
 					{% elseif time_passed < 2700 %}
@@ -635,7 +635,7 @@
 					<div class="time_box">
 						{% if not chat.live %}<div class="reply"><a href="#" class="reply_link" data-mssg-id="{{message.id}}"><strong>Reply</strong></a></div>{% endif %}
 						{% set time_passed = server_time|date('U') - message.created_at|date('U') %}
-						<div class="time" id="{{message.created_at}}" title="{{message.created_at}} UTC">
+						<div class="time" id="{{message.created_at}}" title="{{message.created_at}}">
 							{% if time_passed < 45 %}
 								seconds ago
 							{% elseif time_passed < 2700 %}
@@ -714,7 +714,7 @@
 					<div class="time_box">
 						{% if not chat.live %}<div class="reply"><a href="#" class="reply_link" data-mssg-id="{{response.id}}"><strong>Reply</strong></a></div>{% endif %}
 						{% set time_passed = server_time|date('U') - response.created_at|date('U') %}
-						<div class="time" id="{{response.created_at}}" title="{{response.created_at}} UTC">
+						<div class="time" id="{{response.created_at}}" title="{{response.created_at}}">
 							{% if time_passed < 45 %}
 								seconds ago
 							{% elseif time_passed < 2700 %}

@@ -165,7 +165,48 @@
 	<div class="tab-pane fade in" id="inbox">
 		<div class="frame" style="height:620px;padding:0;white-space:normal;">
 			{% for chat in profile.inbox %}
-				1
+				<div class="chat_title_box">
+					<div><a href="{{site}}/p/{{chat.friends[0].name}}">{{chat.friends[0].name}}</a></div>
+					<div style="font-size:14px;"> {{chat.messages[0].message}} </div>
+					<div class="time_box">
+						{% set time_passed = server_time|date('U') - chat.created_at|date('U') %}
+						<div class="time" id="{{chat.created_at}}" title="{{chat.created_at}}">
+							{% if time_passed < 45 %}
+								seconds ago
+							{% elseif time_passed < 2700 %}
+								{% if time_passed < 90 %}
+									a minute ago
+								{% else %}
+									{{(time_passed/60)|round}} minutes ago
+								{% endif %}
+							{% elseif time_passed < 79200%}
+								{% if time_passed < 5400 %}
+									an hour ago
+								{% else %}
+									{{(time_passed/3600)|round}} hours ago
+								{% endif %}
+							{% elseif time_passed < 2160000 %}
+								{% if time_passed < 129600 %}
+									a day ago
+								{% else %}
+									{{(time_passed/86400)|round}} days ago
+								{% endif %}
+							{% elseif time_passed < 29808000 %}
+								{% if time_passed < 3888000 %}
+									a month ago
+								{% else %}
+									{{(time_passed/2592000)|round}} months ago
+								{% endif %}
+							{% else %}
+								{% if time_passed < 47260800 %}
+									a year ago
+								{% else %}
+									{{(time_passed/31536000)|round}} years ago
+								{% endif %}
+							{% endif %}
+						</div>
+					</div>
+				</div>
 			{% endfor %}
 		</div>
 	</div>
