@@ -1,0 +1,21 @@
+{% extends 'search_layout.twig' %}
+{% use 'common.twig' %}
+
+{% block header %} 
+	{{parent()}}
+{% endblock %}
+
+{% block modals %}
+	{{parent()}}
+{% endblock %}
+
+{% block content %}
+<form role="search">
+	<div class="form-group dropdown entry_search has-feedback">
+		<input class="form-control entry_search_bar" id="search_input" type="text" placeholder="Search for users, posts, and communities" autocomplete="off" maxlength="{{max_title_length}}">
+		<span class="glyphicon glyphicon-search entry_search_submit form-control-feedback"></span>
+		<ul class="dropdown-menu" id="tag_dropdown" role="menu" aria-labelledby="search_input">
+		</ul>
+	</div>
+</form>
+{% endblock %}
