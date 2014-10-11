@@ -18,6 +18,7 @@ class T extends BaseController {
 		$chats_new = $curr_tag->chatsnew();
 		$chats_rising = $curr_tag->chatsrising();
 		$chats_contr = $curr_tag->chatscontr();
+		$chats_removed = $curr_tag->chatsremoved();
 		$chats = $curr_tag->chats();
 		$tags = Tags::take(20)->orderBy('popularity','desc')->get();
 		$upvoted = array();
@@ -62,6 +63,7 @@ class T extends BaseController {
 		$view['chats_new'] = $chats_new;
 		$view['chats_rising'] = $chats_rising;
 		$view['chats_contr'] = $chats_contr; 
+		$view['chats_removed'] = $chats_removed; 
                 return $view;
 	}
 

@@ -109,6 +109,9 @@
 		<li><a href="#new" data-toggle="tab" style="color:#075de9">New</a></li>
 		<li><a href="#rising" data-toggle="tab" style="color:#075de9">Rising</a></li>
 		<li><a href="#controversial" data-toggle="tab" style="color:#075de9">Controversial</a></li>
+		{% if curr_tag_id %}
+			<li><a href="#removed" data-toggle="tab" style="color:#075de9">Removed</a></li>
+		{% endif %}
 	</ul>
 {% endblock %}
 
@@ -175,6 +178,24 @@
 		<span><a href="{{site}}/terms">Terms of Use</a></span>
 	</div>
 </div>
+
+{% if curr_tag_id %}
+<div class="tab-pane fade in" id="removed">
+	<div id="chat_list">
+		{% for chat in chats_removed %} 
+			{{ block('chat_box') }}
+		{% endfor %}
+	</div>
+	<div class="page_links">
+		{{chats_removed.links|raw}}
+	</div>
+	<div class="policy">
+		<span style="margin-left:-104px;"><a href="{{site}}/privacy">Privacy Policy</a></span> |
+		<span><a href="{{site}}/terms">Terms of Use</a></span>
+	</div>
+</div>
+{% endif %}
+
 </div>
 </div>
 {% endblock %}

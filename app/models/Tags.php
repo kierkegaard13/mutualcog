@@ -22,7 +22,11 @@ class Tags extends EloquentBridge
 	}
 
 	public function chatscontr(){
-		return Chats::select('chats.*')->join('chats_to_tags','chats_to_tags.chat_id','=','chats.id')->where('chats_to_tags.tag_id',$this->id)->whereRaw('abs(chats_to_tags.upvotes - chats_to_tags.downvotes) < 10')->where('chats.removed','0')->where('chats_to_tags.removed','0')->orderBy(DB::raw('chats_to_tags.pinned'),'desc')->orderBy('created_at','desc')->paginate(25);
+		return Chats::select('chats.*')->join('chats_to_tags','chats_to_tags.chat_id','=','chats.id')->where('chats_to_tags.tag_id',$this->id)->whereRaw('abs(chats_to_tags.upvotes - chats_to_tags.downvotes) < 10')->whereRaw('chats_to_tags.upvotes + abs(chats_to_tags.downvotes) > 10')->where('chats.removed','0')->where('chats_to_tags.removed','0')->orderBy(DB::raw('chats_to_tags.pinned'),'desc')->orderBy('created_at','desc')->paginate(25);
+	}
+
+	public function chatsremoved(){
+		return Chats::select('chats.*')->join('chats_to_tags','chats_to_tags.chat_id','=','chats.id')->where('chats_to_tags.tag_id',$this->id)->where('chats.removed','0')->where('chats_to_tags.removed','1')->orderBy(DB::raw('chats_to_tags.pinned'),'desc')->orderBy('created_at','desc')->paginate(25);
 	}
 
 	public function subscribers(){

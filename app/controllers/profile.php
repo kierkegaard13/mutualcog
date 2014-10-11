@@ -39,6 +39,7 @@ class Profile extends BaseController {
 		if(Auth::check()){
 			$message_body = htmlentities(Input::get('message_body'));
 			$user_to_chat = UsersToPrivateChats::whereuser_id(Auth::user()->id)->whereentity_id($user_id)->first();
+			$user = User::find($user_id);
 			if($user_to_chat){
 				$friend_to_chat = UsersToPrivateChats::whereentity_id(Auth::user()->id)->whereuser_id($user_id)->first();
 				$friend_to_chat->unseen = 1;
@@ -81,7 +82,6 @@ class Profile extends BaseController {
 				$message->message = $message_body;
 				$message->save();
 			}
-			$user = User::find($user_id);
 			$notification = new Notifications();
 			$notification->sender = Auth::user()->name;
 			$notification->sender_id = Auth::user()->id;
@@ -89,7 +89,7 @@ class Profile extends BaseController {
 			$notification->user_id = $user_id;
 			$notification->save();
 			$notification = $notification->findAll();
-			$notification->message = "<a href='//mutualcog.com/p/" . Auth::user()->name . "'>" . Auth::user()->name . "</a> has sent you a <a href='//mutualcog.com/p/" + $user->name + "#inbox'>new message</a><div><a href='//mutualcog.com/profile/dismiss/" . $notification->id . "'>Dismiss</a></div>";
+			$notification->message = "<div class='request_cont'><div class='request_text'><a href='//mutualcog.com/u/" . Auth::user()->name . "'>" . Auth::user()->name . "</a> has sent you a <a href='//mutualcog.com/u/" . $user->name . "#inbox'>new message</a></div><div class='request_text'><a href='//mutualcog.com/profile/dismiss/" . $notification->id . "'>Dismiss</a></div></div>";
 			$notification->save();
 		}
 		return $this->returnToCurrPage();
