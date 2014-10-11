@@ -234,6 +234,9 @@ $(document).ready(function(){
 	$('#friend_requests').blur(function(){
 		$(this).popover('hide');
 	});
+	$('.register_link').click(function(){
+		$('#reg_modal_title').text('Create an account');
+	});
 	$('body').on('click','.mssg_upvote',upvoteMssg);
 	$('body').on('click','.mssg_downvote',downvoteMssg);
 	$('#chat_display').on('click','.toggle_responses',getResponses);
@@ -513,81 +516,157 @@ upvoteMssg = function(e){
 	e.stopPropagation();
 	var message_id = $(this).attr('id').replace('mssg_upvote_','');
 	var url = '//mutualcog.com/chat/message-upvote';
-	$.ajax({
-		type:'POST',
-		data:{id:message_id},
-		url:url,
-		success:function(hresp){
-			if(hresp.status == 1 || hresp.status == 3){
-				if(hresp.status == 1){
-					module.downvoted.splice(module.downvoted.indexOf(message_id.toString()),1);						
-					module.upvoted.push(message_id.toString());
+	if($('#logged_in').text() == 1){
+		$.ajax({
+			type:'POST',
+			data:{id:message_id},
+			url:url,
+			success:function(hresp){
+				if(hresp.status == 1 || hresp.status == 3){
+					if(hresp.status == 1){
+						module.downvoted.splice(module.downvoted.indexOf(message_id.toString()),1);						
+						module.upvoted.push(message_id.toString());
+					}else{
+						module.upvoted.push(message_id.toString());
+					}
+					if($('#mssg_cont_' + message_id).hasClass('mssg_cont')){
+						module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:'global'});
+					}else{
+						module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:$('#message').attr('class')});
+					}
+					$('#mssg_upvote_' + message_id).css('color','#57bf4b');
+					$('#mssg_downvote_' + message_id).css('color','');
+				}else if(hresp.status == 2){
+					module.upvoted.splice(module.upvoted.indexOf(message_id.toString()),1);
+					if($('#mssg_cont_' + message_id).hasClass('mssg_cont')){
+						module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:'global'});
+					}else{
+						module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:$('#message').attr('class')});
+					}
+					$('#mssg_upvote_' + message_id).css('color','');
+					$('#mssg_downvote_' + message_id).css('color','');
 				}else{
-					module.upvoted.push(message_id.toString());
+					$('#reg_modal_title').text('Sign up to upvote/downvote');
+					$('#register_modal').modal();	
 				}
-				if($('#mssg_cont_' + message_id).hasClass('mssg_cont')){
-					module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:'global'});
-				}else{
-					module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:$('#message').attr('class')});
-				}
-				$('#mssg_upvote_' + message_id).css('color','#57bf4b');
-				$('#mssg_downvote_' + message_id).css('color','');
-			}else if(hresp.status == 2){
-				module.upvoted.splice(module.upvoted.indexOf(message_id.toString()),1);
-				if($('#mssg_cont_' + message_id).hasClass('mssg_cont')){
-					module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:'global'});
-				}else{
-					module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:$('#message').attr('class')});
-				}
-				$('#mssg_upvote_' + message_id).css('color','');
-				$('#mssg_downvote_' + message_id).css('color','');
-			}else{
-				$('#mssg_upvote_' + message_id).tooltip('show');
-			}
-		},
-		error:function(){}
-	});
+			},
+			error:function(){}
+		});
+	}else{
+		$('#reg_modal_title').text('Sign up to upvote/downvote');
+		$('#register_modal').modal();	
+	}
 };
 
 downvoteMssg = function(e){
 	e.stopPropagation();
 	var message_id = $(this).attr('id').replace('mssg_downvote_','');
 	var url = '//mutualcog.com/chat/message-downvote';
-	$.ajax({
-		type:'POST',
-		data:{id:message_id},
-		url:url,
-		success:function(hresp){
-			if(hresp.status == 1 || hresp.status == 3){
-				if(hresp.status == 1){
-					module.upvoted.splice(module.downvoted.indexOf(message_id.toString()),1);						
-					module.downvoted.push(message_id.toString());
+	if($('#logged_in').text() == 1){
+		$.ajax({
+			type:'POST',
+			data:{id:message_id},
+			url:url,
+			success:function(hresp){
+				if(hresp.status == 1 || hresp.status == 3){
+					if(hresp.status == 1){
+						module.upvoted.splice(module.downvoted.indexOf(message_id.toString()),1);						
+						module.downvoted.push(message_id.toString());
+					}else{
+						module.downvoted.push(message_id.toString());
+					}
+					if($('#mssg_cont_' + message_id).hasClass('mssg_cont')){
+						module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:'global'});
+					}else{
+						module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:$('#message').attr('class')});
+					}
+					$('#mssg_downvote_' + message_id).css('color','red');
+					$('#mssg_upvote_' + message_id).css('color','');
+				}else if(hresp.status == 2){
+					module.downvoted.splice(module.downvoted.indexOf(message_id.toString()),1);
+					if($('#mssg_cont_' + message_id).hasClass('mssg_cont')){
+						module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:'global'});
+					}else{
+						module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:$('#message').attr('class')});
+					}
+					$('#mssg_upvote_' + message_id).css('color','');
+					$('#mssg_downvote_' + message_id).css('color','');
 				}else{
-					module.downvoted.push(message_id.toString());
+					$('#reg_modal_title').text('Sign up to upvote/downvote');
+					$('#register_modal').modal();	
 				}
-				if($('#mssg_cont_' + message_id).hasClass('mssg_cont')){
-					module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:'global'});
-				}else{
-					module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:$('#message').attr('class')});
-				}
-				$('#mssg_downvote_' + message_id).css('color','red');
-				$('#mssg_upvote_' + message_id).css('color','');
-			}else if(hresp.status == 2){
-				module.downvoted.splice(module.downvoted.indexOf(message_id.toString()),1);
-				if($('#mssg_cont_' + message_id).hasClass('mssg_cont')){
-					module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:'global'});
-				}else{
-					module.socket.emit('update_votes',{id:message_id,response:hresp,responseto:$('#message').attr('class')});
-				}
-				$('#mssg_upvote_' + message_id).css('color','');
-				$('#mssg_downvote_' + message_id).css('color','');
-			}else{
-				$('#mssg_downvote_' + message_id).tooltip('show');
-			}
-		},
-		error:function(){ }
-	});
+			},
+			error:function(){ }
+		});
+	}else{
+		$('#reg_modal_title').text('Sign up to upvote/downvote');
+		$('#register_modal').modal();	
+	}
 };
+
+$('.big_upvote').click(function(e){
+	e.stopPropagation();
+	var upvote_id = $(this).attr('id');
+	var chat_id = $(this).attr('id').replace('upvote_','');
+	var url = '//mutualcog.com/chat/upvote';
+	if($('#logged_in').text() == 1){
+		$.ajax({
+			type:'POST',
+			data:{id:chat_id},
+			url:url,
+			success:function(hresp){
+				if(hresp.status == 1 || hresp.status == 3){
+					$('#votes_' + chat_id).text(hresp.upvotes);
+					$('#upvote_' + chat_id).css('color','#57bf4b');
+					$('#downvote_' + chat_id).css('color','');
+				}else if(hresp.status == 2){
+					$('#votes_' + chat_id).text(hresp.upvotes);
+					$('#upvote_' + chat_id).css('color','');
+					$('#downvote_' + chat_id).css('color','');
+				}else{
+					$('#reg_modal_title').text('Sign up to upvote/downvote');
+					$('#register_modal').modal();	
+				}
+			},
+			error:function(){}
+		});
+	}else{
+		$('#reg_modal_title').text('Sign up to upvote/downvote');
+		$('#register_modal').modal();	
+	}
+});
+
+$('.big_downvote').click(function(e){
+	e.stopPropagation();
+	var downvote_id = $(this).attr('id');
+	var chat_id = $(this).attr('id').replace('downvote_','');
+	var url = '//mutualcog.com/chat/downvote';
+	if($('#logged_in').text() == 1){
+		$.ajax({
+			type:'POST',
+			data:{id:chat_id},
+			url:url,
+			success:function(hresp){
+				if(hresp.status == 1 || hresp.status == 3){
+					$('#votes_' + chat_id).text(hresp.upvotes);
+					$('#downvote_' + chat_id).css('color','red');
+					$('#upvote_' + chat_id).css('color','');
+				}else if(hresp.status == 2){
+					$('#votes_' + chat_id).text(hresp.upvotes);
+					$('#upvote_' + chat_id).css('color','');
+					$('#downvote_' + chat_id).css('color','');
+				}else{
+					$('#reg_modal_title').text('Sign up to upvote/downvote');
+					$('#register_modal').modal();	
+				}
+			},
+			error:function(){ }
+		});
+	}else{
+		$('#reg_modal_title').text('Sign up to upvote/downvote');
+		$('#register_modal').modal();	
+	}
+});
 
 module.socket.on('updateVotes',function(info) {
 	$('#mssg_votes_' + info.message_id).text(info.response.upvotes);
@@ -808,7 +887,7 @@ $('#search_input').on('keyup',function(e){
 					$.each(hresp,function(index,value){
 						if(value.type == 'tag'){
 							if(enter_tag == 0){
-								content += '<div class="search_res_type">Tags</div>';
+								content += '<div class="search_res_type">Communities</div>';
 								enter_tag++;
 							}
 							content += '<li id="search_' + index + '" class="tag_results"><a href="//mutualcog.com/t/' + value.name + '">' + value.name + '</a></li>';

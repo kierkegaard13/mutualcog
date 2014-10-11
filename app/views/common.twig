@@ -151,7 +151,7 @@
 					<div class="row">
 						<div id="live_group" class="checkbox col-xs-6">
 							<label>
-								<input type="checkbox" name="live_status" id="live_status_v2" checked> Live <div class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-original-title="Live chats don't need to be refreshed to see new comments but are not filtered" style="margin-left:5px;"></div>
+								<input type="checkbox" name="live_status" id="live_status_v2" checked> Live <div class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-original-title="Live chats don't need to be refreshed to see new comments but comments are only sorted by time" style="margin-left:5px;"></div>
 							</label>
 						</div>
 						<div id="nsfw_group" class="checkbox col-xs-6" style="margin-top:10px;">
@@ -279,7 +279,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Register</h4>
+				<h4 id="reg_modal_title" class="modal-title">Create an account</h4>
 			</div>
 			<div class="modal-body">
 				<form method="post" action="{{site}}/profile/register" class="mutual_form" id="register_form">
@@ -297,7 +297,7 @@
 						<input class="form-control" data-toggle="popover" data-original-title="Passwords don't match" data-container="body" data-placement="auto top" data-trigger="focus" type="password" name="pass2" id="pass2" placeholder="Enter your password again">
 					</div>
 					<div id="email_group" class="form-group">
-						<label for="pass2">Email <small>(optional)</small></label>
+						<label for="pass2">Email <small>(optional, only for recovery purposes)</small></label>
 						<input class="form-control" data-toggle="popover" data-original-title="Not a valid email" data-container="body" data-placement="auto top" data-trigger="focus" type="email" name="email" id="email" placeholder="Enter your email" maxlength="{{max_title_length}}">
 					</div>
 				</fieldset>
@@ -439,17 +439,17 @@
 		<div class="number_box"> {{loop.index}}. </div>
 		<div class="vote_box">
 			{% if chat.id in upvoted %}
-				<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+				<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" style="color:#57bf4b"></span>
 				<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-				<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+				<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}"></span>
 			{% elseif chat.id in downvoted %}
-				<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+				<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}"></span>
 				<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-				<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+				<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" style="color:red;"></span>
 			{% else %}
-				<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+				<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}"></span>
 				<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-				<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+				<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}"></span>
 			{% endif %}
 		</div>
 		{% if chat.image %}
@@ -607,17 +607,17 @@
 			<div class="mssg_body_cont">
 				<div class="chat_vote_box">
 					{% if message.id in mssg_upvoted %}
-						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
+						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" style="color:#57bf4b"></span>
 						<div class="upvote_count" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
-						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
+						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}"></span>
 					{% elseif message.id in mssg_downvoted %}
-						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
+						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}"></span>
 						<div class="upvote_count" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
-						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
+						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" style="color:red;"></span>
 					{% else %}
-						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
+						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}"></span>
 						<div class="upvote_count" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
-						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
+						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}"></span>
 					{% endif %}
 				</div>
 				<div class="mssg_body author_{{message.author}}">
@@ -686,17 +686,17 @@
 			<div class="mssg_body_cont">
 				<div class="chat_vote_box">
 					{% if response.id in mssg_upvoted %}
-						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{response.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span>
+						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{response.id}}" style="color:#57bf4b"></span>
 						<div class="upvote_count" id="mssg_votes_{{response.id}}">{{response.upvotes - response.downvotes}}</div>
-						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{response.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span>
+						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{response.id}}"></span>
 					{% elseif response.id in mssg_downvoted %}
-						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{response.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span>
+						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{response.id}}"></span>
 						<div class="upvote_count" id="mssg_votes_{{response.id}}">{{response.upvotes - response.downvotes}}</div>
-						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{response.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span>
+						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{response.id}}" style="color:red;"></span>
 					{% else %}
-						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{response.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span>
+						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{response.id}}"></span>
 						<div class="upvote_count" id="mssg_votes_{{response.id}}">{{response.upvotes - response.downvotes}}</div>
-						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{response.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span>
+						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{response.id}}"></span>
 					{% endif %}
 				</div>
 				<div class="mssg_body author_{{response.author}}">

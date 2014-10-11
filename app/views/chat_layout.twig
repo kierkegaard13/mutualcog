@@ -16,8 +16,8 @@
 	<script src='{{base}}/app/libraries/js/jquery.mCustomScrollbar.concat.min.js'></script>
 </head>
 <body>
-{% block header %}
-{% endblock %}
+{% block header %}{% endblock %}
+{% block modals %}{% endblock %}
 {% if logged_in %}
 	{% block friend_list %}{% endblock %}
 	<div class="wrapper_list_active">

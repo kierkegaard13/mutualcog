@@ -85,11 +85,44 @@ $(document).ready(function(){
 	var reply_form = $('#reply_form').clone();
 	$('.remove_mod').tooltip();
 	$('#request_friend').click(function(){
-		module.socket.emit('request_friend',{user_id:$(this).attr('data-user-id'),user:$(this).attr('data-user-name'),sender_id:module.user_id,sender:module.user_tracker});
-		$(this).removeClass('btn-primary');
-		$(this).addClass('btn-success');
-		$(this).html('<div class="glyphicon glyphicon-check" id="request_glyph"></div> Request Sent');
-		$(this).off('click');
+		if($('#logged_in').text() == 1){
+			module.socket.emit('request_friend',{user_id:$(this).attr('data-user-id'),user:$(this).attr('data-user-name'),sender_id:module.user_id,sender:module.user_tracker});
+			$(this).removeClass('btn-primary');
+			$(this).addClass('btn-success');
+			$(this).html('<div class="glyphicon glyphicon-check" id="request_glyph"></div> Request Sent');
+			$(this).off('click');
+		}else{
+			$('#reg_modal_title').text('Sign up to add friends');
+			$('#register_modal').modal();	
+			return false;
+		}
+	});
+	$('a#subscribe_btn').click(function(){
+		if($('#logged_in').text() == 1){
+			return true;
+		}else{
+			$('#reg_modal_title').text('Sign up to subscribe to communities');
+			$('#register_modal').modal();	
+			return false;
+		}
+	});
+	$('button#message_friend').click(function(){
+		if($('#logged_in').text() == 1){
+			return true;
+		}else{
+			$('#reg_modal_title').text('Sign up to message users');
+			$('#register_modal').modal();	
+			return false;
+		}
+	});
+	$('button#create_community').click(function(){
+		if($('#logged_in').text() == 1){
+			return true;
+		}else{
+			$('#reg_modal_title').text('Sign up to create communities');
+			$('#register_modal').modal();	
+			return false;
+		}
 	});
 	$('a#advanced_create').click(function(e){
 		$('#advanced_modal').modal();
@@ -110,7 +143,6 @@ $(document).ready(function(){
 		$('#Tags_v3').val(chat_cont.find('.chat_tag_str').text());
 		$('#description_v3').val(chat_cont.find('.chat_desc_str').text());
 		$('#form_chat_id').val(chat_cont.find('.chat_id_str').text());
-		console.log(chat_cont.find('.chat_live_str').text() + ' : ' + chat_cont.find('.chat_nsfw_str').text());
 		if(chat_cont.find('.chat_live_str').text()){
 			$('#live_status_v3').prop('checked','true');
 		}else{
@@ -329,58 +361,6 @@ $('#tag_create_form').submit(function(){
 		return false;
 	}
 	return true;
-});
-
-$('.big_upvote').click(function(e){
-	e.stopPropagation();
-	var upvote_id = $(this).attr('id');
-	var chat_id = $(this).attr('id').replace('upvote_','');
-	var url = '//mutualcog.com/chat/upvote';
-	$.ajax({
-		type:'POST',
-		data:{id:chat_id},
-		url:url,
-		success:function(hresp){
-			if(hresp.status == 1 || hresp.status == 3){
-				$('#votes_' + chat_id).text(hresp.upvotes);
-				$('#upvote_' + chat_id).css('color','#57bf4b');
-				$('#downvote_' + chat_id).css('color','');
-			}else if(hresp.status == 2){
-				$('#votes_' + chat_id).text(hresp.upvotes);
-				$('#upvote_' + chat_id).css('color','');
-				$('#downvote_' + chat_id).css('color','');
-			}else{
-				$('#' + upvote_id).tooltip('show');
-			}
-		},
-		error:function(){}
-	});
-});
-
-$('.big_downvote').click(function(e){
-	e.stopPropagation();
-	var downvote_id = $(this).attr('id');
-	var chat_id = $(this).attr('id').replace('downvote_','');
-	var url = '//mutualcog.com/chat/downvote';
-	$.ajax({
-		type:'POST',
-		data:{id:chat_id},
-		url:url,
-		success:function(hresp){
-			if(hresp.status == 1 || hresp.status == 3){
-				$('#votes_' + chat_id).text(hresp.upvotes);
-				$('#downvote_' + chat_id).css('color','red');
-				$('#upvote_' + chat_id).css('color','');
-			}else if(hresp.status == 2){
-				$('#votes_' + chat_id).text(hresp.upvotes);
-				$('#upvote_' + chat_id).css('color','');
-				$('#downvote_' + chat_id).css('color','');
-			}else{
-				$('#' + downvote_id).tooltip('show');
-			}
-		},
-		error:function(){ }
-	});
 });
 
 $(window).on('click',function(e){

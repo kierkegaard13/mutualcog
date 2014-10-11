@@ -25,13 +25,11 @@
 	<div class="small_content_box">
 		<div class="content side_content" id="subscribe">
 <div style="margin-top:5px;">
-	<btn class="btn btn-primary" style="width:100%;" data-toggle="modal" data-target="#chat_modal">Create Chat</btn>
+	<button class="btn btn-primary" style="width:100%;" data-toggle="modal" data-target="#chat_modal">Create New Post</button>
 </div>
-{% if not curr_tag_id and user %}
-	<div style="margin-top:10px;">
-		<btn class="btn btn-primary" style="width:100%;" data-toggle="modal" data-target="#tag_create_modal">Create Community</btn>
-	</div>
-{% endif %}
+<div style="margin-top:10px;">
+	<button class="btn btn-primary" id="create_community" style="width:100%;" data-toggle="modal" data-target="#tag_create_modal">Create Community</button>
+</div>
 		</div>
 	</div>
 {% endblock %}
@@ -39,10 +37,10 @@
 {% block content %}
 <div class="p_main_content" id="main_cont">
 <h2 class="profile_name" id="{{profile.id}}" style="margin-top:0px;">{{profile.name}}</h2>
-{% if profile.id != user.id and logged_in %}
-	<btn class="btn btn-primary pull-right" data-toggle="modal" data-target="#message_modal"><div class="glyphicon glyphicon-envelope"> </div> Message</btn>
+{% if profile.id != user.id %}
+	<button id="message_friend" class="btn btn-primary pull-right" data-toggle="modal" data-target="#message_modal"><div class="glyphicon glyphicon-envelope"> </div> Message</button>
 {% endif %}
-{% if logged_in and profile.id != user.id and not friended and not requested %}
+{% if profile.id != user.id and not friended and not requested %}
 	<button class="btn btn-primary add_friend" id="request_friend" data-user-id="{{profile.id}}" data-user-name="{{profile.name}}"><div class="glyphicon glyphicon-plus" id="request_glyph"> </div> Send Friend Request</button>
 {% elseif requested %}
 	<button class="btn btn-success add_friend"><div class="glyphicon glyphicon-check" id="request_glyph"> </div> Request Sent</button>
