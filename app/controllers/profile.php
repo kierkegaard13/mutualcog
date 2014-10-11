@@ -359,7 +359,7 @@ class Profile extends BaseController {
 				$user->serial_id = Session::get('serial_id');
 				$user->online = 1;
 				$user->save();
-				Auth::login($user);
+				Auth::login($user,true);
 				$node = new NodeAuth();
 				$node->user_id = $user->id;
 				$node->user = $user->name;

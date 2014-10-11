@@ -75,10 +75,15 @@ Route::group(array('before' => 'assignSerial'), function(){
 		Route::controller('terms','terms');
 		Route::controller('tags','TagsController');
 		Route::controller('chat','chat');
+		Route::controller('search','search');
 		Route::get('/u/{user}',array('uses' => 'u@getIndex'));
 		Route::get('/t/{tag}',array('uses' => 't@getIndex'));
 
-		Route::get('/',array('uses' => 'Home@getIndex'));
+		if(Auth::check()){
+			Route::get('/',array('uses' => 'Home@getIndex'));
+		}else{
+			Route::get('/',array('uses' => 'Search@getIndex'));
+		}
 
 		});
 
