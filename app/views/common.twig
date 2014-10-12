@@ -12,13 +12,16 @@
 	</div>
 	<div class="collapse navbar-collapse" id="mutual_navbar" style="position:relative;">
 		{% if not search_page %}
-			<form class="navbar-form tag_search" role="search">
-				<div class="form-group dropdown">
-					<input class="form-control tag_input" id="search_input" type="text" placeholder="Search" autocomplete="off" maxlength="{{max_title_length}}">
-					<ul class="dropdown-menu" id="tag_dropdown" role="menu" aria-labelledby="search_input">
-					</ul>
-				</div>
-			</form>
+			<div class="tag_search_cont">
+				<span class="glyphicon glyphicon-search tag_search_icon"></span>
+				<form class="navbar-form tag_search" role="search">
+					<div class="form-group dropdown" style="margin-top:-8px;">
+						<input class="form-control tag_input" id="search_input" type="text" placeholder="Search" autocomplete="off" maxlength="{{max_title_length}}">
+						<ul class="dropdown-menu" id="tag_dropdown" role="menu" aria-labelledby="search_input">
+						</ul>
+					</div>
+				</form>
+			</div>
 		{% endif %}
 		{% if logged_in %}
 		<ul class="nav navbar-nav nav_dropdown">
@@ -33,7 +36,7 @@
 				</ul>
 			</li>
 		</ul>
-		<ul class="nav navbar-nav nav_right {% if not search_page %}pad_r_350{% endif %}">
+		<ul class="nav navbar-nav nav_right {% if not search_page %}nav_pad_r{% endif %}">
 			{% for tag in tags %}
 				{% if curr_tag.name == tag.name %}
 					<li><a class="highlight_light_blue" href="{{site}}/t/{{tag}}">{{tag}}</a></li>
@@ -43,7 +46,7 @@
 			{% endfor %}
 		</ul>
 		{% else %}
-		<ul class="nav navbar-nav nav_right {% if not search_page %}pad_r_350{% endif %}">
+		<ul class="nav navbar-nav nav_right {% if not search_page %}nav_pad_r{% endif %}">
 			{% for tag in tags %}
 				{% if curr_tag.name == tag.name %}
 					<li><a class="highlight_light_blue" href="{{site}}/t/{{tag}}">{{tag}}</a></li>

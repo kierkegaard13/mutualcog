@@ -510,6 +510,15 @@ $(document).ready(function(){
 			$(this).parent().find('.pm_text').css('display','none');
 		}
 	});
+	$('.tag_search_icon').click(function(){
+		if($('.tag_search').css('display') == 'none'){
+			$('.tag_input').width($('#welcome_user').width());
+			$('.tag_search').css('display','inline');
+		}else{
+			$('.tag_search').css('display','none');
+		}
+		$('.nav_pad_r').css('padding-right',$('.tag_search_cont').width());
+	});
 });
 
 upvoteMssg = function(e){
@@ -884,6 +893,7 @@ $('#search_input').on('keyup',function(e){
 					var content = '';
 					var enter_user = 0;
 					var enter_tag = 0;
+					var enter_post = 0;
 					$.each(hresp,function(index,value){
 						if(value.type == 'tag'){
 							if(enter_tag == 0){
@@ -891,6 +901,16 @@ $('#search_input').on('keyup',function(e){
 								enter_tag++;
 							}
 							content += '<li id="search_' + index + '" class="tag_results"><a href="//mutualcog.com/t/' + value.name + '">' + value.name + '</a></li>';
+						}else if(value.type == 'post'){
+							if(enter_post == 0){
+								content += '<div class="search_res_type">Posts</div>';
+								enter_post++;
+							}
+							if(value.live){
+								content += '<li id="search_' + index + '" class="tag_results"><a href="//mutualcog.com/chat/live/' + value.id + '">' + value.name + '</a></li>';
+							}else{
+								content += '<li id="search_' + index + '" class="tag_results"><a href="//mutualcog.com/chat/static/' + value.id + '">' + value.name + '</a></li>';
+							}
 						}else{
 							if(enter_user == 0){
 								content += '<div class="search_res_type">Users</div>';

@@ -143,6 +143,11 @@ class TagsController extends BaseController {
 		foreach($people as $person){
 			$res_arr[] = array('id' => $person->id,'name' => $person->name,'type' => 'person');
 		}
+		$posts = new Chats();
+		$posts = $posts->where('title','LIKE','%' . $input . '%')->take(5)->get();
+		foreach($posts as $post){
+			$res_arr[] = array('id' => $post->id,'name' => $post->title,'live' => $post->live,'type' => 'post');
+		}
 		return $res_arr;
 	}
 
