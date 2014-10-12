@@ -71,6 +71,16 @@ function newPmChat(friend_id,pm_id,friend_status_class,friend_name){
 }
 
 $(window).resize(function(){
+	if($(window).width() < 768){
+		$('.nav_pad_r').css('padding-right','');
+		$('.tag_search').css('display','');
+		$('#search_input').css('width','');
+	}else{
+		if($('.tag_search').css('display') != 'none'){
+			$('.tag_input').width($('#welcome_user').width());
+			$('.nav_pad_r').css('padding-right',$('.tag_search_cont').width());
+		}
+	}
 	if($('.pm_bar').width() > $(window).width() - 30){
 		module.crit_len.push($(window).width() + 30);
 		$.each($('.pm_cont'),function(index,val){
