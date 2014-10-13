@@ -20,7 +20,7 @@ class T extends BaseController {
 		$chats_contr = $curr_tag->chatscontr();
 		$chats_removed = $curr_tag->chatsremoved();
 		$chats = $curr_tag->chats();
-		$tags = Tags::take(20)->orderBy('popularity','desc')->get();
+		$tags = Tags::take(30)->orderBy('popularity','desc')->get();
 		$upvoted = array();
 		$downvoted = array();
 		if(Auth::check()){

@@ -5,7 +5,7 @@ class U extends BaseController {
 	public function getIndex($username){
 		$view = View::make('profile');
 		$view['friended'] = 0;
-		$tags = Tags::take(20)->orderBy('popularity','desc')->get();
+		$tags = Tags::take(30)->orderBy('popularity','desc')->get();
 		$upvoted = array();
 		$downvoted = array();
 		$mssg_upvoted = array();

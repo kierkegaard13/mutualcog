@@ -74,7 +74,7 @@ class Chat extends BaseController {
 				$mem_to_chat->save();
 			}
 		}
-		$tags = Tags::take(20)->orderBy('popularity','desc')->get();
+		$tags = Tags::take(30)->orderBy('popularity','desc')->get();
 		$tag_arr = array();
 		$mods = array();
 		foreach($chat->moderators as $mod){
@@ -157,7 +157,7 @@ class Chat extends BaseController {
 				}
 			}
 		}
-		$tags = Tags::take(20)->orderBy('popularity','desc')->get();
+		$tags = Tags::take(30)->orderBy('popularity','desc')->get();
 		$tag_arr = array();
 		$mods = array();
 		foreach($chat->moderators as $mod){

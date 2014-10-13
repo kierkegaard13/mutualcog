@@ -527,6 +527,7 @@ $(document).ready(function(){
 		}else{
 			$('.tag_search').css('display','none');
 		}
+		$('.tag_input').focus();
 		$('.nav_pad_r').css('padding-right',$('.tag_search_cont').width());
 	});
 });
@@ -866,6 +867,7 @@ var selected_term = -1;
 $('#search_input').on('keydown',function(e){
 	if(e.keyCode == 13){  /*enter key*/
 		if(selected_term == -1){
+			window.location.href = '//mutualcog.com/search/result/' + $('#search_input').val();
 		}else{
 			location.assign($('li#search_' + selected_term).children('a').attr('href'));
 		}	
@@ -898,7 +900,7 @@ $('#search_input').on('keyup',function(e){
 			$.ajax({
 				type:'GET',
 				data: {tag:tag},
-				url:'//mutualcog.com/tags/similar-entity',
+				url:'//mutualcog.com/search/similar-entity',
 				success:function(hresp){
 					var content = '';
 					var enter_user = 0;
