@@ -16,6 +16,9 @@ class Search extends BaseController {
 		$view = View::make('results');
 		$curr_page = Session::get('curr_page');
 		$curr_page = explode('/',$curr_page);
+		$chats = '';
+		$users = '';
+		$communities = '';
 		$keywords = [' in ','posts titled','users who like',' here','users near me'];
 		$search_string = htmlentities($search_string);
 		$found = -1;
@@ -30,30 +33,26 @@ class Search extends BaseController {
 		if($found != -1){
 			switch($found){
 				case 0:
-					$search_string = $split_string[0];
+					$search_string = trim($split_string[0]);
 					$tag_string = join(' ',array_slice($split_string,1,sizeof($split_string) - 1));
 					$split_tags = explode(',',$tag_string);
-					$tag_ids = array();
-					foreach($split_tags as $tag){
-						$tags = Tags::where('name','LIKE','%' . $tag . '%')->get();
-						foreach($tags as $tag){
-							if(!in_array($tag->id,$tag_ids)){
-								$tag_ids[] = $tag->id;
-							}
-						}
-					}
-					$chats = Chats::select('chats.*')->leftJoin('chats_to_tags','chats_to_tags.chat_id','=','chats.id')->where(function($query)use($tag_ids){
-						foreach($tag_ids as $key=>$id){
+					$chats = Chats::whereHas('tags',function($q)use($split_tags){
+						foreach($split_tags as $key=>$tag){
 							if($key == 0){
-								$query->where('chats_to_tags.tag_id','=',$id);
+								$q->where('name','LIKE','%'.$tag.'%');
 							}else{
-								$query->orWhere('chats_to_tags.tag_id','=',$id);
+								$q->orWhere('name','LIKE','%'.$tag.'%');
 							}
 						}
-					})->where('chats_to_tags.removed','=','0')->where('chats.removed','=','0')->groupBy('chats.id')->get();
-					die(print_r($chats->toArray(),1));
+						$q->where('chats_to_tags.removed','=','0');
+					})->where(function($q)use($search_string){
+						$q->where('title','LIKE','%'.$search_string.'%');
+						$q->orWhere('raw_details','LIKE','%'.$search_string.'%');	
+					})->whereremoved('0')->paginate(25);
 					break;
 				case 1:
+					$search_string = trim($split_string[1]);
+					$chats = Chats::where('title','LIKE','%'.$search_string.'%')->whereremoved('0')->paginate(25);
 					break;
 				case 2:
 					break;
@@ -64,10 +63,18 @@ class Search extends BaseController {
 				default:
 					break;
 			}
+		}else{
+			$chats = Chats::where(function($q)use($search_string){
+				$q->where('title','LIKE','%'.$search_string.'%');
+				$q->orWhere('raw_details','LIKE','%'.$search_string.'%');	
+			})->whereremoved('0')->paginate(25);
 		}
 		$tags = Tags::take(30)->orderBy('popularity','desc')->get();
 		Session::put('curr_page',URL::full());
 		$view['tags'] = $tags;
+		$view['chats'] = $chats;
+		$view['users'] = $users;
+		$view['communities'] = $communities;
 		return $view;
 	}
 

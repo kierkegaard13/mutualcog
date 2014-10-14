@@ -66,43 +66,49 @@
 {% endif %}
 {% endblock %}
 
-{% block side_3 %}
-{% if curr_tag_id %}
-                        <div class="small_content_box">
-				<div class="content side_content" id="create_cont">
-<div>Admin</div>
-{% if tag_admin %}
-	<div style="font-size:14px;margin-left:10px;">
-		<a href="{{site}}/u/{{tag_admin.user.name}}">{{tag_admin.user.name}}</a>
-	</div>
-{% else %}
-	{% if user.owned < 1 and user_subscribed %}
-		<a href="{{site}}/tags/assign-admin/{{curr_tag_id}}" style="font-size:14px;margin-left:10px;">Become the admin</a>
-	{% else %}
-		<div style="font-size:14px;margin-left:10px;">No Admin</div>
-	{% endif %}
-{% endif %}
-<div>Moderators</div>
-<div style="font-size:14px;margin-left:10px;">
-	{% for mod in tag_mods %}
-		<div>
-			{% if mod.user_id == user.id or tag_admin.user_id == user.id %} 
-				<span id="remove_mod_{{mod.user.id}}_{{curr_tag_id}}" class="glyphicon glyphicon-remove remove_mod" data-toggle="tooltip" data-original-title="Remove Mod Powers" data-container="body" data-placement="top auto"></span>	
-			{% endif %}
-			<a href="{{site}}/u/{{mod.user.name}}">{{mod.user.name}}</a></div>
-	{% else %}
-		<div>No moderators</div>
-	{% endfor %}
-</div>
-				</div>
-                        </div>
-{% endif %}
-{% endblock %}
-
 {% block tabs %}
+<ul id="resultsTabs" class="nav nav-tabs nav-justified">
+	<li class="active"><a href="#posts" data-toggle="tab" style="color:#075de9">Posts ({{chats | length}})</a></li>
+	<li><a href="#users" data-toggle="tab" style="color:#075de9">Users ({{users | length}})</a></li>
+	<li><a href="#communities" data-toggle="tab" style="color:#075de9">Communities ({{communities | length}})</a></li>
+</ul>
 {% endblock %}
 
 {% block content %}
 <div class="main_content" id="main_cont">
+<div id="tab_content" class="tab-content">
+
+<div class="tab-pane fade active in" id="posts">
+	{% for chat in chats %}
+		{{ block('chat_box') }}
+	{% else %}
+		No post results
+	{% endfor %}
+	<div class="page_links">
+		{{chats.links|raw}}
+	</div>
+</div>
+
+<div class="tab-pane fade in" id="users">
+	{% for user in users %}
+	{% else %}
+		No user results
+	{% endfor %}
+	<div class="page_links">
+		{{users.links|raw}}
+	</div>
+</div>
+
+<div class="tab-pane fade in" id="communities">
+	{% for community in communities %}
+	{% else %}
+		No community results
+	{% endfor %}
+	<div class="page_links">
+		{{communities.links|raw}}
+	</div>
+</div>
+
+</div>
 </div>
 {% endblock %}

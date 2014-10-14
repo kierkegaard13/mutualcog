@@ -26,7 +26,7 @@ class Chats extends EloquentBridge
 	}
 
 	public function tags(){
-		return $this->belongsToMany('Tags','chats_to_tags','chat_id','tag_id');
+		return $this->belongsToMany('Tags','chats_to_tags','chat_id','tag_id')->withPivot(DB::raw('removed AS tag_removed'));
 	}
 
 	public function voted(){
