@@ -46,6 +46,11 @@ class BaseController extends Controller {
 		View::share('color_arr',array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#000'));
 	}
 
+	public function lastQuery(){
+		$queries = DB::getQueryLog();
+		return end($queries);
+	}	
+
 	public function parseText($text){
 		$pure_txt = $text;
 		$text = $this->htmlEscapeAndLinkUrls($text);

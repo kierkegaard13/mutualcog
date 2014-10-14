@@ -37,8 +37,9 @@ module = function(){
 	var max_chat_mssg_length = 2500;
 	var max_description_length = 100;
 	var max_info_length = 10000;
+	var search_messages = new Array("Type 'here' to search current community","Use 'in' to search communities","Press enter for more results","Search for your interests or specific content");
 
-	return {crit_len:crit_len,chat_scroll_timer:chat_scroll_timer,max_title_length:max_title_length,max_user_length:max_user_length,max_static_length:max_static_length,max_chat_mssg_length:max_chat_mssg_length,max_description_length:max_description_length,max_info_length:max_info_length,pm_scroll_inactive:pm_scroll_inactive,connected:connected,recent:recent,typ_cnt:typ_cnt,pm_info:pm_info,focused:focused,live:live,title_blinking:title_blinking,banned:banned,stop_scroll:stop_scroll,scroll_mod_active:scroll_mod_active,scroll_button_clicked:scroll_button_clicked,scroll_top:scroll_top,clicked_on:clicked_on,chat_id:chat_id,upvoted:upvoted,downvoted:downvoted,socket:socket,color_arr:color_arr,mems:mems,mods:mods,admin:admin,notifications_top_positions:notifications_top_positions,notifications_bottom_positions:notifications_bottom_positions,notifications_top_ids:notifications_top_ids,notifications_bottom_ids:notifications_bottom_ids,serial_id:serial_id,serial_tracker:serial_tracker,user_id:user_id,user_tracker:user_tracker};
+	return {search_messages:search_messages,crit_len:crit_len,chat_scroll_timer:chat_scroll_timer,max_title_length:max_title_length,max_user_length:max_user_length,max_static_length:max_static_length,max_chat_mssg_length:max_chat_mssg_length,max_description_length:max_description_length,max_info_length:max_info_length,pm_scroll_inactive:pm_scroll_inactive,connected:connected,recent:recent,typ_cnt:typ_cnt,pm_info:pm_info,focused:focused,live:live,title_blinking:title_blinking,banned:banned,stop_scroll:stop_scroll,scroll_mod_active:scroll_mod_active,scroll_button_clicked:scroll_button_clicked,scroll_top:scroll_top,clicked_on:clicked_on,chat_id:chat_id,upvoted:upvoted,downvoted:downvoted,socket:socket,color_arr:color_arr,mems:mems,mods:mods,admin:admin,notifications_top_positions:notifications_top_positions,notifications_bottom_positions:notifications_bottom_positions,notifications_top_ids:notifications_top_ids,notifications_bottom_ids:notifications_bottom_ids,serial_id:serial_id,serial_tracker:serial_tracker,user_id:user_id,user_tracker:user_tracker};
 }();
 
 updateChatTimes = function(){
@@ -55,6 +56,10 @@ updateTimes = function(){
 		$(this).text(moment.utc($(this).attr('id')).fromNow());
 	});
 }();
+
+function randomInt(min,max){
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 function newPmChat(friend_id,pm_id,friend_status_class,friend_name){
 	if(pm_id == 0){
@@ -523,6 +528,7 @@ $(document).ready(function(){
 	$('.tag_search_icon').click(function(){
 		if($('.tag_search').css('display') == 'none'){
 			$('.tag_input').width($('#welcome_user').width());
+			$('.tag_input').attr('placeholder',module.search_messages[randomInt(0,module.search_messages.length - 1)]);
 			$('.tag_search').css('display','inline');
 		}else{
 			$('.tag_search').css('display','none');
@@ -918,7 +924,7 @@ $('#search_input').on('keyup',function(e){
 								content += '<div class="search_res_type">Posts</div>';
 								enter_post++;
 							}
-							if(value.live){
+							if(value.live == 1){
 								content += '<li id="search_' + index + '" class="tag_results"><a href="//mutualcog.com/chat/live/' + value.id + '">' + value.name + '</a></li>';
 							}else{
 								content += '<li id="search_' + index + '" class="tag_results"><a href="//mutualcog.com/chat/static/' + value.id + '">' + value.name + '</a></li>';
@@ -931,6 +937,7 @@ $('#search_input').on('keyup',function(e){
 							content += '<li id="search_' + index + '" class="tag_results"><a href="//mutualcog.com/u/' + value.name + '">' + value.name + '</a></li>';
 						}
 					});
+					content += '<div class="search_res_type">Press enter for more results</div>';
 					if(content){
 						$('#tag_dropdown').show();
 						if($('#tag_dropdown').html() != content){
