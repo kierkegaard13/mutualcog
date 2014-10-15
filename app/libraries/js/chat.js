@@ -480,11 +480,19 @@ module.socket.on('check_live',function(live){
 	$('#chat_display').on('click','.chat_link',function(e){e.stopPropagation();});
 });
 
-generateMssg = function(info,is_mssg){
+generateMssg = function(info,is_mssg,tmp){
 	if(is_mssg){
-		var tmp = "<div class='response_to_0 mssg_cont y_0 parent_0' id='mssg_cont_" + info.id + "'><div class='chat_mssg' id='message_" + info.id + "'>";
+		if(tmp){
+			var tmp = "<div class='tmp_chat_mssg response_to_0 mssg_cont y_0 parent_0' id='mssg_cont_" + info.id + "'><div class='chat_mssg' id='message_" + info.id + "'>";
+		}else{
+			var tmp = "<div class='response_to_0 mssg_cont y_0 parent_0' id='mssg_cont_" + info.id + "'><div class='chat_mssg' id='message_" + info.id + "'>";
+		}
 	}else{
-		var tmp = "<div class='response_to_" + info.responseto + " mssg_cont y_" + info.y_dim + " parent_" + info.parent + " pad_l_20' id='mssg_cont_" + info.id + "'><div class='chat_mssg' id='message_" + info.id + "'>";
+		if(tmp){
+			var tmp = "<div class='tmp_chat_mssg response_to_" + info.responseto + " mssg_cont y_" + info.y_dim + " parent_" + info.parent + " pad_l_20' id='mssg_cont_" + info.id + "'><div class='chat_mssg' id='message_" + info.id + "'>";
+		}else{
+			var tmp = "<div class='response_to_" + info.responseto + " mssg_cont y_" + info.y_dim + " parent_" + info.parent + " pad_l_20' id='mssg_cont_" + info.id + "'><div class='chat_mssg' id='message_" + info.id + "'>";
+		}
 	}
 	tmp += "<div class='row' style='margin:0;'> <div class='mssg_body_cont'><div class='vote_box'>";
 	if(module.user_tracker == info.author || module.serial_tracker == info.author){
@@ -507,12 +515,12 @@ generateMssg = function(info,is_mssg){
 
 module.socket.on('publishMessage',function(chat_info){
 	if(chat_info.responseto == 0){
-		var tmp = generateMssg(chat_info,1);
-		$('.tmp_message').remove();
+		var tmp = generateMssg(chat_info,1,0);
+		$('.tmp_chat_mssg').remove();
 		$('#chat_display').append(tmp);
 	}else{
-		var tmp = generateMssg(chat_info,0);
-		$('.tmp_message').remove();
+		var tmp = generateMssg(chat_info,0,0);
+		$('.tmp_chat_mssg').remove();
 		$('#mssg_cont_' + chat_info.responseto).append(tmp);
 	}
 	$('.mssg_icon').tooltip();
@@ -564,11 +572,16 @@ $('#message').keyup(function(e){
 		if(e.which == 13){  /*enter key*/
 			if(keys.indexOf(16) == -1){  /*shift key not pressed*/
 				keys.splice(keys.indexOf(e.which),1);
-				var mssg_sent = $('#message').val();
+				var mssg_sent = processMessage($('#message').val());
 				if(mssg_sent.trim() != ""){
 					if(module.connected){
 						$('#message').val("");
 						if($('#message').attr('class') == 'global'){
+							var tmp = generateMssg({id:0,author:module.user_tracker,responseto:0,y_dim:0,serial:module.serial_tracker,created_at:moment.utc(moment.utc().format()).fromNow(),message:mssg_sent},1,1);
+							$('.tmp_message').remove();
+							$('#chat_display').append(tmp);
+							$('.mssg_icon').tooltip();
+							$('.caret_tooltip').tooltip();
 							$('.enter_hint').text('Sending...');
 							module.socket.emit('message_sent',{message:mssg_sent,responseto:0,y_dim:0,parent:0},function(){
 								$('.enter_hint').text('Sent');
@@ -581,6 +594,11 @@ $('#message').keyup(function(e){
 							}else{
 								var resp_parent = $('#mssg_cont_' + responseto).parents('.mssg_cont').last().attr('id').replace('mssg_cont_','');
 							}
+							var tmp = generateMssg({id:0,author:module.user_tracker,responseto:responseto,y_dim:y_dim,serial:module.serial_tracker,created_at:moment.utc(moment.utc().format()).fromNow(),message:mssg_sent},0,1);
+							$('.tmp_message').remove();
+							$('#mssg_cont_' + responseto).append(tmp);
+							$('.mssg_icon').tooltip();
+							$('.caret_tooltip').tooltip();
 							$('.enter_hint').text('Sending...');
 							module.socket.emit('message_sent',{message:mssg_sent,responseto:responseto,y_dim:y_dim,parent:resp_parent},function(){
 								$('.enter_hint').text('Sent');

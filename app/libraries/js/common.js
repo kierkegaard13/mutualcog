@@ -42,6 +42,71 @@ module = function(){
 	return {search_messages:search_messages,crit_len:crit_len,chat_scroll_timer:chat_scroll_timer,max_title_length:max_title_length,max_user_length:max_user_length,max_static_length:max_static_length,max_chat_mssg_length:max_chat_mssg_length,max_description_length:max_description_length,max_info_length:max_info_length,pm_scroll_inactive:pm_scroll_inactive,connected:connected,recent:recent,typ_cnt:typ_cnt,pm_info:pm_info,focused:focused,live:live,title_blinking:title_blinking,banned:banned,stop_scroll:stop_scroll,scroll_mod_active:scroll_mod_active,scroll_button_clicked:scroll_button_clicked,scroll_top:scroll_top,clicked_on:clicked_on,chat_id:chat_id,upvoted:upvoted,downvoted:downvoted,socket:socket,color_arr:color_arr,mems:mems,mods:mods,admin:admin,notifications_top_positions:notifications_top_positions,notifications_bottom_positions:notifications_bottom_positions,notifications_top_ids:notifications_top_ids,notifications_bottom_ids:notifications_bottom_ids,serial_id:serial_id,serial_tracker:serial_tracker,user_id:user_id,user_tracker:user_tracker};
 }();
 
+marked.setOptions({
+	sanitize:true,
+	breaks:true,
+	highlight:function (code) {
+		return require('highlight.js').highlightAuto(code).value;
+	}
+});
+
+function hashHtml(text){
+	return text.replace(/#/,'&#035;');
+}
+
+function emoji(text){
+	var mapArr = ['\\&lt\\;3',':\\)',':\\(',':D',":\\&\\#39\\;\\(",'spec_face_angr','spec_face_rage',':\\|',':O',':P','T_T'];
+
+	var mapObj = {
+		'&lt;3':'<img style="height:18px;" src="//localhost/laravel/app/emoji/heart.png"></img>',
+		':D':'<img style="height:18px;" src="//localhost/laravel/app/emoji/smile.png"></img>',
+		':)':'<img style="height:18px;" src="//localhost/laravel/app/emoji/smiley.png"></img>',
+		':(':'<img style="height:18px;" src="//localhost/laravel/app/emoji/disappointed.png"></img>',
+		':|':'<img style="height:18px;" src="//localhost/laravel/app/emoji/neutral_face.png"></img>',
+		//':/':'<img style="height:18px;" src="//localhost/laravel/app/emoji/confused.png"></img>',
+		":&#39;(":'<img style="height:18px;" src="//localhost/laravel/app/emoji/cry.png"></img>',
+		':O':'<img style="height:18px;" src="//localhost/laravel/app/emoji/open_mouth.png"></img>',
+		':P':'<img style="height:18px;" src="//localhost/laravel/app/emoji/stuck_out_tongue_closed_eyes.png"></img>',
+		'T_T':'<img style="height:18px;" src="//localhost/laravel/app/emoji/sob.png"></img>',
+		'spec_face_angr':'<img style="height:18px;" src="//localhost/laravel/app/emoji/angry.png"></img>',
+		'spec_face_rage':'<img style="height:18px;" src="//localhost/laravel/app/emoji/rage.png"></img>'
+	};
+
+	var re = new RegExp(mapArr.join("|"),"gi");
+	text = text.replace(re, function(matched){
+		return mapObj[matched];
+	});
+	return text;
+}
+
+function processMessage(message){
+	var url_reg = /(\b)(https?:\/\/)?([\da-z-]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/g;
+	var url_reg3 = /(img)(\s)(src\=)/g;
+	var t_reg = /\/t\/([^\s]*)(\s*)/g; 
+	var p_reg = /\/p\/([^\s]*)(\s*)/g; 
+	var at_reg = /\@([^\s]*)(\s*)/g;
+	var hash_reg = /\&\#035\;([^\s]*)(\s*)/g; 
+	var re1 = new RegExp('^<p>','g');
+	var re2 = new RegExp('</p>$','g');
+	message = hashHtml(message);
+	message = message.replace('>:|','spec_face_angr');
+	message = message.replace('>:(','spec_face_rage');
+	message = marked(message);
+	message = message.replace(url_reg,"$1<a class='chat_link' href='\/\/$3\.$4$5'>$3\.$4$5</a>");
+	if(message.length){
+		message = message.replace(/^\s+|\s+$/g,'');
+		message = message.replace(re1,'');
+		message = message.replace(re2,'');
+		message = message.replace(p_reg,"<a class='chat_link' href='\/\/mutualcog.com/u/$1'>\/p\/$1</a>$2");
+		message = message.replace(t_reg,"<a class='chat_link' href='\/\/mutualcog.com/t/$1'>\/t\/$1</a>$2");
+		message = message.replace(at_reg,"<a class='chat_link' href='\/\/mutualcog.com/u/$1'>@$1</a>$2");
+		message = message.replace(hash_reg,"<a class='chat_link' href='\/\/mutualcog.com/t/$1'>#$1</a>$2");
+		message = message.replace(url_reg3,"$1$2style='max-width:300px;max-height:200px;margin-bottom:5px;' $3");
+	}
+	message = emoji(message);
+	return message;
+}
+
 updateChatTimes = function(){
 	$.each($('.chat_time'),function(index,value){
 		$(this).text(moment.utc($(this).attr('id')).fromNow());
@@ -1106,9 +1171,14 @@ $('body').on('keydown','.pm_text',function(e){
 	pm_keys.push(e.which);
 	var $this = $(this);
 	var self = this;
+	if(e.which == 13 && $(this).val().trim() == ""){
+		return false;
+	}
 	window.setTimeout(function(){
-		$this.height(0);
-		$this.height(self.scrollHeight - 10);
+		if((e.which != 13 || pm_keys.indexOf(16) != -1) && $this.val().trim() != ""){
+			$this.height(0);
+			$this.height(self.scrollHeight - 10);
+		}
 	},0);
 });
 
@@ -1128,7 +1198,8 @@ $('body').on('keyup','.pm_text',function(e){
 				module.socket.emit('not_typing',{pm_id:module.pm_info[2],friend_id:module.pm_info[1],user_id:module.user_id});
 			}
 			if($(this).val().trim() != ""){
-				module.socket.emit('send_pm',{message:$(this).val(),pm_id:module.pm_info[2],friend_id:module.pm_info[1],user_id:module.user_id},function(info){
+				var pm_sent = processMessage($(this).val());
+				module.socket.emit('send_pm',{message:pm_sent,pm_id:module.pm_info[2],friend_id:module.pm_info[1],user_id:module.user_id},function(info){
 					var chat_cont = $('#pm_' + info.friend_id + '_' + info.pm_id);
 					var tmp_message = chat_cont.find('.tmp_message');
 					tmp_message.find('.pm_message').html(info.message);
@@ -1149,6 +1220,8 @@ $('body').on('keyup','.pm_text',function(e){
 						pm_body.mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
 					},20);
 				}
+			}else{
+				return false;
 			}
 			module.typ_cnt = 0;
 		}else{
