@@ -784,65 +784,6 @@
         ]
     },
     {
-        "name": "twig/twig",
-        "version": "v1.16.0",
-        "version_normalized": "1.16.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/fabpot/Twig.git",
-            "reference": "8ce37115802e257a984a82d38254884085060024"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/fabpot/Twig/zipball/8ce37115802e257a984a82d38254884085060024",
-            "reference": "8ce37115802e257a984a82d38254884085060024",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.2.4"
-        },
-        "time": "2014-07-05 12:19:05",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.16-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Twig_": "lib/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-3-Clause"
-        ],
-        "authors": [
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com",
-                "homepage": "http://fabien.potencier.org",
-                "role": "Lead Developer"
-            },
-            {
-                "name": "Armin Ronacher",
-                "email": "armin.ronacher@active-4.com",
-                "role": "Project Founder"
-            },
-            {
-                "name": "Twig Team",
-                "homepage": "https://github.com/fabpot/Twig/graphs/contributors",
-                "role": "Contributors"
-            }
-        ],
-        "description": "Twig, the flexible, fast, and secure template language for PHP",
-        "homepage": "http://twig.sensiolabs.org",
-        "keywords": [
-            "templating"
-        ]
-    },
-    {
         "name": "rcrowe/twigbridge",
         "version": "0.5.4",
         "version_normalized": "0.5.4.0",
@@ -1764,6 +1705,65 @@
         "homepage": "http://symfony.com"
     },
     {
+        "name": "twig/twig",
+        "version": "v1.16.1",
+        "version_normalized": "1.16.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/fabpot/Twig.git",
+            "reference": "7c4c01dcf578523cfcddf383641a4f12790270ec"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/fabpot/Twig/zipball/7c4c01dcf578523cfcddf383641a4f12790270ec",
+            "reference": "7c4c01dcf578523cfcddf383641a4f12790270ec",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.2.4"
+        },
+        "time": "2014-10-10 14:09:53",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.16-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Twig_": "lib/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com",
+                "homepage": "http://fabien.potencier.org",
+                "role": "Lead Developer"
+            },
+            {
+                "name": "Armin Ronacher",
+                "email": "armin.ronacher@active-4.com",
+                "role": "Project Founder"
+            },
+            {
+                "name": "Twig Team",
+                "homepage": "https://github.com/fabpot/Twig/graphs/contributors",
+                "role": "Contributors"
+            }
+        ],
+        "description": "Twig, the flexible, fast, and secure template language for PHP",
+        "homepage": "http://twig.sensiolabs.org",
+        "keywords": [
+            "templating"
+        ]
+    },
+    {
         "name": "symfony/security-core",
         "version": "v2.4.10",
         "version_normalized": "2.4.10.0",
@@ -1826,73 +1826,5 @@
         ],
         "description": "Symfony Security Component - Core Library",
         "homepage": "http://symfony.com"
-    },
-    {
-        "name": "wisembly/elephant.io",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/Wisembly/elephant.io.git",
-            "reference": "ed693eb86481be9a65f1b52d578c63ee877d9e19"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/Wisembly/elephant.io/zipball/ed693eb86481be9a65f1b52d578c63ee877d9e19",
-            "reference": "ed693eb86481be9a65f1b52d578c63ee877d9e19",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.4.0",
-            "psr/log": "~1.0"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "~4.0"
-        },
-        "time": "2014-09-28 11:42:49",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "ElephantIO\\": [
-                    "src/",
-                    "test/"
-                ]
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Baptiste Clavié",
-                "email": "baptiste@wisembly.com",
-                "homepage": "http://baptiste.xn--clavi-fsa.net/",
-                "role": "Maintainer"
-            },
-            {
-                "name": "Guillaume Potier",
-                "email": "guillaume@wisembly.com",
-                "role": "Maintainer"
-            },
-            {
-                "name": "Ludovic Barreca",
-                "email": "ludogp2@gmail.com",
-                "role": "Project Founder"
-            },
-            {
-                "name": "Elephant.IO Community",
-                "role": "Contributors :)"
-            }
-        ],
-        "description": "Send events to a websocket real time engine though PHP",
-        "homepage": "http://elephant.io",
-        "keywords": [
-            "dialog",
-            "nodejs",
-            "real time",
-            "websocket"
-        ]
     }
 ]

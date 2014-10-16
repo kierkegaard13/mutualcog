@@ -19,16 +19,15 @@ class Search extends BaseController {
 		$chats = '';
 		$users = '';
 		$communities = '';
-		$prime_keywords = ['posts ','communities ','users '];
-		$post_af_keywords = [' in ',' about ',' by ',' here'];
-		$post_bf_keywords = ['sfw ','nsfw ','live ','static '];
+		$prime_keywords = ['posts','communities','users'];
+		$post_af_keywords = [' in ',' about ',' by '];
+		$post_bf_keywords = ['sfw','nsfw','live','static'];
 		$user_keywords = [' named ',' who like ',' near '];
 		$com_keywords = [' similar to ',' named ',' concerning '];
 		$search_string = htmlentities($search_string);
 		$found = -1;
-		foreach($prime_keywords as $key => $word){
-			$tmp_string = explode($word,$search_string);
-			if(sizeof($tmp_string) > 1){
+		foreach($prime_keywords as $key => $word){  //split search based on primary keywords
+			if(strpos($search_string,$word) !== false){
 				$found = $key;
 				$split_string = explode($word,$search_string);
 				break;
@@ -36,7 +35,7 @@ class Search extends BaseController {
 		}
 		if($found != -1){
 			switch($found){
-				case 0:
+				case 0:  //posts
 					$chats = new Chats();
 					$num_found = 0;
 					if(sizeof($split_string) > 1){
@@ -63,12 +62,53 @@ class Search extends BaseController {
 								}
 							}
 						}
-						$split_string = $split_string[1];
+						$search_string = $split_string[1];
+					}else{
+						$search_string = $split_string[0];
 					}
+					foreach($post_af_keywords as $key=>$word){
+						if(strpos($search_string,$word) !== false){
+							switch($key){
+								case 0:  //in
+									$split_string = explode($word,$search_string);
+									if(sizeof($split_string) > 1){
+										$search_string = $split_string[1];
+									}else{
+										$search_string = $split_string[0];
+									}
+									$tag_str = explode(',',$search_string);
+									if(sizeof(explode(' ',$tag_str[sizeof($tag_str) - 1])) > 1){
+										$last_el = explode(' ',$tag_str[sizeof($tag_str - 1)]);
+										$tag_str[sizeof($tag_str) - 1] = $last_el[0];
+										$last_el = array_splice($last_el,0,1);
+										$last_el = join(' ',$last_el); 
+										$search_string = (sizeof($split_string) > 1) ? $split_string[0] . ' ' . $last_el : $last_el;
+									}
+									$chats = $chats->whereHas('tags',function($query)use($tag_str){
+										$query->where(function($q)use($tag_str){
+											foreach($tag_str as $key=>$tag){
+												if($key == 0){
+													$q->where('name','=',$tag);
+												}else{
+													$q->orWhere('name','=',$tag);
+												}
+											}
+										});
+									});
+									break;
+								case 1:  //about
+									break;
+								case 2:  //by
+									break;
+								default:break;
+							}
+						}
+					}
+					$chats = $chats->whereremoved('0')->get();
 					break;
-				case 1:
+				case 1:  //communities
 					break;
-				case 2:
+				case 2:  //users
 					break;
 				default:
 					break;
