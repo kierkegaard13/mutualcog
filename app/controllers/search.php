@@ -19,7 +19,7 @@ class Search extends BaseController {
 		$chats = '';
 		$users = '';
 		$communities = '';
-		$keywords = [' in ','posts titled','users who like',' here','users near me'];
+		$keywords = ['posts ','communities ','users ',' in ',' titled ',' by ',' from ','sfw ','nsfw ','live ','static ',' here',' who like ',' near ',' similar to ',' concerning '];
 		$search_string = htmlentities($search_string);
 		$found = -1;
 		foreach($keywords as $key => $word){
@@ -55,10 +55,6 @@ class Search extends BaseController {
 					$chats = Chats::where('title','LIKE','%'.$search_string.'%')->whereremoved('0')->paginate(25);
 					break;
 				case 2:
-					break;
-				case 3:
-					break;
-				case 4:
 					break;
 				default:
 					break;
