@@ -66,8 +66,8 @@ function processMessage(message){
 	message = hashHtml(message);
 	message = message.replace('>:|','spec_face_angr');
 	message = message.replace('>:(','spec_face_rage');
-	message = message.replace(url_reg,"$1<a class='chat_link' href='\/\/$3\.$4$5'>$3\.$4$5</a>");
 	message = marked(message);
+	message = message.replace(url_reg,"$1<a class='chat_link' href='\/\/$3\.$4$5'>$3\.$4$5</a>");
 	if(message.length){
 		message = message.replace(/^\s+|\s+$/g,'');
 		message = message.replace(re1,'');
@@ -253,7 +253,6 @@ io.sockets.on('connection', function(client) {
 
 	client.on('send_pm',function(pm_info,fn){
 		if(client.authorized && pm_info.message.length < 10000){
-			pm_info.message = processMessage(pm_info.message);
 			var mssg_id = 0;
 			/* Figure out if recipient has disconnected */
 			conn.where({id:pm_info.friend_id}).get('users',function(err,rows){
@@ -549,7 +548,6 @@ io.sockets.on('connection', function(client) {
 	// Success!  Now listen to messages to be received
 	client.on('message_sent',function(mssg_info,fn){ 
 		if(io.sockets.clients(client.room)[client.arr_index].live && !client.banned && mssg_info.message.replace(/^\s+|\s+$/g,'') != '' && mssg_info.message.length < 2500){
-			mssg_info.message = processMessage(mssg_info.message);
 			conn.insert('messages',{message:mssg_info.message,chat_id:client.chat_id,member_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:mssg_info.responseto,y_dim:mssg_info.y_dim,parent:mssg_info.parent,author:client.user,serial:client.serial},function(err,info){
 				if(err) console.log(err);
 				var insert_id = info.insertId;
