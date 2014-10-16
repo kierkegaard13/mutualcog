@@ -19,7 +19,7 @@ class Search extends BaseController {
 		$chats = '';
 		$users = '';
 		$communities = '';
-		$keywords = ['posts ','communities ','users ',' in ',' titled ',' by ',' from ','sfw ','nsfw ','live ','static ',' here',' who like ',' near ',' similar to ',' concerning '];
+		$keywords = ['posts ','communities ','users ',' in ',' about ',' by ','sfw ','nsfw ','live ','static ',' here',' who like ',' near ',' similar to ',' named ',' concerning '];
 		$search_string = htmlentities($search_string);
 		$found = -1;
 		foreach($keywords as $key => $word){
