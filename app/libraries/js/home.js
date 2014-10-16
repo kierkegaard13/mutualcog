@@ -143,16 +143,15 @@ $(document).ready(function(){
 		$('#Tags_v3').val(chat_cont.find('.chat_tag_str').text());
 		$('#description_v3').val(chat_cont.find('.chat_desc_str').text());
 		$('#form_chat_id').val(chat_cont.find('.chat_id_str').text());
-		if(chat_cont.find('.chat_live_str').text()){
-			$('#live_status_v3').prop('checked','true');
+		if(chat_cont.find('.chat_live_str').text() == 1){
+			$('#live_status_v3').attr('checked',true);
 		}else{
-			$('#live_status_v3').prop('checked','false');
+			$('#live_status_v3').attr('checked',false);
 		}
-		if(chat_cont.find('.chat_nsfw_str').text()){
-			console.log('hooray');
-			$('#nsfw_v3').prop('checked','true');
+		if(chat_cont.find('.chat_nsfw_str').text() == 1){
+			$('#nsfw_v3').attr('checked',true);
 		}else{
-			$('#nsfw_v3').prop('checked','false');
+			$('#nsfw_v3').attr('checked',false);
 		}
 		$('#edit_modal').modal();
 		return false;
