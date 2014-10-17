@@ -456,7 +456,7 @@ $(document).ready(function(){
 					$(this).find('.pm_text').width($(this).find('.pm_header').width() - 2);
 				}});
 			}
-		}else{
+		}else if($('#pm_' + friend_id + '_' + pm_id).length == 0){
 			if($('.pm_list_footer').length == 0){
 				$('.pm_bar').prepend('<div class="dropup pm_list_footer_cont"><div class="pm_list_footer dropdown-toggle" data-toggle="dropdown"><div class="glyphicon glyphicon-comment" style="color:white;float:left;"> ...</div></div><ul class="dropdown-menu pm_dropup" role="menu"><li id="switch_' + friend_id + '_' + pm_id + '"><a class="switch_pm" href="#" data-friend-id="' + friend_id + '" data-friend-name="' + friend_name + '" data-pm-id="' + pm_id + '" data-status="' + friend_status_class + '">' + friend_name + '</a></li></ul></div>');
 			}else{
@@ -997,13 +997,13 @@ $('#search_input').on('keyup',function(e){
 					$.each(hresp,function(index,value){
 						if(value.type == 'tag'){
 							if(enter_tag == 0){
-								content += '<div class="search_res_type">Communities</div>';
+								content += '<div class="search_res_type"><strong>Communities</strong></div>';
 								enter_tag++;
 							}
 							content += '<li id="search_' + index + '" class="tag_results"><a href="//mutualcog.com/t/' + value.name + '">' + value.name + '</a></li>';
 						}else if(value.type == 'post'){
 							if(enter_post == 0){
-								content += '<div class="search_res_type">Posts</div>';
+								content += '<div class="search_res_type"><strong>Posts</strong></div>';
 								enter_post++;
 							}
 							if(value.live == 1){
@@ -1013,14 +1013,14 @@ $('#search_input').on('keyup',function(e){
 							}
 						}else{
 							if(enter_user == 0){
-								content += '<div class="search_res_type">Users</div>';
+								content += '<div class="search_res_type"><strong>Users</strong></div>';
 								enter_user++;
 							}
 							content += '<li id="search_' + index + '" class="tag_results"><a href="//mutualcog.com/u/' + value.name + '">' + value.name + '</a></li>';
 						}
 					});
-					content += '<div class="search_res_type">Press enter for more results</div>';
-					content += '<li><a class="search_link" href="#" >List of advanced search keywords</a></li>';
+					content += '<div class="search_hint_cont"><div class="search_hint"><strong>Press enter for more results</strong></div></div>';
+					content += '<li><a class="search_link" href="#" ><strong>List of advanced search keywords</strong></a></li>';
 					if(content){
 						$('#tag_dropdown').show();
 						if($('#tag_dropdown').html() != content){
