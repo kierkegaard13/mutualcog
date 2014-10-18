@@ -42,11 +42,11 @@ class Search extends BaseController {
 		$chats = '';
 		$users = '';
 		$communities = '';
-		$prime_keywords = ["/\bposts/i","/\bcommunities/i","/\busers/i"];
-		$post_af_keywords = ["/\bin/i","/\babout/i","/\bby/i"];
-		$post_bf_keywords = ["/\bsfw/i","/\bnsfw/i","/\blive/i","/\bstatic/i"];
-		$user_keywords = ["/\bnamed/i","/\blike/i","/\bnear/i"];
-		$com_keywords = ["/\bnamed/i","/\bsimilar to/i","/\bconcerning/i"];
+		$prime_keywords = ["/\bposts\b/i","/\bcommunities\b/i","/\busers\b/i"];
+		$post_af_keywords = ["/\bin\b/i","/\babout\b/i","/\bby\b/i"];
+		$post_bf_keywords = ["/\bsfw\b/i","/\bnsfw\b/i","/\blive\b/i","/\bstatic\b/i"];
+		$user_keywords = ["/\bnamed\b/i","/\bwho like\b/i","/\bnear\b/i"];
+		$com_keywords = ["/\bnamed\b/i","/\bsimilar to\b/i","/\babout\b/i"];
 		$search_string = htmlentities($search_string);
 		$found = -1;
 		foreach($prime_keywords as $key => $word){  //split search based on primary keywords
@@ -90,13 +90,14 @@ class Search extends BaseController {
 						$search_string = $split_string[0];
 					}
 					foreach($post_af_keywords as $key=>$word){
-						if(strpos($search_string,$word) !== false){   
+						if(preg_match($word,$search_string)){   
 							switch($key){    
 								case 0:  //in
 									$this->parseSearch($tag_str,$search_string,$word);
 									$chats = $chats->whereHas('tags',function($query)use($tag_str){
 										$query->where(function($q)use($tag_str){
 											foreach($tag_str as $key=>$tag){
+												$tag = trim($tag);
 												if($key == 0){
 													$q->where('name','LIKE','%'.$tag.'%');
 												}else{
@@ -110,6 +111,7 @@ class Search extends BaseController {
 									$this->parseSearch($tag_str,$search_string,$word);
 									$chats = $chats->where(function($query)use($tag_str){
 										foreach($tag_str as $key=>$tag){
+											$tag = trim($tag);
 											if($key == 0){
 												$query->where(function($q)use($tag){
 													$q->where('title','LIKE','%'.$tag.'%');
@@ -126,7 +128,7 @@ class Search extends BaseController {
 									break;
 								case 2:  //by
 									$this->parseSearch($tag_str,$search_string,$word);
-									$tag_str = $tag_str[0];
+									$tag_str = trim($tag_str[0]);
 									$chats = $chats->whereadmin($tag_str);
 									break;
 								default:break;
@@ -136,8 +138,62 @@ class Search extends BaseController {
 					$chats = $chats->whereremoved('0')->get();
 					break;
 				case 1:  //communities
+					$communities = new Tags();
+					$search_string = $split_string[1];
+					foreach($com_keywords as $key=>$word){
+						if(preg_match($word,$search_string)){   
+							switch($key){    
+								case 0:  //named
+									$this->parseSearch($tag_str,$search_string,$word);
+									$communities = $communities->where(function($query)use($tag_str){
+										foreach($tag_str as $key=>$tag){
+											$tag = trim($tag);
+											if($key == 0){
+												$query->where('name','LIKE','%'.$tag.'%');
+											}else{
+												$query->orWhere('name','LIKE','%'.$tag.'%');
+											}
+										}
+									});
+									break;
+								case 1:  //similar to
+									break;
+								case 2:  //about
+									break;
+								default:break;
+							}
+						}
+					}
+					$communities = $communities->get();
 					break;
 				case 2:  //users
+					$search_string = $split_string[1];
+					$users = new User();
+					foreach($user_keywords as $key=>$word){
+						if(preg_match($word,$search_string)){   
+							switch($key){    
+								case 0:  //named
+									$this->parseSearch($tag_str,$search_string,$word);
+									$users = $users->where(function($query)use($tag_str){
+										foreach($tag_str as $key=>$tag){
+											$tag = trim($tag);
+											if($key == 0){
+												$query->where('name','LIKE','%'.$tag.'%');
+											}else{
+												$query->orWhere('name','LIKE','%'.$tag.'%');
+											}
+										}
+									});
+									break;
+								case 1:  //who like
+									break;
+								case 2:  //near
+									break;
+								default:break;
+							}
+						}
+					}
+					$users = $users->get();
 					break;
 				default:
 					break;
