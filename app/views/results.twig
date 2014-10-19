@@ -82,7 +82,9 @@
 	{% for chat in chats %}
 		{{ block('chat_box') }}
 	{% else %}
-		No post results
+		<div class="chat_title_box">
+			No post results
+		</div>
 	{% endfor %}
 	<div class="page_links">
 		{{chats.links|raw}}
@@ -90,9 +92,22 @@
 </div>
 
 <div class="tab-pane fade in" id="users">
-	{% for user in users %}
+	{% for usr in users %}
+		<div class="chat_title_box">
+			<a class="navbar_blue_color" href="{{site}}/u/{{usr.name}}">{{usr.name}}</a>
+			<div class="pull-right" style="margin-top:-5px;">
+			{% if user.id != usr.id %}
+				<button id="message_friend" class="btn btn-primary" data-toggle="modal" data-target="#message_modal"><div class="glyphicon glyphicon-envelope"> </div> Message</button>
+			{% endif %}
+			{% if usr.id != user.id %}
+				<button class="btn btn-primary" id="request_friend" data-user-id="{{profile.id}}" data-user-name="{{profile.name}}"><div class="glyphicon glyphicon-plus" id="request_glyph"> </div> Send Friend Request</button>
+			{% endif %}
+			</div>
+		</div>
 	{% else %}
-		No user results
+		<div class="chat_title_box">
+			No user results
+		</div>
 	{% endfor %}
 	<div class="page_links">
 		{{users.links|raw}}
@@ -101,6 +116,14 @@
 
 <div class="tab-pane fade in" id="communities">
 	{% for community in communities %}
+		<div class="chat_title_box">
+			<a class="navbar_blue_color" href="{{site}}/t/{{community.name}}">{{community.name}}</a>
+			{% if community.id in user.subArr %}
+				<div class="pull-right"><a href="{{site}}/tags/unsubscribe/{{community.id}}" class="btn btn-danger btn-xs">Unsubscribe</a></div>
+			{% else %}
+				<div class="pull-right"><a id="subscribe_btn" href="{{site}}/tags/subscribe/{{community.id}}" class="btn btn-success btn-xs">Subscribe</a></div>
+			{% endif %}
+		</div>
 	{% else %}
 		No community results
 	{% endfor %}

@@ -159,6 +159,9 @@ class TagsController extends BaseController {
 			$usertag = new UsersToTags();
 			$usertag->tag_id = htmlentities($tag_id);
 			$usertag->user_id = Auth::user()->id;
+			if($usertag->findAll()){
+				return $this->returnToCurrPage();
+			}
 			$usertag->score = 1;
 			$usertag->save();
 		}

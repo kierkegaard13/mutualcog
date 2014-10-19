@@ -96,6 +96,15 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 		return $this->belongsToMany('Tags','users_to_tags','user_id','tag_id');
 	}
 
+	public function subArr(){
+		$tmp_arr =  User::select('users_to_tags.tag_id')->where('users.id',$this->id)->join('users_to_tags','users_to_tags.user_id','=','users.id')->get()->toArray();
+		$sub_arr = array();
+		foreach($tmp_arr as $sub){
+			$sub_arr[] = $sub['tag_id'];
+		}
+		return $sub_arr;
+	}
+
 	public function owned(){
 		return count(UsersToTags::whereuser_id($this->id)->whereis_admin(1)->get());
 	}

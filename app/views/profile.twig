@@ -52,7 +52,7 @@
 <div>Level: {{profile.level}}</div>
 <div>Cognizance: {{profile.cognizance}}/{{profile.next_level}}
 <div class="progress progress-striped active">
-	<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{profile.cognizance}}" aria-valuemin="0" aria-valuemax="{{100 + 20*profile.level}}" style="width:{{profile.cognizance}}%;">
+	<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{profile.cognizance}}" aria-valuemin="0" aria-valuemax="{{100 + 20*profile.level}}" style="width:{{(profile.cognizance/profile.next_level) * 100}}%;">
 		<span class="sr-only">Only {{profile.cognizance}}% Complete</span>
 	</div>
 </div>
