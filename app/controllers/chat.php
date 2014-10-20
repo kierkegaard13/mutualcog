@@ -19,6 +19,18 @@ class Chat extends BaseController {
 		if(Auth::check()){
 			Auth::user()->chat_id = $chat_id;
 			Auth::user()->save();
+			$node = new NodeAuth();
+			$node->user_id = Auth::user()->id;
+			$node->user = Auth::user()->name;
+			$node->serial_id = Auth::user()->serial_id;
+			if($node->findAll()){
+				$node = $node->findAll();
+			}
+			$node->serial = Session::get('unique_serial');
+			$node->serial_id = Session::get('serial_id');
+			$node->sid = Session::getId();
+			$node->authorized = 1;
+			$node->save();
 			foreach(Auth::user()->upvotedChats() as $upvote){
 				$upvoted[] = $upvote->chat_id;
 			}

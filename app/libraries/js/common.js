@@ -465,7 +465,7 @@ $(document).ready(function(){
 		}
 	});
 	$('body').on('click','.switch_pm',function(){
-		$(this).remove();
+		$(this).remove();  //remove item from dropup
 		var first = $('.pm_cont').first();
 		var first_fr_id = first.attr('id').split('_')[1];
 		var first_pm_id = first.attr('id').split('_')[2];
@@ -478,7 +478,7 @@ $(document).ready(function(){
 		var pm_id = $(this).attr('data-pm-id');
 		var friend_status_class = $(this).attr('data-status');
 		var friend_name = $(this).attr('data-friend-name');
-		if($('#pm_' + friend_id + '_' + pm_id).length == 0){
+		if($('#pm_' + friend_id + '_' + pm_id).length == 0){  //display none never set on item, only exists as dropup elem
 			var chat_box = newPmChat(friend_id,pm_id,friend_status_class,friend_name);
 			$('.pm_cont').first().before(chat_box);
 			$.ajax({
@@ -532,8 +532,7 @@ $(document).ready(function(){
 				},
 				error:function(){}	
 			});
-		}else{
-			console.log('hihi');
+		}else{  //item is currently display none
 			var chat_box = $('#pm_' + friend_id + '_' + pm_id).clone();
 			$('#pm_' + friend_id + '_' + pm_id).remove();
 			chat_box.css('display','');
@@ -601,6 +600,7 @@ $(document).ready(function(){
 	});
 	$('.tag_search_icon').click(function(){
 		if($('.tag_search').css('display') == 'none'){
+			console.log($('#welcome_user').width());
 			$('.tag_input').width($('#welcome_user').width());
 			$('.tag_input').attr('placeholder',module.search_messages[randomInt(0,module.search_messages.length - 1)]);
 			$('.tag_search').css('display','inline');

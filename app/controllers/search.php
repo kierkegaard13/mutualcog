@@ -203,6 +203,12 @@ class Search extends BaseController {
 				$q->where('title','LIKE','%'.$search_string.'%');
 				$q->orWhere('raw_details','LIKE','%'.$search_string.'%');	
 			})->whereremoved('0')->paginate(25);
+			$communities = Tags::where(function($q)use($search_string){
+				$q->where('name','LIKE','%'.$search_string.'%');
+			})->paginate(25);
+			$chats = User::where(function($q)use($search_string){
+				$q->where('name','LIKE','%'.$search_string.'%');
+			})->paginate(25);
 		}
 		$tags = Tags::take(30)->orderBy('popularity','desc')->get();
 		Session::put('curr_page',URL::full());
