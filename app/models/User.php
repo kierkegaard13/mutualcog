@@ -88,6 +88,10 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 		return $this->belongsToMany('Chats','members_to_chats','member_id','chat_id');
 	}
 
+	public function interests(){
+		return $this->belongsToMany('Concepts','users_to_concepts','user_id','concept_id');
+	}
+
 	public function friendships(){
 		return $this->hasMany('InteractionUsers','user_id')->wheretype(0)->wherefriended(1)->orderBy(DB::raw('bond + bond * timestampdiff(minute,"2013-1-1 12:00:00",interaction_users.updated_at)/45000'),'desc');
 	}

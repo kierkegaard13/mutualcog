@@ -236,6 +236,10 @@ class TagsController extends BaseController {
 			$tag_name = htmlentities(Input::get('tag_name'));
 			$tag_desc = htmlentities(Input::get('description'));
 			$raw_info = htmlentities(Input::get('info'));
+			$tag_tier = 0;
+			if(Auth::user()->is_admin || Auth::user()->is_mod){
+				$tag_tier = htmlentities(Input::get('tag_tier'));
+			}
 			$validator = Validator::make(
 					array(
 						'name' => $tag_name,
@@ -256,6 +260,7 @@ class TagsController extends BaseController {
 				$tag->info = $this->parseText($raw_info);
 				$tag->admin = Auth::user()->name;
 				$tag->admin_id = Auth::user()->id;
+				$tag->tier = $tag_tier;
 				$tag->save();
 				$tag = $tag->findAll();
 				$user_to_tag = new UsersToTags();

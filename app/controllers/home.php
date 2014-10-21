@@ -21,7 +21,6 @@ class Home extends BaseController {
 		$chats = Chats::select('*',DB::raw('(case when (upvotes - downvotes > 0) then log(upvotes - downvotes) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 when (upvotes - downvotes = 0) then log(1) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 else log(1/abs(upvotes - downvotes)) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 end) AS score'))->whereremoved('0')->wherensfw('0')->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
 		$chats_new = Chats::whereremoved('0')->wherensfw('0')->orderBy('pinned','desc')->orderBy('created_at','desc')->paginate(25);
 		$chats_rising = Chats::select('*',DB::raw('(upvotes - downvotes) - views AS score'))->wherensfw('0')->whereremoved('0')->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
-		$chats_contr = Chats::whereRaw('abs(upvotes - downvotes) < 10')->whereRaw('upvotes + abs(downvotes) > 10')->whereremoved('0')->wherensfw('0')->orderBy('pinned','desc')->orderBy('created_at','desc')->paginate(25);
 		$tags = Tags::take(30)->orderBy('popularity','desc')->get();
 		$upvoted = array();
 		$downvoted = array();
@@ -48,7 +47,6 @@ class Home extends BaseController {
 		$view['chats'] = $chats;
 		$view['chats_new'] = $chats_new;
 		$view['chats_rising'] = $chats_rising;
-		$view['chats_contr'] = $chats_contr;
 		return $view;
 	}
 }

@@ -14,9 +14,10 @@
 		{% if not search_page %}
 			<div class="tag_search_cont">
 				<span class="glyphicon glyphicon-search tag_search_icon"></span>
-				<form class="navbar-form tag_search" role="search">
+				<form class="navbar-form tag_search has-feedback" role="search">
 					<div class="form-group dropdown search_drop_cont">
 						<input class="form-control tag_input" id="search_input" type="text" placeholder="Search" autocomplete="off" maxlength="{{max_title_length}}">
+						<span class="glyphicon glyphicon-search entry_search_submit form-control-feedback"></span>
 						<ul class="dropdown-menu" id="tag_dropdown" role="menu" aria-labelledby="search_input">
 						</ul>
 					</div>
@@ -99,7 +100,7 @@
 					<div class="red_ball pm_status"></div>
 					{% endif %}
 					<div class="glyphicon glyphicon-remove pm_remove"></div>
-					<div class="pm_name">{{pm.friends[0].name}}</div>
+					<a class="pm_name" href="{{site}}/u/{{pm.friends[0].name}}">{{pm.friends[0].name}}</a>
 				</div>
 				<div class="pm_body" {% if pm.pivot.visible == 2 %}style="display:none;"{% endif %}>
 					<div class="pm_body_mssgs">
@@ -143,9 +144,9 @@
 					</div>
 					<div id="tags_group_v2" class="form-group">
 						{% if not curr_tag_id %}
-							<label for="Tags_v2">Tags</label>
+							<label for="Tags_v2">Communities</label>
 						{% endif %}
-						<input class="form-control tags_input" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Tags" data-placement="bottom" type="{% if curr_tag_id %}hidden{% else %}text{% endif %}" name="tags" id="Tags_v2" placeholder="Use spaces to separate tags (max: 5)" autocomplete="off" {% if curr_tag_id %}value="#{{curr_tag.name}}"{% endif %} maxlength="120">
+						<input class="form-control tags_input" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Tags" data-placement="bottom" type="{% if curr_tag_id %}hidden{% else %}text{% endif %}" name="tags" id="Tags_v2" placeholder="Use spaces to separate communities (max: 5)" autocomplete="off" {% if curr_tag_id %}value="#{{curr_tag.name}}"{% endif %} maxlength="120">
 					</div>
 					<div id="description_group" class="form-group">
 						<label for="description">Description <small>(optional)</small></label>
@@ -184,16 +185,25 @@
 				<form method="post" action="{{site}}/tags/create-tag" class="mutual_form" id="tag_create_form">
 				<fieldset>
 					<div id="create_name_group" class="form-group">
-						<label for="name">Community Tag Name</label>
+						<label for="name">Community Name</label>
 						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Tag name must be unique" data-trigger="focus" type="text" name="tag_name" id="create_tag_name" placeholder="Tags are between 3 and 20 characters" maxlength="20">
 					</div>
+					{% if user.is_admin %}
+					<div id="create_tier_group" class="form-group">
+						<label for="tier">Community Tier</label>
+						<select class="form-control">
+							<option value="0">Community</option>
+							<option value="1">Category</option>
+						</select>
+					</div>
+					{% endif %}
 					<div id="create_desc_group" class="form-group">
 						<label for="description">Community Description (Doesn't show up in sidebar)</label>
 						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Description must be a max of {{max_description_length}} characters" data-trigger="focus" type="text" name="description" id="create_tag_desc" placeholder="Write a very short description of the content in your community" maxlength="{{max_description_length}}">
 					</div>
 					<div id="create_info_group" class="form-group">
 						<label for="info">Community Info (Sidebar Description, Posting Rules, etc)</label>
-						<textarea class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Info must be a max of {{max_info_length}} characters" data-trigger="focus" name="info" id="create_tag_info" rows=10 maxlength="{{max_info_length}}"></textarea>
+						<textarea class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Info must be a max of {{max_info_length}} characters" data-trigger="focus" name="info" id="create_tag_info" rows=8 maxlength="{{max_info_length}}"></textarea>
 					</div>
 				</fieldset>
 				<small>You will be able to request mods after community creation by clicking the manage community button in the sidebar</small>

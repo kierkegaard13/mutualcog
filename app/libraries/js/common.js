@@ -132,7 +132,7 @@ function newPmChat(friend_id,pm_id,friend_status_class,friend_name){
 	}else{
 		var chat_box = '<div class="pm_cont pm_visible" id="pm_' + friend_id + '_' + pm_id + '" style="visibility:hidden;">';
 	}
-	chat_box += '<div class="pm_header"><div class="' + friend_status_class + ' pm_status"></div><div class="glyphicon glyphicon-remove pm_remove"></div><div class="pm_name">' + friend_name + '</div></div>';
+	chat_box += '<div class="pm_header"><div class="' + friend_status_class + ' pm_status"></div><div class="glyphicon glyphicon-remove pm_remove"></div><a class="pm_name" href="//mutualcog.com/u/' + friend_name + '">' + friend_name + '</a></div>';
 	chat_box += '<div class="pm_body"><div class="pm_body_mssgs">'
 	chat_box += '</div><div class="pm_body_alerts"> <div class="pm_mssg_alert pm_unseen" style="display:none;">Not seen</div> <div class="pm_mssg_alert pm_typing" style="display:none;">' + friend_name + ' is typing...</div> </div></div>';
 	chat_box += '<textarea rows=1 class="pm_text"></textarea>';
@@ -147,7 +147,7 @@ $(window).resize(function(){
 		$('#search_input').css('width','');
 	}else{
 		if($('.tag_search').css('display') != 'none'){
-			$('.tag_input').width($('#welcome_user').width());
+			$('.tag_input').width($('#welcome_user').width() - 34);
 			if($('#logged_in').text() == 1){
 				$('.nav_pad_r').css('padding-right',$('.tag_search_cont').width() + 118);
 			}else{
@@ -332,6 +332,9 @@ $(document).ready(function(){
 	$('.chat_content').on('click','.toggle_responses',getStaticResponses);
 	$('.request_btn').on('click',function(){  //TODO complete seen notification func
 		
+	});
+	$('.pm_bar').on('click','.pm_name',function(e){
+		e.stopPropagation();
 	});
 	$('body').on('click','.request_link',function(){
 		var $this = $(this);
@@ -601,7 +604,7 @@ $(document).ready(function(){
 	$('.tag_search_icon').click(function(){
 		if($('.tag_search').css('display') == 'none'){
 			console.log($('#welcome_user').width());
-			$('.tag_input').width($('#welcome_user').width());
+			$('.tag_input').width($('#welcome_user').width() - 34);
 			$('.tag_input').attr('placeholder',module.search_messages[randomInt(0,module.search_messages.length - 1)]);
 			$('.tag_search').css('display','inline');
 		}else{
@@ -1068,7 +1071,7 @@ module.socket.on('receive_pm',function(info){
 			url:'//mutualcog.com/chat/pm-log',
 			success:function(hresp){	
 				var chat_box = '<div class="pm_cont" id="pm_' + info.friend_id + '_' + info.pm_id + '">';
-				chat_box += '<div class="pm_header"><div class="' + friend_status_class + ' pm_status"></div><div class="glyphicon glyphicon-remove pm_remove"></div><div class="pm_name">' + info.friend_name + '</div></div>';
+				chat_box += '<div class="pm_header"><div class="' + friend_status_class + ' pm_status"></div><div class="glyphicon glyphicon-remove pm_remove"></div><a class="pm_name" href="//mutualcog.com/u/' + info.friend_name + '">' + info.friend_name + '</a></div>';
 				chat_box += '<div class="pm_body"><div class="pm_body_mssgs">';
 				$.each(hresp,function(index,val){
 					if(val.author_id == module.user_id){
