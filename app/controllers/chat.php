@@ -43,57 +43,57 @@ class Chat extends BaseController {
 			foreach(Auth::user()->downvotedMessages() as $downvote){
 				$mssg_downvoted[] = $downvote->message_id;
 			}
-			$mem_to_chat = new MembersToChats();
-			$mem_to_chat->chat_id = $chat_id;
-			$mem_to_chat->member_id = Auth::user()->id;
-			$mem_to_chat->user = Auth::user()->name;
-			if(!$mem_to_chat->findAll()){  //getting into chat for the first time
+			$user_to_chat = new UsersToChats();
+			$user_to_chat->chat_id = $chat_id;
+			$user_to_chat->user_id = Auth::user()->id;
+			$user_to_chat->user = Auth::user()->name;
+			if(!$user_to_chat->findAll()){  //getting into chat for the first time
 				if($chat->admin_id == Auth::user()->id){
-					$mem_to_chat->is_admin = 1;
+					$user_to_chat->is_admin = 1;
 				}else if($chat->admin_id == Auth::user()->serial_id){
-					$mem_to_chat->is_admin = 1;
+					$user_to_chat->is_admin = 1;
 					$chat->admin_id = Auth::user()->id;
 					$chat->admin = Auth::user()->name;
 					$chat->save();
 				}
-				$mem_to_chat->active = 1;
-				$mem_to_chat->save();
+				$user_to_chat->active = 1;
+				$user_to_chat->save();
 			}else{  //have been in chat before
-				$mem_to_chat = $mem_to_chat->findAll();
-				if($mem_to_chat->banned){
+				$user_to_chat = $user_to_chat->findAll();
+				if($user_to_chat->banned){
 					return Redirect::to('home');  //add you have been banned message
 				}
-				$mem_to_chat->active = 1;
-				$mem_to_chat->save();
+				$user_to_chat->active = 1;
+				$user_to_chat->save();
 			}
 		}else{  //not logged in
-			$mem_to_chat = new MembersToChats();
-			$mem_to_chat->chat_id = $chat_id;
-			$mem_to_chat->member_id = Session::get('serial_id');
-			$mem_to_chat->user = Session::get('unique_serial');
-			if(!$mem_to_chat->findAll()){
-				$mem_to_chat->active = 1;
+			$user_to_chat = new UsersToChats();
+			$user_to_chat->chat_id = $chat_id;
+			$user_to_chat->user_id = Session::get('serial_id');
+			$user_to_chat->user = Session::get('unique_serial');
+			if(!$user_to_chat->findAll()){
+				$user_to_chat->active = 1;
 				if($chat->admin_id == Session::get('serial_id')){
-					$mem_to_chat->is_admin = 1;
+					$user_to_chat->is_admin = 1;
 				}
-				$mem_to_chat->save();
+				$user_to_chat->save();
 			}else{
-				$mem_to_chat = $mem_to_chat->findAll();
-				$mem_to_chat->active = 1;
-				if($mem_to_chat->banned){
+				$user_to_chat = $user_to_chat->findAll();
+				$user_to_chat->active = 1;
+				if($user_to_chat->banned){
 					return Redirect::to('home');  //add you have been banned message
 				}
-				$mem_to_chat->save();
+				$user_to_chat->save();
 			}
 		}
-		$tags = Tags::take(30)->orderBy('popularity','desc')->get();
-		$tag_arr = array();
+		$communities = Communities::take(30)->orderBy('popularity','desc')->get();
+		$community_arr = array();
 		$mods = array();
 		foreach($chat->moderators as $mod){
 			$mods[] = $mod->user;
 		}
 		Session::put('curr_page',URL::full());
-		$view['tags'] = $tags;
+		$view['communities'] = $communities;
 		$view['curr_time'] = date('Y:m:d:H:i');
 		$view['upvoted'] = $upvoted;
 		$view['downvoted'] = $downvoted;
@@ -131,52 +131,52 @@ class Chat extends BaseController {
 			foreach(Auth::user()->downvotedMessages() as $downvote){
 				$mssg_downvoted[] = $downvote->message_id;
 			}
-			$mem_to_chat = new MembersToChats();
-			$mem_to_chat->chat_id = $chat_id;
-			$mem_to_chat->member_id = Auth::user()->id;
-			$mem_to_chat->user = Auth::user()->name;
-			if(!$mem_to_chat->findAll()){  //getting into chat for the first time
+			$user_to_chat = new UsersToChats();
+			$user_to_chat->chat_id = $chat_id;
+			$user_to_chat->user_id = Auth::user()->id;
+			$user_to_chat->user = Auth::user()->name;
+			if(!$user_to_chat->findAll()){  //getting into chat for the first time
 				if($chat->admin_id == Auth::user()->id){
-					$mem_to_chat->is_admin = 1;
+					$user_to_chat->is_admin = 1;
 				}else if($chat->admin_id == Auth::user()->serial_id){
-					$mem_to_chat->is_admin = 1;
+					$user_to_chat->is_admin = 1;
 					$chat->admin_id = Auth::user()->id;
 					$chat->admin = Auth::user()->name;
 					$chat->save();
 				}
-				$mem_to_chat->save();
+				$user_to_chat->save();
 			}else{  //have been in chat before
-				$mem_to_chat = $mem_to_chat->findAll();
-				if($mem_to_chat->banned){
+				$user_to_chat = $user_to_chat->findAll();
+				if($user_to_chat->banned){
 					return Redirect::to('home');  //add you have been banned message
 				}
-				$mem_to_chat->save();
+				$user_to_chat->save();
 			}
 		}else{  //not logged in
-			$mem_to_chat = new MembersToChats();
-			$mem_to_chat->chat_id = $chat_id;
-			$mem_to_chat->member_id = Session::get('serial_id');
-			$mem_to_chat->user = Session::get('unique_serial');
-			if(!$mem_to_chat->findAll()){
+			$user_to_chat = new UsersToChats();
+			$user_to_chat->chat_id = $chat_id;
+			$user_to_chat->user_id = Session::get('serial_id');
+			$user_to_chat->user = Session::get('unique_serial');
+			if(!$user_to_chat->findAll()){
 				if($chat->admin_id == Session::get('serial_id')){
-					$mem_to_chat->is_admin = 1;
+					$user_to_chat->is_admin = 1;
 				}
-				$mem_to_chat->save();
+				$user_to_chat->save();
 			}else{
-				$mem_to_chat = $mem_to_chat->findAll();
-				if($mem_to_chat->banned){
+				$user_to_chat = $user_to_chat->findAll();
+				if($user_to_chat->banned){
 					return Redirect::to('home');  //add you have been banned message
 				}
 			}
 		}
-		$tags = Tags::take(30)->orderBy('popularity','desc')->get();
-		$tag_arr = array();
+		$communities = Communities::take(30)->orderBy('popularity','desc')->get();
+		$community_arr = array();
 		$mods = array();
 		foreach($chat->moderators as $mod){
 			$mods[] = $mod->user;
 		}
 		Session::put('curr_page',URL::full());
-		$view['tags'] = $tags;
+		$view['communities'] = $communities;
 		$view['curr_time'] = date('Y:m:d:H:i');
 		$view['upvoted'] = $upvoted;
 		$view['downvoted'] = $downvoted;
@@ -265,11 +265,11 @@ class Chat extends BaseController {
 			$message->chat_id = htmlentities($chat_id);
 			$message->message = $this->parseText($mssg_content);
 			if(Auth::check()){
-				$message->member_id = Auth::user()->id;
+				$message->user_id = Auth::user()->id;
 				$message->author = Auth::user()->name;
 				$message->serial = Auth::user()->serial->serial_id;
 			}else{
-				$message->member_id = Session::get('serial_id');
+				$message->user_id = Session::get('serial_id');
 				$message->author = Session::get('unique_serial');
 				$message->serial = Session::get('unique_serial');
 
@@ -299,7 +299,7 @@ class Chat extends BaseController {
 			if(Auth::check()){	
 				$mssg_voted = new MessagesVoted();
 				$mssg_voted->message_id = $message->id;
-				$mssg_voted->member_id = Auth::user()->id;
+				$mssg_voted->user_id = Auth::user()->id;
 				$mssg_voted->status = 1;
 				$mssg_voted->save();
 			}
@@ -356,10 +356,10 @@ class Chat extends BaseController {
 	public function getCheckMod(){
 		$user = htmlentities(Input::get('user'));
 		$chat_id = htmlentities(Input::get('chat_id'));
-		$mem_to_chat = new MembersToChats();
-		$mem_to_chat = $mem_to_chat->whereuser($user)->wherechat_id($chat_id)->first();
-		if($mem_to_chat){
-			if($mem_to_chat->is_mod){
+		$user_to_chat = new UsersToChats();
+		$user_to_chat = $user_to_chat->whereuser($user)->wherechat_id($chat_id)->first();
+		if($user_to_chat){
+			if($user_to_chat->is_mod){
 				return 1;
 			}else{
 				return 0;
@@ -374,7 +374,7 @@ class Chat extends BaseController {
 			if($chat){
 				if($chat->admin == Auth::user()->name){
 					$messages = Messages::wherechat_id($chat_id)->delete();
-					$chat_to_tags = ChatsToTags::wherechat_id($chat_id)->delete();
+					$chat_to_communities = ChatsToCommunities::wherechat_id($chat_id)->delete();
 					$chat->delete();
 				}
 			}
@@ -382,7 +382,7 @@ class Chat extends BaseController {
 		return $this->returnToCurrPage();
 	}
 
-	public function getSoftRemove($chat_id,$tag_id = null){
+	public function getSoftRemove($chat_id,$community_id = null){
 		if(Auth::check() && $chat_id){
 			if(Auth::user()->is_admin){
 				$chat = Chats::find($chat_id);
@@ -390,11 +390,11 @@ class Chat extends BaseController {
 					$chat->removed = 1;
 					$chat->save();
 				}
-			}else if(Auth::user()->tag_mod == $tag_id || Auth::user()->tag_admin == $tag_id){
-				if($tag_id){
-					$chat_to_tag = ChatsToTags::wherechat_id($chat_id)->wheretag_id($tag_id)->first();
-					$chat_to_tag->removed = 1;
-					$chat_to_tag->save();
+			}else if(Auth::user()->community_mod == $community_id || Auth::user()->community_admin == $community_id){
+				if($community_id){
+					$chat_to_community = ChatsToCommunities::wherechat_id($chat_id)->wherecommunity_id($community_id)->first();
+					$chat_to_community->removed = 1;
+					$chat_to_community->save();
 				}
 			}
 		}
@@ -422,17 +422,17 @@ class Chat extends BaseController {
 		$details = Input::get('description');
 		$live_status = htmlentities(Input::get('live_status'));
 		$nsfw = htmlentities(Input::get('nsfw'));
-		$tags = htmlentities(Input::get('tags'));
+		$communities = htmlentities(Input::get('communities'));
 		$validator = Validator::make(
 				array(
 					'title' => $title,
 					'description' => $details,
-					'tags' => $tags
+					'communities' => $communities
 				     ),
 				array(
 					'title' => "required|between:5,$this->max_title_length",
 					'description' => "max:$this->max_static_length",
-					'tags' => 'max:120'
+					'communities' => 'max:120'
 				     )
 				);
 		if(!$validator->fails()){
@@ -522,7 +522,7 @@ class Chat extends BaseController {
 						$chat->save();
 						$ch_voted = new ChatsVoted();
 						$ch_voted->chat_id = $chat->id;
-						$ch_voted->member_id = Auth::user()->id;
+						$ch_voted->user_id = Auth::user()->id;
 						$ch_voted->status = 1;
 						$ch_voted->save();
 					}else{
@@ -532,14 +532,14 @@ class Chat extends BaseController {
 					}
 					$chat = $chat->findAll();
 				}
-				$tags = explode(' ',$tags);
-				foreach($tags as $tag){
-					if(strlen($tag) > 2 && strlen($tag) < 20){
-						$t = new Tags();
-						$tag = str_replace('#','',$tag);
-						$tag = htmlentities($tag);
-						if($tag){
-							$t->name = $tag;
+				$communities = explode(' ',$communities);
+				foreach($communities as $community){
+					if(strlen($community) > 2 && strlen($community) < 20){
+						$t = new Communities();
+						$community = str_replace('#','',$community);
+						$community = htmlentities($community);
+						if($community){
+							$t->name = $community;
 							if($t->findAll()){
 								$t = $t->findAll();
 								$t->popularity = $t->popularity + 1;
@@ -548,12 +548,12 @@ class Chat extends BaseController {
 								$t->save();
 							}
 							$t = $t->findAll();
-							$chats_to_tags = new ChatsToTags();
-							$chats_to_tags->chat_id = $chat->id;
-							$chats_to_tags->tag_id = $t->id;
-							if($chats_to_tags->findAll()){
+							$chats_to_communities = new ChatsToCommunities();
+							$chats_to_communities->chat_id = $chat->id;
+							$chats_to_communities->community_id = $t->id;
+							if($chats_to_communities->findAll()){
 							}else{
-								$chats_to_tags->save();
+								$chats_to_communities->save();
 							}
 						}
 					}
@@ -575,17 +575,17 @@ class Chat extends BaseController {
 		$details = Input::get('description');
 		$live_status = htmlentities(Input::get('live_status'));
 		$nsfw = htmlentities(Input::get('nsfw'));
-		$tags = htmlentities(Input::get('tags'));
+		$communities = htmlentities(Input::get('communities'));
 		$validator = Validator::make(
 				array(
 					'title' => $title,
 					'description' => $details,
-					'tags' => $tags
+					'communities' => $communities
 				     ),
 				array(
 					'title' => "required|between:5,$this->max_title_length",
 					'description' => "max:$this->max_static_length",
-					'tags' => 'max:120'
+					'communities' => 'max:120'
 				     )
 				);
 		if(!$validator->fails()){
@@ -652,31 +652,31 @@ class Chat extends BaseController {
 				}else{
 					$chat->nsfw = 0;
 				}
-				$tags = explode(' ',$tags);
-				$tag_found = 0;
-				$tag_index = 0;
-				foreach($chat->tags as $old_tag){
-					foreach($tags as $tag){
-						if($old_tag->name == str_replace('#','',$tag)){
-							$tag_found = 1;
+				$communities = explode(' ',$communities);
+				$community_found = 0;
+				$community_index = 0;
+				foreach($chat->communities as $old_community){
+					foreach($communities as $community){
+						if($old_community->name == str_replace('#','',$community)){
+							$community_found = 1;
 						}
 					}
-					if($tag_found){
-						unset($tags[$tag_index]);
+					if($community_found){
+						unset($communities[$community_index]);
 					}else{
-						$chat_to_tag = ChatsToTags::wherechat_id($chat->id)->wheretag_id($old_tag->id)->get();
-						$chat_to_tag->delete();
+						$chat_to_community = ChatsToCommunities::wherechat_id($chat->id)->wherecommunity_id($old_community->id)->get();
+						$chat_to_community->delete();
 					}
-					$tag_found = 0;
-					$tag_index++;
+					$community_found = 0;
+					$community_index++;
 				}
-				foreach($tags as $tag){
-					if(strlen($tag) > 2 && strlen($tag) < 20){
-						$t = new Tags();
-						$tag = str_replace('#','',$tag);
-						$tag = htmlentities($tag);
-						if($tag){
-							$t->name = $tag;
+				foreach($communities as $community){
+					if(strlen($community) > 2 && strlen($community) < 20){
+						$t = new Communities();
+						$community = str_replace('#','',$community);
+						$community = htmlentities($community);
+						if($community){
+							$t->name = $community;
 							if($t->findAll()){
 								$t = $t->findAll();
 								$t->popularity = $t->popularity + 1;
@@ -685,10 +685,10 @@ class Chat extends BaseController {
 								$t->save();
 							}
 							$t = $t->findAll();
-							$chats_to_tags = new ChatsToTags();
-							$chats_to_tags->chat_id = $chat->id;
-							$chats_to_tags->tag_id = $t->id;
-							$chats_to_tags->save();
+							$chats_to_communities = new ChatsToCommunities();
+							$chats_to_communities->chat_id = $chat->id;
+							$chats_to_communities->community_id = $t->id;
+							$chats_to_->save();
 						}
 					}
 				}

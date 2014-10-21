@@ -32,7 +32,7 @@ class BaseController extends Controller {
 		View::share('base',$this->base_url);
 		View::share('site',$this->site_url);
 		View::share('io_url',$this->io_url);
-		View::share('curr_tag_id','');
+		View::share('curr_com_id','');
 		View::share('version','v=.3');
 		View::share('server_time',date(DATE_ATOM));
 		View::share('serial',Session::get('unique_serial'));
@@ -113,13 +113,13 @@ class BaseController extends Controller {
 		if($entity_type){  //Voting on a chat
 			$entity = Chats::find($entity_id);
 			$voted = new ChatsVoted();
-			$temp = $voted->wheremember_id($member)->wherechat_id($entity_id)->first();
-			$tag = Tags::wherename(Auth::user()->page)->first();
+			$temp = $voted->whereuser_id($member)->wherechat_id($entity_id)->first();
+			$community = Communities::wherename(Auth::user()->page)->first();
 			if($temp){
 				$voted = $temp;
 				$status = $voted->status;
 			}else{
-				$voted->member_id = $member;
+				$voted->user_id = $member;
 				$voted->chat_id = $entity_id;
 			}
 			if(preg_match('/[a-zA-Z]/',$entity->admin)){
@@ -131,12 +131,12 @@ class BaseController extends Controller {
 		}else{  //voting on a message
 			$entity = Messages::find($entity_id);
 			$voted = new MessagesVoted();
-			$temp = $voted->wheremember_id($member)->wheremessage_id($entity_id)->first();
+			$temp = $voted->whereuser_id($member)->wheremessage_id($entity_id)->first();
 			if($temp){
 				$voted = $temp;
 				$status = $voted->status;
 			}else{
-				$voted->member_id = $member;
+				$voted->user_id = $member;
 				$voted->message_id = $entity_id;
 			}
 			if(preg_match('/[a-zA-Z]/',$entity->author)){
@@ -226,29 +226,29 @@ class BaseController extends Controller {
 			$user->save();
 		}
 		if($entity_type){
-			foreach($entity->tags as $tag){
-				$usertag = UsersToTags::wheretag_id($tag->id)->whereuser_id(Auth::user()->id)->first();
-				if($usertag){
-					$usertag->score = $usertag->score - $status + $type;
-					$usertag->save();
+			foreach($entity->communities as $community){
+				$usercommunity = UsersToCommunities::wherecommunity_id($community->id)->whereuser_id(Auth::user()->id)->first();
+				if($usercommunity){
+					$usercommunity->score = $usercommunity->score - $status + $type;
+					$usercommunity->save();
 				}
-				$tag->popularity = $tag->popularity - $status + $type;
-				$tag->save();
+				$community->popularity = $community->popularity - $status + $type;
+				$community->save();
 			}
 		}
 		/* MODIFY MESSAGE OR CHAT UPVOTES AND DOWNVOTES */
 		if($entity_type){
-			$chat_to_tag = ChatsToTags::wherechat_id($entity->id)->wheretag_id($tag->id)->first();
-			if($chat_to_tag){
-				$chat_to_tag->upvotes = ($type == $status && $type == 1) ? $chat_to_tag->upvotes - 1 : (($type != $status && $type == 1) ? $chat_to_tag->upvotes + 1 : (($status == 1 && $type == -1) ? $chat_to_tag->upvotes - 1 : $chat_to_tag->upvotes));
-				$chat_to_tag->downvotes = ($type == $status && $type == -1) ? $chat_to_tag->downvotes - 1 : (($type != $status && $type == -1) ? $chat_to_tag->downvotes + 1 : (($status == -1 && $type == 1) ? $chat_to_tag->downvotes - 1 : $chat_to_tag->downvotes));
-				$chat_to_tag->save();
+			$chat_to_community = ChatsToCommunities::wherechat_id($entity->id)->wherecommunity_id($community->id)->first();
+			if($chat_to_community){
+				$chat_to_community->upvotes = ($type == $status && $type == 1) ? $chat_to_community->upvotes - 1 : (($type != $status && $type == 1) ? $chat_to_community->upvotes + 1 : (($status == 1 && $type == -1) ? $chat_to_community->upvotes - 1 : $chat_to_community->upvotes));
+				$chat_to_community->downvotes = ($type == $status && $type == -1) ? $chat_to_community->downvotes - 1 : (($type != $status && $type == -1) ? $chat_to_community->downvotes + 1 : (($status == -1 && $type == 1) ? $chat_to_community->downvotes - 1 : $chat_to_community->downvotes));
+				$chat_to_community->save();
 			}else{
-				$chat_to_tags = ChatsToTags::wherechat_id($chat_to_tag->id)->get();
-				foreach($chat_to_tags as $chat_to_tag){
-					$chat_to_tag->upvotes = ($type == $status && $type == 1) ? $chat_to_tag->upvotes - 1 : (($type != $status && $type == 1) ? $chat_to_tag->upvotes + 1 : (($status == 1 && $type == -1) ? $chat_to_tag->upvotes - 1 : $chat_to_tag->upvotes));
-					$chat_to_tag->downvotes = ($type == $status && $type == -1) ? $chat_to_tag->downvotes - 1 : (($type != $status && $type == -1) ? $chat_to_tag->downvotes + 1 : (($status == -1 && $type == 1) ? $chat_to_tag->downvotes - 1 : $chat_to_tag->downvotes));
-					$chat_to_tag->save();
+				$chat_to_communities = ChatsToCommunities::wherechat_id($chat_to_community->id)->get();
+				foreach($chat_to_communities as $chat_to_community){
+					$chat_to_community->upvotes = ($type == $status && $type == 1) ? $chat_to_community->upvotes - 1 : (($type != $status && $type == 1) ? $chat_to_community->upvotes + 1 : (($status == 1 && $type == -1) ? $chat_to_community->upvotes - 1 : $chat_to_community->upvotes));
+					$chat_to_community->downvotes = ($type == $status && $type == -1) ? $chat_to_community->downvotes - 1 : (($type != $status && $type == -1) ? $chat_to_community->downvotes + 1 : (($status == -1 && $type == 1) ? $chat_to_community->downvotes - 1 : $chat_to_community->downvotes));
+					$chat_to_community->save();
 				}
 			}
 		}

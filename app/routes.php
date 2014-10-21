@@ -73,11 +73,11 @@ Route::group(array('before' => 'assignSerial'), function(){
 		Route::controller('profile','profile');
 		Route::controller('privacy','privacy');
 		Route::controller('terms','terms');
-		Route::controller('tags','TagsController');
+		Route::controller('community','community');
 		Route::controller('chat','chat');
 		Route::controller('search','search');
 		Route::get('/u/{user}',array('uses' => 'u@getIndex'));
-		Route::get('/t/{tag}',array('uses' => 't@getIndex'));
+		Route::get('/c/{community}',array('uses' => 'c@getIndex'));
 
 		if(Auth::check()){
 			Route::get('/',array('uses' => 'Home@getIndex'));

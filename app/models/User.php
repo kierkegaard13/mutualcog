@@ -61,7 +61,7 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 	}
 
 	public function messages(){
-		return $this->hasMany('Messages','member_id')->wheretype('public');
+		return $this->hasMany('Messages','user_id')->wheretype('public');
 	}
 
 	public function privateChats(){
@@ -85,7 +85,7 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 	}
 
 	public function rooms(){
-		return $this->belongsToMany('Chats','members_to_chats','member_id','chat_id');
+		return $this->belongsToMany('Chats','members_to_chats','user_id','chat_id');
 	}
 
 	public function interests(){
@@ -97,36 +97,36 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 	}
 
 	public function subscriptions(){
-		return $this->belongsToMany('Tags','users_to_tags','user_id','tag_id');
+		return $this->belongsToMany('Communities','users_to_communities','user_id','community_id');
 	}
 
 	public function subArr(){
-		$tmp_arr =  User::select('users_to_tags.tag_id')->where('users.id',$this->id)->join('users_to_tags','users_to_tags.user_id','=','users.id')->get()->toArray();
+		$tmp_arr =  User::select('users_to_communities.community_id')->where('users.id',$this->id)->join('users_to_communities','users_to_communities.user_id','=','users.id')->get()->toArray();
 		$sub_arr = array();
 		foreach($tmp_arr as $sub){
-			$sub_arr[] = $sub['tag_id'];
+			$sub_arr[] = $sub['community_id'];
 		}
 		return $sub_arr;
 	}
 
 	public function owned(){
-		return count(UsersToTags::whereuser_id($this->id)->whereis_admin(1)->get());
+		return count(UsersToCommunities::whereuser_id($this->id)->whereis_admin(1)->get());
 	}
 
 	public function upvotedChats(){
-		return ChatsVoted::wheremember_id($this->id)->wherestatus(1)->take(1000)->get();
+		return ChatsVoted::whereuser_id($this->id)->wherestatus(1)->take(1000)->get();
 	}
 
 	public function downvotedChats(){
-		return ChatsVoted::wheremember_id($this->id)->wherestatus(-1)->take(1000)->get();
+		return ChatsVoted::whereuser_id($this->id)->wherestatus(-1)->take(1000)->get();
 	}
 
 	public function upvotedMessages(){
-		return MessagesVoted::wheremember_id($this->id)->wherestatus(1)->get();
+		return MessagesVoted::whereuser_id($this->id)->wherestatus(1)->get();
 	}
 
 	public function downvotedMessages(){
-		return MessagesVoted::wheremember_id($this->id)->wherestatus(-1)->get();
+		return MessagesVoted::whereuser_id($this->id)->wherestatus(-1)->get();
 	}
 
 	public function notifications(){

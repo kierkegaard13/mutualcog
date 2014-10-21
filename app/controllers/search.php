@@ -5,30 +5,30 @@ class Search extends BaseController {
 	public function getIndex()
 	{
 		$view = View::make('search');
-		$tags = Tags::take(30)->orderBy('popularity','desc')->get();
+		$communities = Communities::take(30)->orderBy('popularity','desc')->get();
 		Session::put('curr_page',URL::full());
-		$view['tags'] = $tags;
+		$view['communities'] = $communities;
 		$view['search_page'] = 1;
 		return $view;
 	}
 
-	public function parseSearch(&$tag_str,&$search_string,$word){
+	public function parseSearch(&$community_str,&$search_string,$word){
 		$split_string = preg_split($word,$search_string);
 		if(sizeof($split_string) > 1){  //found words before keyword
 			$search_string = $split_string[1];
 		}else{
 			$search_string = $split_string[0];
 		}
-		$tag_str = explode(',',$search_string);
-		foreach($tag_str as $index=>$tag){  
-			if(sizeof(explode(' ',trim($tag))) > 1){
-				$split_tag = explode(' ',trim($tag));
-				$tag_str[$index] = $split_tag[0];
-				$end_str = join(' ',array_splice($tag_str,0,$index - 1));
-				$tag_str = array_splice($tag_str,$index + 1);
-				$split_tag = array_splice($split_tag,0,1);
-				$split_tag = join(' ',$split_tag); 
-				$search_string = (sizeof($split_string) > 1) ? $split_string[0] . ' ' . $split_tag . ' ' . $end_str: $split_tag . ' ' . $end_str;
+		$community_str = explode(',',$search_string);
+		foreach($community_str as $index=>$community){  
+			if(sizeof(explode(' ',trim($community))) > 1){
+				$split_community = explode(' ',trim($community));
+				$community_str[$index] = $split_community[0];
+				$end_str = join(' ',array_splice($community_str,0,$index - 1));
+				$community_str = array_splice($community_str,$index + 1);
+				$split_community = array_splice($split_community,0,1);
+				$split_community = join(' ',$split_community); 
+				$search_string = (sizeof($split_string) > 1) ? $split_string[0] . ' ' . $split_community . ' ' . $end_str: $split_community . ' ' . $end_str;
 				break;
 			}
 		}
@@ -93,43 +93,43 @@ class Search extends BaseController {
 						if(preg_match($word,$search_string)){   
 							switch($key){    
 								case 0:  //in
-									$this->parseSearch($tag_str,$search_string,$word);
-									$chats = $chats->whereHas('tags',function($query)use($tag_str){
-										$query->where(function($q)use($tag_str){
-											foreach($tag_str as $key=>$tag){
-												$tag = trim($tag);
+									$this->parseSearch($community_str,$search_string,$word);
+									$chats = $chats->whereHas('communities',function($query)use($community_str){
+										$query->where(function($q)use($community_str){
+											foreach($community_str as $key=>$community){
+												$community = trim($community);
 												if($key == 0){
-													$q->where('name','LIKE','%'.$tag.'%');
+													$q->where('name','LIKE','%'.$community.'%');
 												}else{
-													$q->orWhere('name','LIKE','%'.$tag.'%');
+													$q->orWhere('name','LIKE','%'.$community.'%');
 												}
 											}
 										});
 									});
 									break;
 								case 1:  //about
-									$this->parseSearch($tag_str,$search_string,$word);
-									$chats = $chats->where(function($query)use($tag_str){
-										foreach($tag_str as $key=>$tag){
-											$tag = trim($tag);
+									$this->parseSearch($community_str,$search_string,$word);
+									$chats = $chats->where(function($query)use($community_str){
+										foreach($community_str as $key=>$community){
+											$community = trim($community);
 											if($key == 0){
-												$query->where(function($q)use($tag){
-													$q->where('title','LIKE','%'.$tag.'%');
-													$q->orWhere('raw_details','LIKE','%'.$tag.'%');
+												$query->where(function($q)use($community){
+													$q->where('title','LIKE','%'.$community.'%');
+													$q->orWhere('raw_details','LIKE','%'.$community.'%');
 												});
 											}else{
-												$query->orWhere(function($q)use($tag){
-													$q->where('title','LIKE','%'.$tag.'%');
-													$q->orWhere('raw_details','LIKE','%'.$tag.'%');
+												$query->orWhere(function($q)use($community){
+													$q->where('title','LIKE','%'.$community.'%');
+													$q->orWhere('raw_details','LIKE','%'.$community.'%');
 												});
 											}
 										}
 									});
 									break;
 								case 2:  //by
-									$this->parseSearch($tag_str,$search_string,$word);
-									$tag_str = trim($tag_str[0]);
-									$chats = $chats->whereadmin($tag_str);
+									$this->parseSearch($community_str,$search_string,$word);
+									$community_str = trim($community_str[0]);
+									$chats = $chats->whereadmin($community_str);
 									break;
 								default:break;
 							}
@@ -138,20 +138,20 @@ class Search extends BaseController {
 					$chats = $chats->whereremoved('0')->get();
 					break;
 				case 1:  //communities
-					$communities = new Tags();
+					$communities = new Communities();
 					$search_string = $split_string[1];
 					foreach($com_keywords as $key=>$word){
 						if(preg_match($word,$search_string)){   
 							switch($key){    
 								case 0:  //named
-									$this->parseSearch($tag_str,$search_string,$word);
-									$communities = $communities->where(function($query)use($tag_str){
-										foreach($tag_str as $key=>$tag){
-											$tag = trim($tag);
+									$this->parseSearch($community_str,$search_string,$word);
+									$communities = $communities->where(function($query)use($community_str){
+										foreach($community_str as $key=>$community){
+											$community = trim($community);
 											if($key == 0){
-												$query->where('name','LIKE','%'.$tag.'%');
+												$query->where('name','LIKE','%'.$community.'%');
 											}else{
-												$query->orWhere('name','LIKE','%'.$tag.'%');
+												$query->orWhere('name','LIKE','%'.$community.'%');
 											}
 										}
 									});
@@ -173,14 +173,14 @@ class Search extends BaseController {
 						if(preg_match($word,$search_string)){   
 							switch($key){    
 								case 0:  //named
-									$this->parseSearch($tag_str,$search_string,$word);
-									$users = $users->where(function($query)use($tag_str){
-										foreach($tag_str as $key=>$tag){
-											$tag = trim($tag);
+									$this->parseSearch($community_str,$search_string,$word);
+									$users = $users->where(function($query)use($community_str){
+										foreach($community_str as $key=>$community){
+											$community = trim($community);
 											if($key == 0){
-												$query->where('name','LIKE','%'.$tag.'%');
+												$query->where('name','LIKE','%'.$community.'%');
 											}else{
-												$query->orWhere('name','LIKE','%'.$tag.'%');
+												$query->orWhere('name','LIKE','%'.$community.'%');
 											}
 										}
 									});
@@ -203,16 +203,16 @@ class Search extends BaseController {
 				$q->where('title','LIKE','%'.$search_string.'%');
 				$q->orWhere('raw_details','LIKE','%'.$search_string.'%');	
 			})->whereremoved('0')->paginate(25);
-			$communities = Tags::where(function($q)use($search_string){
+			$communities = Communities::where(function($q)use($search_string){
 				$q->where('name','LIKE','%'.$search_string.'%');
 			})->paginate(25);
 			$chats = User::where(function($q)use($search_string){
 				$q->where('name','LIKE','%'.$search_string.'%');
 			})->paginate(25);
 		}
-		$tags = Tags::take(30)->orderBy('popularity','desc')->get();
+		$communities = Communities::take(30)->orderBy('popularity','desc')->get();
 		Session::put('curr_page',URL::full());
-		$view['tags'] = $tags;
+		$view['communities'] = $communities;
 		$view['chats'] = $chats;
 		$view['users'] = $users;
 		$view['communities'] = $communities;
@@ -220,12 +220,12 @@ class Search extends BaseController {
 	}
 
 	public function getSimilarEntity(){ //TODO: add 'here' functionality
-		$input = htmlentities(Input::get('tag'));
+		$input = htmlentities(Input::get('community'));
 		$res_arr = array();
-		$tag = new Tags();
-		$tag = $tag->where('name','LIKE','%' . $input . '%')->take(5)->get();
-		foreach($tag as $t){
-			$res_arr[] = array('id' => $t->id,'name' => $t->name,'type' => 'tag');
+		$community = new Communities();
+		$community = $community->where('name','LIKE','%' . $input . '%')->take(5)->get();
+		foreach($community as $t){
+			$res_arr[] = array('id' => $t->id,'name' => $t->name,'type' => 'community');
 		}
 		$people = new User();
 		$people = $people->where('name','LIKE','%' . $input . '%')->take(5)->get();
