@@ -82,7 +82,7 @@ function emoji(text){
 function processMessage(message){
 	var url_reg = /(\b)(https?:\/\/)?([\da-z-]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/g;
 	var url_reg3 = /(img)(\s)(src\=)/g;
-	var t_reg = /\/t\/([^\s]*)(\s*)/g; 
+	var t_reg = /\/c\/([^\s]*)(\s*)/g; 
 	var p_reg = /\/p\/([^\s]*)(\s*)/g; 
 	var at_reg = /\@([^\s]*)(\s*)/g;
 	var hash_reg = /\&\#035\;([^\s]*)(\s*)/g; 
@@ -98,9 +98,9 @@ function processMessage(message){
 		message = message.replace(re1,'');
 		message = message.replace(re2,'');
 		message = message.replace(p_reg,"<a class='chat_link' href='\/\/mutualcog.com/u/$1'>\/p\/$1</a>$2");
-		message = message.replace(t_reg,"<a class='chat_link' href='\/\/mutualcog.com/t/$1'>\/t\/$1</a>$2");
+		message = message.replace(t_reg,"<a class='chat_link' href='\/\/mutualcog.com/c/$1'>\/c\/$1</a>$2");
 		message = message.replace(at_reg,"<a class='chat_link' href='\/\/mutualcog.com/u/$1'>@$1</a>$2");
-		message = message.replace(hash_reg,"<a class='chat_link' href='\/\/mutualcog.com/t/$1'>#$1</a>$2");
+		message = message.replace(hash_reg,"<a class='chat_link' href='\/\/mutualcog.com/c/$1'>#$1</a>$2");
 		message = message.replace(url_reg3,"$1$2style='max-width:300px;max-height:200px;margin-bottom:5px;' $3");
 	}
 	message = emoji(message);
@@ -143,15 +143,15 @@ function newPmChat(friend_id,pm_id,friend_status_class,friend_name){
 $(window).resize(function(){
 	if($(window).width() < 768){
 		$('.nav_pad_r').css('padding-right','');
-		$('.tag_search').css('display','');
+		$('.community_search').css('display','');
 		$('#search_input').css('width','');
 	}else{
-		if($('.tag_search').css('display') != 'none'){
-			$('.tag_input').width($('#welcome_user').width() - 34);
+		if($('.community_search').css('display') != 'none'){
+			$('.community_input').width($('#welcome_user').width() - 34);
 			if($('#logged_in').text() == 1){
-				$('.nav_pad_r').css('padding-right',$('.tag_search_cont').width() + 118);
+				$('.nav_pad_r').css('padding-right',$('.community_search_cont').width() + 118);
 			}else{
-				$('.nav_pad_r').css('padding-right',$('.tag_search_cont').width());
+				$('.nav_pad_r').css('padding-right',$('.community_search_cont').width());
 			}
 		}
 	}
@@ -601,23 +601,23 @@ $(document).ready(function(){
 			$(this).parent().find('.pm_text').css('display','none');
 		}
 	});
-	$('.tag_search_icon').click(function(){
-		if($('.tag_search').css('display') == 'none'){
+	$('.community_search_icon').click(function(){
+		if($('.community_search').css('display') == 'none'){
 			console.log($('#welcome_user').width());
-			$('.tag_input').width($('#welcome_user').width() - 34);
-			$('.tag_input').attr('placeholder',module.search_messages[randomInt(0,module.search_messages.length - 1)]);
-			$('.tag_search').css('display','inline');
+			$('.community_input').width($('#welcome_user').width() - 34);
+			$('.community_input').attr('placeholder',module.search_messages[randomInt(0,module.search_messages.length - 1)]);
+			$('.community_search').css('display','inline');
 		}else{
-			$('.tag_search').css('display','none');
+			$('.community_search').css('display','none');
 		}
-		$('.tag_input').focus();
+		$('.community_input').focus();
 		if($('#logged_in').text() == 1){
-			$('.nav_pad_r').css('padding-right',$('.tag_search_cont').width() + 118);
+			$('.nav_pad_r').css('padding-right',$('.community_search_cont').width() + 118);
 		}else{
-			$('.nav_pad_r').css('padding-right',$('.tag_search_cont').width());
+			$('.nav_pad_r').css('padding-right',$('.community_search_cont').width());
 		}
 	});
-	$('#tag_dropdown').on('click','.search_link',function(){
+	$('#community_dropdown').on('click','.search_link',function(){
 		$('#keywords_modal').modal();
 		return false;
 	});	
@@ -940,17 +940,17 @@ $('.modal').on('hide.bs.modal',function(){
 	$('.form-control').tooltip('destroy');
 });
 
-$('#tag_dropdown').on('click',function(e){
+$('#community_dropdown').on('click',function(e){
 	e.stopPropagation();
 });
 
 $('#search_input').on('focus',function(e){
 	e.stopPropagation();
 	if($('#search_input').val() == ""){
-		$('#tag_dropdown').html('');
+		$('#community_dropdown').html('');
 	}
 	$(this).dropdown();
-	$('#tag_dropdown').show();
+	$('#community_dropdown').show();
 });
 
 var selected_term = -1;
@@ -966,15 +966,15 @@ $('#search_input').on('keydown',function(e){
 	}else if(e.keyCode == 38){  /*up arrow*/
 		if(selected_term != 0){
 			selected_term--;
-			$('.tag_results').css('background-color','');
+			$('.community_results').css('background-color','');
 			$('li#search_' + selected_term).css('background-color','#ddd');
 			
 		}
 		return false;
 	}else if(e.keyCode == 40){  /*down arrow*/
-		if(selected_term != $('.tag_results').length - 1){
+		if(selected_term != $('.community_results').length - 1){
 			selected_term++;
-			$('.tag_results').css('background-color','');
+			$('.community_results').css('background-color','');
 			$('li#search_' + selected_term).css('background-color','#ddd');
 		}
 		return false;
@@ -982,56 +982,56 @@ $('#search_input').on('keydown',function(e){
 });
 
 $('#search_input').on('keyup',function(e){
-	var tag = $(this).val();	
+	var community = $(this).val();	
 	if(e.keyCode == 13){  /*enter key*/
 		return false;
 	}else if(e.keyCode == 38 || e.keyCode == 40){  /*up arrow or down arrow*/
 	}else{
-		if(tag.length > 2){
+		if(community.length > 2){
 			$.ajax({
 				type:'GET',
-				data: {tag:tag},
+				data: {community:community},
 				url:'//mutualcog.com/search/similar-entity',
 				success:function(hresp){
 					var content = '';
 					var enter_user = 0;
-					var enter_tag = 0;
+					var enter_community = 0;
 					var enter_post = 0;
 					$.each(hresp,function(index,value){
-						if(value.type == 'tag'){
-							if(enter_tag == 0){
+						if(value.type == 'community'){
+							if(enter_community == 0){
 								content += '<div class="search_res_type"><strong>Communities</strong></div>';
-								enter_tag++;
+								enter_community++;
 							}
-							content += '<li id="search_' + index + '" class="tag_results"><a href="//mutualcog.com/t/' + value.name + '">' + value.name + '</a></li>';
+							content += '<li id="search_' + index + '" class="community_results"><a href="//mutualcog.com/c/' + value.name + '">' + value.name + '</a></li>';
 						}else if(value.type == 'post'){
 							if(enter_post == 0){
 								content += '<div class="search_res_type"><strong>Posts</strong></div>';
 								enter_post++;
 							}
 							if(value.live == 1){
-								content += '<li id="search_' + index + '" class="tag_results"><a href="//mutualcog.com/chat/live/' + value.id + '">' + value.name + '</a></li>';
+								content += '<li id="search_' + index + '" class="community_results"><a href="//mutualcog.com/chat/live/' + value.id + '">' + value.name + '</a></li>';
 							}else{
-								content += '<li id="search_' + index + '" class="tag_results"><a href="//mutualcog.com/chat/static/' + value.id + '">' + value.name + '</a></li>';
+								content += '<li id="search_' + index + '" class="community_results"><a href="//mutualcog.com/chat/static/' + value.id + '">' + value.name + '</a></li>';
 							}
 						}else{
 							if(enter_user == 0){
 								content += '<div class="search_res_type"><strong>Users</strong></div>';
 								enter_user++;
 							}
-							content += '<li id="search_' + index + '" class="tag_results"><a href="//mutualcog.com/u/' + value.name + '">' + value.name + '</a></li>';
+							content += '<li id="search_' + index + '" class="community_results"><a href="//mutualcog.com/u/' + value.name + '">' + value.name + '</a></li>';
 						}
 					});
 					content += '<div class="search_hint_cont"><div class="search_hint"><strong>Press enter for more results</strong></div></div>';
 					content += '<li><a class="search_link" href="#" ><strong>List of advanced search keywords</strong></a></li>';
 					if(content){
-						$('#tag_dropdown').show();
-						if($('#tag_dropdown').html() != content){
-							$('#tag_dropdown').html(content);
+						$('#community_dropdown').show();
+						if($('#community_dropdown').html() != content){
+							$('#community_dropdown').html(content);
 							selected_term = -1;
 						}
 					}else{
-						$('#tag_dropdown').hide();
+						$('#community_dropdown').hide();
 						selected_term = -1;
 					}
 				},
@@ -1039,7 +1039,7 @@ $('#search_input').on('keyup',function(e){
 				}
 			});
 		}else{
-			$('#tag_dropdown').html('');
+			$('#community_dropdown').html('');
 		}
 	}
 });

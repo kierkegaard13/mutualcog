@@ -119,7 +119,7 @@ class Community extends BaseController {
 		return $this->returnToCurrPage();
 	}
 
-	public function getSimilarTag(){
+	public function getSimilarCommunity(){
 		$input = htmlentities(Input::get('community'));
 		$res_arr = array();
 		$community = new Communities();
@@ -199,7 +199,7 @@ class Community extends BaseController {
 		}
 	}
 
-	public function postEditTag(){
+	public function postEditCommunity(){
 		if(Auth::check()){
 			$community_id = htmlentities(Input::get('community_id'));
 			$description = htmlentities(Input::get('description'));
@@ -231,7 +231,7 @@ class Community extends BaseController {
 		return $this->returnToCurrPage();
 	}
 
-	public function postCreateTag(){
+	public function postCreateCommunity(){
 		if(Auth::check()){
 			$community_name = htmlentities(Input::get('community_name'));
 			$community_desc = htmlentities(Input::get('description'));

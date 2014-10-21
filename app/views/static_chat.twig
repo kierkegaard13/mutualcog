@@ -34,9 +34,9 @@
 <div style="margin-top:5px;">
 	<btn class="btn btn-primary" style="width:100%;" data-toggle="modal" data-target="#chat_modal">Create New Post</btn>
 </div>
-{% if not curr_tag_id and user %}
+{% if not curr_community_id and user %}
 	<div style="margin-top:10px;">
-		<btn class="btn btn-primary" style="width:100%;" data-toggle="modal" data-target="#tag_create_modal">Create Community</btn>
+		<btn class="btn btn-primary" style="width:100%;" data-toggle="modal" data-target="#community_create_modal">Create Community</btn>
 	</div>
 {% endif %}
 		</div>
@@ -136,9 +136,9 @@
 				{% endif %}
 			{% endif %}
 		</span>
-		with Tags:
-		{% for tag in chat.tags %}
-			<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}" style="color:#075de9;">#{{tag.name}}</a> </span>
+		in Communities:
+		{% for community in chat.communities %}
+			<span class="chat_communities"><a href="{{site}}/c/{{community.name}}" style="color:#075de9;">#{{community.name}}</a> </span>
 		{% endfor %}
 		and <a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:gray;"><strong>{{chat.messages | length }} comments</strong></a>
 	</div>

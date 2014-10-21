@@ -1,7 +1,7 @@
 $(window).on('click',function(e){
-	$('#tag_dropdown').hide();
-	$('#members_box').hide('blind');
-	$('#show_members').removeClass('highlighted_dark');
+	$('#community_dropdown').hide();
+	$('#users_box').hide('blind');
+	$('#show_users').removeClass('highlighted_dark');
 });
 
 $(document).ready(function(){
@@ -93,7 +93,7 @@ $(document).ready(function(){
 		});
 	}
 	$('#permalink').tooltip();
-	$('#show_members').tooltip();
+	$('#show_users').tooltip();
 	$('#stop_scroll').tooltip();
 	$('#pause_chat').tooltip();
 	$('#mod_user').tooltip();
@@ -102,29 +102,29 @@ $(document).ready(function(){
 	$('#permalink').click(function(e){
 		window.location.href = $(this).attr('data-page-link'); 
 	});
-	$('#show_members').click(function(e){
+	$('#show_users').click(function(e){
 		if(hovering == 0){
-			$('#members_box').toggle('blind');
+			$('#users_box').toggle('blind');
 		}
 		if($(this).hasClass('highlighted_dark')){
 			showing = 0;
-			$(this).attr('data-original-title','Show chat members');
+			$(this).attr('data-original-title','Show chat users');
 			$(this).removeClass('highlighted_dark');
 		}else{
 			showing = 1;
-			$(this).attr('data-original-title','Hide chat members');
+			$(this).attr('data-original-title','Hide chat users');
 			$(this).addClass('highlighted_dark');
 		}
 		return false;
 	});
-	$('#show_members').hover(function(){
+	$('#show_users').hover(function(){
 		if(showing == 0){
-			$('#members_box').show('blind');
+			$('#users_box').show('blind');
 			hovering = 1;
 		}
 	},function(){
 		if(showing == 0){
-			$('#members_box').hide('blind');
+			$('#users_box').hide('blind');
 			hovering = 0;
 		}
 	});
@@ -171,7 +171,7 @@ $(document).ready(function(){
 		if(user == module.user_tracker || module.clicked_on == -1){
 			return false;
 		}else{
-			module.socket.emit('warn',{member:user});
+			module.socket.emit('warn',{user:user});
 		}
 	});
 	$('#kick_user').click(function(){
@@ -179,7 +179,7 @@ $(document).ready(function(){
 		if(user == module.user_tracker || module.clicked_on == -1){
 			return false;
 		}else{
-			module.socket.emit('kick',{member:user});
+			module.socket.emit('kick',{user:user});
 		}
 	});
 	$('#stop_scroll').click(function(){
@@ -302,9 +302,9 @@ module.socket.on('connect',function() {
 		$('.pm_unseen').hide();
 	}
 	if($('#logged_in').text() == 1){
-		module.socket.emit('add_member',{new_member:module.user_tracker,serial_id:module.serial_id});
+		module.socket.emit('add_user',{new_user:module.user_tracker,serial_id:module.serial_id});
 	}else{
-		module.socket.emit('add_member',{new_member:module.serial_tracker,serial_id:module.serial_id});
+		module.socket.emit('add_user',{new_user:module.serial_tracker,serial_id:module.serial_id});
 	}
 });
 
@@ -365,18 +365,18 @@ module.socket.on('displayMembers',function(info){
 	if(info.remove){
 		$('.author_' + info.mod).find('.glyphicon-tower').remove();
 	}
-	$.each(info.members,function(index,member){
-		if(member.is_admin){
-			module.admin.push(member.user);
-			module.mems.push("<div style='color:white;'><span class='glyphicon glyphicon-star' style='margin-right:5px;'></span>" + member.user + "</div>");
-		}else if(member.is_mod){
-			module.mods.push(member.user);
-			module.mems.push("<div style='color:white;'><span class='glyphicon glyphicon-tower' style='margin-right:5px;'></span>" + member.user + "</div>");
+	$.each(info.users,function(index,user){
+		if(user.is_admin){
+			module.admin.push(user.user);
+			module.mems.push("<div style='color:white;'><span class='glyphicon glyphicon-star' style='margin-right:5px;'></span>" + user.user + "</div>");
+		}else if(user.is_mod){
+			module.mods.push(user.user);
+			module.mems.push("<div style='color:white;'><span class='glyphicon glyphicon-tower' style='margin-right:5px;'></span>" + user.user + "</div>");
 		}else{
-			module.mems.push("<div style='color:white;'>" + member.user + "</div>");
+			module.mems.push("<div style='color:white;'>" + user.user + "</div>");
 		}
 	});
-	$('#members_list').html(module.mems.join(''));
+	$('#users_list').html(module.mems.join(''));
 });
 
 module.socket.on('add_mod_funcs',function(){

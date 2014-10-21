@@ -79,7 +79,7 @@ code{
 	  padding-top:55px;
 	  margin-left:0px;
 	}
-	.tag_search_cont {
+	.community_search_cont {
 	  position:absolute;
 	  right:0px;
 	  top:0px;
@@ -87,19 +87,19 @@ code{
 	  transition:background-color .5s;
 	  -webkit-transition:background-color .5s;
 	}
-	.tag_search_cont:hover {
+	.community_search_cont:hover {
 	  background-color:@highlight_blue;
 	}
 	.search_drop_cont {
 	  margin-top:-8px;
 	}
-	.tag_search {
+	.community_search {
 	  margin-bottom:0px;
 	  margin-top:4px;
 	  padding-right:17px;	
 	  display:none;
 	}
-	.tag_search_icon {
+	.community_search_icon {
 	  margin-bottom:0px;
 	  padding:11px 10px 11px 10px;
 	  font-size:18px;
@@ -108,7 +108,7 @@ code{
 	  transition:background-color .5s;
 	  -webkit-transition:background-color .5s;
 	}
-	#tag_dropdown {
+	#community_dropdown {
 	  box-shadow:0 3px 10px -2px #9ecaed;
 	  border-color:#9acaed;
 	  width:100%;
@@ -211,9 +211,9 @@ code{
 	.row {
 	  margin-right:0px;
 	}
-	.tag_search_cont {
+	.community_search_cont {
 	}
-	.tag_search {
+	.community_search {
 	  margin-left:-20px !important;
 	  margin-right:0px !important;	
 	  display:block;
@@ -221,13 +221,13 @@ code{
 	.nav_pad_r {
 	  padding-right:0;
 	}
-	.tag_search_icon {
+	.community_search_icon {
 	  display:none;
 	}
 	.search_drop_cont {
 	  margin-top:0;
 	}
-	#tag_dropdown {
+	#community_dropdown {
 	  box-shadow:0 3px 10px -2px #9ecaed;
 	  border-color:#9acaed;
 	  width:100%;
@@ -290,15 +290,15 @@ code{
 	  width:100%;
 	  margin-top:-76px;	
 	}
-	.tag_results>a {
+	.community_results>a {
 	  color:#333 !important;
 	  transition:color .5s;
 	  -webkit-transition:color .5s;
 	}
-	.tag_results>a:hover {
+	.community_results>a:hover {
 	  color:white !important;
 	}
-	#tag_dropdown {
+	#community_dropdown {
 	  border-bottom-right-radius:0;
 	  border-bottom-left-radius:0;
 	}
@@ -537,8 +537,11 @@ code{
 .request_link {
   cursor:pointer;
 }
-.tag_results {
+.community_results {
   overflow:hidden;
+}
+.community_input {
+  height:30px;
 }
 .chat_status_indicator {
   margin: -5px 10px 0 5px;
@@ -632,7 +635,7 @@ textarea {
 }
 
 .hljs-string,
-.hljs-tag .hljs-value,
+.hljs-community .hljs-value,
 .hljs-phpdoc,
 .tex .hljs-formula {
 	  color: #d14
@@ -661,10 +664,10 @@ textarea {
 	    font-weight: bold
 }
 
-.hljs-tag,
-.hljs-tag .hljs-title,
+.hljs-community,
+.hljs-community .hljs-title,
 .hljs-rules .hljs-property,
-.django .hljs-tag .hljs-keyword {
+.django .hljs-community .hljs-keyword {
 	  color: #000080;
 	    font-weight: normal
 }

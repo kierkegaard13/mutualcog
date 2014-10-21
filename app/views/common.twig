@@ -12,13 +12,13 @@
 	</div>
 	<div class="collapse navbar-collapse" id="mutual_navbar" style="position:relative;">
 		{% if not search_page %}
-			<div class="tag_search_cont">
-				<span class="glyphicon glyphicon-search tag_search_icon"></span>
-				<form class="navbar-form tag_search has-feedback" role="search">
+			<div class="community_search_cont">
+				<span class="glyphicon glyphicon-search community_search_icon"></span>
+				<form class="navbar-form community_search has-feedback" role="search">
 					<div class="form-group dropdown search_drop_cont">
-						<input class="form-control tag_input" id="search_input" type="text" placeholder="Search" autocomplete="off" maxlength="{{max_title_length}}">
+						<input class="form-control community_input" id="search_input" type="text" placeholder="Search" autocomplete="off" maxlength="{{max_title_length}}">
 						<span class="glyphicon glyphicon-search entry_search_submit form-control-feedback"></span>
-						<ul class="dropdown-menu" id="tag_dropdown" role="menu" aria-labelledby="search_input">
+						<ul class="dropdown-menu" id="community_dropdown" role="menu" aria-labelledby="search_input">
 						</ul>
 					</div>
 				</form>
@@ -30,7 +30,7 @@
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Subscriptions <strong class="caret" style="color:white;"></strong></a>
 				<ul class="dropdown-menu" role="menu">
 					{% for sub in user.subscriptions %}
-						<li><a href="{{site}}/t/{{sub.name}}">{{sub.name}}</a></li>
+						<li><a href="{{site}}/c/{{sub.name}}">{{sub.name}}</a></li>
 					{% else %}
 						<li>No subscriptions</li>
 					{% endfor %}
@@ -38,21 +38,21 @@
 			</li>
 		</ul>
 		<ul class="nav navbar-nav nav_right {% if not search_page %}nav_pad_r{% endif %}">
-			{% for tag in tags %}
-				{% if curr_tag.name == tag.name %}
-					<li><a class="highlight_light_blue" href="{{site}}/t/{{tag}}">{{tag}}</a></li>
+			{% for community in communities %}
+				{% if curr_community.name == community.name %}
+					<li><a class="highlight_light_blue" href="{{site}}/c/{{community}}">{{community}}</a></li>
 				{% else %}
-					<li><a href="{{site}}/t/{{tag}}">{{tag}}</a></li>
+					<li><a href="{{site}}/c/{{community}}">{{community}}</a></li>
 				{% endif %}
 			{% endfor %}
 		</ul>
 		{% else %}
 		<ul class="nav navbar-nav nav_right {% if not search_page %}nav_pad_r{% endif %}">
-			{% for tag in tags %}
-				{% if curr_tag.name == tag.name %}
-					<li><a class="highlight_light_blue" href="{{site}}/t/{{tag}}">{{tag}}</a></li>
+			{% for community in communities %}
+				{% if curr_community.name == community.name %}
+					<li><a class="highlight_light_blue" href="{{site}}/c/{{community}}">{{community}}</a></li>
 				{% else %}
-					<li><a href="{{site}}/t/{{tag}}">{{tag}}</a></li>
+					<li><a href="{{site}}/c/{{community}}">{{community}}</a></li>
 				{% endif %}
 			{% endfor %}
 		</ul>
@@ -142,11 +142,11 @@
 						<label for="Link_v2">Link <small>(optional)</small></label>
 						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Not a valid url" data-trigger="focus" type="text" name="link" id="Link_v2" placeholder="Add a link (optional)">
 					</div>
-					<div id="tags_group_v2" class="form-group">
-						{% if not curr_tag_id %}
-							<label for="Tags_v2">Communities</label>
+					<div id="communities_group_v2" class="form-group">
+						{% if not curr_community_id %}
+							<label for="Communities_v2">Communities</label>
 						{% endif %}
-						<input class="form-control tags_input" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Tags" data-placement="bottom" type="{% if curr_tag_id %}hidden{% else %}text{% endif %}" name="tags" id="Tags_v2" placeholder="Use spaces to separate communities (max: 5)" autocomplete="off" {% if curr_tag_id %}value="#{{curr_tag.name}}"{% endif %} maxlength="120">
+						<input class="form-control communities_input" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Communities" data-placement="bottom" type="{% if curr_community_id %}hidden{% else %}text{% endif %}" name="communities" id="Communities_v2" placeholder="Use spaces to separate communities (max: 5)" autocomplete="off" {% if curr_community_id %}value="#{{curr_community.name}}"{% endif %} maxlength="120">
 					</div>
 					<div id="description_group" class="form-group">
 						<label for="description">Description <small>(optional)</small></label>
@@ -174,7 +174,7 @@
 		</div>
 	</div>	
 </div>
-<div class="modal fade" id="tag_create_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="tag_create_modalLabel">
+<div class="modal fade" id="community_create_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="community_create_modalLabel">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -182,11 +182,11 @@
 				<h4 class="modal-title">Create Community</h4>
 			</div>
 			<div class="modal-body">
-				<form method="post" action="{{site}}/tags/create-tag" class="mutual_form" id="tag_create_form">
+				<form method="post" action="{{site}}/community/create-community" class="mutual_form" id="community_create_form">
 				<fieldset>
 					<div id="create_name_group" class="form-group">
 						<label for="name">Community Name</label>
-						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Tag name must be unique" data-trigger="focus" type="text" name="tag_name" id="create_tag_name" placeholder="Tags are between 3 and 20 characters" maxlength="20">
+						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Community name must be unique" data-trigger="focus" type="text" name="community_name" id="create_community_name" placeholder="Communities are between 3 and 20 characters" maxlength="20">
 					</div>
 					{% if user.is_admin %}
 					<div id="create_tier_group" class="form-group">
@@ -199,11 +199,11 @@
 					{% endif %}
 					<div id="create_desc_group" class="form-group">
 						<label for="description">Community Description (Doesn't show up in sidebar)</label>
-						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Description must be a max of {{max_description_length}} characters" data-trigger="focus" type="text" name="description" id="create_tag_desc" placeholder="Write a very short description of the content in your community" maxlength="{{max_description_length}}">
+						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Description must be a max of {{max_description_length}} characters" data-trigger="focus" type="text" name="description" id="create_community_desc" placeholder="Write a very short description of the content in your community" maxlength="{{max_description_length}}">
 					</div>
 					<div id="create_info_group" class="form-group">
 						<label for="info">Community Info (Sidebar Description, Posting Rules, etc)</label>
-						<textarea class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Info must be a max of {{max_info_length}} characters" data-trigger="focus" name="info" id="create_tag_info" rows=8 maxlength="{{max_info_length}}"></textarea>
+						<textarea class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Info must be a max of {{max_info_length}} characters" data-trigger="focus" name="info" id="create_community_info" rows=8 maxlength="{{max_info_length}}"></textarea>
 					</div>
 				</fieldset>
 				<small>You will be able to request mods after community creation by clicking the manage community button in the sidebar</small>
@@ -216,7 +216,7 @@
 		</div>
 	</div>	
 </div>
-<div class="modal fade" id="tag_edit_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="tag_edit_modalLabel">
+<div class="modal fade" id="community_edit_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="community_edit_modalLabel">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -224,26 +224,26 @@
 				<h4 class="modal-title">Edit Community</h4>
 			</div>
 			<div class="modal-body">
-				<form method="post" action="{{site}}/tags/edit-tag" class="mutual_form" id="tag_edit_form">
+				<form method="post" action="{{site}}/community/edit-community" class="mutual_form" id="community_edit_form">
 				<fieldset>
-					<div id="tag_id_group" class="form-group">
-						<input class="form-control" type="hidden" name="tag_id" id="input_tag_id" maxlength="20">
+					<div id="community_id_group" class="form-group">
+						<input class="form-control" type="hidden" name="community_id" id="input_community_id" maxlength="20">
 					</div>
-					<div id="tag_desc_group" class="form-group">
+					<div id="community_desc_group" class="form-group">
 						<label for="description">Community Description (Doesn't show up in sidebar)</label>
-						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Description must be a max of {{max_description_length}} characters" data-trigger="focus" type="text" name="description" id="edit_tag_desc" placeholder="Write a very short description of the content in your community" maxlength="{{max_description_length}}">
+						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Description must be a max of {{max_description_length}} characters" data-trigger="focus" type="text" name="description" id="edit_community_desc" placeholder="Write a very short description of the content in your community" maxlength="{{max_description_length}}">
 					</div>
-					<div id="tag_info_group" class="form-group">
+					<div id="community_info_group" class="form-group">
 						<label for="info">Community Info (Sidebar Description, Posting Rules, etc)</label>
-						<textarea class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Info must be a max of {{max_info_length}} characters" data-trigger="focus" name="info" id="edit_tag_info" rows=10 maxlength="{{max_info_length}}"></textarea>
+						<textarea class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Info must be a max of {{max_info_length}} characters" data-trigger="focus" name="info" id="edit_community_info" rows=10 maxlength="{{max_info_length}}"></textarea>
 					</div>
 					<div id="mod_info_group" class="form-group">
 						<label for="mods" style="width:100%;">Appoint mods (max:20) <small>*must be subscribed </small><small id="mod_request_sent" class="base_green_color pull-right" style="display:none;">Request Sent</small></label>
-						<input class="form-control" data-toggle="popover" data-user-id="" data-tag-id="{{curr_tag_id}}" data-tag-name="{{curr_tag.name}}" data-content="<div>Some content</div>" data-container="body" data-placement="auto top" type="text" name="mods" id="mod_input" placeholder="Use enter or mouse to select from list" autocomplete="off" maxlength="{{max_user_length}}">
+						<input class="form-control" data-toggle="popover" data-user-id="" data-community-id="{{curr_community_id}}" data-community-name="{{curr_community.name}}" data-content="<div>Some content</div>" data-container="body" data-placement="auto top" type="text" name="mods" id="mod_input" placeholder="Use enter or mouse to select from list" autocomplete="off" maxlength="{{max_user_length}}">
 					</div>
 					<div id="admin_info_group" class="form-group">
 						<label for="admins" style="width:100%;">Appoint new admin <small>*must be subscribed </small><small id="admin_request_sent" class="base_green_color pull-right" style="display:none;">Request Sent</small></label>
-						<input class="form-control" data-toggle="popover" data-user-id="" data-tag-id="{{curr_tag_id}}" data-tag-name="{{curr_tag.name}}" data-content="<div>Some content</div>" data-container="body" data-placement="auto top" type="text" name="admins" id="admin_input" placeholder="Use enter or mouse to select from list" autocomplete="off" maxlength="{{max_user_length}}">
+						<input class="form-control" data-toggle="popover" data-user-id="" data-community-id="{{curr_community_id}}" data-community-name="{{curr_community.name}}" data-content="<div>Some content</div>" data-container="body" data-placement="auto top" type="text" name="admins" id="admin_input" placeholder="Use enter or mouse to select from list" autocomplete="off" maxlength="{{max_user_length}}">
 					</div>
 				</fieldset>
 			</div>
@@ -391,9 +391,9 @@
 						<label for="Link_v3">Link <small>(optional)</small></label>
 						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Not a valid url" data-trigger="focus" type="text" name="link" id="Link_v3" placeholder="Add a link (optional)" maxlength="{{max_static_length}}">
 					</div>
-					<div id="tags_group_v3" class="form-group">
-						<label for="Tags_v3">Tags</label>
-						<input class="form-control tags_input" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Tags" data-placement="bottom" type="text" name="tags" id="Tags_v3" placeholder="Use spaces to separate tags (max: 5)" autocomplete="off" maxlength="120">
+					<div id="communities_group_v3" class="form-group">
+						<label for="Communities_v3">Communities</label>
+						<input class="form-control communities_input" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Communities" data-placement="bottom" type="text" name="communities" id="Communities_v3" placeholder="Use spaces to separate communities (max: 5)" autocomplete="off" maxlength="120">
 					</div>
 					<div id="description_group_v3" class="form-group">
 						<label for="description">Description <small>(optional)</small></label>
@@ -522,7 +522,7 @@
 		{% else %}
 			<div class="pull-right glyphicon glyphicon-pause darker_yellow_color chat_status_indicator" data-toggle="tooltip" data-original-title="Static Chat" data-container="body" data-placement="top"></div>
 		{% endif %}
-		<div class="chat_tag_str" style="display:none;">#{{chat.tags|join(' #')}}</div>
+		<div class="chat_community_str" style="display:none;">#{{chat.communities|join(' #')}}</div>
 		<div class="chat_link_str" style="display:none;">{{chat.link}}</div>
 		<div class="chat_title_str" style="display:none;">{{chat.title}}</div>
 		<div class="chat_desc_str" style="display:none;">{{chat.raw_details}}</div>
@@ -530,13 +530,13 @@
 		<div class="chat_nsfw_str" style="display:none;">{{chat.nsfw}}</div>
 		<div class="chat_id_str" style="display:none;">{{chat.id}}</div>
 		<div class="chat_title">
-			{% if chat.pinned and not curr_tag_id %}
+			{% if chat.pinned and not curr_community_id %}
 				{% if chat.link %}
 					<a class="title_red_link" href="{{chat.link}}" >{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
 				{% else %}
 					<a class="title_red_link" href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}">{{chat.title}}</a>
 				{% endif %}
-			{% elseif chat.tag_pinned %}
+			{% elseif chat.community_pinned %}
 				{% if chat.link %}
 					<a class="base_green_link" href="{{chat.link}}">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
 				{% else %}
@@ -561,9 +561,9 @@
 						<strong>
 							{% if chat.author.is_admin or chat.author.is_mod %}
 								<span class="brighter_red_color">{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</span></strong></a>,
-							{% elseif curr_tag_id %}
-								{% if chat.admin_id == tag_admin.user_id or chat.admin_id in curr_tag.moderators %}
-									<span class="base_green_color">{{chat.admin}}{% if chat.admin_id == tag_admin.user_id %}[A]{% elseif chat.admin_id in curr_tag.moderators %}[M]{% endif %}</span></strong></a>,
+							{% elseif curr_community_id %}
+								{% if chat.admin_id == community_admin.user_id or chat.admin_id in curr_community.moderators %}
+									<span class="base_green_color">{{chat.admin}}{% if chat.admin_id == community_admin.user_id %}[A]{% elseif chat.admin_id in curr_community.moderators %}[M]{% endif %}</span></strong></a>,
 								{% else %}
 									{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</strong></a>,
 								{% endif %}
@@ -609,10 +609,10 @@
 						{% endif %}
 					{% endif %}
 				</span>
-				{% if not curr_tag_id %}
-					with Tags:
-					{% for tag in chat.tags %}
-						<span class="chat_tags"><a href="{{site}}/t/{{tag.name}}"><strong>#{{tag.name}}</strong></a> </span>
+				{% if not curr_community_id %}
+					in Communities:
+					{% for community in chat.communities %}
+						<span class="chat_communities"><a href="{{site}}/c/{{community.name}}"><strong>#{{community.name}}</strong></a> </span>
 					{% endfor %}
 					and
 				{% else %}
@@ -628,19 +628,19 @@
 					<span><a href="#" data-toggle="modal" class="edit_chat_link" data-target="edit_modal"><strong>Edit</strong></a></span>
 				{% endif %}
 				{% if user.name == chat.admin %}
-					<span><a href="#" data-toggle="modal" data-remove-link="{{site}}/chat/hard-remove/{{chat.id}}/{{curr_tag_id}}" class="remove_chat_link" data-target="remove_modal"><strong>Remove</strong></a></span>
-				{% elseif user.is_admin or ((user.tag_admin == curr_tag_id or user.tag_mod == curr_tag_id) and (curr_tag_id|length > 0)) %}
-					<span><a href="#" data-toggle="modal" data-remove-link="{{site}}/chat/soft-remove/{{chat.id}}/{{curr_tag_id}}" class="remove_chat_link" data-target="remove_modal"><strong>Remove</strong></a></span>
+					<span><a href="#" data-toggle="modal" data-remove-link="{{site}}/chat/hard-remove/{{chat.id}}/{{curr_community_id}}" class="remove_chat_link" data-target="remove_modal"><strong>Remove</strong></a></span>
+				{% elseif user.is_admin or ((user.community_admin == curr_community_id or user.community_mod == curr_community_id) and (curr_community_id|length > 0)) %}
+					<span><a href="#" data-toggle="modal" data-remove-link="{{site}}/chat/soft-remove/{{chat.id}}/{{curr_community_id}}" class="remove_chat_link" data-target="remove_modal"><strong>Remove</strong></a></span>
 				{% endif %}
-				{% if curr_tag_id %}
-					{% if chat.tag_pinned %}
-						{% if user.tag_admin == curr_tag_id or user.tag_mod == curr_tag_id %}
-							<span><a href="{{site}}/tags/unpin-post/{{chat.id}}/{{curr_tag_id}}"><strong>UnPin</strong></span>
+				{% if curr_community_id %}
+					{% if chat.community_pinned %}
+						{% if user.community_admin == curr_community_id or user.community_mod == curr_community_id %}
+							<span><a href="{{site}}/community/unpin-post/{{chat.id}}/{{curr_community_id}}"><strong>UnPin</strong></span>
 						{% else %}
 							<span><strong>Pinned</strong></span>
 						{% endif %}
-					{% elseif user.tag_admin == curr_tag_id or user.tag_mod == curr_tag_id %}
-						<span><a href="{{site}}/tags/pin-post/{{chat.id}}/{{curr_tag_id}}"><strong>Pin</strong></span>
+					{% elseif user.community_admin == curr_community_id or user.community_mod == curr_community_id %}
+						<span><a href="{{site}}/community/pin-post/{{chat.id}}/{{curr_community_id}}"><strong>Pin</strong></span>
 					{% endif %}
 				{% else %}
 					{% if chat.pinned %}
