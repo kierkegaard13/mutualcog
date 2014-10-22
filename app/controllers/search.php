@@ -41,7 +41,7 @@ class Search extends BaseController {
 		$curr_page = explode('/',$curr_page);
 		$chats = '';
 		$users = '';
-		$communities = '';
+		$communities_res = '';
 		$prime_keywords = ["/\bposts\b/i","/\bcommunities\b/i","/\busers\b/i"];
 		$post_af_keywords = ["/\bin\b/i","/\babout\b/i","/\bby\b/i"];
 		$post_bf_keywords = ["/\bsfw\b/i","/\bnsfw\b/i","/\blive\b/i","/\bstatic\b/i"];
@@ -138,14 +138,14 @@ class Search extends BaseController {
 					$chats = $chats->whereremoved('0')->get();
 					break;
 				case 1:  //communities
-					$communities = new Communities();
+					$communities_res = new Communities();
 					$search_string = $split_string[1];
 					foreach($com_keywords as $key=>$word){
 						if(preg_match($word,$search_string)){   
 							switch($key){    
 								case 0:  //named
 									$this->parseSearch($community_str,$search_string,$word);
-									$communities = $communities->where(function($query)use($community_str){
+									$communities_res = $communities_res->where(function($query)use($community_str){
 										foreach($community_str as $key=>$community){
 											$community = trim($community);
 											if($key == 0){
@@ -164,7 +164,7 @@ class Search extends BaseController {
 							}
 						}
 					}
-					$communities = $communities->get();
+					$communities_res = $communities_res->get();
 					break;
 				case 2:  //users
 					$search_string = $split_string[1];
@@ -203,10 +203,10 @@ class Search extends BaseController {
 				$q->where('title','LIKE','%'.$search_string.'%');
 				$q->orWhere('raw_details','LIKE','%'.$search_string.'%');	
 			})->whereremoved('0')->paginate(25);
-			$communities = Communities::where(function($q)use($search_string){
+			$communities_res = Communities::where(function($q)use($search_string){
 				$q->where('name','LIKE','%'.$search_string.'%');
 			})->paginate(25);
-			$chats = User::where(function($q)use($search_string){
+			$users = User::where(function($q)use($search_string){
 				$q->where('name','LIKE','%'.$search_string.'%');
 			})->paginate(25);
 		}
@@ -215,7 +215,7 @@ class Search extends BaseController {
 		$view['communities'] = $communities;
 		$view['chats'] = $chats;
 		$view['users'] = $users;
-		$view['communities'] = $communities;
+		$view['communities_res'] = $communities_res;
 		return $view;
 	}
 

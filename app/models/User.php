@@ -60,20 +60,20 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 		return $this->belongsTo('Serials','serial_id');
 	}
 
+	public function interests(){
+		return $this->morphToMany('Concepts','entity','entities_to_concepts','entity_id','concept_id');
+	}
+
 	public function messages(){
 		return $this->hasMany('Messages','user_id')->wheretype('public');
 	}
 
 	public function privateChats(){
-		return $this->belongsToMany('PrivateChats','users_to_private_chats','user_id','chat_id')->whereinboxed(0)->where('visible','!=','0')->withPivot('visible','unseen');
+		return $this->belongsToMany('PrivateChats','users_to_private_chats','user_id','chat_id')->where('visible','!=','0')->withPivot('visible','unseen');
 	}
 
 	public function privateChatF(){
-		return $this->belongsToMany('PrivateChats','users_to_private_chats','entity_id','chat_id')->whereinboxed(0)->whereuser_id(Auth::user()->id)->whereentity_type(0);
-	}
-
-	public function inbox(){
-		return $this->belongsToMany('PrivateChats','users_to_private_chats','user_id','chat_id')->whereinboxed(1)->withPivot('unseen');
+		return $this->belongsToMany('PrivateChats','users_to_private_chats','entity_id','chat_id')->whereuser_id(Auth::user()->id)->whereentity_type(0);
 	}
 
 	public function chats(){
@@ -86,10 +86,6 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 
 	public function rooms(){
 		return $this->belongsToMany('Chats','members_to_chats','user_id','chat_id');
-	}
-
-	public function interests(){
-		return $this->belongsToMany('Concepts','users_to_concepts','user_id','concept_id');
 	}
 
 	public function friendships(){
