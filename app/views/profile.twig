@@ -23,15 +23,15 @@
 
 {% block side_2 %}
 	<div class="small_content_box">
-		<div class="content side_content" id="subscribe">
+		<div class="content side_content" id="subscribe" style="padding:0;">
 <div style="margin-top:5px;">
-	<button class="btn btn-primary" style="width:100%;" data-toggle="modal" data-target="#chat_modal">Create New Post</button>
+	<button class="btn btn-primary menu_top" style="width:100%;" data-toggle="modal" data-target="#chat_modal">Create new post</button>
 </div>
-<div style="margin-top:10px;">
-	<button class="btn btn-primary" id="create_community" style="width:100%;" data-toggle="modal" data-target="#community_create_modal">Create Community</button>
+<div>
+	<button class="btn btn-primary menu_middle" id="create_community" style="width:100%;" data-toggle="modal" data-target="#community_create_modal">Create community</button>
 </div>
-<div style="margin-top:10px;">
-	<a href="{{site}}/chat/random" class="btn btn-primary" style="width:100%;" title="Jump into a random chat">Random</a>
+<div>
+	<a href="{{site}}/chat/random" class="btn btn-primary menu_bottom" style="width:100%;" title="Jump into a random chat">Jump into chat</a>
 </div>
 		</div>
 	</div>
@@ -62,10 +62,7 @@
 <ul id="profileTabs" class="nav nav-tabs nav-justified">
 	<li class="active"><a href="#posts" data-toggle="tab" style="color:#075de9">Posts</a></li>
 	<li><a href="#comments" data-toggle="tab" style="color:#075de9">Comments</a></li>
-	<li><a href="#friendships" data-toggle="tab" style="color:#075de9">Friendships</a></li>
-	{% if user.id == profile.id %}
-		<li><a href="#inbox" data-toggle="tab" style="color:#075de9">Inbox</a></li>
-	{% endif %}
+	<li><a href="#friendships" data-toggle="tab" style="color:#075de9">Friends</a></li>
 </ul>
 
 <div id="tab_content" class="tab-content">
@@ -161,57 +158,6 @@
 		{% endfor %}
 	</div>
 </div>
-
-{% if user.id == profile.id %}
-	<div class="tab-pane fade in" id="inbox">
-		<div class="frame" style="height:620px;padding:0;white-space:normal;">
-			{% for chat in profile.inbox %}
-				<div class="chat_title_box">
-					<div><a href="{{site}}/p/{{chat.friends[0].name}}">{{chat.friends[0].name}}</a></div>
-					<div style="font-size:14px;"> {{chat.messages[0].message}} </div>
-					<div class="time_box">
-						{% set time_passed = server_time|date('U') - chat.created_at|date('U') %}
-						<div class="time" id="{{chat.created_at}}" title="{{chat.created_at}}">
-							{% if time_passed < 45 %}
-								seconds ago
-							{% elseif time_passed < 2700 %}
-								{% if time_passed < 90 %}
-									a minute ago
-								{% else %}
-									{{(time_passed/60)|round}} minutes ago
-								{% endif %}
-							{% elseif time_passed < 79200%}
-								{% if time_passed < 5400 %}
-									an hour ago
-								{% else %}
-									{{(time_passed/3600)|round}} hours ago
-								{% endif %}
-							{% elseif time_passed < 2160000 %}
-								{% if time_passed < 129600 %}
-									a day ago
-								{% else %}
-									{{(time_passed/86400)|round}} days ago
-								{% endif %}
-							{% elseif time_passed < 29808000 %}
-								{% if time_passed < 3888000 %}
-									a month ago
-								{% else %}
-									{{(time_passed/2592000)|round}} months ago
-								{% endif %}
-							{% else %}
-								{% if time_passed < 47260800 %}
-									a year ago
-								{% else %}
-									{{(time_passed/31536000)|round}} years ago
-								{% endif %}
-							{% endif %}
-						</div>
-					</div>
-				</div>
-			{% endfor %}
-		</div>
-	</div>
-{% endif %}
 
 </div>
 

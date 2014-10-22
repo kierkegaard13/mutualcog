@@ -24,7 +24,9 @@ function getUniqueSerialNumber($serial_number=null){
 		list($year,$month,$day,$hour,$minute) = explode(':',$curr_date);
 		$temp_date = date('Y:m:d:H:i',strtotime($temp->updated_at));
 		list($t_year,$t_month,$t_day,$t_hour,$t_minute) = explode(':',$temp_date);
-		if(($year > $t_year || $month > $t_month || $day > $t_day || ($hour * 60 + $minute) > ($t_hour * 60 + $t_minute) + 481)){
+		if(($year > $t_year || $month > $t_month || $day > $t_day || ($hour * 60 + $minute) > ($t_hour * 60 + $t_minute) + 721)){
+			$temp->ip_address = Request::getClientIp();
+			$temp->welcomed = 0;
 			$temp->save();
 			if(Auth::check()){
 				Auth::user()->serial_id = $temp->id;
@@ -36,6 +38,8 @@ function getUniqueSerialNumber($serial_number=null){
 		$serial_number = mt_rand(0,16777215);
 		return getUniqueSerialNumber($serial_number);
 	}
+	$serial->ip_address = Request::getClientIp();
+	$serial->welcomed = 0;
 	$serial->save();
 	if(Auth::check()){
 		Auth::user()->serial_id = $serial->id;
@@ -54,6 +58,7 @@ Route::filter('assignSerial',function(){
 		}else{
 			$serial = Serials::whereserial_id(Session::get('unique_serial'))->first();
 			if($serial){
+				$serial->ip_address = Request::getClientIp();
 				$serial->save();
 				if(Auth::check()){
 					Auth::user()->serial_id = $serial->id;

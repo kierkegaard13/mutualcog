@@ -29,7 +29,7 @@ return array(
 	|
 	*/
 
-	'lifetime' => 480,
+	'lifetime' => 720,
 
 	'expire_on_close' => false,
 
