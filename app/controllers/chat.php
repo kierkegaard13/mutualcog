@@ -467,18 +467,7 @@ class Chat extends BaseController {
 					if((strpos($link,'http://') == 'false') && (strpos($link,'https://') == 'false')){
 						$link = 'http://' . $link;
 					}
-					function get($a,$b,$c)
-					{
-						// Gets a string between 2 strings
-						$y = explode($b,$a);
-						if($y[1]){
-							$x = explode($c,$y[1]);
-							return $x[0];
-						}else{
-							return 0;
-						}
-					}
-					if(substr($link,-4,4) == '.png' || substr($link,-4,4) == '.gif' || substr($link,-4,4) == '.jpg' || substr($link,-5,5) == '.jpeg'){
+					if(substr($link,-4,4) == '.png' || substr($link,-4,4) == '.eps' || substr($link,-4,4) == '.gif' || substr($link,-4,4) == '.jpg' || substr($link,-5,5) == '.jpeg'){
 						$site_name = str_replace('http://','',$link);
 						$site_name = str_replace('https://','',$site_name);
 						$site_name = explode('/',$site_name);
@@ -487,12 +476,24 @@ class Chat extends BaseController {
 						$chat->image = $link;
 						$chat->site_name = $site_name;
 					}else{
-						$image = get(file_get_contents($link), "<img src=", " ");
-						$image = str_replace('"','',$image);
 						$site_name = str_replace('http://','',$link);
 						$site_name = str_replace('https://','',$site_name);
 						$site_name = explode('/',$site_name);
 						$site_name = $site_name[0];
+						if($site_name == 'www.youtube.com'){
+							$image = $this->youtubeLogo();
+						}else{
+							$html = file_get_contents($link);
+							$dom = new DOMDocument();
+							@$dom->loadHtml($html);
+							$imgTags = $dom->getElementsByTagName('img');
+							if ($imgTags->length > 0) {
+								$imgElement = $imgTags->item(0);
+								$image =  $imgElement->getAttribute('src');
+							} else {
+								$image = '';
+							}
+						}
 						$chat->link = $link;
 						$chat->image = $image;
 						$chat->site_name = $site_name;

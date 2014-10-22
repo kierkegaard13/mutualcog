@@ -97,12 +97,33 @@ code{
 	  margin-bottom:0px;
 	  margin-top:4px;
 	  padding-right:17px;	
+	  padding-left:5px;
 	  display:none;
 	}
 	.community_search_icon {
 	  margin-bottom:0px;
 	  padding:11px 10px 11px 10px;
 	  font-size:18px;
+	  cursor:pointer;
+	  margin-top:-2px;
+	  transition:background-color .5s;
+	  -webkit-transition:background-color .5s;
+	}
+	.community_search_expand {
+	  margin-bottom:0px;
+	  padding:11px 0px 11px 10px;
+	  margin-right:-10px;
+	  font-size:18px;
+	  cursor:pointer;
+	  margin-top:-2px;
+	  transition:background-color .5s;
+	  -webkit-transition:background-color .5s;
+	}
+	.community_search_collapse {
+	  margin-bottom:0px;
+	  padding:11px 10px 11px 0px;
+	  font-size:18px;
+	  margin-left:-10px;
 	  cursor:pointer;
 	  margin-top:-2px;
 	  transition:background-color .5s;
@@ -221,7 +242,7 @@ code{
 	.nav_pad_r {
 	  padding-right:0;
 	}
-	.community_search_icon {
+	.community_search_icon, .community_search_expand, .community_search_collapse {
 	  display:none;
 	}
 	.search_drop_cont {

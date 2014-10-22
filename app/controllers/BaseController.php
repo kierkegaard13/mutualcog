@@ -46,6 +46,10 @@ class BaseController extends Controller {
 		View::share('color_arr',array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#000'));
 	}
 
+	public function youtubeLogo(){
+		return $this->base_url . '/YouTube-logo-full_color.png';
+	}
+
 	public function lastQuery(){
 		$queries = DB::getQueryLog();
 		return end($queries);
@@ -81,17 +85,17 @@ class BaseController extends Controller {
 		}
 		$patterns = array('/&gt;:\\|/','/&gt;:\\(/','/&lt;3/','/:\\)/','/:D/','/:\\|/',"/:\\'\\(/",'/:O/','/:P/','/T_T/','/:\\(/');
 		$replace = array(
-			'<img style="height:18px;" src="//localhost/laravel/app/emoji/angry.png"></img>',
-			'<img style="height:18px;" src="//localhost/laravel/app/emoji/rage.png"></img>',
-			'<img style="height:18px;" src="//localhost/laravel/app/emoji/heart.png"></img>',
-			'<img style="height:18px;" src="//localhost/laravel/app/emoji/smile.png"></img>',
-			'<img style="height:18px;" src="//localhost/laravel/app/emoji/smiley.png"></img>',
-			'<img style="height:18px;" src="//localhost/laravel/app/emoji/neutral_face.png"></img>',
-			'<img style="height:18px;" src="//localhost/laravel/app/emoji/cry.png"></img>',
-			'<img style="height:18px;" src="//localhost/laravel/app/emoji/open_mouth.png"></img>',
-			'<img style="height:18px;" src="//localhost/laravel/app/emoji/stuck_out_tongue_closed_eyes.png"></img>',
-			'<img style="height:18px;" src="//localhost/laravel/app/emoji/sob.png"></img>',
-			'<img style="height:18px;" src="//localhost/laravel/app/emoji/disappointed.png"></img>'
+			'<img style="height:18px;" src="' . $this->base_url . '/app/emoji/angry.png"></img>',
+			'<img style="height:18px;" src="' . $this->base_url . '/app/emoji/rage.png"></img>',
+			'<img style="height:18px;" src="' . $this->base_url . '/app/emoji/heart.png"></img>',
+			'<img style="height:18px;" src="' . $this->base_url . '/app/emoji/smile.png"></img>',
+			'<img style="height:18px;" src="' . $this->base_url . '/app/emoji/smiley.png"></img>',
+			'<img style="height:18px;" src="' . $this->base_url . '/app/emoji/neutral_face.png"></img>',
+			'<img style="height:18px;" src="' . $this->base_url . '/app/emoji/cry.png"></img>',
+			'<img style="height:18px;" src="' . $this->base_url . '/app/emoji/open_mouth.png"></img>',
+			'<img style="height:18px;" src="' . $this->base_url . '/app/emoji/stuck_out_tongue_closed_eyes.png"></img>',
+			'<img style="height:18px;" src="' . $this->base_url . '/app/emoji/sob.png"></img>',
+			'<img style="height:18px;" src="' . $this->base_url . '/app/emoji/disappointed.png"></img>'
 			//'<img style="height:18px;" src="//localhost/laravel/app/emoji/confused.png"></img>'
 		);
 		$text = preg_replace($patterns,$replace,$text);

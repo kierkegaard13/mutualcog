@@ -210,9 +210,7 @@ $(window).resize(function(){
 
 $(document).ready(function(){
 	$.each($('.chat_img'),function(index,val){
-		console.log($('.chat_img').eq(index).attr('data-chat-img'));
 		$('.chat_img').eq(index).attr('src',$('.chat_img').eq(index).attr('data-chat-img'));
-		console.log($('.chat_img').eq(index).attr('src'));
 	});
 	if(module.user_id.length){
 		window.setInterval(function(){
@@ -601,13 +599,16 @@ $(document).ready(function(){
 			$(this).parent().find('.pm_text').css('display','none');
 		}
 	});
-	$('.community_search_icon').click(function(){
+	$('.toggle_search').click(function(){
 		if($('.community_search').css('display') == 'none'){
-			console.log($('#welcome_user').width());
+			$('.community_search_expand').css('display','none');
+			$('.community_search_collapse').css('display','');
 			$('.community_input').width($('#welcome_user').width() - 34);
 			$('.community_input').attr('placeholder',module.search_messages[randomInt(0,module.search_messages.length - 1)]);
 			$('.community_search').css('display','inline');
 		}else{
+			$('.community_search_expand').css('display','');
+			$('.community_search_collapse').css('display','none');
 			$('.community_search').css('display','none');
 		}
 		$('.community_input').focus();
@@ -979,6 +980,15 @@ $('#search_input').on('keydown',function(e){
 		}
 		return false;
 	}
+});
+
+$('.entry_search_submit').click(function(){
+	if(selected_term == -1){
+		window.location.href = '//mutualcog.com/search/result/' + $('#search_input').val();
+	}else{
+		location.assign($('li#search_' + selected_term).children('a').attr('href'));
+	}	
+	return false;
 });
 
 $('#search_input').on('keyup',function(e){
