@@ -56,7 +56,7 @@ code{
 	  height:97%;
 	  padding-left:200px;
 	  padding-right:15px;
-	  padding-top:55px;
+	  padding-top:50px;
 	  margin-left:0px;
 	}
 }
@@ -66,7 +66,7 @@ code{
 	  height:97%;
 	  padding-left:10px;
 	  padding-right:15px;
-	  padding-top:55px;
+	  padding-top:50px;
 	  margin-left:0px;
 	}
 }
@@ -76,7 +76,7 @@ code{
 	  height:97%;
 	  padding-left:10px;
 	  padding-right:15px;
-	  padding-top:55px;
+	  padding-top:50px;
 	  margin-left:0px;
 	}
 	.community_search_cont {
@@ -445,17 +445,21 @@ code{
   border-bottom:solid 1px #aaa;
   font-size:14px;
   overflow:hidden;
+  transition:color .5s;
+  -webkit-transition:color .5s;
   transition:background-color .5s;
   -webkit-transition:background-color .5s;
 }
 .friend_box:hover {
+  color:#333;
   background-color:#ddd;
   cursor:pointer;
 }
 .friend_list {
   position:fixed;
+  color:white;
   height:100%;
-  background-color:white;
+  background-color:@navbar_color;
   margin-top:0;
   padding:0;
   padding-top:40px;
