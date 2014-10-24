@@ -76,13 +76,13 @@
 	{% endif %}
 	{{friendship.entity.name}}
 	{% if not friendship.entity.chat_id or friendship.entity.anonymous %}
-		<div style="color:gray;font-size:13px;margin-top:-5px;">Just browsing</div>
+		<div style="font-size:13px;margin-top:-5px;">Just browsing</div>
 	{% else %}
 		<div style="font-size:13px;margin-top:-5px;">In a <a class="visible_link" href="{{site}}/chat/{% if friendship.entity.chatRoom.live %}live{% else %}static{% endif %}/{{friendship.entity.chat_id}}">chat</a></div>
 	{% endif %}
 	</div>
 {% else %}
-<div style="color:gray;font-size:12px;margin-top:10px;margin-left:5px;">
+<div style="color:white;font-size:12px;margin-top:10px;margin-left:5px;">
         You don't have any friends yet
 </div>
 {% endfor %}
@@ -540,9 +540,9 @@
 				{% endif %}
 			{% elseif chat.community_pinned %}
 				{% if chat.link %}
-					<a class="base_green_link" href="{{chat.link}}">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+					<a class="darker_green_link" href="{{chat.link}}">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
 				{% else %}
-					<a class="base_green_link" href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}">{{chat.title}}</a>
+					<a class="darker_green_link" href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}">{{chat.title}}</a>
 				{% endif %}
 			{% else %}
 				{% if chat.link %}
