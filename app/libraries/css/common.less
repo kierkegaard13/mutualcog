@@ -35,6 +35,12 @@ code{
   border:1px solid #ccc;
   border-radius:4px;
 }
+a.chat_link {
+  color:@base_blue;
+}
+a.visible_link {
+  color:@brighter_green;
+}
 .form-group {
   margin-bottom:10px;
 }
@@ -164,7 +170,7 @@ code{
 	  z-index:100;
 	  width:100%;
 	  margin-bottom:0px;
-	  color:#fff;
+	  color:@light_text;
 	  border-radius:0px;
 	  background-color: @navbar_color;
 	  min-height:40px;
@@ -263,7 +269,7 @@ code{
 	  z-index:100;
 	  width:100%;
 	  margin-bottom:-40px;
-	  color:#fff;
+	  color:@light_text;
 	  border-radius:0px;
 	  background-color: @navbar_color;
 	  min-height:40px;
@@ -295,7 +301,7 @@ code{
 	  font-size:16px;
 	}
 	.navbar .dropdown-menu>li>a {
-	  color:white;
+	  color:@light_text;
 	}
 	.dropdown-menu>li>a {
 	  transition:background-color .5s;
@@ -312,7 +318,7 @@ code{
 	  margin-top:-76px;	
 	}
 	.community_results>a {
-	  color:#333 !important;
+	  color:@dark_text !important;
 	  transition:color .5s;
 	  -webkit-transition:color .5s;
 	}
@@ -362,23 +368,23 @@ code{
   background-color:#eee;
 }
 .navbar-brand {
-  color:#fff;
+  color:@light_text;
   background-color: @navbar_color;
   transition:background-color .5s;
   -webkit-transition:background-color .5s;
 }
 .navbar-brand:hover {
-  color:#fff;
+  color:@light_text;
   background-color: @highlight_blue;
 }
 .navbar .nav>li>a {
-  color:#fff;
+  color:@light_text;
   background-color: @navbar_color;
   transition:background-color .5s;
   -webkit-transition:background-color .5s;
 }
 .navbar .nav>li>a:hover {
-  color:#fff;
+  color:@light_text;
   background-color: @highlight_blue;
 }
 .navbar-nav>li>a {
@@ -391,26 +397,26 @@ code{
   border-radius:2px;
 }
 .entry_search_submit {
-  color:#333;
+  color:@dark_text;
 }
 .progress {
   height:10px;
   margin-bottom:10px;
 }
 .search_res_type {
-  color:#333;
+  color:@dark_text;
   margin-left:10px;
 }
 .search_hint_cont {
   border-top:solid #ccc 1px;
 }
 .search_hint {
-  color:#333;
+  color:@dark_text;
   margin-left:10px;
   padding:5px 0;
 }
 .search_link {
-  color:#333 !important;
+  color:@dark_text !important;
   padding-left:10px !important;
   transition:color .5s;
   -webkit-transition:color .5s;
@@ -442,7 +448,7 @@ code{
   position:relative;
   padding:10px;
   padding-left:15px;
-  border-bottom:solid 1px #aaa;
+  border-bottom:solid 1px #eee;
   font-size:14px;
   overflow:hidden;
   transition:color .5s;
@@ -451,18 +457,18 @@ code{
   -webkit-transition:background-color .5s;
 }
 .friend_box:hover {
-  color:#333;
+  color:@dark_text;
   background-color:#ddd;
   cursor:pointer;
 }
 .friend_list {
   position:fixed;
-  color:white;
+  color:@light_text;
   height:100%;
   background-color:@navbar_color;
-  margin-top:0;
+  border-top:solid 1px #eee;
   padding:0;
-  padding-top:40px;
+  margin-top:40px;
   width:190px;
 }
 .pm_dropup {
@@ -653,7 +659,7 @@ textarea {
 }
 .hljs {
 	  display: block; padding: 0.5em;
-	    color: #333;
+	    color: @dark_text;
 	      background: #f8f8f8
 }
 
@@ -673,7 +679,7 @@ textarea {
 .hljs-subst,
 .hljs-request,
 .hljs-status {
-	  color: #333;
+	  color: @dark_text;
 	    font-weight: bold
 }
 
