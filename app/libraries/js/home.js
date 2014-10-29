@@ -240,7 +240,7 @@ $('#home_form_v2').submit(function(){
 		}else{
 			communities = communities.split(' ');
 			$.each(communities,function(index,value){
-				value = value.substr(1);
+				value = value.replace('#','');
 				if((value.length < 3 || value.length > 20) && value.length != 0){
 					$('#communities_group_v2').attr('class','form-group has-error');
 					$('#Communities_v2').attr('data-original-title','Communities must be between 3 and 20 characters');
@@ -285,7 +285,7 @@ $('#home_form_v3').submit(function(){
 	}else{
 		communities = communities.split(' ');
 		$.each(communities,function(index,value){
-			value = value.substr(1);
+			value = value.replace('#','');
 			if((value.length < 3 || value.length > 20) && value.length != 0){
 				$('#communities_group_v3').attr('class','form-group has-error');
 				$('#Communities_v3').attr('data-original-title','Communities must be between 3 and 20 characters');

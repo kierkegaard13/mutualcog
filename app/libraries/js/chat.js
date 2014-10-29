@@ -23,6 +23,9 @@ $(document).ready(function(){
 			}	
 		}
 	}}});	
+	if($('#chat_details').height() > 50){
+		$('#chat_details').text($('#chat_details').text().substring(0,50));
+	}
 	window.setInterval(function(){
 		if(module.chat_scroll_timer == 0){
 			if(module.scroll_button_clicked == 0 && module.stop_scroll){

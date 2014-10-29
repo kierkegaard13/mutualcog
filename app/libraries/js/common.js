@@ -869,6 +869,8 @@ $('#login_form').submit(function(){
 		if(!res){
 			return false;
 		}
+	}else{
+		return false;
 	}
 	return true;
 });
