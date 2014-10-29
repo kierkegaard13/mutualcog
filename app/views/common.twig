@@ -496,7 +496,7 @@
 {% endblock %}
 
 {% block chat_box %}
-<div class="chat_title_box {% if not chat.seen %}bright_blue_background{% endif %}">
+<div class="chat_title_box {% if not chat.seen %}{% if chat.pinned and not curr_community_id %}red_left_border{% elseif chat.community_pinned %}green_left_border{% else %}blue_left_border{% endif %}{% endif %}">
 	<div class="row">
 		<div class="number_box"> {{loop.index}}. </div>
 		<div class="vote_box">
