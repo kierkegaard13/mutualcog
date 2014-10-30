@@ -82,10 +82,10 @@ Route::group(array('before' => 'assignSerial'), function(){
 		Route::controller('chat','chat');
 		Route::controller('search','search');
 		Route::get('/u/{user}',array('uses' => 'u@getIndex'));
-		Route::get('/c/{community}',array('uses' => 'c@getIndex'));
+		Route::get('/c/{community}/{option?}',array('uses' => 'c@getIndex'));
 
 		if(Auth::check()){
-			Route::get('/',array('uses' => 'Home@getIndex'));
+			Route::get('/{option?}',array('uses' => 'Home@getIndex'));
 		}else{
 			Route::get('/',array('uses' => 'Search@getIndex'));
 		}

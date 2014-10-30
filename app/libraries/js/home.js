@@ -108,7 +108,7 @@ $(document).ready(function(){
 			return false;
 		}
 	});
-	$('a#subscribe_btn').click(function(){
+	$('#subscribe_btn').click(function(){
 		if($('#logged_in').text() == 1){
 			return true;
 		}else{
@@ -126,7 +126,7 @@ $(document).ready(function(){
 			return false;
 		}
 	});
-	$('button#create_community').click(function(){
+	$('#create_community').click(function(){
 		if($('#logged_in').text() == 1){
 			return true;
 		}else{
@@ -135,11 +135,11 @@ $(document).ready(function(){
 			return false;
 		}
 	});
-	$('a#advanced_create').click(function(e){
+	$('#advanced_create').click(function(e){
 		$('#advanced_modal').modal();
 		return false;
 	});
-	$('a#community_edit').click(function(e){
+	$('#community_edit').click(function(e){
 		var community_cont = $(this).parents('.side_content');
 		$('#input_community_id').val(community_cont.find('#community_id_str').text());
 		$('#input_community_info').val(community_cont.find('#community_info_str').text());
@@ -147,7 +147,7 @@ $(document).ready(function(){
 		$('#community_edit_modal').modal();
 		return false;
 	});
-	$('a.edit_chat_link').click(function(e){
+	$('.edit_chat_link').click(function(e){
 		var chat_cont = $(this).parents('.chat_title_box');
 		$('#Title_v3').val(chat_cont.find('.chat_title_str').text());
 		$('#Link_v3').val(chat_cont.find('.chat_link_str').text());
@@ -172,7 +172,7 @@ $(document).ready(function(){
 		var user_id = $(this).attr('id').split('_')[2];
 		window.location.href = '//mutualcog.com/community/remove-mod/' + user_id + '/' + community_id; 
 	});
-	$('a.remove_chat_link').click(function(e){
+	$('.remove_chat_link').click(function(e){
 		$('#remove_modal').modal();
 		$('#remove_chat_final').attr('href',$(this).attr('data-remove-link'));
 		return false;

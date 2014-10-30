@@ -616,42 +616,42 @@
 				{% endif %}
 				<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:gray;"><strong>{{chat.messages | length }} comments</strong></a>
 			</div>
-			<div class="more_options">
+			<div> 
 				{% if chat.nsfw %}
-					<span class="brighter_red_color">NSFW</span>
+					<a href="{{site}}/{% if curr_community_id %}c/{{curr_community.name}}/{% endif %}nsfw" class="btn btn-danger btn-sm chat_info_link">NSFW</a>
 				{% endif %}
 				{% if user.name == chat.admin %}
-					<span><a href="#" data-toggle="modal" class="edit_chat_link" data-target="edit_modal"><strong>Edit</strong></a></span>
+					<button class="btn btn-default btn-sm chat_info_link edit_chat_link" data-toggle="modal" data-target="edit_modal">Edit</button>
 				{% endif %}
 				{% if user.name == chat.admin %}
-					<span><a href="#" data-toggle="modal" data-remove-link="{{site}}/chat/hard-remove/{{chat.id}}/{{curr_community_id}}" class="remove_chat_link" data-target="remove_modal"><strong>Remove</strong></a></span>
+					<a href="#" data-toggle="modal" data-remove-link="{{site}}/chat/hard-remove/{{chat.id}}/{{curr_community_id}}" class="btn btn-default btn-sm chat_info_link remove_chat_link" data-target="remove_modal">Remove</a>
 				{% elseif user.is_admin or ((user.community_admin == curr_community_id or user.community_mod == curr_community_id) and (curr_community_id|length > 0)) %}
-					<span><a href="#" data-toggle="modal" data-remove-link="{{site}}/chat/soft-remove/{{chat.id}}/{{curr_community_id}}" class="remove_chat_link" data-target="remove_modal"><strong>Remove</strong></a></span>
+					<a href="#" data-toggle="modal" data-remove-link="{{site}}/chat/soft-remove/{{chat.id}}/{{curr_community_id}}" class="btn btn-default btn-sm chat_info_link remove_chat_link" data-target="remove_modal">Remove</a>
 				{% endif %}
 				{% if curr_community_id %}
 					{% if chat.community_pinned %}
 						{% if user.community_admin == curr_community_id or user.community_mod == curr_community_id %}
-							<span><a href="{{site}}/community/unpin-post/{{chat.id}}/{{curr_community_id}}"><strong>UnPin</strong></a></span>
+							<a href="{{site}}/community/unpin-post/{{chat.id}}/{{curr_community_id}}" class="btn btn-default btn-sm chat_info_link">UnPin</a>
 						{% else %}
-							<span><strong>Pinned</strong></span>
+							<a href="{{site}}/c/{{curr_community.name}}/pinned" class="btn btn-default btn-sm chat_info_link">Pinned</a>
 						{% endif %}
 					{% elseif user.community_admin == curr_community_id or user.community_mod == curr_community_id %}
-						<span><a href="{{site}}/community/pin-post/{{chat.id}}/{{curr_community_id}}"><strong>Pin</strong></a></span>
+						<a href="{{site}}/community/pin-post/{{chat.id}}/{{curr_community_id}}" class="btn btn-default btn-sm chat_info_link">Pin</a>
 					{% endif %}
 				{% else %}
 					{% if chat.pinned %}
 						{% if user.is_admin or user.is_mod %}
-							<span><a href="{{site}}/chat/unpin-post/{{chat.id}}"><strong>UnPin</strong></a></span>
+							<a href="{{site}}/chat/unpin-post/{{chat.id}}" class="btn btn-default btn-sm chat_info_link">UnPin</a>
 						{% else %}
-							<span><strong>Pinned</strong></span>
+							<a href="{{site}}/pinned" class="btn btn-default btn-sm chat_info_link">Pinned</a>
 						{% endif %}
 					{% elseif user.is_admin or user.is_mod %}
-						<span><a href="{{site}}/chat/pin-post/{{chat.id}}"><strong>Pin</strong></a></span>
+						<a href="{{site}}/chat/pin-post/{{chat.id}}" class="btn btn-default btn-sm chat_info_link">Pin</a>
 					{% endif %}
 				{% endif %}
-				<span><a href="{{site}}/chat/static/{{chat.id}}"><strong>Static</strong></a></span>
+				<a href="{{site}}/chat/static/{{chat.id}}" class="btn btn-default btn-sm chat_info_link">Static</a>
 				{% if chat.details | length > 0 %}
-					<span class="toggle_description"><a href="#"><strong>Show description</strong></a></span>
+					<button class="btn btn-default btn-sm chat_info_link toggle_description">Show description</button>
 				{% endif %}
 			</div>
 			<div id="description_{{chat.id}}" class="description_cont" {% if chat.link %}style="margin-left:100px;"{% endif %}>

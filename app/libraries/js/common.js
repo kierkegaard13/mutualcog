@@ -239,7 +239,9 @@ $(document).ready(function(){
 			module.recent = 0;
 		});
 	}
-	module.socket.emit('seen_chats');
+	if(typeof socket !== 'undefined'){
+		module.socket.emit('seen_chats');
+	}
 	if($('.pm_body').length){
 		if($('.pm_bar').width() > $(window).width() - 30){
 			$.each($('.pm_cont'),function(index,val){

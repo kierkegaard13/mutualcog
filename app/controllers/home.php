@@ -15,12 +15,33 @@ class Home extends BaseController {
 	   |
 	 */
 
-	public function getIndex()
+	public function getIndex($option = null)
 	{
 		$view = View::make('home');
-		$chats = Chats::select('*',DB::raw('(case when (upvotes - downvotes > 0) then log(upvotes - downvotes) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 when (upvotes - downvotes = 0) then log(1) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 else log(1/abs(upvotes - downvotes)) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 end) AS score'))->whereremoved('0')->wherensfw('0')->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
-		$chats_new = Chats::whereremoved('0')->wherensfw('0')->orderBy('pinned','desc')->orderBy('created_at','desc')->paginate(25);
-		$chats_rising = Chats::select('*',DB::raw('(upvotes - downvotes) - views AS score'))->wherensfw('0')->whereremoved('0')->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
+		$chats = Chats::select('*',DB::raw('(case when (upvotes - downvotes > 0) then log(upvotes - downvotes) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 when (upvotes - downvotes = 0) then log(1) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 else log(1/abs(upvotes - downvotes)) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 end) AS score'))->whereremoved('0');
+		$chats_removed = Chats::select('*',DB::raw('(case when (upvotes - downvotes > 0) then log(upvotes - downvotes) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 when (upvotes - downvotes = 0) then log(1) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 else log(1/abs(upvotes - downvotes)) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 end) AS score'))->whereremoved('1');
+		$chats_new = Chats::whereremoved('0');
+		$chats_rising = Chats::select('*',DB::raw('(upvotes - downvotes) - views AS score'))->whereremoved('0');
+		if($option == 'nsfw'){
+			$chats = $chats->wherensfw('1');
+			$chats_new = $chats_new->wherensfw('1');
+			$chats_rising = $chats_rising->wherensfw('1');
+			$chats_removed = $chats_removed->wherensfw('1');
+		}else if($option == 'pinned'){
+			$chats = $chats->wherepinned('1')->wherensfw('0');
+			$chats_new = $chats_new->wherepinned('1')->wherensfw('0');
+			$chats_rising = $chats_rising->wherepinned('1')->wherensfw('0');
+			$chats_removed = $chats_removed->wherepinned('1')->wherensfw('0');
+		}else{
+			$chats = $chats->wherensfw('0');
+			$chats_new = $chats_new->wherensfw('0');
+			$chats_rising = $chats_rising->wherensfw('0');
+			$chats_removed = $chats_removed->wherensfw('0');
+		}
+		$chats = $chats->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
+		$chats_new = $chats_new->orderBy('pinned','desc')->orderBy('created_at','desc')->paginate(25);
+		$chats_rising = $chats_rising->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
+		$chats_removed = $chats_removed->orderBy(DB::raw('score'),'desc')->paginate(25);
 		$communities = Communities::take(30)->orderBy('popularity','desc')->get();
 		$upvoted = array();
 		$downvoted = array();
@@ -49,4 +70,93 @@ class Home extends BaseController {
 		$view['chats_rising'] = $chats_rising;
 		return $view;
 	}
+
+	public function getNsfw()
+	{
+		$view = View::make('home');
+		$chats = Chats::select('*',DB::raw('(case when (upvotes - downvotes > 0) then log(upvotes - downvotes) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 when (upvotes - downvotes = 0) then log(1) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 else log(1/abs(upvotes - downvotes)) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 end) AS score'))->whereremoved('0');
+		$chats_removed = Chats::select('*',DB::raw('(case when (upvotes - downvotes > 0) then log(upvotes - downvotes) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 when (upvotes - downvotes = 0) then log(1) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 else log(1/abs(upvotes - downvotes)) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 end) AS score'))->whereremoved('1');
+		$chats_new = Chats::whereremoved('0');
+		$chats_rising = Chats::select('*',DB::raw('(upvotes - downvotes) - views AS score'))->whereremoved('0');
+		$chats = $chats->wherensfw('1');
+		$chats_new = $chats_new->wherensfw('1');
+		$chats_rising = $chats_rising->wherensfw('1');
+		$chats_removed = $chats_removed->wherensfw('1');
+		$chats = $chats->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
+		$chats_new = $chats_new->orderBy('pinned','desc')->orderBy('created_at','desc')->paginate(25);
+		$chats_rising = $chats_rising->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
+		$chats_removed = $chats_removed->orderBy(DB::raw('score'),'desc')->paginate(25);
+		$communities = Communities::take(30)->orderBy('popularity','desc')->get();
+		$upvoted = array();
+		$downvoted = array();
+		if(Auth::check()){
+			Auth::user()->page = 'home';
+			Auth::user()->chat_id = 0;
+			Auth::user()->community_admin = 0;
+			Auth::user()->community_mod = 0;
+			Auth::user()->save();
+			foreach(Auth::user()->upvotedChats() as $upvote){
+				$upvoted[] = $upvote->chat_id;
+			}
+			foreach(Auth::user()->downvotedChats() as $downvote){
+				$downvoted[] = $downvote->chat_id;
+			}
+		}
+		Session::put('curr_page',URL::full());
+		$view['home_active'] = 'highlight_light_blue';
+		$view['sid'] = Session::getId();
+		$view['curr_community_id'] = '';
+		$view['upvoted'] = $upvoted;
+		$view['downvoted'] = $downvoted;
+		$view['communities'] = $communities;
+		$view['chats'] = $chats;
+		$view['chats_new'] = $chats_new;
+		$view['chats_rising'] = $chats_rising;
+		return $view;
+	}
+
+	public function getPinned()
+	{
+		$view = View::make('home');
+		$chats = Chats::select('*',DB::raw('(case when (upvotes - downvotes > 0) then log(upvotes - downvotes) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 when (upvotes - downvotes = 0) then log(1) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 else log(1/abs(upvotes - downvotes)) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 end) AS score'))->whereremoved('0');
+		$chats_removed = Chats::select('*',DB::raw('(case when (upvotes - downvotes > 0) then log(upvotes - downvotes) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 when (upvotes - downvotes = 0) then log(1) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 else log(1/abs(upvotes - downvotes)) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 end) AS score'))->whereremoved('1');
+		$chats_new = Chats::whereremoved('0');
+		$chats_rising = Chats::select('*',DB::raw('(upvotes - downvotes) - views AS score'))->whereremoved('0');
+		$chats = $chats->wherepinned('1')->wherensfw('0');
+		$chats_new = $chats_new->wherepinned('1')->wherensfw('0');
+		$chats_rising = $chats_rising->wherepinned('1')->wherensfw('0');
+		$chats_removed = $chats_removed->wherepinned('1')->wherensfw('0');
+		$chats = $chats->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
+		$chats_new = $chats_new->orderBy('pinned','desc')->orderBy('created_at','desc')->paginate(25);
+		$chats_rising = $chats_rising->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
+		$chats_removed = $chats_removed->orderBy(DB::raw('score'),'desc')->paginate(25);
+		$communities = Communities::take(30)->orderBy('popularity','desc')->get();
+		$upvoted = array();
+		$downvoted = array();
+		if(Auth::check()){
+			Auth::user()->page = 'home';
+			Auth::user()->chat_id = 0;
+			Auth::user()->community_admin = 0;
+			Auth::user()->community_mod = 0;
+			Auth::user()->save();
+			foreach(Auth::user()->upvotedChats() as $upvote){
+				$upvoted[] = $upvote->chat_id;
+			}
+			foreach(Auth::user()->downvotedChats() as $downvote){
+				$downvoted[] = $downvote->chat_id;
+			}
+		}
+		Session::put('curr_page',URL::full());
+		$view['home_active'] = 'highlight_light_blue';
+		$view['sid'] = Session::getId();
+		$view['curr_community_id'] = '';
+		$view['upvoted'] = $upvoted;
+		$view['downvoted'] = $downvoted;
+		$view['communities'] = $communities;
+		$view['chats'] = $chats;
+		$view['chats_new'] = $chats_new;
+		$view['chats_rising'] = $chats_rising;
+		return $view;
+	}
+
 }
