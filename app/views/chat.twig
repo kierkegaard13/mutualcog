@@ -120,8 +120,11 @@
 	{% endfor %}
 </div>
 </div>
-<div class="top_5 {% if user.name == chat.admin or serial == chat.admin %} edit_details {% endif %}" id="curr_details" data-toggle="tooltip" data-placement="top" data-original-title="Click to edit description" data-container="body">
-{% if chat.details %}<span id="chat_details">{{chat.details | raw}}</span><a class="chat_link" id="continue_description" data-toggle="modal" data-target="#continue_modal" href="#">Continue</a>{% endif %}
+<div class="top_5" id="curr_details" data-toggle="tooltip" data-placement="top" data-original-title="Click to edit description" data-container="body">
+{% if logged_in and (user.name == chat.admin or serial == chat.admin) %}
+	<button class="btn btn-primary fill_cont bottom_5" data-toggle="modal" data-target="#description_modal">Edit Description</button>
+{% endif %}
+<button class="btn btn-primary fill_cont" data-toggle="modal" data-target="#continue_modal">Read Description</button>
 </div>
 <div class="modal fade" id="continue_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="continue_modalLabel">
 	<div class="modal-dialog">

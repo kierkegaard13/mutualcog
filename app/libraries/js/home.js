@@ -24,6 +24,17 @@ $(document).ready(function(){
 			return false;
 		}
 	});
+	$('.toggle_description').click(function(){
+		var descr = $(this).parent().parent().find('.description_cont');
+		if(descr.css('display') == 'none'){
+			$(this).html('<a href="#"><strong>Hide description</strong></a>'); 
+			descr.css('display','block');
+		}else{
+			$(this).html('<a href="#"><strong>Show description</strong></a>'); 
+			descr.css('display','none');
+		}
+		return false;
+	});	
 	$('.load_more').on('click',function(){
 		var url = $(this).attr('href');
 		var cont = $(this).parent();

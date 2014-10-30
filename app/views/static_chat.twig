@@ -142,7 +142,7 @@
 		{% endfor %}
 		and <a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:gray;"><strong>{{chat.messages | length }} comments</strong></a>
 	</div>
-	<div class="chat_details">
+	<div class="chat_details" {% if chat.link %}style="margin-left:80px;"{% endif %}>
 		{{chat.details | raw}}
 	</div>
 </div>

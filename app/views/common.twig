@@ -631,25 +631,31 @@
 				{% if curr_community_id %}
 					{% if chat.community_pinned %}
 						{% if user.community_admin == curr_community_id or user.community_mod == curr_community_id %}
-							<span><a href="{{site}}/community/unpin-post/{{chat.id}}/{{curr_community_id}}"><strong>UnPin</strong></span>
+							<span><a href="{{site}}/community/unpin-post/{{chat.id}}/{{curr_community_id}}"><strong>UnPin</strong></a></span>
 						{% else %}
 							<span><strong>Pinned</strong></span>
 						{% endif %}
 					{% elseif user.community_admin == curr_community_id or user.community_mod == curr_community_id %}
-						<span><a href="{{site}}/community/pin-post/{{chat.id}}/{{curr_community_id}}"><strong>Pin</strong></span>
+						<span><a href="{{site}}/community/pin-post/{{chat.id}}/{{curr_community_id}}"><strong>Pin</strong></a></span>
 					{% endif %}
 				{% else %}
 					{% if chat.pinned %}
 						{% if user.is_admin or user.is_mod %}
-							<span><a href="{{site}}/chat/unpin-post/{{chat.id}}"><strong>UnPin</strong></span>
+							<span><a href="{{site}}/chat/unpin-post/{{chat.id}}"><strong>UnPin</strong></a></span>
 						{% else %}
 							<span><strong>Pinned</strong></span>
 						{% endif %}
 					{% elseif user.is_admin or user.is_mod %}
-						<span><a href="{{site}}/chat/pin-post/{{chat.id}}"><strong>Pin</strong></span>
+						<span><a href="{{site}}/chat/pin-post/{{chat.id}}"><strong>Pin</strong></a></span>
 					{% endif %}
 				{% endif %}
 				<span><a href="{{site}}/chat/static/{{chat.id}}"><strong>Static</strong></a></span>
+				{% if chat.details | length > 0 %}
+					<span class="toggle_description"><a href="#"><strong>Show description</strong></a></span>
+				{% endif %}
+			</div>
+			<div id="description_{{chat.id}}" class="description_cont" {% if chat.link %}style="margin-left:100px;"{% endif %}>
+				{{chat.details | raw}}
 			</div>
 		</div>
 	</div>
