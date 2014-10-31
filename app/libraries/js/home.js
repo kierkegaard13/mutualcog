@@ -3,7 +3,6 @@ var selected_mod = -1;
 var selected_admin = -1;
 
 $(document).ready(function(){
-	$('.chat_status_indicator').tooltip();
 	$('.advanced_cog').tooltip();
 	$('#pause_chat').tooltip();
 	$('.chat_content').on('click','.mssg_icon',deleteIt);
@@ -27,10 +26,10 @@ $(document).ready(function(){
 	$('.toggle_description').click(function(){
 		var descr = $(this).parent().parent().find('.description_cont');
 		if(descr.css('display') == 'none'){
-			$(this).html('<a href="#"><strong>Hide description</strong></a>'); 
+			$(this).html('Hide description'); 
 			descr.css('display','block');
 		}else{
-			$(this).html('<a href="#"><strong>Show description</strong></a>'); 
+			$(this).html('Show description'); 
 			descr.css('display','none');
 		}
 		return false;

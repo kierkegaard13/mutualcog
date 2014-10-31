@@ -32,6 +32,16 @@ class Home extends BaseController {
 			$chats_new = $chats_new->wherepinned('1')->wherensfw('0');
 			$chats_rising = $chats_rising->wherepinned('1')->wherensfw('0');
 			$chats_removed = $chats_removed->wherepinned('1')->wherensfw('0');
+		}else if($option == 'live'){
+			$chats = $chats->wherelive('1')->wherensfw('0');
+			$chats_new = $chats_new->wherelive('1')->wherensfw('0');
+			$chats_rising = $chats_rising->wherelive('1')->wherensfw('0');
+			$chats_removed = $chats_removed->wherelive('1')->wherensfw('0');
+		}else if($option == 'static'){
+			$chats = $chats->wherelive('0')->wherensfw('0');
+			$chats_new = $chats_new->wherelive('0')->wherensfw('0');
+			$chats_rising = $chats_rising->wherelive('0')->wherensfw('0');
+			$chats_removed = $chats_removed->wherelive('0')->wherensfw('0');
 		}else{
 			$chats = $chats->wherensfw('0');
 			$chats_new = $chats_new->wherensfw('0');

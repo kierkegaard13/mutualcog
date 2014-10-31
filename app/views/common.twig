@@ -520,9 +520,9 @@
 			</a>
 		{% endif %}
 		{% if chat.live %}
-			<div class="pull-right glyphicon glyphicon-play brighter_green_color chat_status_indicator" data-toggle="tooltip" data-original-title="Live Chat" data-container="body" data-placement="top"></div>
+			<a href="{{site}}/{% if curr_community_id %}c/{{curr_community.name}}/{% endif %}live" class="pull-right glyphicon glyphicon-play brighter_green_color chat_status_indicator" title="Live chat"></a>
 		{% else %}
-			<div class="pull-right glyphicon glyphicon-pause darker_yellow_color chat_status_indicator" data-toggle="tooltip" data-original-title="Static Chat" data-container="body" data-placement="top"></div>
+			<a href="{{site}}/{% if curr_community_id %}c/{{curr_community.name}}/{% endif %}static" class="pull-right glyphicon glyphicon-pause darker_yellow_color chat_status_indicator" title="Static chat"></a>
 		{% endif %}
 		<div class="chat_community_str" style="display:none;">#{{chat.communities|join(' #')}}</div>
 		<div class="chat_link_str" style="display:none;">{{chat.link}}</div>

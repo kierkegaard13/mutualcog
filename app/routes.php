@@ -88,6 +88,7 @@ Route::group(array('before' => 'assignSerial'), function(){
 			Route::get('/{option?}',array('uses' => 'Home@getIndex'));
 		}else{
 			Route::get('/',array('uses' => 'Search@getIndex'));
+			Route::get('/{option}',array('uses' => 'Home@getIndex'));
 		}
 
 		});

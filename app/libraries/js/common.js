@@ -294,21 +294,21 @@ $(document).ready(function(){
 		if(moment().local().format('D:M:YYYY') == moment.utc($('.pm_message').eq(index).attr('title')).local().format('D:M:YYYY')){
 			$('.pm_message').eq(index).attr('title',moment.utc($('.pm_message').eq(index).attr('title')).local().format('[Today at] h:mma'));
 		}else{
-			$('.pm_message').eq(index).attr('title',moment.utc($('.pm_message').eq(index).attr('title')).local().format('D/M/YY [at] h:mma'));
+			$('.pm_message').eq(index).attr('title',moment.utc($('.pm_message').eq(index).attr('title')).local().format('M/D/YY [at] h:mma'));
 		}
 	});
 	$.each($('.chat_time'),function(index,val){
 		if(moment().local().format('D:M:YYYY') == moment.utc($('.chat_time').eq(index).attr('title')).local().format('D:M:YYYY')){
 			$('.chat_time').eq(index).attr('title',moment.utc($('.chat_time').eq(index).attr('title')).local().format('[Today at] h:mma'));
 		}else{
-			$('.chat_time').eq(index).attr('title',moment.utc($('.chat_time').eq(index).attr('title')).local().format('D/M/YY [at] h:mma'));
+			$('.chat_time').eq(index).attr('title',moment.utc($('.chat_time').eq(index).attr('title')).local().format('M/D/YY [at] h:mma'));
 		}
 	});
 	$.each($('.time'),function(index,val){
 		if(moment().local().format('D:M:YYYY') == moment.utc($('.time').eq(index).attr('title')).local().format('D:M:YYYY')){
 			$('.time').eq(index).attr('title',moment.utc($('.time').eq(index).attr('title')).local().format('[Today at] h:mma'));
 		}else{
-			$('.time').eq(index).attr('title',moment.utc($('.time').eq(index).attr('title')).local().format('D/M/YY [at] h:mma'));
+			$('.time').eq(index).attr('title',moment.utc($('.time').eq(index).attr('title')).local().format('M/D/YY [at] h:mma'));
 		}
 	});
 	$('#mssg_requests').popover({html:true});

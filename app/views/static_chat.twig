@@ -84,9 +84,9 @@
 	</a>
 {% endif %}
 {% if chat.live %}
-	<div class="pull-right glyphicon glyphicon-play brighter_green_color chat_status_indicator" data-toggle="tooltip" data-original-title="Live Chat" data-container="body" data-placement="top"></div>
+	<div class="pull-right glyphicon glyphicon-play brighter_green_color static_status_indicator" title="Live chat"></div>
 {% else %}
-	<div class="pull-right glyphicon glyphicon-pause darker_yellow_color chat_status_indicator" data-toggle="tooltip" data-original-title="Static Chat" data-container="body" data-placement="top"></div>
+	<div class="pull-right glyphicon glyphicon-pause darker_yellow_color static_status_indicator" title="Static chat"></div>
 {% endif %}
 <div class="static_chat_title">
 	<div id="chat_admin_info" style="display:none;">{{chat.admin}}</div>

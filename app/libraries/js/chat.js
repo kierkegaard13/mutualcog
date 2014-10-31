@@ -482,9 +482,9 @@ generateMssg = function(info,is_mssg,tmp){
 		}
 	}else{
 		if(tmp){
-			var tmp = "<div class='tmp_chat_mssg response_to_" + info.responseto + " mssg_cont y_" + info.y_dim + " parent_" + info.parent + " pad_l_20' id='mssg_cont_" + info.id + "'><div class='chat_mssg' id='message_" + info.id + "'>";
+			var tmp = "<div class='tmp_chat_mssg response_to_" + info.responseto + " mssg_cont y_" + info.y_dim + " parent_" + info.parent + " marg_l_20' id='mssg_cont_" + info.id + "'><div class='chat_mssg' id='message_" + info.id + "'>";
 		}else{
-			var tmp = "<div class='response_to_" + info.responseto + " mssg_cont y_" + info.y_dim + " parent_" + info.parent + " pad_l_20' id='mssg_cont_" + info.id + "'><div class='chat_mssg' id='message_" + info.id + "'>";
+			var tmp = "<div class='response_to_" + info.responseto + " mssg_cont y_" + info.y_dim + " parent_" + info.parent + " marg_l_20' id='mssg_cont_" + info.id + "'><div class='chat_mssg' id='message_" + info.id + "'>";
 		}
 	}
 	tmp += "<div class='row' style='margin:0;'> <div class='mssg_body_cont'><div class='vote_box'>";

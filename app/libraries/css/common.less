@@ -35,6 +35,27 @@ code{
   border:1px solid #ccc;
   border-radius:4px;
 }
+.fill_cont {
+  width:100%;
+}
+.bottom_5 {
+  margin-bottom:5px;
+}
+.top_5 {
+  margin-top:5px;
+}
+.top_10 {
+  margin-top:10px;
+}
+.pad_l_10 {
+  padding-left:10px;
+}
+.pad_l_20 {
+  padding-left:20px;
+}
+.marg_l_20 {
+  margin-left:20px;
+}
 a.chat_link {
   color:@navbar_color;
 }
@@ -587,6 +608,7 @@ a.visible_link {
   width:250px;
 }
 .pm_bar {
+  z-index:10;
   position:fixed !important;
   bottom:0px;
   right:0px;
@@ -611,8 +633,12 @@ a.visible_link {
   height:30px;
 }
 .chat_status_indicator {
-  margin: -5px 15px 0 5px;
+  margin: -5px 10px 0 5px;
   cursor:pointer;
+  display:inline-block;
+}
+.static_status_indicator {
+  margin: 0px 0px 0 5px;
   display:inline-block;
 }
 .green_ball {

@@ -24,6 +24,16 @@ class C extends BaseController {
 			$chats_new = $chats_new->wherensfw('1');
 			$chats_rising = $chats_rising->wherensfw('1');
 			$chats_removed = $chats_removed->wherensfw('1');
+		}else if($option == 'live'){
+			$chats = $chats->wherelive('1');
+			$chats_new = $chats_new->wherelive('1');
+			$chats_rising = $chats_rising->wherelive('1');
+			$chats_removed = $chats_removed->wherelive('1');
+		}else if($option == 'static'){
+			$chats = $chats->wherelive('0');
+			$chats_new = $chats_new->wherelive('0');
+			$chats_rising = $chats_rising->wherelive('0');
+			$chats_removed = $chats_removed->wherelive('0');
 		}else if($option == 'pinned'){
 			$chats = $chats->where('chats_to_communities.pinned','1');
 			$chats_new = $chats_new->where('chats_to_communities.pinned','1');
