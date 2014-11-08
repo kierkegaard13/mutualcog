@@ -1,37 +1,34 @@
-@red:#F44336;
+@red:darken(#F44336,5%);
 @blue:#0d47a1;
-@yellow:#FFEB3B;
+@yellow:darken(#FFEB3B,5%);
 @green:#4CAF50;
 @orange:#FF9800;
 @purple:#9C27B0;
 @black:#000;
 
 @deep_purple:#673AB7;
-@light_blue:#03A9F4;
+
 @deep_orange:#FF5722;
 
-@background-color: #ddd;
-@base_blue: #055BE0;
-@base_green: #21A831; 
-@base_yellow: lighten(#FFF745,10%); 
-@base_purple: purple;
-@base_red: #A82615;
+@light_blue:lighten(@blue,10%);
+@highlight_blue: lighten(@blue,15%); 
+@darker_bright_blue:lighten(@blue,40%);
+@bright_blue:lighten(@blue,50%);
+
 @link_grey: #888;
-@darker_yellow: darken(@base_yellow,1%);
-@title_red: lighten(@base_red,10%);
-@brighter_red: lighten(@base_red,15%);
-@darker_green:darken(@base_green,10%);
-@brighter_green:lighten(@base_green,5%);
-@brighter_yellow:lighten(@base_yellow,5%);
-@highlight_blue: lighten(@base_blue,5%); 
-@bright_blue:lighten(@highlight_blue,42%);
-@darker_bright_blue:lighten(@highlight_blue,33%);
+@brighter_yellow:lighten(@yellow,5%);
+@darker_yellow: darken(@yellow,1%);
+@brighter_red: @red;
+@darker_green:darken(@green,10%);
+@brighter_green:lighten(@green,5%);
 
 @dark_text_primary:lighten(@black,13%);
 @dark_text_secondary:lighten(@black,46%);
 @light_text:#f5f5f5;
 
-@navbar_color: lighten(@blue,5%);
+@navbar_color: lighten(@blue,0%);
+@title_red: darken(@red,5%);
+@background-color: #ddd;
 
 @font_face:'Roboto','arial','helvetica',sans-serif;
 @default_font_size:16px;

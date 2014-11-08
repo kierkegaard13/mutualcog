@@ -63,15 +63,15 @@ class BaseController extends Controller {
 		$text = preg_replace('/^<p>/','',$text);
 		$text = preg_replace('/<\/p>$/','',$text);
 		$text = preg_replace($reg3,"$1$2style='max-width:300px;max-height:200px;margin-bottom:5px;' $3",$text);
-		if(preg_match("/\/p\/([^\s]*)(<)/",$text)){
+		if(preg_match("/\/u\/([^\s]*)(<)/",$text)){
 			$text = preg_replace("/\/p\/([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/u/$1'>/u/$1</a>$2",$text);
 		}else{
 			$text = preg_replace("/\/p\/([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/u/$1'>/u/$1</a>$2",$text);
 		}
-		if(preg_match("/\/t\/([^\s]*)(<)/",$text)){
-			$text = preg_replace("/\/t\/([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/t/$1'>/t/$1</a>$2",$text);
+		if(preg_match("/\/c\/([^\s]*)(<)/",$text)){
+			$text = preg_replace("/\/t\/([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/c/$1'>/t/$1</a>$2",$text);
 		}else{
-			$text = preg_replace("/\/t\/([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/t/$1'>/t/$1</a>$2",$text);
+			$text = preg_replace("/\/t\/([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/c/$1'>/t/$1</a>$2",$text);
 		}
 		if(preg_match("/\@([^\s]*)(<)/",$text)){
 			$text = preg_replace("/\@([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/u/$1'>@$1</a>$2",$text);
@@ -79,9 +79,9 @@ class BaseController extends Controller {
 			$text = preg_replace("/\@([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/u/$1'>@$1</a>$2",$text);
 		}
 		if(preg_match("/\#([^\s]*)(<)/",$text)){
-			$text = preg_replace("/\#([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/t/$1'>#$1</a>$2",$text);
+			$text = preg_replace("/\#([^\s]*)(<)/","<a class='chat_link' href='\/\/mutualcog.com/c/$1'>#$1</a>$2",$text);
 		}else{
-			$text = preg_replace("/\#([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/t/$1'>#$1</a>$2",$text);
+			$text = preg_replace("/\#([^\s]*)(\s*)/","<a class='chat_link' href='\/\/mutualcog.com/c/$1'>#$1</a>$2",$text);
 		}
 		$patterns = array('/&gt;:\\|/','/&gt;:\\(/','/&lt;3/','/:\\)/','/:D/','/:\\|/',"/:\\'\\(/",'/:O/','/:P/','/T_T/','/:\\(/');
 		$replace = array(

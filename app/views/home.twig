@@ -73,19 +73,19 @@
 {% if curr_community_id %}
                         <div class="small_content_box">
 				<div class="content side_content" id="create_cont">
-<div>Admin</div>
+<div><strong>Admin</strong></div>
 {% if community_admin %}
-	<div style="font-size:14px;margin-left:10px;">
+	<div style="margin-left:10px;">
 		<a href="{{site}}/u/{{community_admin.user.name}}">{{community_admin.user.name}}</a>
 	</div>
 {% else %}
 	{% if user.owned < 1 and user_subscribed %}
-		<a href="{{site}}/community/assign-admin/{{curr_community_id}}" style="font-size:14px;margin-left:10px;">Become the admin</a>
+		<a href="{{site}}/community/assign-admin/{{curr_community_id}}" style="margin-left:10px;">Become the admin</a>
 	{% else %}
 		<div style="font-size:14px;margin-left:10px;">No Admin</div>
 	{% endif %}
 {% endif %}
-<div>Moderators</div>
+<div><strong>Moderators</strong></div>
 <div style="font-size:14px;margin-left:10px;">
 	{% for mod in community_mods %}
 		<div>

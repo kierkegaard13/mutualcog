@@ -32,11 +32,9 @@
 	  border-top-right-radius:2px;
 	  border-top-left-radius:2px;
 	}
-	.side_content {
-	  .grey_border;
-	}
 	.chat_content {
-	  .grey_border;
+	  z-index:1;
+	  .box_shadow(1);
 	}
 	.main_content {
 	  min-height:1000px !important;
@@ -49,7 +47,8 @@
 	}
 	.p_main_content {
 	  margin-bottom:20px !important;
-	  .grey_border;
+	  z-index:1;
+	  .box_shadow(1);
 	}
 }
 @media screen and (max-width:767px){
@@ -97,7 +96,7 @@ select {
   -webkit-transition:color .5s;
 }
 .remove_mod:hover {
-  color:@base_red;
+  color:@red;
 }
 .page_links {
   position:absolute;
@@ -338,7 +337,7 @@ a.mod_power {
   -webkit-transition:color .5s;
 }
 .big_upvote:hover {
-  color:@base_green;
+  color:@green;
 }
 .big_downvote {
   color:black;
@@ -364,7 +363,7 @@ a.mod_power {
   -webkit-transition:color .5s;
 }
 .mssg_upvote:hover {
-  color:@base_green;
+  color:@green;
 }
 .mssg_downvote {
   color:black;

@@ -124,7 +124,9 @@
 {% if logged_in and (user.name == chat.admin or serial == chat.admin) %}
 	<button class="btn btn-primary fill_cont bottom_5" data-toggle="modal" data-target="#description_modal">Edit Description</button>
 {% endif %}
-<button class="btn btn-primary fill_cont" data-toggle="modal" data-target="#continue_modal">Read Description</button>
+{% if chat.details | length > 0 %}
+	<button class="btn btn-primary fill_cont" data-toggle="modal" data-target="#continue_modal">Read Description</button>
+{% endif %}
 </div>
 <div class="modal fade" id="continue_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="continue_modalLabel">
 	<div class="modal-dialog">

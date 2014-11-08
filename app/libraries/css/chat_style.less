@@ -5,10 +5,8 @@
 	  width:50% !important;
 	}
 	.main_content {
-	  .grey_border;
-	}
-	.side_content {
-	  .grey_border;
+	  z-index:1;
+	  .box_shadow(1);
 	}
 	.big_content_box {
 	  height:98%;
@@ -104,7 +102,7 @@
   -webkit-transition:color .5s;
 }
 .notify_bubble:hover {
-  color:@base_blue;
+  color:@blue;
 }
 #notify_text_top {
   font-size:14px;
@@ -152,7 +150,7 @@
   -webkit-transition:color .5s;
 }
 .big_upvote:hover {
-  color:@base_green;
+  color:@green;
 }
 .big_downvote {
   color:black;
@@ -178,7 +176,7 @@
   -webkit-transition:color .5s;
 }
 .mssg_upvote:hover {
-  color:@base_green;
+  color:@green;
 }
 .mssg_downvote {
   color:black;
@@ -477,17 +475,21 @@ select {
   position:relative;
   background-color:#fff;
   padding:10px;
-  box-shadow:2px 2px 2px #999;
+  box-shadow:0 6px 6px #000;
   margin-bottom:10px;
   display:table;
   cursor:pointer;
   min-width:190px;
   font-size:14px;
-  transition:background-color .5s;
-  -webkit-transition:background-color .5s;
+  border-radius:1px;
+  transition:background-color .5s,box-shadow .3s;
+  -webkit-transition:background-color .5s,box-shadow .3s;
 }
 .chat_mssg:hover {
   background-color:@bright_blue;
+}
+.chat_mssg:active {
+  box-shadow:0 0 #000;
 }
 .chat_title {
   padding:10px 5px;

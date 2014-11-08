@@ -34,7 +34,7 @@
 					{% for sub in user.subscriptions %}
 						<li><a href="{{site}}/c/{{sub.name}}">{{sub.name}}</a></li>
 					{% else %}
-						<li>No subscriptions</li>
+						<li style="font-size:14px;color:#333;padding-left:10px;">No subscriptions</li>
 					{% endfor %}
 				</ul>
 			</li>
@@ -108,7 +108,7 @@
 					<div class="pm_body_mssgs">
 					{% for message in pm.messages %}
 						<div class="pm_mssg_cont">
-							<div class="pm_message {% if message.author_id == user.id %}pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;"{% else %} pull-left" style="background-color:#7badfc;margin-right:30px;margin-left:5px;"{% endif %} title="{{message.created_at}}">
+							<div class="pm_message {% if message.author_id == user.id %}pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;"{% else %} pull-left darker_bright_blue_background" style="margin-right:30px;margin-left:5px;"{% endif %} title="{{message.created_at}}">
 								{{message.message|raw}}
 							</div>	
 						</div>
@@ -240,11 +240,11 @@
 						<textarea class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Info must be a max of {{max_info_length}} characters" data-trigger="focus" name="info" id="edit_community_info" rows=10 maxlength="{{max_info_length}}"></textarea>
 					</div>
 					<div id="mod_info_group" class="form-group">
-						<label for="mods" style="width:100%;">Appoint mods (max:20) <small>*must be subscribed </small><small id="mod_request_sent" class="base_green_color pull-right" style="display:none;">Request Sent</small></label>
+						<label for="mods" style="width:100%;">Appoint mods (max:20) <small>*must be subscribed </small><small id="mod_request_sent" class="green_color pull-right" style="display:none;">Request Sent</small></label>
 						<input class="form-control" data-toggle="popover" data-user-id="" data-community-id="{{curr_community_id}}" data-community-name="{{curr_community.name}}" data-content="<div>Some content</div>" data-container="body" data-placement="auto top" type="text" name="mods" id="mod_input" placeholder="Use enter or mouse to select from list" autocomplete="off" maxlength="{{max_user_length}}">
 					</div>
 					<div id="admin_info_group" class="form-group">
-						<label for="admins" style="width:100%;">Appoint new admin <small>*must be subscribed </small><small id="admin_request_sent" class="base_green_color pull-right" style="display:none;">Request Sent</small></label>
+						<label for="admins" style="width:100%;">Appoint new admin <small>*must be subscribed </small><small id="admin_request_sent" class="green_color pull-right" style="display:none;">Request Sent</small></label>
 						<input class="form-control" data-toggle="popover" data-user-id="" data-community-id="{{curr_community_id}}" data-community-name="{{curr_community.name}}" data-content="<div>Some content</div>" data-container="body" data-placement="auto top" type="text" name="admins" id="admin_input" placeholder="Use enter or mouse to select from list" autocomplete="off" maxlength="{{max_user_length}}">
 					</div>
 				</fieldset>
@@ -501,13 +501,13 @@
 		<div class="number_box"> {{loop.index}}. </div>
 		<div class="vote_box">
 			{% if chat.id in upvoted %}
-				<span class="glyphicon glyphicon-chevron-up big_upvote base_green_color" id="upvote_{{chat.id}}"></span>
+				<span class="glyphicon glyphicon-chevron-up big_upvote green_color" id="upvote_{{chat.id}}"></span>
 				<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
 				<span class="glyphicon glyphicon-chevron-down big_downvote" id="downvote_{{chat.id}}"></span>
 			{% elseif chat.id in downvoted %}
 				<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}"></span>
 				<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-				<span class="glyphicon glyphicon-chevron-down big_downvote brighter_red_color" id="downvote_{{chat.id}}"></span>
+				<span class="glyphicon glyphicon-chevron-down big_downvote red_color" id="downvote_{{chat.id}}"></span>
 			{% else %}
 				<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}"></span>
 				<div class="upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
@@ -556,10 +556,10 @@
 					<a href="{{site}}/u/{{chat.admin}}">
 						<strong>
 							{% if chat.author.is_admin or chat.author.is_mod %}
-								<span class="brighter_red_color">{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</span></strong></a>,
+								<span class="red_color">{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</span></strong></a>,
 							{% elseif curr_community_id %}
 								{% if chat.admin_id == community_admin.user_id or chat.admin_id in curr_community.moderators %}
-									<span class="base_green_color">{{chat.admin}}{% if chat.admin_id == community_admin.user_id %}[A]{% elseif chat.admin_id in curr_community.moderators %}[M]{% endif %}</span></strong></a>,
+									<span class="green_color">{{chat.admin}}{% if chat.admin_id == community_admin.user_id %}[A]{% elseif chat.admin_id in curr_community.moderators %}[M]{% endif %}</span></strong></a>,
 								{% else %}
 									{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</strong></a>,
 								{% endif %}
@@ -669,13 +669,13 @@
 			<div class="mssg_body_cont">
 				<div class="chat_vote_box">
 					{% if message.id in mssg_upvoted %}
-						<span class="glyphicon glyphicon-chevron-up mssg_upvote base_green_color" id="mssg_upvote_{{message.id}}"></span>
+						<span class="glyphicon glyphicon-chevron-up mssg_upvote green_color" id="mssg_upvote_{{message.id}}"></span>
 						<div class="upvote_count" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
 						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}"></span>
 					{% elseif message.id in mssg_downvoted %}
 						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}"></span>
 						<div class="upvote_count" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
-						<span class="glyphicon glyphicon-chevron-down mssg_downvote brighter_red_color" id="mssg_downvote_{{message.id}}"></span>
+						<span class="glyphicon glyphicon-chevron-down mssg_downvote red_color" id="mssg_downvote_{{message.id}}"></span>
 					{% else %}
 						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}"></span>
 						<div class="upvote_count" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
@@ -748,13 +748,13 @@
 			<div class="mssg_body_cont">
 				<div class="chat_vote_box">
 					{% if response.id in mssg_upvoted %}
-						<span class="glyphicon glyphicon-chevron-up mssg_upvote base_green_color" id="mssg_upvote_{{response.id}}"></span>
+						<span class="glyphicon glyphicon-chevron-up mssg_upvote green_color" id="mssg_upvote_{{response.id}}"></span>
 						<div class="upvote_count" id="mssg_votes_{{response.id}}">{{response.upvotes - response.downvotes}}</div>
 						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{response.id}}"></span>
 					{% elseif response.id in mssg_downvoted %}
 						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{response.id}}"></span>
 						<div class="upvote_count" id="mssg_votes_{{response.id}}">{{response.upvotes - response.downvotes}}</div>
-						<span class="glyphicon glyphicon-chevron-down mssg_downvote brighter_red_color" id="mssg_downvote_{{response.id}}"></span>
+						<span class="glyphicon glyphicon-chevron-down mssg_downvote red_color" id="mssg_downvote_{{response.id}}"></span>
 					{% else %}
 						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{response.id}}"></span>
 						<div class="upvote_count" id="mssg_votes_{{response.id}}">{{response.upvotes - response.downvotes}}</div>
