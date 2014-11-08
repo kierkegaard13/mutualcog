@@ -5,8 +5,8 @@ html,body{
 }
 body{
   background-color:#ddd;
-  font-size:16px;
-  font-family: 'arial','helvetica',sans-serif;
+  font-size:@default_font_size;
+  font-family: @font_face;
 }
 p{
   margin:0;
@@ -339,7 +339,7 @@ a.visible_link {
 	  margin-top:-76px;	
 	}
 	.community_results>a {
-	  color:@dark_text !important;
+	  color:@dark_text_primary !important;
 	  transition:color .5s;
 	  -webkit-transition:color .5s;
 	}
@@ -419,9 +419,15 @@ a.visible_link {
 }
 .btn {
   border-radius:2px;
+  box-shadow:0 0 #999;
+  transition:background-color .5s, box-shadow .5s;
+  -webkit-transition:background-color .5s, box-shadow .5s;
+}
+.btn:hover {
+  box-shadow:0px 3px 6px #999;
 }
 .entry_search_submit {
-  color:@dark_text;
+  color:@dark_text_primary;
 }
 .progress {
   height:10px;
@@ -437,19 +443,19 @@ a.visible_link {
   border-left:solid 4px @brighter_red;
 }
 .search_res_type {
-  color:@dark_text;
+  color:@dark_text_primary;
   margin-left:10px;
 }
 .search_hint_cont {
   border-top:solid #ccc 1px;
 }
 .search_hint {
-  color:@dark_text;
+  color:@dark_text_primary;
   margin-left:10px;
   padding:5px 0;
 }
 .search_link {
-  color:@dark_text !important;
+  color:@dark_text_primary !important;
   padding-left:10px !important;
   transition:color .5s;
   -webkit-transition:color .5s;
@@ -490,7 +496,7 @@ a.visible_link {
   -webkit-transition:background-color .5s;
 }
 .friend_box:hover {
-  color:@dark_text;
+  color:@dark_text_primary;
   background-color:#ddd;
   cursor:pointer;
 }
@@ -697,7 +703,7 @@ textarea {
 }
 .hljs {
 	  display: block; padding: 0.5em;
-	    color: @dark_text;
+	    color: @dark_text_primary;
 	      background: #f8f8f8
 }
 
@@ -717,7 +723,7 @@ textarea {
 .hljs-subst,
 .hljs-request,
 .hljs-status {
-	  color: @dark_text;
+	  color: @dark_text_primary;
 	    font-weight: bold
 }
 
