@@ -86,6 +86,9 @@ a.visible_link {
 	  padding-top:50px;
 	  margin-left:0px;
 	}
+	.navbar {
+	  margin-left:190px;
+	}
 }
 @media screen and (max-width:991px){
 	.wrapper_list_active {
@@ -193,18 +196,20 @@ a.visible_link {
 	  position:fixed;
 	  top:0;
 	  z-index:100;
+	  border-left:none;
 	  width:100%;
 	  margin-bottom:0px;
 	  color:@light_text;
 	  border-radius:0px;
 	  background-color: @navbar_color;
+	  box-shadow:2px 2px 4px #999;
 	  min-height:40px;
 	  height:40px;
 	}
 	.navbar-brand {
 	  font-size:14px;
 	  margin-top:-1px;
-	  padding-top:10px;
+	  padding-top:12px;
 	  padding-right:10px;
 	  padding-bottom:10px;
 	  height:auto;
@@ -421,6 +426,25 @@ a.visible_link {
 .chat_info_link {
   margin-bottom:5px;
 }
+.left_menu_toggle {
+  color:white;
+  padding:10px 10px 10px 15px;
+  font-size:14px;
+  border-bottom:solid 1px #eee;
+  display:block;
+  position:relative;
+  transition:background-color .5s;
+  -webkit-transition:background-color .5s;
+}
+.left_menu_toggle:hover {
+  color:white;
+  text-decoration:none;
+  background-color:@highlight_blue;
+}
+.left_menu_toggle:focus {
+  color:white;
+  text-decoration:none;
+}
 #create_cont {
   font-size:14px;
 }
@@ -488,10 +512,8 @@ a.visible_link {
   border-bottom:solid 1px #eee;
   font-size:14px;
   overflow:hidden;
-  transition:color .5s;
-  -webkit-transition:color .5s;
-  transition:background-color .5s;
-  -webkit-transition:background-color .5s;
+  transition:background-color .5s,color .5s;
+  -webkit-transition:background-color .5s,color .5s;
 }
 .friend_box:hover {
   color:@dark_text_primary;
@@ -503,9 +525,7 @@ a.visible_link {
   color:@light_text;
   height:100%;
   background-color:@navbar_color;
-  border-top:solid 1px #eee;
   padding:0;
-  margin-top:40px;
   width:190px;
 }
 .pm_dropup {
@@ -564,6 +584,11 @@ a.visible_link {
   line-height:20px;
   background-color:@navbar_color;	
   cursor:pointer;
+  transition:background-color .5s;
+  -webkit-transition:background-color .5s;
+}
+.pm_header:hover {
+  background-color:darken(@navbar_color,10%);
 }
 .pm_body {
   overflow:auto;

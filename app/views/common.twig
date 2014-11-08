@@ -26,19 +26,6 @@
 				</form>
 			</div>
 		{% endif %}
-		{% if logged_in %}
-		<ul class="nav navbar-nav nav_dropdown">
-			<li class="dropdown">
-				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Subscriptions <strong class="caret" style="color:white;"></strong></a>
-				<ul class="dropdown-menu" role="menu">
-					{% for sub in user.subscriptions %}
-						<li><a href="{{site}}/c/{{sub.name}}">{{sub.name}}</a></li>
-					{% else %}
-						<li style="font-size:14px;color:#333;padding-left:10px;">No subscriptions</li>
-					{% endfor %}
-				</ul>
-			</li>
-		</ul>
 		<ul class="nav navbar-nav nav_right {% if not search_page %}nav_pad_r{% endif %}">
 			{% for community in communities %}
 				{% if curr_community.name == community.name %}
@@ -48,23 +35,22 @@
 				{% endif %}
 			{% endfor %}
 		</ul>
-		{% else %}
-		<ul class="nav navbar-nav nav_right {% if not search_page %}nav_pad_r{% endif %}">
-			{% for community in communities %}
-				{% if curr_community.name == community.name %}
-					<li><a class="highlight_light_blue" href="{{site}}/c/{{community}}">{{community}}</a></li>
-				{% else %}
-					<li><a href="{{site}}/c/{{community}}">{{community}}</a></li>
-				{% endif %}
-			{% endfor %}
-		</ul>
-		{% endif %}
 	</div>
 </nav>
 {% endblock %}
 
 {% block friend_list %}
 <div class="hidden-xs hidden-sm friend_list">
+<div style="position:relative;">
+<a href="#" class="dropdown-toggle left_menu_toggle" data-toggle="dropdown">Subscriptions <strong class="caret" style="color:white;"></strong></a>
+<ul class="dropdown-menu" role="menu" style="width:191px;margin-top:-1px;">
+	{% for sub in user.subscriptions %}
+		<li><a href="{{site}}/c/{{sub.name}}">{{sub.name}}</a></li>
+	{% else %}
+		<li style="font-size:14px;color:#333;padding-left:10px;">No subscriptions</li>
+	{% endfor %}
+</ul>
+</div>
 {% for friendship in user.friendships %}
 	<div class="friend_box" id="friend_box_for_{{friendship.entity.name}}" data-friend-id="{{friendship.entity.id}}" data-pm-chat-id="{% if friendship.entity.privateChatF[0] %}{{friendship.entity.privateChatF[0].id}}{% else %}0{% endif %}" title="{{friendship.entity.online}}">
 	{% if friendship.entity.online_score < 600 %}
@@ -126,6 +112,40 @@
 {% endblock %}
 
 {% block modals %}
+<div class="modal fade" id="continue_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="continue_modalLabel">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Chat Description</h4>
+			</div>
+			<div class="modal-body">
+				<div id="curr_details">
+					{{chat.details | raw}}
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>	
+</div>
+<div class="modal fade" id="description_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="description_modalLabel">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Edit Chat Description</h4>
+			</div>
+			<div class="modal-body">
+				<textarea rows="7" id="detail_text" maxlength="{{max_static_length}}">{{chat.raw_details | raw}}</textarea>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-success" id="save_details">Save Details</button>
+			</div>
+		</div>
+	</div>	
+</div>
 <div class="modal fade" id="chat_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="chat_modalLabel">
 	<div class="modal-dialog">
 		<div class="modal-content">

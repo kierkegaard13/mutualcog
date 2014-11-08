@@ -30,15 +30,10 @@
 
 {% block side_1 %}
 	<div class="small_content_box">
-		<div class="content side_content" id="subscribe">
-<div style="margin-top:5px;">
-	<btn class="btn btn-primary" style="width:100%;" data-toggle="modal" data-target="#chat_modal">Create New Post</btn>
-</div>
-{% if not curr_community_id and user %}
-	<div style="margin-top:10px;">
-		<btn class="btn btn-primary" style="width:100%;" data-toggle="modal" data-target="#community_create_modal">Create Community</btn>
-	</div>
-{% endif %}
+		<div class="content side_content" style="padding:0;">
+	<button class="menu_top btn btn-primary" style="width:100%;" data-toggle="modal" data-target="#chat_modal">Create new post</button>
+	<button class="menu_middle btn btn-primary" id="create_community" style="width:100%;" data-toggle="modal" data-target="#community_create_modal">Create community</button>
+	<a href="{{site}}/chat/random" class="menu_bottom btn btn-primary" style="width:100%;" title="Jump into a random chat">Jump into chat</a>
 		</div>
 	</div>
 {% endblock %}
@@ -91,9 +86,9 @@
 <div class="static_chat_title">
 	<div id="chat_admin_info" style="display:none;">{{chat.admin}}</div>
 	{% if chat.link %}
-		<a class="chat_id" id="chat_{{chat.id}}" href="{{chat.link}}" style="color:#032f75;">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
+		<a class="chat_id" id="chat_{{chat.id}}" href="{{chat.link}}">{{chat.title}}</a> <span class="site_name">from {{chat.site_name}}</span>
 	{% else %}
-		<a class="chat_id" id="chat_{{chat.id}}" href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:#032f75;">{{chat.title}}</a>
+		<a class="chat_id" id="chat_{{chat.id}}" href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}">{{chat.title}}</a>
 	{% endif %}
 	{% if chat.admin % 16777259 == 0 %}
 		<div class="chat_info">Created by <a href="{{site}}/u/{{chat.admin}}" style="color:gray;"><strong>{{chat.admin}}</strong></a>, 
@@ -138,7 +133,7 @@
 		</span>
 		in Communities:
 		{% for community in chat.communities %}
-			<span class="chat_communities"><a href="{{site}}/c/{{community.name}}" style="color:#075de9;">#{{community.name}}</a> </span>
+			<span class="chat_communities"><a href="{{site}}/c/{{community.name}}"><strong>#{{community.name}}</strong></a> </span>
 		{% endfor %}
 		and <a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:gray;"><strong>{{chat.messages | length }} comments</strong></a>
 	</div>

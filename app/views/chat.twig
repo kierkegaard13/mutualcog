@@ -120,50 +120,14 @@
 	{% endfor %}
 </div>
 </div>
-<div class="top_5" id="curr_details" data-toggle="tooltip" data-placement="top" data-original-title="Click to edit description" data-container="body">
-{% if logged_in and (user.name == chat.admin or serial == chat.admin) %}
+<div class="top_5">
+{% if user.name == chat.admin or serial == chat.admin %}
 	<button class="btn btn-primary fill_cont bottom_5" data-toggle="modal" data-target="#description_modal">Edit Description</button>
 {% endif %}
 {% if chat.details | length > 0 %}
 	<button class="btn btn-primary fill_cont" data-toggle="modal" data-target="#continue_modal">Read Description</button>
 {% endif %}
 </div>
-<div class="modal fade" id="continue_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="continue_modalLabel">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Chat Description</h4>
-			</div>
-			<div class="modal-body">
-				<div id="curr_details">
-					{{chat.details | raw}}
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn" data-dismiss="modal">Close</button>
-			</div>
-		</div>
-	</div>	
-</div>
-{% if user.name == chat.admin or serial == chat.admin %}
-	<div class="modal fade" id="description_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="description_modalLabel">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title">Edit Chat Description</h4>
-				</div>
-				<div class="modal-body">
-					<textarea rows="7" id="detail_text" maxlength="{{max_static_length}}">{{chat.raw_details | raw}}</textarea>
-				</div>
-				<div class="modal-footer">
-					<button class="btn btn-success" id="save_details">Save Details</button>
-				</div>
-			</div>
-		</div>	
-	</div>
-{% endif %}
 {% endblock %}
 
 {% block content %}
