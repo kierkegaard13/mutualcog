@@ -20,7 +20,6 @@
 {% block tools %}
 <div id="user_toolbox">
 	<span class="glyphicon glyphicon-link" id="permalink" data-page-link="{{site}}/chat/static/{{chat.id}}" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Permalink"></span>
-	<span class="glyphicon glyphicon-list" id="show_users" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Show chat users"></span>
 	<span class="glyphicon glyphicon-stop" id="stop_scroll" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Stop scrollbar"></span>
 	<!--<span class="glyphicon glyphicon-list" id="show_users" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Show chat users"></span>-->
 	{% if user.name == chat.admin or serial == chat.admin %}
@@ -34,7 +33,6 @@
 	<span class="glyphicon glyphicon-remove mod_power" id="kick_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Kick user"></span>
 	{% endif %}
 </div>
-<div id="users_box"><div id="users_list"></div></div>
 {% endblock %}
 
 {% block welcome %}
@@ -65,10 +63,10 @@
 			<a href="{{site}}/u/{{chat.admin}}">
 				<strong>
 					{% if chat.author.is_admin or chat.author.is_mod %}
-						<span class="brighter_red_color">{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</span></strong></a>,
+						<span class="red_color">{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</span></strong></a>,
 					{% elseif curr_community_id %}
 						{% if chat.admin_id == community_admin.user_id or chat.admin_id in curr_community.moderators %}
-							<span class="base_green_color">{{chat.admin}}{% if chat.admin_id == community_admin.user_id %}[A]{% elseif chat.admin_id in curr_community.moderators %}[M]{% endif %}</span></strong></a>,
+							<span class="green_color">{{chat.admin}}{% if chat.admin_id == community_admin.user_id %}[A]{% elseif chat.admin_id in curr_community.moderators %}[M]{% endif %}</span></strong></a>,
 						{% else %}
 							{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</strong></a>,
 						{% endif %}
@@ -128,6 +126,10 @@
 	<button class="btn btn-primary fill_cont" data-toggle="modal" data-target="#continue_modal">Read Description</button>
 {% endif %}
 </div>
+</div>
+{% endblock %}
+
+{% block members %}
 {% endblock %}
 
 {% block content %}

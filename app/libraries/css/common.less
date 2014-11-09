@@ -118,6 +118,7 @@ a.visible_link {
 	  right:0px;
 	  top:0px;
 	  z-index:10;
+	  height:38px;
 	  transition:background-color .5s;
 	  -webkit-transition:background-color .5s;
 	}
@@ -132,7 +133,8 @@ a.visible_link {
 	  margin-top:4px;
 	  padding-right:17px;	
 	  padding-left:5px;
-	  display:none;
+	  display:inline;
+	  visibility:hidden;
 	}
 	.community_search_icon {
 	  margin-bottom:0px;
@@ -462,6 +464,9 @@ a.visible_link {
   color:@dark_text_primary;
   background-color:@background_color;
 }
+.navbar .ui-effects-wrapper {
+  display:inline;
+}
 #create_cont {
   font-size:14px;
 }
@@ -588,6 +593,7 @@ a.visible_link {
   top:10px;
 }
 .pm_cont {
+  box-shadow:0 -3px 6px #999;
   margin-right:5px;
   display:inline-block;
 }

@@ -57,8 +57,8 @@ function emoji(text){
 function processMessage(message){
 	var url_reg = /(\b)(https?:\/\/)?([\da-z-]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/g;
 	var url_reg3 = /(img)(\s)(src\=)/g;
-	var t_reg = /\/t\/([^\s]*)(\s*)/g; 
-	var p_reg = /\/p\/([^\s]*)(\s*)/g; 
+	var t_reg = /\/c\/([^\s]*)(\s*)/g; 
+	var p_reg = /\/u\/([^\s]*)(\s*)/g; 
 	var at_reg = /\@([^\s]*)(\s*)/g;
 	var hash_reg = /\&\#035\;([^\s]*)(\s*)/g; 
 	var re1 = new RegExp('^<p>','g');

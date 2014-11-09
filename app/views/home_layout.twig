@@ -38,9 +38,9 @@
 			{% block chat_content %}{% endblock %}
 		</div>
 		{% if logged_in %}
-		<div class="col-sm-5 col-md-5 col-lg-3" id="side">
+		<div class="col-sm-5 col-md-5 col-lg-3 hidden-xs" id="side">
 		{% else %}
-		<div class="col-sm-5 col-md-4 col-lg-3" id="side">
+		<div class="col-sm-5 col-md-4 col-lg-3 hidden-xs" id="side">
 		{% endif %}
 			{% block tools %}{% endblock %}
 			<div class="small_content_box">
@@ -60,7 +60,7 @@
 	{% endif %}
 </div>
 <script src="//{{io_url}}/socket.io/socket.io.js"></script>
-<script src='//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js'></script>
+<script src='//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js'></script>
 <script src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.1/moment.min.js'></script>
 <script src='//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js'></script>
 <script type="text/javascript">
