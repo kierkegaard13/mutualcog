@@ -4,7 +4,7 @@ html,body{
   height:100%;
 }
 body{
-  background-color:#ddd;
+  background-color:@background_color;
   font-size:@default_font_size;
   font-family: @font_face;
 }
@@ -57,7 +57,7 @@ code{
   margin-left:20px;
 }
 a.chat_link {
-  color:@navbar_color;
+  color:@light_blue;
 }
 a.visible_link {
   color:@brighter_green;
@@ -87,7 +87,7 @@ a.visible_link {
 	  margin-left:0px;
 	}
 	.navbar {
-	  margin-left:190px;
+	  padding-left:190px;
 	}
 }
 @media screen and (max-width:991px){
@@ -445,6 +445,23 @@ a.visible_link {
   color:white;
   text-decoration:none;
 }
+#subscription_cont {
+  display:none;
+}
+.subscription {
+  color:@light_text;
+  display:block;
+  padding:10px 10px 10px 15px;
+  border-bottom:solid 1px #eee;
+  font-size:14px;
+  transition:background-color .5s,color .5s;
+  -webkit-transition:background-color .5s,color .5s;
+}
+.subscription:hover {
+  text-decoration:none;
+  color:@dark_text_primary;
+  background-color:@background_color;
+}
 #create_cont {
   font-size:14px;
 }
@@ -527,6 +544,7 @@ a.visible_link {
   background-color:@navbar_color;
   padding:0;
   width:190px;
+  z-index:100;
 }
 .pm_dropup {
   width:200px;

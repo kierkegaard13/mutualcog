@@ -42,20 +42,18 @@
 {% block friend_list %}
 <div class="hidden-xs hidden-sm friend_list">
 <div style="position:relative;">
-<a href="#" class="dropdown-toggle left_menu_toggle" data-toggle="dropdown">Subscriptions <strong class="caret" style="color:white;"></strong></a>
-<ul class="dropdown-menu" role="menu" style="width:191px;margin-top:-1px;">
-	{% for sub in user.subscriptions %}
-		<li><a href="{{site}}/c/{{sub.name}}">{{sub.name}}</a></li>
-	{% else %}
-		<li style="font-size:14px;color:#333;padding-left:10px;">No subscriptions</li>
-	{% endfor %}
-</ul>
+	<a href="#" class="dropdown-toggle left_menu_toggle" data-toggle="dropdown">Friends <strong class="caret" style="color:white;"></strong></a>
+	<ul class="dropdown-menu" role="menu" style="width:191px;margin-top:-1px;border:none;">
+		<li><a class="show_subscriptions" href="#">Subscriptions</a></li>
+		<li><a class="show_friends" href="#" style="display:none;">Friends</a></li>
+	</ul>
 </div>
+<div id="friend_box_cont">
 {% for friendship in user.friendships %}
 	<div class="friend_box" id="friend_box_for_{{friendship.entity.name}}" data-friend-id="{{friendship.entity.id}}" data-pm-chat-id="{% if friendship.entity.privateChatF[0] %}{{friendship.entity.privateChatF[0].id}}{% else %}0{% endif %}" title="{{friendship.entity.online}}">
 	{% if friendship.entity.online_score < 600 %}
 		<div class="green_ball friend_status" id="friend_{{friendship.entity.id}}_status"></div>
-	{% elseif friendship.entity.online_score < 7200%}
+	{% elseif friendship.entity.online_score < 7200 %}
 		<div class="yellow_ball friend_status" id="friend_{{friendship.entity.id}}_status"></div>
 	{% else %}
 		<div class="red_ball friend_status" id="friend_{{friendship.entity.id}}_status"></div>
@@ -68,10 +66,18 @@
 	{% endif %}
 	</div>
 {% else %}
-<div style="color:white;font-size:12px;margin-top:10px;margin-left:5px;">
-        You don't have any friends yet
-</div>
+	<div style="color:white;font-size:12px;margin-top:10px;margin-left:5px;">
+		You don't have any friends yet
+	</div>
 {% endfor %}
+</div>
+<div id="subscription_cont">
+	{% for sub in user.subscriptions %}
+		<a class="subscription" href="{{site}}/c/{{sub.name}}">{{sub.name}}</a>
+	{% else %}
+		<div class="subscription">No subscriptions</div>
+	{% endfor %}
+</div>
 </div>
 {% endblock %}
 

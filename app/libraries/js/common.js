@@ -326,6 +326,20 @@ $(document).ready(function(){
 	$('.register_link').click(function(){
 		$('#reg_modal_title').text('Create an account');
 	});
+	$('.show_subscriptions').click(function(){
+		$('.left_menu_toggle').html('Subscriptions <strong class="caret" style="color:white;"></strong>');
+		$('.show_friends').show();
+		$('#friend_box_cont').hide();
+		$('#subscription_cont').show('slide');
+		$(this).hide();
+	});
+	$('.show_friends').click(function(){
+		$('.left_menu_toggle').html('Friends <strong class="caret" style="color:white;"></strong>');
+		$('.show_subscriptions').show();
+		$('#friend_box_cont').show('slide');
+		$('#subscription_cont').hide();
+		$(this).hide();
+	});
 	$('body').on('click','.mssg_upvote',upvoteMssg);
 	$('body').on('click','.mssg_downvote',downvoteMssg);
 	$('#chat_display').on('click','.toggle_responses',getResponses);

@@ -87,7 +87,7 @@ Route::group(array('before' => 'assignSerial'), function(){
 		if(Auth::check()){
 			Route::get('/{option?}',array('uses' => 'Home@getIndex'));
 		}else{
-			Route::get('/',array('uses' => 'Search@getIndex'));
+			//Route::get('/',array('uses' => 'Search@getIndex'));
 			Route::get('/{option}',array('uses' => 'Home@getIndex'));
 		}
 
