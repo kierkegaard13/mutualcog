@@ -37,6 +37,10 @@ class Chats extends EloquentBridge
 		return $this->hasMany('UsersToChats','chat_id')->select('user')->whereis_mod(1);
 	}
 
+	public function users(){
+		return $this->belongsToMany('User','users_to_chats','chat_id','user_id')->withPivot('is_admin','is_mod');
+	}
+
 	public function seen(){
 		if(Auth::check()){
 			return count(UsersToChats::whereuser_id(Auth::user()->id)->wherechat_id($this->id)->first());
