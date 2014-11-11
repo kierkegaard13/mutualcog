@@ -323,6 +323,19 @@ $(document).ready(function(){
 	$('#friend_requests').blur(function(){
 		$(this).popover('hide');
 	});
+	$('#request_friend').click(function(){
+		if($('#logged_in').text() == 1){
+			module.socket.emit('request_friend',{user_id:$(this).attr('data-user-id'),user:$(this).attr('data-user-name'),sender_id:module.user_id,sender:module.user_tracker});
+			$(this).removeClass('btn-primary');
+			$(this).addClass('btn-success');
+			$(this).html('<div class="glyphicon glyphicon-check" id="request_glyph"></div> Request Sent');
+			$(this).off('click');
+		}else{
+			$('#reg_modal_title').text('Sign up to add friends');
+			$('#register_modal').modal();	
+			return false;
+		}
+	});
 	$('.register_link').click(function(){
 		$('#reg_modal_title').text('Create an account');
 	});

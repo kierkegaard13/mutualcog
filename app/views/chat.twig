@@ -20,6 +20,7 @@
 {% block tools %}
 <div id="user_toolbox">
 	<span class="glyphicon glyphicon-link" id="permalink" data-page-link="{{site}}/chat/static/{{chat.id}}" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Permalink"></span>
+	<span class="glyphicon glyphicon-list" id="show_users" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Show chat members"></span>
 	<span class="glyphicon glyphicon-stop" id="stop_scroll" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Stop scrollbar"></span>
 	<!--<span class="glyphicon glyphicon-list" id="show_users" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Show chat users"></span>-->
 	{% if user.name == chat.admin or serial == chat.admin %}
@@ -126,16 +127,6 @@
 	<button class="btn btn-primary fill_cont" data-toggle="modal" data-target="#continue_modal">Read Description</button>
 {% endif %}
 </div>
-</div>
-{% endblock %}
-
-{% block members %}
-<div id="chat_members_cont">
-	{% for member in chat.users %}
-		<div class="chat_member">
-			{{member.name}}
-		</div>
-	{% endfor %}
 </div>
 {% endblock %}
 

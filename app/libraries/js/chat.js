@@ -96,19 +96,7 @@ $(document).ready(function(){
 		window.location.href = $(this).attr('data-page-link'); 
 	});
 	$('#show_users').click(function(e){
-		if(hovering == 0){
-			$('#users_box').toggle('blind');
-		}
-		if($(this).hasClass('highlighted_dark')){
-			showing = 0;
-			$(this).attr('data-original-title','Show chat users');
-			$(this).removeClass('highlighted_dark');
-		}else{
-			showing = 1;
-			$(this).attr('data-original-title','Hide chat users');
-			$(this).addClass('highlighted_dark');
-		}
-		return false;
+		$('#members_modal').modal();
 	});
 	$('#show_users').hover(function(){
 		if(showing == 0){
@@ -346,32 +334,6 @@ module.socket.on('updateResponseCount',function(info){
 	$('#' + info.id + '.response_count').text(info.count);
 });
 
-module.socket.on('displayMembers',function(info){
-	module.mems = new Array();
-	module.mods = new Array();
-	module.admin = new Array();
-	if(info.add){
-		$.each($('.author_' + info.mod),function(index,element){
-			$('.author_' + info.mod).eq(index).html("<span class='glyphicon glyphicon-tower' style='margin-right:5px;'></span>" + $('.author_' + info.mod).eq(index).html());
-		});
-	}
-	if(info.remove){
-		$('.author_' + info.mod).find('.glyphicon-tower').remove();
-	}
-	$.each(info.users,function(index,user){
-		if(user.is_admin){
-			module.admin.push(user.user);
-			module.mems.push("<div style='color:white;'><span class='glyphicon glyphicon-star' style='margin-right:5px;'></span>" + user.user + "</div>");
-		}else if(user.is_mod){
-			module.mods.push(user.user);
-			module.mems.push("<div style='color:white;'><span class='glyphicon glyphicon-tower' style='margin-right:5px;'></span>" + user.user + "</div>");
-		}else{
-			module.mems.push("<div style='color:white;'>" + user.user + "</div>");
-		}
-	});
-	$('#users_list').html(module.mems.join(''));
-});
-
 module.socket.on('add_mod_funcs',function(){
 	$('#user_toolbox').append('<span class="glyphicon glyphicon-warning-sign mod_power" id="warn_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Warn user"></span> <span class="glyphicon glyphicon-remove mod_power" id="kick_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Kick user"></span> ');
 	$('#warn_user').tooltip();
@@ -496,11 +458,6 @@ generateMssg = function(info,is_mssg,tmp){
 	tmp += '</div><div class="mssg_body author_' + info.author + '"><div id="toggle_' + info.id + '" class="toggle_responses"> <span class="caret caret_tooltip" id="caret_' + info.id + '" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span> </div> ';
 	if((module.serial_tracker == info.author || module.user_tracker == info.author) && info.message != '<i>This message has been deleted</i>'){
 		tmp += "<span id='remove_" + info.id + "' style='margin-right:4px;' class='glyphicon glyphicon-remove mssg_icon' data-mssg-serial='" + info.serial + "' data-toggle='tooltip' title='Delete post' data-container='body' data-placement='top'></span>";
-	}
-	if(module.admin.indexOf(info.author) != -1){
-		tmp += "<span class='glyphicon glyphicon-star'></span>";
-	}else if(module.mods.indexOf(info.author) != -1){
-		tmp += "<span class='glyphicon glyphicon-tower'></span>";	
 	}
 	tmp += "<strong class='mssg_op' data-author='" + info.author + "' style='color:" + module.color_arr[info.serial % 7] + ";'> " + info.author + " (<span class='response_count' id='" + info.id + "'>0</span>)</strong> : " + info.message + "<div class='time_box'><div class='reply'><a href='#' class='reply_link' data-mssg-id='" + info.id + "'><strong>Reply</strong></a></div><div class='time' id='" + info.created_at + "'>" + moment.utc(info.created_at).fromNow() + "</div></div></div></div></div></div></div>"	
 	return tmp;

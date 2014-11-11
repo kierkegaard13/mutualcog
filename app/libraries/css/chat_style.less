@@ -1,9 +1,6 @@
 @import "common";
 
 @media screen and (min-width:768px){
-	.modal-dialog {
-	  width:50% !important;
-	}
 	.main_content {
 	  z-index:1;
 	  .box_shadow(1);
@@ -26,12 +23,15 @@
 	  margin-top:15px !important;
 	}
 }
-.chat_member {
-  padding:10px 15px;
-  border-bottom:solid 1px #999;
-}
 #continue_description,#chat_details {
   display:none;
+}
+.chat_member_cont {
+  max-height:300px;
+  padding:0 !important;
+}
+.chat_member {
+  padding:10px 15px;
 }
 .main_content {
   height:100% !important;
