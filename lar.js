@@ -179,10 +179,6 @@ io.sockets.on('connection', function(client) {
 			}
 			conn.where({chat_id:client.chat_id,user:client.user}).update('users_to_chats',{active:1},function(err,info){
 				if(err)console.log(err);
-				conn.where({chat_id:client.chat_id,active:1}).get('users_to_chats',function(err,rows){
-					if(err)console.log(err);
-					io.sockets.in(client.room).emit('displayMembers',{users:rows,mod:0,add:0,remove:0});  //the other parameters help to add mods to the list
-				});
 			});
 			conn.where({user_id:client.memb_id,chat_id:client.chat_id,user:client.user}).get('users_to_chats',function(err,rows){
 				if(err)console.log(err);
@@ -490,10 +486,6 @@ io.sockets.on('connection', function(client) {
 				if(err)console.log(err);
 				io.sockets.in(client.room + '_user_' + user).emit('add_mod_funcs');
 				client.emit('add_mod_confirm',user);
-				conn.where({chat_id:client.chat_id,active:1}).get('users_to_chats',function(err,rows){
-					if(err)console.log(err);
-					io.sockets.in(client.room).emit('displayMembers',{users:rows,mod:user,add:1,remove:0});
-				});
 			});
 		}
 	});
@@ -505,10 +497,6 @@ io.sockets.on('connection', function(client) {
 				if(err)console.log(err);
 				io.sockets.in(client.room + '_user_' + user).emit('remove_mod_funcs');
 				client.emit('remove_mod_confirm',user);
-				conn.where({chat_id:client.chat_id,active:1}).get('users_to_chats',function(err,rows){
-					if(err)console.log(err);
-					io.sockets.in(client.room).emit('displayMembers',{users:rows,mod:user,add:0,remove:1});
-				});
 			});
 		}
 	});

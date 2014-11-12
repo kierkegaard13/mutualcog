@@ -44,7 +44,7 @@
 	<button id="message_friend" class="btn btn-primary pull-right" data-toggle="modal" data-target="#message_modal"><div class="glyphicon glyphicon-envelope"> </div> Message</button>
 {% endif %}
 {% if profile.id != user.id and not friended and not requested %}
-	<button class="btn btn-primary add_friend" id="request_friend" data-user-id="{{profile.id}}" data-user-name="{{profile.name}}"><div class="glyphicon glyphicon-plus" id="request_glyph"> </div> Send Friend Request</button>
+	<button class="btn btn-primary add_friend" id="request_friend" data-user-id="{{profile.id}}" data-user-name="{{profile.name}}"><div class="glyphicon glyphicon-plus" id="request_glyph"> </div> Friend</button>
 {% elseif requested %}
 	<button class="btn btn-success add_friend"><div class="glyphicon glyphicon-check" id="request_glyph"> </div> Request Sent</button>
 {% elseif friended %}

@@ -308,16 +308,22 @@
 			{% for member in chat.users %}
 			{% if not loop.last %}
 				<div class="chat_member light_divider_bottom">
-					<a class="chat_link" href="{{site}}/u/{{member.name}}">{{member.name}}</a>
+					<a class="dark_link" href="{{site}}/u/{{member.name}}">{{member.name}}</a>
 					{% if member.id != user.id %}
 						<button class="btn btn-primary pull-right" style="margin-top:-6px;" id="request_friend" data-user-id="{{member.id}}" data-user-name="{{member.name}}"><div class="glyphicon glyphicon-plus" id="request_glyph"> </div> Friend</button>
+					{% endif %}
+					{% if member.id != user.id and (user.name == chat.admin or serial == chat.admin) %}
+						<button class="btn btn-default pull-right" style="margin-top:-6px;margin-right:5px;" id="mod_user" data-user-id="{{member.id}}" data-user-name="{{member.name}}"><div class="glyphicon glyphicon-tower"> </div> Mod</button>
 					{% endif %}
 				</div>
 			{% else %}
 				<div class="chat_member">
-					<a class="chat_link" href="{{site}}/u/{{member.name}}">{{member.name}}</a>
+					<a class="dark_link" href="{{site}}/u/{{member.name}}">{{member.name}}</a>
 					{% if member.id != user.id %}
 						<button class="btn btn-primary pull-right" style="margin-top:-6px;" id="request_friend" data-user-id="{{member.id}}" data-user-name="{{member.name}}"><div class="glyphicon glyphicon-plus" id="request_glyph"> </div> Friend</button>
+					{% endif %}
+					{% if member.id != user.id and (user.name == chat.admin or serial == chat.admin) %}
+						<button class="btn btn-default pull-right" style="margin-top:-6px;margin-right:5px;" id="mod_user" data-user-id="{{member.id}}" data-user-name="{{member.name}}"><div class="glyphicon glyphicon-tower"> </div> Mod</button>
 					{% endif %}
 				</div>
 			{% endif %}
