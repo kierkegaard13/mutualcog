@@ -20,7 +20,7 @@
 {% block tools %}
 <div id="user_toolbox">
 	<span class="glyphicon glyphicon-link" id="permalink" data-page-link="{{site}}/chat/static/{{chat.id}}" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Permalink"></span>
-	<span class="glyphicon glyphicon-list" id="show_users" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Show chat members"></span>
+	<span class="glyphicon glyphicon-list" id="show_users" data-chat-id="{{chat.id}}" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Show chat members"></span>
 	<span class="glyphicon glyphicon-stop" id="stop_scroll" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Stop scrollbar"></span>
 	<!--<span class="glyphicon glyphicon-list" id="show_users" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Show chat users"></span>-->
 	{% if user.name == chat.admin or serial == chat.admin %}
@@ -63,7 +63,7 @@
 			<a href="{{site}}/u/{{chat.admin}}">
 				<strong>
 					{% if chat.author.is_admin or chat.author.is_mod %}
-						<span class="red_color">{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</span></strong></a>,
+						<span class="red_color" id="chat_admin" data-admin-name="{{chat.admin}}">{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</span></strong></a>,
 					{% elseif curr_community_id %}
 						{% if chat.admin_id == community_admin.user_id or chat.admin_id in curr_community.moderators %}
 							<span class="green_color">{{chat.admin}}{% if chat.admin_id == community_admin.user_id %}[A]{% elseif chat.admin_id in curr_community.moderators %}[M]{% endif %}</span></strong></a>,

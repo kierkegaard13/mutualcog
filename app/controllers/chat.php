@@ -199,6 +199,12 @@ class Chat extends BaseController {
                 return $view;
 	}
 
+	public function getChatUsers(){
+		$chat_id = Input::get('chat_id');
+		$chat = Chats::find($chat_id);
+		return $chat->users;
+	}
+
 	public function getRandom(){
 		$chats = Chats::select('*',DB::raw('(case when (upvotes - downvotes > 0) then log(upvotes - downvotes) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 when (upvotes - downvotes = 0) then log(1) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 else log(1/abs(upvotes - downvotes)) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 end) AS score'))->whereremoved('0')->wherelive('1')->wherensfw('0')->take(25)->orderBy(DB::raw('score'),'desc')->get();
 		$chats = $chats->toArray();

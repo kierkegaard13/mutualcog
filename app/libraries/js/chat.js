@@ -96,18 +96,36 @@ $(document).ready(function(){
 		window.location.href = $(this).attr('data-page-link'); 
 	});
 	$('#show_users').click(function(e){
-		$('#members_modal').modal();
-	});
-	$('#show_users').hover(function(){
-		if(showing == 0){
-			$('#users_box').show('blind');
-			hovering = 1;
-		}
-	},function(){
-		if(showing == 0){
-			$('#users_box').hide('blind');
-			hovering = 0;
-		}
+		var chat_id = $(this).attr('data-chat-id');
+		$.ajax({
+			type:'GET',
+			url:'//mutualcog.com/chat/chat-users',
+			data:{chat_id:chat_id},
+			success:function(hresp){
+				var members = '';
+				$.each(hresp,function(index,val){
+					members += '<div class="chat_member light_divider_bottom">';
+					if(val.pivot.active){
+						members += '<a class="dark_link" href="//mutualcog.com/u/' + val.name + '">' + val.name + '</a>';
+					}else{
+						members += '<a class="grey_link" href="//mutualcog.com/u/' + val.name + '">' + val.name + '</a>';
+					}
+					if(val.id != module.user_id){
+						members += '<button class="btn btn-primary pull-right" style="margin-top:-6px;" id="request_friend" data-user-id="' + val.id + '" data-user-name="' + val.name + '"><div class="glyphicon glyphicon-plus" id="request_glyph"> </div> Friend</button>';
+					}
+					if(val.id != module.user_id && (module.user_tracker == $('#chat_admin').attr('data-admin-name') || module.serial_tracker == $('#chat_admin').attr('data-admin-name'))){
+						members += '<button class="btn btn-default pull-right" style="margin-top:-6px;margin-right:5px;" id="mod_user" data-user-id="' + val.id + '" data-user-name="' + val.name + '"><div class="glyphicon glyphicon-tower"> </div> Mod</button>';
+					} 
+					members += '</div>';
+				});
+				$('.chat_member_cont').html(members);
+				$('#members_modal').modal();
+			},
+			error:function(){
+				$('.chat_member_cont').html("Couldn't retrieve chat members");
+				$('#members_modal').modal();
+			}
+		});
 	});
 	$('#pause_chat').click(function(){
 		if($(this).hasClass('pause')){  /*if chat is not paused*/
