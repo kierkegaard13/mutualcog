@@ -38,7 +38,7 @@ class Chats extends EloquentBridge
 	}
 
 	public function users(){
-		return $this->belongsToMany('User','users_to_chats','chat_id','user_id')->withPivot('is_admin','is_mod');
+		return $this->belongsToMany('User','users_to_chats','chat_id','user_id')->wherebanned(0)->whereis_user(1)->withPivot('is_admin','is_mod','active');
 	}
 
 	public function seen(){

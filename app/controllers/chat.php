@@ -17,6 +17,10 @@ class Chat extends BaseController {
 		$mssg_upvoted = array();
 		$mssg_downvoted = array();
 		if(Auth::check()){
+			$ip_address = Auth::user()->serial->ip_address;
+			if(UsersToChats::whereip_address($ip_address)->wherebanned(1)->first()){
+				return Redirect::to('home');
+			}
 			Auth::user()->chat_id = $chat_id;
 			Auth::user()->save();
 			$node = new NodeAuth();
@@ -47,6 +51,8 @@ class Chat extends BaseController {
 			$user_to_chat->chat_id = $chat_id;
 			$user_to_chat->user_id = Auth::user()->id;
 			$user_to_chat->user = Auth::user()->name;
+			$user_to_chat->ip_address = Auth::user()->serial->ip_address;
+			$user_to_chat->is_user = 1;
 			if(!$user_to_chat->findAll()){  //getting into chat for the first time
 				if($chat->admin_id == Auth::user()->id){
 					$user_to_chat->is_admin = 1;
@@ -60,17 +66,19 @@ class Chat extends BaseController {
 				$user_to_chat->save();
 			}else{  //have been in chat before
 				$user_to_chat = $user_to_chat->findAll();
-				if($user_to_chat->banned){
-					return Redirect::to('home');  //add you have been banned message
-				}
 				$user_to_chat->active = 1;
 				$user_to_chat->save();
 			}
 		}else{  //not logged in
+			$ip_address = Serials::find(Session::get('serial_id'))->ip_address;
+			if(UsersToChats::whereip_address($ip_address)->wherebanned(1)->first()){
+				return Redirect::to('home');
+			}
 			$user_to_chat = new UsersToChats();
 			$user_to_chat->chat_id = $chat_id;
 			$user_to_chat->user_id = Session::get('serial_id');
 			$user_to_chat->user = Session::get('unique_serial');
+			$user_to_chat->ip_address = $ip_address;
 			if(!$user_to_chat->findAll()){
 				$user_to_chat->active = 1;
 				if($chat->admin_id == Session::get('serial_id')){
@@ -80,9 +88,6 @@ class Chat extends BaseController {
 			}else{
 				$user_to_chat = $user_to_chat->findAll();
 				$user_to_chat->active = 1;
-				if($user_to_chat->banned){
-					return Redirect::to('home');  //add you have been banned message
-				}
 				$user_to_chat->save();
 			}
 		}
