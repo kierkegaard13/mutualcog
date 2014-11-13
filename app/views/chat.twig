@@ -59,11 +59,11 @@
 <div class="chat_id" id="chat_{{chat.id}}">{{chat.title}}</div>
 <div style="color:#777;font-size:12px;">
 	{% if chat.admin % 275604541 == 0 %}
-		<div class="chat_info">Created by 
+		<div class="chat_info" id="chat_admin" data-admin-name="{{chat.admin}}">Created by 
 			<a href="{{site}}/u/{{chat.admin}}">
 				<strong>
 					{% if chat.author.is_admin or chat.author.is_mod %}
-						<span class="red_color" id="chat_admin" data-admin-name="{{chat.admin}}">{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</span></strong></a>,
+						<span class="red_color">{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</span></strong></a>,
 					{% elseif curr_community_id %}
 						{% if chat.admin_id == community_admin.user_id or chat.admin_id in curr_community.moderators %}
 							<span class="green_color">{{chat.admin}}{% if chat.admin_id == community_admin.user_id %}[A]{% elseif chat.admin_id in curr_community.moderators %}[M]{% endif %}</span></strong></a>,

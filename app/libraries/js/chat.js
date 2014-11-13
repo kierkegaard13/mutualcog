@@ -104,8 +104,12 @@ $(document).ready(function(){
 			success:function(hresp){
 				var members = '';
 				$.each(hresp,function(index,val){
-					members += '<div class="chat_member light_divider_bottom">';
-					if(val.pivot.active){
+					if(index == hresp.length - 1){
+						members += '<div class="chat_member">';
+					}else{
+						members += '<div class="chat_member light_divider_bottom">';
+					}
+					if(val.pivot.active == '1'){
 						members += '<a class="dark_link" href="//mutualcog.com/u/' + val.name + '">' + val.name + '</a>';
 					}else{
 						members += '<a class="grey_link" href="//mutualcog.com/u/' + val.name + '">' + val.name + '</a>';
@@ -113,8 +117,10 @@ $(document).ready(function(){
 					if(val.id != module.user_id){
 						members += '<button class="btn btn-primary pull-right" style="margin-top:-6px;" id="request_friend" data-user-id="' + val.id + '" data-user-name="' + val.name + '"><div class="glyphicon glyphicon-plus" id="request_glyph"> </div> Friend</button>';
 					}
-					if(val.id != module.user_id && (module.user_tracker == $('#chat_admin').attr('data-admin-name') || module.serial_tracker == $('#chat_admin').attr('data-admin-name'))){
-						members += '<button class="btn btn-default pull-right" style="margin-top:-6px;margin-right:5px;" id="mod_user" data-user-id="' + val.id + '" data-user-name="' + val.name + '"><div class="glyphicon glyphicon-tower"> </div> Mod</button>';
+					if(val.id != module.user_id && (module.user_tracker == $('#chat_admin').attr('data-admin-name') || module.serial_tracker == $('#chat_admin').attr('data-admin-name')) && val.pivot.is_mod == '0'){
+						members += '<button class="btn btn-default pull-right" style="margin-top:-6px;margin-right:5px;" id="mod_user" data-user-id="' + val.id + '" data-user-name="' + val.name + '" data-is-mod="0"><div class="glyphicon glyphicon-tower"> </div> Mod</button>';
+					}else if(val.id != module.user_id && (module.user_tracker == $('#chat_admin').attr('data-admin-name') || module.serial_tracker == $('#chat_admin').attr('data-admin-name')) && val.pivot.is_mod == '1'){
+						members += '<button class="btn btn-default pull-right" style="margin-top:-6px;margin-right:5px;" id="mod_user" data-user-id="' + val.id + '" data-user-name="' + val.name + '" data-is-mod="1"><div class="glyphicon glyphicon-tower"> </div> Unmod</button>';
 					} 
 					members += '</div>';
 				});
