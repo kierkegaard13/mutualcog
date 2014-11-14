@@ -479,24 +479,24 @@ io.sockets.on('connection', function(client) {
 		}
 	});
 
-	client.on('make_mod',function(info){  //is mod isn't actually set here
-		var user = info.user;
-		if(client.is_admin){
-			conn.where({user:info.user,chat_id:info.chat_id}).update('users_to_chats',{is_mod:1},function(err,info){
-				if(err)console.log(err);
-				io.sockets.in(client.room + '_user_' + user).emit('add_mod_funcs');
-				client.emit('add_mod_confirm',user);
-			});
+	client.on('mod_user',function(info,fn){  //is mod isn't actually set here
+		var name = info.name;
+		var user_id = info.id;
+		var is_mod = info.is_mod;
+		var chat_id = info.chat_id;
+		if(is_mod == '1'){
+			var insert_mod = 0;
+		}else{
+			var insert_mod = 1;
 		}
-	});
-
-	client.on('remove_mod',function(info){
-		var user = info.user;
+		console.log(info);
 		if(client.is_admin){
-			conn.where({user:info.user,chat_id:info.chat_id}).update('users_to_chats',{is_mod:0},function(err,info){
+			console.log(insert_mod);
+			conn.where({user_id:user_id,chat_id:chat_id}).update('users_to_chats',{is_mod:insert_mod},function(err,info){
 				if(err)console.log(err);
-				io.sockets.in(client.room + '_user_' + user).emit('remove_mod_funcs');
-				client.emit('remove_mod_confirm',user);
+				console.log(info);
+				io.sockets.in(client.room + '_user_' + name).emit('add_mod_funcs');
+				fn({user_id:user_id,is_mod:is_mod});
 			});
 		}
 	});

@@ -95,6 +95,18 @@ $(document).ready(function(){
 	$('#permalink').click(function(e){
 		window.location.href = $(this).attr('data-page-link'); 
 	});
+	$('.chat_member_cont').on('click','.mod_user',function(){
+		var chat_id = $('#show_users').attr('data-chat-id');
+		module.socket.emit('mod_user',{id:$(this).attr('data-user-id'),chat_id:chat_id,name:$(this).attr('data-user-name'),is_mod:$(this).attr('data-is-mod')},function(info){
+			if(info.is_mod == '0'){
+				$('#mod_user_' + info.user_id).html('<div class="glyphicon glyphicon-tower"> </div> Unmod');
+				$('#mod_user_' + info.user_id).attr('data-is-mod','1');
+			}else{
+				$('#mod_user_' + info.user_id).html('<div class="glyphicon glyphicon-tower"> </div> Mod');
+				$('#mod_user_' + info.user_id).attr('data-is-mod','0');
+			}
+		});
+	});
 	$('#show_users').click(function(e){
 		var chat_id = $(this).attr('data-chat-id');
 		$.ajax({
@@ -118,9 +130,9 @@ $(document).ready(function(){
 						members += '<button class="btn btn-primary pull-right" style="margin-top:-6px;" id="request_friend" data-user-id="' + val.id + '" data-user-name="' + val.name + '"><div class="glyphicon glyphicon-plus" id="request_glyph"> </div> Friend</button>';
 					}
 					if(val.id != module.user_id && (module.user_tracker == $('#chat_admin').attr('data-admin-name') || module.serial_tracker == $('#chat_admin').attr('data-admin-name')) && val.pivot.is_mod == '0'){
-						members += '<button class="btn btn-default pull-right" style="margin-top:-6px;margin-right:5px;" id="mod_user" data-user-id="' + val.id + '" data-user-name="' + val.name + '" data-is-mod="0"><div class="glyphicon glyphicon-tower"> </div> Mod</button>';
+						members += '<button class="btn btn-default pull-right mod_user" id="mod_user_' + val.id + '" style="margin-top:-6px;margin-right:5px;" data-user-id="' + val.id + '" data-user-name="' + val.name + '" data-is-mod="0"><div class="glyphicon glyphicon-tower"> </div> Mod</button>';
 					}else if(val.id != module.user_id && (module.user_tracker == $('#chat_admin').attr('data-admin-name') || module.serial_tracker == $('#chat_admin').attr('data-admin-name')) && val.pivot.is_mod == '1'){
-						members += '<button class="btn btn-default pull-right" style="margin-top:-6px;margin-right:5px;" id="mod_user" data-user-id="' + val.id + '" data-user-name="' + val.name + '" data-is-mod="1"><div class="glyphicon glyphicon-tower"> </div> Unmod</button>';
+						members += '<button class="btn btn-default pull-right mod_user" id="mod_user_' + val.id + '" style="margin-top:-6px;margin-right:5px;" data-user-id="' + val.id + '" data-user-name="' + val.name + '" data-is-mod="1"><div class="glyphicon glyphicon-tower"> </div> Unmod</button>';
 					} 
 					members += '</div>';
 				});
@@ -148,27 +160,6 @@ $(document).ready(function(){
 			$(this).addClass('glyphicon-pause');
 			$(this).addClass('pause');
 			$(this).attr('data-original-title','Pause chat');
-		}
-	});
-	$('#mod_user').click(function(){
-		var user = $('#mssg_cont_' + module.clicked_on).find('.mssg_op').attr('data-author');
-		if(user == module.user_tracker || module.clicked_on == -1){
-			return false;
-		}else{
-			$.ajax({
-				type:'GET',
-				url:'//mutualcog.com/chat/check-mod',
-				data:{user:user,chat_id:module.chat_id},
-				success:function(hresp){
-					if(hresp == 0){
-						module.socket.emit('make_mod',{user:user,chat_id:module.chat_id});
-					}else{
-						module.socket.emit('remove_mod',{user:user,chat_id:module.chat_id});
-					}
-				},
-				error:function(){
-				}
-			});
 		}
 	});
 	$('#warn_user').click(function(){
@@ -366,16 +357,6 @@ module.socket.on('add_mod_funcs',function(){
 
 module.socket.on('remove_mod_funcs',function(){
 	$('.mod_power').remove();
-});
-
-module.socket.on('add_mod_confirm',function(user){
-	$('#modified_ident').text(user);
-	$('#modified_message').text('is now a mod');
-	$('#action_confirmed').show('blind',function(){	
-		window.setTimeout(function(){
-			$('#action_confirmed').hide('blind');
-		},1500);
-	});
 });
 
 module.socket.on('remove_mod_confirm',function(user){
