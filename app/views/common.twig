@@ -631,7 +631,7 @@
 								<span class="red_color">{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</span></strong></a>,
 							{% elseif curr_community_id %}
 								{% if chat.admin_id == community_admin.user_id or chat.admin_id in curr_community.moderators %}
-									<span class="green_color">{{chat.admin}}{% if chat.admin_id == community_admin.user_id %}[A]{% elseif chat.admin_id in curr_community.moderators %}[M]{% endif %}</span></strong></a>,
+									<span class="green_color">{{chat.admin}}{% if chat.admin_id == community_admin.user_id %}[CA]{% elseif chat.admin_id in curr_community.moderators %}[CM]{% endif %}</span></strong></a>,
 								{% else %}
 									{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</strong></a>,
 								{% endif %}

@@ -927,6 +927,11 @@ function validateUser(username){
 		$('#reg_username').attr('data-original-title','Your username must contain at least one character');
 		$('#reg_username').tooltip('show');
 		return 0;
+	}else if(response == 4){
+		$('#reg_user_group').attr('class','form-group has-error');
+		$('#reg_username').attr('data-original-title','Your username cannot contain brackets or spaces');
+		$('#reg_username').tooltip('show');
+		return 0;
 	}else{
 		$('#reg_user_group').attr('class','form-group');
 		$('#reg_username').tooltip('destroy');

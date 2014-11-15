@@ -223,6 +223,9 @@ class Profile extends BaseController {
 		if(!preg_match('/[a-zA-Z]/',$username)){
 			return 3;
 		}
+		if(preg_match('/[\[\]\s]/',$username)){
+			return 4;
+		}
 		return 1;
 	}
 
@@ -300,7 +303,7 @@ class Profile extends BaseController {
 				);
 		if(!$validator->fails()){
 			$user = new User();
-			if(preg_match('/[a-zA-z]/',$username)){
+			if(preg_match('/[a-zA-z]/',$username) && !preg_match('/[\[\]\s]/',$username)){
 				$user->name = ucfirst($username);
 			}else{
 				if(Session::has('curr_page')){
