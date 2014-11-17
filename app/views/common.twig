@@ -316,7 +316,7 @@
 						<button class="btn btn-primary pull-right" style="margin-top:-6px;" id="request_friend" data-user-id="{{member.id}}" data-user-name="{{member.name}}"><div class="glyphicon glyphicon-plus" id="request_glyph"> </div> Friend</button>
 					{% endif %}
 					{% if member.id != user.id and (user.name == chat.admin or serial == chat.admin) %}
-						<button class="btn btn-default pull-right" style="margin-top:-6px;margin-right:5px;" id="mod_user" data-user-id="{{member.id}}" data-user-name="{{member.name}}"><div class="glyphicon glyphicon-tower"> </div> Mod</button>
+						<button class="btn btn-default pull-right mod_user" style="margin-top:-6px;margin-right:5px;" id="mod_user_{{member.id}}" data-user-id="{{member.id}}" data-user-name="{{member.name}}" data-is-mod="{{member.pivot.is_mod}}"><div class="glyphicon glyphicon-tower"> </div> {% if member.pivot.is_mod %}Unmod{% else %}Mod{% endif %}</button>
 					{% endif %}
 				</div>
 			{% else %}
@@ -330,7 +330,7 @@
 						<button class="btn btn-primary pull-right" style="margin-top:-6px;" id="request_friend" data-user-id="{{member.id}}" data-user-name="{{member.name}}"><div class="glyphicon glyphicon-plus" id="request_glyph"> </div> Friend</button>
 					{% endif %}
 					{% if member.id != user.id and (user.name == chat.admin or serial == chat.admin) %}
-						<button class="btn btn-default pull-right" style="margin-top:-6px;margin-right:5px;" id="mod_user" data-user-id="{{member.id}}" data-user-name="{{member.name}}"><div class="glyphicon glyphicon-tower"> </div> Mod</button>
+						<button class="btn btn-default pull-right mod_user" style="margin-top:-6px;margin-right:5px;" id="mod_user_{{member.id}}" data-user-id="{{member.id}}" data-user-name="{{member.name}}" data-is-mod="{{member.pivot.is_mod}}"><div class="glyphicon glyphicon-tower"> </div> {% if member.pivot.is_mod %}Unmod{% else %}Mod{% endif %}</button>
 					{% endif %}
 				</div>
 			{% endif %}
@@ -630,7 +630,7 @@
 								<span class="red_color">{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</span></strong></a>,
 							{% elseif curr_community_id %}
 								{% if chat.admin_id == community_admin.user_id or chat.admin_id in curr_community.moderators %}
-									<span class="green_color">{{chat.admin}}{% if chat.admin_id == community_admin.user_id %}[A]{% elseif chat.admin_id in curr_community.moderators %}[M]{% endif %}</span></strong></a>,
+									<span class="green_color">{{chat.admin}}{% if chat.admin_id == community_admin.user_id %}[CA]{% elseif chat.admin_id in curr_community.moderators %}[CM]{% endif %}</span></strong></a>,
 								{% else %}
 									{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</strong></a>,
 								{% endif %}
