@@ -8,8 +8,21 @@
 	.big_content_box {
 	  height:98%;
 	}
+	.chat_content {
+	  position:relative;
+	  height:100%;
+	}
 }
 @media screen and (max-width:767px){
+	.chat_content {
+	  padding-left:0;
+	  position:absolute;
+	  height:auto;
+	  top:0;
+	  right:0;
+	  left:0;
+	  bottom:0;
+	}
 	#main, #side, #users_box {
 	  padding-right:0px;
 	}
@@ -384,9 +397,6 @@ select {
   text-align:left;
   height:auto;
   overflow:auto;
-}
-.chat_content {
-  position:relative;
 }
 .chat_main {
   height:100% !important;
