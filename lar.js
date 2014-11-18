@@ -182,9 +182,15 @@ io.sockets.on('connection', function(client) {
 			});
 			conn.where({user_id:client.memb_id,chat_id:client.chat_id,user:client.user}).get('users_to_chats',function(err,rows){
 				if(err)console.log(err);
-				client.is_mod = rows[0].is_mod;
-				client.is_admin = rows[0].is_admin;
-				client.banned = rows[0].banned;
+				if(rows.length > 0){
+					client.is_mod = rows[0].is_mod;
+					client.is_admin = rows[0].is_admin;
+					client.banned = rows[0].banned;
+				}else{
+					client.is_mod = 0;
+					client.is_admin = 0;
+					client.banned = 0;
+				}
 			});
 		});
 	});
@@ -489,9 +495,7 @@ io.sockets.on('connection', function(client) {
 		}else{
 			var insert_mod = 1;
 		}
-		console.log(info);
 		if(client.is_admin){
-			console.log(insert_mod);
 			conn.where({user_id:user_id,chat_id:chat_id}).update('users_to_chats',{is_mod:insert_mod},function(err,info){
 				if(err)console.log(err);
 				console.log(info);

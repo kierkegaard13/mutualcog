@@ -8,6 +8,14 @@
 		<span class="icon-bar"></span>
 		</button>
 		<a class="{{home_active}} navbar-brand" href="{{site}}/home"><img src="{{base}}/MC_home2.png"></a>
+		{% if logged_in %}
+			<a class="navbar-brand visible-xs" href="{{site}}/profile/logout" title="Logout"><div class="glyphicon glyphicon-log-out"></div></a>
+		{% else %}
+			<btn class="navbar-brand visible-xs" href="#" data-toggle="modal" data-target="#register_modal" title="Login"><div class="glyphicon glyphicon-log-in"></div></btn>
+		{% endif %}
+		{% if chat.details | length > 0 %}
+			<btn class="navbar-brand visible-xs" href="#" data-toggle="modal" data-target="#continue_modal" title="Read description"><div class="glyphicon glyphicon-book"></div></btn>
+		{% endif %}
 	</div>
 	<div class="collapse navbar-collapse" id="mutual_navbar" style="position:relative;">
 		{% if not search_page %}
