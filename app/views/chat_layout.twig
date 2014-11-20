@@ -33,6 +33,9 @@
 		{% endif %}
 			<div class="big_content_box">
 				<div class="content main_content" id="main_cont">
+					<div class="visible-xs">
+						{% block mobile_tools %}{% endblock %}
+					</div>
 					{% block content %}{% endblock %}
 				</div>
 			</div>

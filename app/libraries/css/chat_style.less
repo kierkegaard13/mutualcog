@@ -12,6 +12,12 @@
 	  position:relative;
 	  height:100%;
 	}
+	.frame_cont {
+	  height:76%;
+	  position:relative;
+	  width:100%;
+	  overflow:auto; 
+	}
 }
 @media screen and (max-width:767px){
 	.chat_content {
@@ -35,6 +41,12 @@
 	.tool_box {
 	  margin-top:15px !important;
 	}
+	.frame_cont {
+	  height:70%;
+	  position:relative;
+	  width:100%;
+	  overflow:auto; 
+	}
 }
 #continue_description,#chat_details {
   display:none;
@@ -56,6 +68,10 @@
 }
 .mssg_cont:hover {
   border-color:@highlight_blue;
+}
+.mobile_tools {
+  text-align:center;
+  padding-bottom:5px;
 }
 .reply{
   font-size:12px;
@@ -419,12 +435,6 @@ select {
   background-color: #888;
   border-radius:10px;
   opacity:.5;
-}
-.frame_cont {
-  height:76%;
-  position:relative;
-  width:100%;
-  overflow:auto; 
 }
 .go_back {
   position:absolute;

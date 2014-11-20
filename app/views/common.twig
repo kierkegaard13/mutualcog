@@ -13,8 +13,12 @@
 		{% else %}
 			<btn class="navbar-brand visible-xs" href="#" data-toggle="modal" data-target="#register_modal" title="Login"><div class="glyphicon glyphicon-log-in"></div></btn>
 		{% endif %}
-		{% if chat.details | length > 0 %}
-			<btn class="navbar-brand visible-xs" href="#" data-toggle="modal" data-target="#continue_modal" title="Read description"><div class="glyphicon glyphicon-book"></div></btn>
+		{% if user.name == chat.admin or serial == chat.admin %}
+			<btn class="navbar-brand visible-xs" href="#" data-toggle="modal" data-target="#description_modal" title="Edit description"><div class="glyphicon glyphicon-book"></div></btn>
+		{% else %}
+			{% if chat.details | length > 0 %}
+				<btn class="navbar-brand visible-xs" href="#" data-toggle="modal" data-target="#continue_modal" title="Read description"><div class="glyphicon glyphicon-book"></div></btn>
+			{% endif %}
 		{% endif %}
 	</div>
 	<div class="collapse navbar-collapse" id="mutual_navbar" style="position:relative;">
