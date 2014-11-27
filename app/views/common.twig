@@ -20,6 +20,9 @@
 				<btn class="navbar-brand visible-xs" href="#" data-toggle="modal" data-target="#continue_modal" title="Read description"><div class="glyphicon glyphicon-book"></div></btn>
 			{% endif %}
 		{% endif %}
+		{% if curr_community_id %}
+			<btn class="navbar-brand visible-xs" href="#" data-toggle="modal" data-target="#tag_info_modal" title="Community info"><div class="glyphicon glyphicon-info-sign"></div></btn>
+		{% endif %}
 	</div>
 	<div class="collapse navbar-collapse" id="mutual_navbar" style="position:relative;">
 		{% if not search_page %}
@@ -40,9 +43,29 @@
 		<ul class="nav navbar-nav nav_right {% if not search_page %}nav_pad_r{% endif %}">
 			{% for community in communities %}
 				{% if curr_community.name == community.name %}
-					<li><a class="highlight_light_blue" href="{{site}}/c/{{community}}">{{community}}</a></li>
+					<li class="visible-xs">
+						<div class="com_link_cont highlight_light_blue">
+							{% if community.id in user.subArr %}
+								<a href="{{site}}/community/unsubscribe/{{community.id}}" class="glyphicon glyphicon-ok nav_glyph" title="Unsubscribe"></a>
+							{% else %}
+								<a href="{{site}}/community/subscribe/{{community.id}}" class="glyphicon glyphicon-plus nav_glyph" title="Subscribe"></a>
+							{% endif %}
+							<a href="{{site}}/c/{{community.name}}">{{community.name}}</a>
+						</div>
+					</li>
+					<li class="hidden-xs"> <a class="highlight_light_blue" href="{{site}}/c/{{community.name}}">{{community.name}}</a> </li>
 				{% else %}
-					<li><a href="{{site}}/c/{{community}}">{{community}}</a></li>
+					<li class="visible-xs">
+						<div class="com_link_cont">
+							{% if community.id in user.subArr %}
+								<a href="{{site}}/community/unsubscribe/{{community.id}}" class="glyphicon glyphicon-ok nav_glyph" title="Unsubscribe"></a>
+							{% else %}
+								<a href="{{site}}/community/subscribe/{{community.id}}" class="glyphicon glyphicon-plus nav_glyph" title="Subscribe"></a>
+							{% endif %}
+							<a href="{{site}}/c/{{community.name}}">{{community.name}}</a>
+						</div>
+					</li>
+					<li class="hidden-xs"> <a href="{{site}}/c/{{community.name}}">{{community.name}}</a> </li>
 				{% endif %}
 			{% endfor %}
 		</ul>

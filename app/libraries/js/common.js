@@ -628,8 +628,10 @@ $(document).ready(function(){
 			$(this).parent().find('.pm_text').css('display','none');
 		}
 	});
-	$('.community_search').hide();
-	$('.community_search').css('visibility','visible');
+	if($(window).width() > 767){
+		$('.community_search').hide();
+		$('.community_search').css('visibility','visible');
+	}
 	$('.toggle_search').click(function(){
 		if($('.community_search').css('display') == 'none'){
 			$('.community_search_expand').css('display','none');
