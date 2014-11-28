@@ -10,18 +10,20 @@
 		<a class="{{home_active}} navbar-brand" href="{{site}}/home"><img src="{{base}}/MC_home2.png"></a>
 		{% if logged_in %}
 			<a class="navbar-brand visible-xs" href="{{site}}/profile/logout" title="Logout"><div class="glyphicon glyphicon-log-out"></div></a>
+			<btn class="navbar-brand visible-xs" title="Private messaging"><div class="glyphicon glyphicon-user"></div></btn>
+			<btn class="navbar-brand visible-xs" title="Notifications"><div class="glyphicon glyphicon-globe"></div></btn>
 		{% else %}
-			<btn class="navbar-brand visible-xs" href="#" data-toggle="modal" data-target="#register_modal" title="Login"><div class="glyphicon glyphicon-log-in"></div></btn>
+			<btn class="navbar-brand visible-xs" data-toggle="modal" data-target="#register_modal" title="Login"><div class="glyphicon glyphicon-log-in"></div></btn>
 		{% endif %}
-		{% if user.name == chat.admin or serial == chat.admin %}
-			<btn class="navbar-brand visible-xs" href="#" data-toggle="modal" data-target="#description_modal" title="Edit description"><div class="glyphicon glyphicon-book"></div></btn>
+		{% if (chat.admin | length > 0) and (user.name == chat.admin or serial == chat.admin) %}
+			<btn class="navbar-brand visible-xs" data-toggle="modal" data-target="#description_modal" title="Edit description"><div class="glyphicon glyphicon-book"></div></btn>
 		{% else %}
 			{% if chat.details | length > 0 %}
-				<btn class="navbar-brand visible-xs" href="#" data-toggle="modal" data-target="#continue_modal" title="Read description"><div class="glyphicon glyphicon-book"></div></btn>
+				<btn class="navbar-brand visible-xs" data-toggle="modal" data-target="#continue_modal" title="Read description"><div class="glyphicon glyphicon-book"></div></btn>
 			{% endif %}
 		{% endif %}
 		{% if curr_community_id %}
-			<btn class="navbar-brand visible-xs" href="#" data-toggle="modal" data-target="#tag_info_modal" title="Community info"><div class="glyphicon glyphicon-info-sign"></div></btn>
+			<btn class="navbar-brand visible-xs" data-toggle="modal" data-target="#tag_info_modal" title="Community info"><div class="glyphicon glyphicon-info-sign"></div></btn>
 		{% endif %}
 	</div>
 	<div class="collapse navbar-collapse" id="mutual_navbar" style="position:relative;">
@@ -62,7 +64,7 @@
 							{% else %}
 								<a href="{{site}}/community/subscribe/{{community.id}}" class="glyphicon glyphicon-plus nav_glyph" title="Subscribe"></a>
 							{% endif %}
-							<a href="{{site}}/c/{{community.name}}">{{community.name}}</a>
+							<a class="mobile_com" href="{{site}}/c/{{community.name}}">{{community.name}}</a>
 						</div>
 					</li>
 					<li class="hidden-xs"> <a href="{{site}}/c/{{community.name}}">{{community.name}}</a> </li>
@@ -447,9 +449,16 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 id="reg_modal_title" class="modal-title">Create an account</h4>
+				<h4 id="reg_modal_title" class="modal-title">Create an account or login</h4>
 			</div>
 			<div class="modal-body">
+				<ul id="loginTabs" class="nav nav-tabs nav-justified">
+					<li class="active"><a href="#register" data-toggle="tab">Register</a></li>
+					<li><a href="#login" data-toggle="tab">Login</a></li>
+				</ul>
+<div id="tab_content" class="tab-content">
+
+<div class="tab-pane fade active in" id="register">
 				<form method="post" action="{{site}}/profile/register" class="mutual_form" id="register_form">
 				<fieldset>
 					<div id="reg_user_group" class="form-group">
@@ -469,11 +478,32 @@
 						<input class="form-control" data-toggle="popover" data-original-title="Not a valid email" data-container="body" data-placement="auto top" data-trigger="focus" type="email" name="email" id="email" placeholder="Enter your email" maxlength="{{max_title_length}}">
 					</div>
 				</fieldset>
-			</div>
-			<div class="modal-footer">
-				<button class="btn btn-primary" type="Submit">Register</button>
-				<button type="button" class="btn close_reg" data-dismiss="modal">Close</button>
+			<div class="modal-footer" style="padding:15px 0 0 0;">
+				<button id="register_form_submit" class="btn btn-primary" type="submit">Register</button>
 				</form>
+				<button type="button" class="btn close_reg" data-dismiss="modal">Close</button>
+			</div>
+</div>
+<div class="tab-pane fade in" id="login">
+				<form method="post" action="{{site}}/profile/login" class="mutual_form" id="mobile_login_form">
+				<fieldset>
+					<div id="mobile_user_group" class="form-group">
+						<label for="username">Username</label>
+						<input class="form-control" data-toggle="tooltip" data-placement="auto top" data-original-title="Username or password incorrect" data-trigger="focus" data-container="body" type="text" name="username" id="mobile_username" placeholder="Enter your username" maxlength="{{max_user_length}}">
+					</div>
+					<div id="mobile_pass1_group" class="form-group">
+						<label for="pass">Password</label>
+						<input class="form-control" type="password" name="pass" id="mobile_pass" placeholder="Enter your password" maxlength="30">
+					</div>
+				</fieldset>
+			<div class="modal-footer" style="padding:15px 0 0 0;">
+				<button id="login_form_submit" class="btn btn-primary" type="submit">Login</button>
+				</form>
+				<button type="button" class="btn close_reg" data-dismiss="modal">Close</button>
+			</div>
+</div>
+
+</div>
 			</div>
 		</div>
 	</div>	

@@ -97,7 +97,7 @@ function processMessage(message){
 		message = message.replace(/^\s+|\s+$/g,'');
 		message = message.replace(re1,'');
 		message = message.replace(re2,'');
-		message = message.replace(p_reg,"<a class='chat_link' href='\/\/mutualcog.com/u/$1'>\/p\/$1</a>$2");
+		message = message.replace(p_reg,"<a class='chat_link' href='\/\/mutualcog.com/u/$1'>\/u\/$1</a>$2");
 		message = message.replace(t_reg,"<a class='chat_link' href='\/\/mutualcog.com/c/$1'>\/c\/$1</a>$2");
 		message = message.replace(at_reg,"<a class='chat_link' href='\/\/mutualcog.com/u/$1'>@$1</a>$2");
 		message = message.replace(hash_reg,"<a class='chat_link' href='\/\/mutualcog.com/c/$1'>#$1</a>$2");
@@ -871,7 +871,7 @@ module.socket.on('updateVotes',function(info) {
 	$('#mssg_votes_' + info.message_id).text(info.response.upvotes);
 });
 
-function validateLogin(username,password){
+function validateLogin(username,password,mobile){
 	var response = $.ajax({
 		type:'GET',
 		data:{username:username,pass:password},
@@ -879,15 +879,28 @@ function validateLogin(username,password){
 		async:false,
 	}).responseText;
 	if(response == 1){
-		$('#user_group').attr('class','form-group');
-		$('#pass1_group').attr('class','form-group');
-		$('#username').tooltip('destroy');
+		if(!mobile){
+			$('#user_group').attr('class','form-group');
+			$('#pass1_group').attr('class','form-group');
+			$('#username').tooltip('destroy');
+		}else{
+			$('#mobile_user_group').attr('class','form-group');
+			$('#mobile_pass1_group').attr('class','form-group');
+			$('#mobile_username').tooltip('destroy');
+		}
 		return 1;
 	}else{
-		$('#user_group').attr('class','form-group has-error');
-		$('#pass1_group').attr('class','form-group has-error');
-		$('#username').attr('data-original-title','Your username or password is incorrect');
-		$('#username').tooltip('show');
+		if(!mobile){
+			$('#user_group').attr('class','form-group has-error');
+			$('#pass1_group').attr('class','form-group has-error');
+			$('#username').attr('data-original-title','Your username or password is incorrect');
+			$('#username').tooltip('show');
+		}else{
+			$('#mobile_user_group').attr('class','form-group has-error');
+			$('#mobile_pass1_group').attr('class','form-group has-error');
+			$('#mobile_username').attr('data-original-title','Your username or password is incorrect');
+			$('#mobile_username').tooltip('show');
+		}
 		return 0;
 	}
 }
@@ -896,7 +909,21 @@ $('#login_form').submit(function(){
 	var username = $('#username').val();
 	var pass = $('#pass').val();
 	if(username.length > 0 && pass.length > 0){
-		var res = validateLogin(username,pass);
+		var res = validateLogin(username,pass,0);
+		if(!res){
+			return false;
+		}
+	}else{
+		return false;
+	}
+	return true;
+});
+
+$('#mobile_login_form').submit(function(){
+	var username = $('#mobile_username').val();
+	var pass = $('#mobile_pass').val();
+	if(username.length > 0 && pass.length > 0){
+		var res = validateLogin(username,pass,1);
 		if(!res){
 			return false;
 		}
