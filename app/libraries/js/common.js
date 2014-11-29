@@ -209,8 +209,8 @@ $(window).resize(function(){
 });
 
 $(document).ready(function(){
-	$.each($('.chat_img'),function(index,val){
-		$('.chat_img').eq(index).attr('src',$('.chat_img').eq(index).attr('data-chat-img'));
+	$.each($('.async_img'),function(index,val){
+		$('.async_img').eq(index).attr('src',$('.async_img').eq(index).attr('data-chat-img'));
 	});
 	if(module.user_id.length){
 		window.setInterval(function(){
@@ -1104,7 +1104,9 @@ $('#search_input').on('keydown',function(e){
 });
 
 $('.entry_search_submit').click(function(){
-	if(selected_term == -1){
+	if(selected_term == -1 && $('#search_input').val().length == 0){
+		return false;
+	}else if(selected_term == -1 && $('#search_input').val().length > 0){
 		window.location.href = '//mutualcog.com/search/result/' + $('#search_input').val();
 	}else{
 		location.assign($('li#search_' + selected_term).children('a').attr('href'));

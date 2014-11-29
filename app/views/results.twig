@@ -106,44 +106,46 @@
 				<button id="message_friend" class="btn btn-primary" data-toggle="modal" data-target="#message_modal"><div class="glyphicon glyphicon-envelope"> </div> Message</button>
 			{% endif %}
 			</div>
-			<div>Level : {{usr.level}}</div>
-			{% set time_passed = server_time|date('U') - usr.updated_at|date('U') %}
-			<div> Most recent activity : 
-			<span class="chat_time" id="{{usr.updated_at}}" title="{{usr.updated_at}}">
-				{% if time_passed < 45 %}
-					seconds ago
-				{% elseif time_passed < 2700 %}
-					{% if time_passed < 90 %}
-						a minute ago
+			<div style="font-size:14px;">
+				<div>Level : {{usr.level}}</div>
+				{% set time_passed = server_time|date('U') - usr.updated_at|date('U') %}
+				<div> Most recent activity : 
+				<span class="chat_time" id="{{usr.updated_at}}" title="{{usr.updated_at}}">
+					{% if time_passed < 45 %}
+						seconds ago
+					{% elseif time_passed < 2700 %}
+						{% if time_passed < 90 %}
+							a minute ago
+						{% else %}
+							{{(time_passed/60)|round}} minutes ago
+						{% endif %}
+					{% elseif time_passed < 79200%}
+						{% if time_passed < 5400 %}
+							an hour ago
+						{% else %}
+							{{(time_passed/3600)|round}} hours ago
+						{% endif %}
+					{% elseif time_passed < 2160000 %}
+						{% if time_passed < 129600 %}
+							a day ago
+						{% else %}
+							{{(time_passed/86400)|round}} days ago
+						{% endif %}
+					{% elseif time_passed < 29808000 %}
+						{% if time_passed < 3888000 %}
+							a month ago
+						{% else %}
+							{{(time_passed/2592000)|round}} months ago
+						{% endif %}
 					{% else %}
-						{{(time_passed/60)|round}} minutes ago
+						{% if time_passed < 47260800 %}
+							a year ago
+						{% else %}
+							{{(time_passed/31536000)|round}} years ago
+						{% endif %}
 					{% endif %}
-				{% elseif time_passed < 79200%}
-					{% if time_passed < 5400 %}
-						an hour ago
-					{% else %}
-						{{(time_passed/3600)|round}} hours ago
-					{% endif %}
-				{% elseif time_passed < 2160000 %}
-					{% if time_passed < 129600 %}
-						a day ago
-					{% else %}
-						{{(time_passed/86400)|round}} days ago
-					{% endif %}
-				{% elseif time_passed < 29808000 %}
-					{% if time_passed < 3888000 %}
-						a month ago
-					{% else %}
-						{{(time_passed/2592000)|round}} months ago
-					{% endif %}
-				{% else %}
-					{% if time_passed < 47260800 %}
-						a year ago
-					{% else %}
-						{{(time_passed/31536000)|round}} years ago
-					{% endif %}
-				{% endif %}
-			</span>
+				</span>
+				</div>
 			</div>
 		</div>
 	{% else %}
@@ -158,7 +160,7 @@
 
 <div class="tab-pane fade in" id="communities">
 	{% for community in communities_res %}
-		<div class="chat_title_box">
+		<div class="chat_title_box" style="padding:15px;">
 			<a class="navbar_blue_color" href="{{site}}/c/{{community.name}}">{{community.name}}</a>
 			{% if community.id in user.subArr %}
 				<div class="pull-right"><a href="{{site}}/community/unsubscribe/{{community.id}}" class="btn btn-danger btn-xs">Unsubscribe</a></div>
