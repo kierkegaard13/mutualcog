@@ -313,6 +313,7 @@ a.grey_link {
 	  top:0;
 	  z-index:100;
 	  width:100%;
+	  position:fixed;
 	  margin-bottom:-40px;
 	  color:@light_text;
 	  border-radius:0px;
@@ -337,6 +338,7 @@ a.grey_link {
 	.navbar-collapse {
 	  padding-right:0px;
 	  max-height:600px;
+	  overflow-x:hidden !important;
 	}
 	.navbar-collapse.in {
 	  overflow-y:hidden !important;
@@ -564,6 +566,47 @@ a.grey_link {
 .menu_bottom {
   border-top-right-radius:0;
   border-top-left-radius:0;
+}
+#mobile_notifications_cont {
+  z-index:5;
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background-color:#fff;
+  display:none;
+}
+#mobile_pms_cont {
+  z-index:5;
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background-color:#fff;
+  display:none;
+}
+.mobile_pms_nav {
+  text-align:center;
+  font-size:20px;
+  cursor:pointer;
+  height:48px;
+  border-bottom:solid 1px #ddd;
+}
+.show_open_pms {
+  padding:10px 14px 10px 15px;
+  border-right:solid 1px #ddd;
+  transition:background-color .5s;
+  -webkit-transition:background-color .5s;
+}
+.show_friends {
+  padding:10px 15px;
+  transition:background-color .5s;
+  -webkit-transition:background-color .5s;
+}
+.show_open_pms:hover, .show_friends:hover {
+  background-color:#ddd;
 }
 .friend_status{
   position:absolute;

@@ -26,6 +26,8 @@
 	<div class="wrapper">
 {% endif %}
 	<div class="row" style="height:100%;">
+		{% block mobile_pms %}{% endblock %}
+		{% block mobile_notifications %}{% endblock %}
 		{% if logged_in %}
 		<div class="col-sm-7 col-md-7 col-lg-9" id="main">
 		{% else %}

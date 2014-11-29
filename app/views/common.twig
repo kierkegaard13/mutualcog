@@ -10,8 +10,8 @@
 		<a class="{{home_active}} navbar-brand" href="{{site}}/home"><img src="{{base}}/MC_home2.png"></a>
 		{% if logged_in %}
 			<a class="navbar-brand visible-xs" href="{{site}}/profile/logout" title="Logout"><div class="glyphicon glyphicon-log-out"></div></a>
-			<btn class="navbar-brand visible-xs" title="Private messaging"><div class="glyphicon glyphicon-user"></div></btn>
-			<btn class="navbar-brand visible-xs" title="Notifications"><div class="glyphicon glyphicon-globe"></div></btn>
+			<btn id="show_mobile_pms" class="navbar-brand visible-xs" title="Private messaging"><div class="glyphicon glyphicon-user"></div></btn>
+			<btn id="show_mobile_notifications" class="navbar-brand visible-xs" title="Notifications"><div class="glyphicon glyphicon-globe"></div></btn>
 		{% else %}
 			<btn class="navbar-brand visible-xs" data-toggle="modal" data-target="#register_modal" title="Login"><div class="glyphicon glyphicon-log-in"></div></btn>
 		{% endif %}
@@ -73,6 +73,28 @@
 		</ul>
 	</div>
 </nav>
+{% endblock %}
+
+{% block mobile_pms %}
+<div id="mobile_pms_cont">
+	<div class="mobile_pms_nav">
+		<div class="show_open_pms col-xs-6" title="Conversations">
+			<div class="glyphicon glyphicon-envelope"></div>
+		</div>
+		<div class="show_friends col-xs-6" title="Friends">
+			<div class="glyphicon glyphicon-list"></div>
+		</div>
+	</div>
+	<div class="mobile_pms">
+	</div>
+	<div class="mobile_friend_list">
+	</div>
+</div>
+{% endblock %}
+
+{% block mobile_notifications %}
+<div id="mobile_notifications_cont">
+</div>
 {% endblock %}
 
 {% block friend_list %}

@@ -336,6 +336,24 @@ $(document).ready(function(){
 			return false;
 		}
 	});
+	$('#show_mobile_pms').click(function(){
+		if($('#mobile_pms_cont').css('display') == 'none'){
+			$(this).addClass('highlight_blue_background');
+		}else{
+			$(this).removeClass('highlight_blue_background');
+		}
+		$('.big_content_box').toggle();
+		$('#mobile_pms_cont').toggle('blind');
+	});
+	$('#show_mobile_notifications').click(function(){
+		if($('#mobile_notifications_cont').css('display') == 'none'){
+			$(this).addClass('highlight_blue_background');
+		}else{
+			$(this).removeClass('highlight_blue_background');
+		}
+		$('.big_content_box').toggle();
+		$('#mobile_notifications_cont').toggle('blind');
+	});
 	$('.register_link').click(function(){
 		$('#reg_modal_title').text('Create an account');
 	});
