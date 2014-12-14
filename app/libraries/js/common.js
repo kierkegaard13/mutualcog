@@ -336,23 +336,37 @@ $(document).ready(function(){
 			return false;
 		}
 	});
+	$('.mobile_show_friends').click(function(){
+		$(this).css('background-color','#ddd');
+		$('.mobile_show_open_pms').css('background-color','');
+		$('.mobile_pms').hide();
+		$('.mobile_friend_list').show('slide');
+	});
+	$('.mobile_show_open_pms').click(function(){
+		$(this).css('background-color','#ddd');
+		$('.mobile_show_friends').css('background-color','');
+		$('.mobile_friend_list').hide();
+		$('.mobile_pms').show('slide');
+	});
 	$('#show_mobile_pms').click(function(){
 		if($('#mobile_pms_cont').css('display') == 'none'){
 			$(this).addClass('highlight_blue_background');
+			$('#show_mobile_notifications').removeClass('highlight_blue_background');
 		}else{
 			$(this).removeClass('highlight_blue_background');
 		}
-		$('.big_content_box').toggle();
 		$('#mobile_pms_cont').toggle('blind');
+		$('#mobile_notifications_cont').hide();
 	});
 	$('#show_mobile_notifications').click(function(){
 		if($('#mobile_notifications_cont').css('display') == 'none'){
 			$(this).addClass('highlight_blue_background');
+			$('#show_mobile_pms').removeClass('highlight_blue_background');
 		}else{
 			$(this).removeClass('highlight_blue_background');
 		}
-		$('.big_content_box').toggle();
 		$('#mobile_notifications_cont').toggle('blind');
+		$('#mobile_pms_cont').hide();
 	});
 	$('.register_link').click(function(){
 		$('#reg_modal_title').text('Create an account');
@@ -407,6 +421,12 @@ $(document).ready(function(){
 		module.socket.emit('request_answered',{type:type,user_id:user_id,accepted:0});
 	});
 	$('body').on('click','.pm_remove',function(){
+		$(this).parent().parent().remove();
+		var pm_info = $(this).parent().parent().attr('id').split('_');
+		module.socket.emit('leave_pm',{pm_id:pm_info[2],friend_id:pm_info[1]});
+		return false;
+	});
+	$('body').on('click','.mobile_pm_remove',function(){
 		$(this).parent().parent().remove();
 		var pm_info = $(this).parent().parent().attr('id').split('_');
 		module.socket.emit('leave_pm',{pm_id:pm_info[2],friend_id:pm_info[1]});

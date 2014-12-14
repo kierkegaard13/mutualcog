@@ -594,18 +594,22 @@ a.grey_link {
   height:48px;
   border-bottom:solid 1px #ddd;
 }
-.show_open_pms {
-  padding:10px 14px 10px 15px;
+.mobile_notifications_nav {
+  text-align:center;
+  font-size:20px;
+  cursor:pointer;
+  height:48px;
+  border-bottom:solid 1px #ddd;
+}
+.mobile_nav_el_left {
   border-right:solid 1px #ddd;
+}
+.mobile_nav_el{
+  padding:10px 14px 10px 15px;
   transition:background-color .5s;
   -webkit-transition:background-color .5s;
 }
-.show_friends {
-  padding:10px 15px;
-  transition:background-color .5s;
-  -webkit-transition:background-color .5s;
-}
-.show_open_pms:hover, .show_friends:hover {
+.mobile_nav_el:hover {
   background-color:#ddd;
 }
 .friend_status{
@@ -624,6 +628,21 @@ a.grey_link {
   -webkit-transition:background-color .5s,color .5s;
 }
 .friend_box:hover {
+  color:@dark_text_primary;
+  background-color:#ddd;
+  cursor:pointer;
+}
+.mobile_friend_box {
+  position:relative;
+  padding:10px;
+  padding-left:15px;
+  border-bottom:solid 1px #ddd;
+  font-size:14px;
+  overflow:hidden;
+  transition:background-color .5s,color .5s;
+  -webkit-transition:background-color .5s,color .5s;
+}
+.mobile_friend_box:hover {
   color:@dark_text_primary;
   background-color:#ddd;
   cursor:pointer;
@@ -659,6 +678,36 @@ a.grey_link {
 .pm_list_footer:hover {
   cursor:pointer;
   background-color:@highlight_blue;
+}
+.mobile_pm_status{
+  position:absolute;
+  left:5px;
+  top:18px;
+  margin-left:5px;
+}
+.mobile_pm_remove {
+  float:right;
+  color:@dark_text_primary;
+  top:4px;
+  transition:color .5s;
+  -webkit-transition:color .5s;
+}
+.mobile_pm_remove:hover {
+  color:@brighter_red;
+}
+.mobile_pm_cont {
+  width:100%;
+  transition:background-color .5s;
+  -webkit-transition:background-color .5s;
+}
+.mobile_pm_cont:hover {
+  background-color:#ddd;
+}
+.mobile_pm {
+  padding:10px;
+  position:relative;
+  border-bottom:1px solid #ddd;
+  cursor:pointer;
 }
 .pm_name {
   color:white;
