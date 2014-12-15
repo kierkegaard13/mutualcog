@@ -20,11 +20,8 @@ function getUniqueSerialNumber($serial_number=null){
 	$serial->serial_id = $serial_number;
 	$temp = $serial->findAll();
 	if($temp){  //serial number exists
-		$curr_date = date('Y:m:d:H:i');
-		list($year,$month,$day,$hour,$minute) = explode(':',$curr_date);
-		$temp_date = date('Y:m:d:H:i',strtotime($temp->updated_at));
-		list($t_year,$t_month,$t_day,$t_hour,$t_minute) = explode(':',$temp_date);
-		if(($year > $t_year || $month > $t_month || $day > $t_day || ($hour * 60 + $minute) > ($t_hour * 60 + $t_minute) + 721)){
+		/* if temp is more than 8 hours old */
+		if(abs($this->compareTimes($temp->updated_at)) > 721){
 			$temp->ip_address = Request::getClientIp();
 			$temp->welcomed = 0;
 			$temp->save();

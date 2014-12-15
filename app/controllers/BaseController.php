@@ -46,6 +46,44 @@ class BaseController extends Controller {
 		View::share('color_arr',array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#000'));
 	}
 
+	public function compareTimes($time1, $format = 'minutes', $time2 = null){
+		$time_diff = 0;
+		$time1 = date('Y:W:w:H:i',strtotime($time1));
+		if($time2){
+			$time2 = date('Y:W:w:H:i',strtotime($time2));
+		}else{
+			$time2 = date('Y:W:w:H:i');
+		}
+		list($year1,$week1,$day1,$hour1,$minute1) = explode(':',$time1);
+		list($year2,$week2,$day2,$hour2,$minute2) = explode(':',$time2);
+		$year_diff = ($year1 - $year2) * 525949;
+		$week_diff = ($week1 - $week2) * 10080;
+		$day_diff = ($day1 - $day2) * 1440;
+		$hour_diff = ($hour1 - $hour2) * 60;
+		$minute_diff = $minute1 - $minute2;
+		$time_diff = $year_diff + $week_diff + $day_diff + $hour_diff + $minute_diff;
+		/* test if time1 > time2 
+		$years_eq = $year1 == $year2;
+		$weeks_eq = $week1 == $week2;
+		$days_eq = $day1 == $day2;
+		$hours_eq = $hour1 == $hour2;
+		if($year1 > $year2 || ($years_eq && ($week1 > $week2 || ($weeks_eq && ($day1 > $day2 || ($days_eq && ($hour1 > $hour2 || ($hours_eq && $minute1 > $minute2)))))))){
+		}else{
+		}
+		*/
+		if($format == 'minutes'){
+			return $time_diff;
+		}else if($format == 'hours'){
+			return $time_diff/60;
+		}else if($format == 'days'){
+			return $time_diff/1440;
+		}else if($format == 'weeks'){
+			return $time_diff/10080;
+		}else{
+			return $time_diff/525949;
+		}
+	}
+
 	public function youtubeLogo(){
 		return $this->base_url . '/YouTube-logo-full_color.png';
 	}

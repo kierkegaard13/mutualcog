@@ -85,14 +85,13 @@ $(document).ready(function(){
 	});
 	var showing = 0;
 	var hovering = 0;
-	$('#permalink').tooltip();
-	$('#show_users').tooltip();
-	$('#stop_scroll').tooltip();
-	$('#pause_chat').tooltip();
-	$('#mod_user').tooltip();
-	$('#warn_user').tooltip();
-	$('#kick_user').tooltip();
-	$('#permalink').click(function(e){
+	$('.permalink').tooltip();
+	$('.show_users').tooltip();
+	$('.stop_scroll').tooltip();
+	$('.pause_chat').tooltip();
+	$('.warn_user').tooltip();
+	$('.kick_user').tooltip();
+	$('.permalink').click(function(e){
 		window.location.href = $(this).attr('data-page-link'); 
 	});
 	$('.chat_member_cont').on('click','.mod_user',function(){
@@ -107,7 +106,7 @@ $(document).ready(function(){
 			}
 		});
 	});
-	$('#show_users').click(function(e){
+	$('.show_users').click(function(e){
 		var chat_id = $(this).attr('data-chat-id');
 		$.ajax({
 			type:'GET',
@@ -145,7 +144,7 @@ $(document).ready(function(){
 			}
 		});
 	});
-	$('#pause_chat').click(function(){
+	$('.pause_chat').click(function(){
 		if($(this).hasClass('pause')){  /*if chat is not paused*/
 			module.socket.emit('pause_all');
 			$(this).removeClass('pause');
@@ -162,7 +161,7 @@ $(document).ready(function(){
 			$(this).attr('data-original-title','Pause chat');
 		}
 	});
-	$('#warn_user').click(function(){
+	$('.warn_user').click(function(){
 		var user = $('#mssg_cont_' + module.clicked_on).find('.mssg_op').attr('data-author');
 		if(user == module.user_tracker || module.clicked_on == -1){
 			return false;
@@ -170,7 +169,7 @@ $(document).ready(function(){
 			module.socket.emit('warn',{user:user});
 		}
 	});
-	$('#kick_user').click(function(){
+	$('.kick_user').click(function(){
 		var user = $('#mssg_cont_' + module.clicked_on).find('.mssg_op').attr('data-author');
 		if(user == module.user_tracker || module.clicked_on == -1){
 			return false;
@@ -178,7 +177,7 @@ $(document).ready(function(){
 			module.socket.emit('kick',{user:user});
 		}
 	});
-	$('#stop_scroll').click(function(){
+	$('.stop_scroll').click(function(){
 		if($(this).hasClass('highlight_red')){
 			module.stop_scroll = 0;
 			module.scroll_button_clicked = 0;
