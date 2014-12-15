@@ -266,6 +266,7 @@ io.sockets.on('connection', function(client) {
 			});
 			conn.where({user_id:client.user_id,entity_id:pm_info.friend_id,type:0}).get('interaction_users',function(err,rows){
 				if(err)console.log(err);
+				//TODO: Need to come up with bond function
 				conn.where({user_id:client.user_id,entity_id:pm_info.friend_id,type:0}).update('interaction_users',{bond:rows[0].bond + 1},function(err,rows){
 					if(err)console.log(err);
 				});

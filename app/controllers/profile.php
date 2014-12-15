@@ -106,24 +106,24 @@ class Profile extends BaseController {
 				$interaction_user = InteractionUsers::whereuser_id(Auth::user()->id)->whereentity_id($friend_id)->wheretype(0)->first();
 				if($interaction_user){
 					$interaction_user->friended = 1;
-					$interaction_user->bond = $interaction_user->bond + 50;
+					$interaction_user->bond = 1;
 					$interaction_user->save();
 					$interaction_friend = InteractionUsers::whereentity_id(Auth::user()->id)->whereuser_id($friend_id)->wheretype(0)->first();
 					$interaction_friend->friended = 1;
-					$interaction_friend->bond = $interaction_user->bond + 50;
+					$interaction_friend->bond = 1;
 					$interaction_friend->save();
 				}else{
 					$inter_user = new InteractionUsers();
 					$inter_user->user_id = Auth::user()->id;
 					$inter_user->entity_id = $friend_id;
 					$inter_user->friended = 1;
-					$inter_user->bond = 50;
+					$inter_user->bond = 1;
 					$inter_user->save();
 					$inter_friend = new InteractionUsers();
 					$inter_friend->user_id = $friend_id;
 					$inter_friend->entity_id = Auth::user()->id;
 					$inter_friend->friended = 1;
-					$inter_friend->bond = 50;
+					$inter_friend->bond = 1;
 					$inter_friend->save();
 				}
 				$user_to_chat = UsersToPrivateChats::whereuser_id(Auth::user()->id)->whereentity_id($friend_id)->first();
@@ -158,41 +158,16 @@ class Profile extends BaseController {
 				$interaction_user = InteractionUsers::whereuser_id(Auth::user()->id)->whereentity_id($friend_id)->wheretype(0)->first();
 				if($interaction_user && $interaction_user->friended == 1){
 					$interaction_user->friended = 0;
-					$interaction_user->bond = $interaction_user->bond - 50;
+					$interaction_user->bond = 0;
 					$interaction_user->save();
 					$interaction_friend = InteractionUsers::whereentity_id(Auth::user()->id)->whereuser_id($friend_id)->wheretype(0)->first();
 					$interaction_friend->friended = 0;
-					$interaction_friend->bond = $interaction_user->bond - 50;
+					$interaction_friend->bond = 0;
 					$interaction_friend->save();
 				}
 			}
 		}
 		return $this->returnToCurrPage();
-	}
-
-	public function getProfileVisit(){
-		if(Auth::check()){
-			$profile_id = Input::get('profile_id');
-			if(Auth::user()->id != $profile_id){
-				$interaction = InteractionUsers::whereuser_id(Auth::user()->id)->whereentity_id($profile_id)->wheretype(0)->first();
-				if($interaction){
-					$interaction->bond = $interaction->bond + 5;
-					$interaction->save();
-				}else{
-					$inter_user = new InteractionUsers();
-					$inter_user->user_id = Auth::user()->id;
-					$inter_user->entity_id = $profile_id;
-					$inter_user->bond = 5;
-					$inter_user->save();
-					$inter_friend = new InteractionUsers();
-					$inter_friend->user_id = $profile_id;
-					$inter_friend->entity_id = Auth::user()->id;
-					$inter_friend->bond = 5;
-					$inter_friend->save();
-				}
-			}
-		}
-		return 1;
 	}
 
 	public function postAbout(){

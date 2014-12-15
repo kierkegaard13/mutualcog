@@ -336,6 +336,30 @@ $(document).ready(function(){
 			return false;
 		}
 	});
+	$('.mobile_show_friend_requests').click(function(){
+		$(this).css('background-color','#ddd');
+		$('.mobile_show_mssg_requests').css('background-color','');
+		$('.mobile_show_global_requests').css('background-color','');
+		$('.mobile_mssg_requests').hide();
+		$('.mobile_global_requests').hide();
+		$('.mobile_friend_requests').show('slide');
+	});
+	$('.mobile_show_mssg_requests').click(function(){
+		$(this).css('background-color','#ddd');
+		$('.mobile_show_friend_requests').css('background-color','');
+		$('.mobile_show_global_requests').css('background-color','');
+		$('.mobile_friend_requests').hide();
+		$('.mobile_global_requests').hide();
+		$('.mobile_mssg_requests').show('slide');
+	});
+	$('.mobile_show_global_requests').click(function(){
+		$(this).css('background-color','#ddd');
+		$('.mobile_show_friend_requests').css('background-color','');
+		$('.mobile_show_mssg_requests').css('background-color','');
+		$('.mobile_mssg_requests').hide();
+		$('.mobile_friend_requests').hide();
+		$('.mobile_global_requests').show('slide');
+	});
 	$('.mobile_show_friends').click(function(){
 		$(this).css('background-color','#ddd');
 		$('.mobile_show_open_pms').css('background-color','');
