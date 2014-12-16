@@ -1,7 +1,16 @@
 {% extends 'home_layout.twig' %}
 {% use 'common.twig' %}
+{% use 'home_common.twig' %}
 
 {% block header %}
+	{{parent()}}
+{% endblock %}
+
+{% block modals %}
+	{{parent()}}
+{% endblock %}
+
+{% block home_modals %}
 	{{parent()}}
 {% endblock %}
 
@@ -45,9 +54,9 @@
 				<div class="content_left">
 					<div class="content side_content" id="create_new_mssg">
 <form method="post" action="{{site}}/chat/message/{{chat.id}}">
-	<legend>Submit a new Message</legend>
+	<legend>Submit a new comment</legend>
 	<textarea rows="4" name="mssg_content" maxlength="{{max_static_length}}"></textarea>
-	<button type="submit" class="btn btn-primary" style="width:100%;">Send Message</button>
+	<button type="submit" class="btn btn-primary" style="width:100%;">Submit comment</button>
 </form>
 					</div>
                                 </div>
@@ -144,7 +153,7 @@
 {% if not chat.live %}
 <form method="post" class="visible-xs" action="{{site}}/chat/message/{{chat.id}}">
 	<textarea rows="4" name="mssg_content" maxlength="{{max_static_length}}"></textarea>
-	<button type="submit" class="btn btn-sm btn-primary">Send Message</button>
+	<button type="submit" class="btn btn-sm btn-primary">Submit comment</button>
 </form>
 {% endif %}
 </div>
@@ -155,7 +164,7 @@
 <form method="post" id="reply_form" class="reply_forms" action="{{site}}/chat/message/{{chat.id}}">
 	<input type="hidden" name="reply_to" id="reply_to">
 	<textarea rows="3" name="mssg_content" maxlength="{{max_static_length}}"></textarea>
-	<button type="submit" class="btn btn-sm btn-primary">Send Message</button>
+	<button type="submit" class="btn btn-sm btn-primary">Submit comment</button>
 </form>
 </div>
 <div class="big_content_box" style="margin-top:15px;margin-bottom:15px;">

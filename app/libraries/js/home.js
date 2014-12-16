@@ -127,8 +127,17 @@ $(document).ready(function(){
 	});
 	$('#community_edit').click(function(e){
 		var community_cont = $(this).parents('.side_content');
+		console.log(community_cont.find('#community_id_str').text());
 		$('#input_community_id').val(community_cont.find('#community_id_str').text());
-		$('#input_community_info').val(community_cont.find('#community_info_str').text());
+		$('#edit_community_info').val(community_cont.find('#community_info_str').text());
+		$('#input_community_desc').val(community_cont.find('#community_desc_str').text());
+		$('#community_edit_modal').modal();
+		return false;
+	});
+	$('#mobile_community_edit').click(function(e){
+		var community_cont = $('#community_edit').parents('.side_content');
+		$('#input_community_id').val(community_cont.find('#community_id_str').text());
+		$('#edit_community_info').val(community_cont.find('#community_info_str').text());
 		$('#input_community_desc').val(community_cont.find('#community_desc_str').text());
 		$('#community_edit_modal').modal();
 		return false;

@@ -24,6 +24,9 @@
 		{% endif %}
 		{% if curr_community_id %}
 			<btn class="navbar-brand visible-xs" data-toggle="modal" data-target="#tag_info_modal" title="Community info"><div class="glyphicon glyphicon-info-sign"></div></btn>
+			{% if user.community_admin == curr_community_id and curr_community_id | length > 0 %}
+				<btn class="navbar-brand visible-xs" id="mobile_community_edit" data-toggle="modal" data-target="community_edit_modal" title="Manage community"><div class="glyphicon glyphicon-cog"></div></btn>
+			{% endif %}
 		{% endif %}
 	</div>
 	<div class="collapse navbar-collapse" id="mutual_navbar" style="position:relative;">
@@ -43,6 +46,11 @@
 			</div>
 		{% endif %}
 		<ul class="nav navbar-nav nav_right {% if not search_page %}nav_pad_r{% endif %}">
+			{% if logged_in %}
+				<li class="visible-xs">
+					<a href="{{site}}/u/{{user.name}}">My profile</a>
+				</li>
+			{% endif %}
 			{% for community in communities %}
 				{% if curr_community.name == community.name %}
 					<li class="visible-xs">
@@ -52,7 +60,7 @@
 							{% else %}
 								<a href="{{site}}/community/subscribe/{{community.id}}" class="glyphicon glyphicon-plus nav_glyph" title="Subscribe"></a>
 							{% endif %}
-							<a href="{{site}}/c/{{community.name}}">{{community.name}}</a>
+							<a class="mobile_com" href="{{site}}/c/{{community.name}}">{{community.name}}</a>
 						</div>
 					</li>
 					<li class="hidden-xs"> <a class="highlight_light_blue" href="{{site}}/c/{{community.name}}">{{community.name}}</a> </li>
@@ -311,137 +319,6 @@
 			</div>
 			<div class="modal-footer">
 				<button class="btn btn-success" id="save_details">Save Details</button>
-			</div>
-		</div>
-	</div>	
-</div>
-<div class="modal fade" id="chat_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="chat_modalLabel">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Create a Chat</h4>
-			</div>
-			<div class="modal-body">
-				<form method="post" action="{{site}}/chat/new-chat" class="mutual_form" id="home_form_v2">
-				<fieldset>
-					<div id="title_group_v2" class="form-group">
-						<label for="Title_v2">Title</label>
-						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Title must be have between 5 and {{max_title_length}} characters" data-trigger="focus" type="text" name="title" id="Title_v2" placeholder="What's this chat about?" maxlength="{{max_title_length}}">
-					</div>
-					<div id="link_group_v2" class="form-group">
-						<label for="Link_v2">Link <small>(optional)</small></label>
-						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Not a valid url" data-trigger="focus" type="text" name="link" id="Link_v2" placeholder="Add a link (optional)">
-					</div>
-					<div id="communities_group_v2" class="form-group">
-						{% if not curr_community_id %}
-							<label for="Communities_v2">Communities</label>
-						{% endif %}
-						<input class="form-control communities_input" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Communities" data-placement="bottom" type="{% if curr_community_id %}hidden{% else %}text{% endif %}" name="communities" id="Communities_v2" placeholder="Use spaces to separate communities (max: 5)" autocomplete="off" {% if curr_community_id %}value="#{{curr_community.name}}"{% endif %} maxlength="120">
-					</div>
-					<div id="description_group" class="form-group">
-						<label for="description">Description <small>(optional)</small></label>
-						<textarea name="description" data-toggle="tooltip" data-placement="top" data-original-title="Descriptions have a max length of {{max_static_length}} characters" data-trigger="focus" class="form-control" id="description" rows="5" maxlength="{{max_static_length}}"></textarea>
-					</div>
-					<div class="row">
-						<div id="live_group" class="checkbox col-xs-6">
-							<label>
-								<input type="checkbox" name="live_status" id="live_status_v2" checked> Live <div class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-original-title="Live chats don't need to be refreshed to see new comments but comments are only sorted by time" style="margin-left:5px;"></div>
-							</label>
-						</div>
-						<div id="nsfw_group" class="checkbox col-xs-6" style="margin-top:10px;">
-							<label>
-								<input type="checkbox" name="nsfw" id="nsfw_v2"> nsfw <div class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-original-title="NSFW posts don't show up on the front page and only show pictures in nsfw communities" style="margin-left:5px;"></div>
-							</label>
-						</div>
-					</div>
-				</fieldset>
-			</div>
-			<div class="modal-footer">
-				<button class="btn btn-primary" type="Submit">Create</button>
-				<button type="button" class="btn" data-dismiss="modal">Close</button>
-				</form>
-			</div>
-		</div>
-	</div>	
-</div>
-<div class="modal fade" id="community_create_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="community_create_modalLabel">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Create Community</h4>
-			</div>
-			<div class="modal-body">
-				<form method="post" action="{{site}}/community/create-community" class="mutual_form" id="community_create_form">
-				<fieldset>
-					<div id="create_name_group" class="form-group">
-						<label for="name">Community Name</label>
-						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Community name must be unique" data-trigger="focus" type="text" name="community_name" id="create_community_name" placeholder="Communities are between 3 and 20 characters" maxlength="20">
-					</div>
-					{% if user.is_admin %}
-					<div id="create_tier_group" class="form-group">
-						<label for="tier">Community Tier</label>
-						<select class="form-control">
-							<option value="0">Community</option>
-							<option value="1">Category</option>
-						</select>
-					</div>
-					{% endif %}
-					<div id="create_desc_group" class="form-group">
-						<label for="description">Community Description (Doesn't show up in sidebar)</label>
-						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Description must be a max of {{max_description_length}} characters" data-trigger="focus" type="text" name="description" id="create_community_desc" placeholder="Write a very short description of the content in your community" maxlength="{{max_description_length}}">
-					</div>
-					<div id="create_info_group" class="form-group">
-						<label for="info">Community Info (Sidebar Description, Posting Rules, etc)</label>
-						<textarea class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Info must be a max of {{max_info_length}} characters" data-trigger="focus" name="info" id="create_community_info" rows=8 maxlength="{{max_info_length}}"></textarea>
-					</div>
-				</fieldset>
-				<small>You will be able to request mods after community creation by clicking the manage community button in the sidebar</small>
-			</div>
-			<div class="modal-footer">
-				<button class="btn btn-primary" type="Submit">Save</button>
-				<button type="button" class="btn" data-dismiss="modal">Close</button>
-				</form>
-			</div>
-		</div>
-	</div>	
-</div>
-<div class="modal fade" id="community_edit_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="community_edit_modalLabel">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Edit Community</h4>
-			</div>
-			<div class="modal-body">
-				<form method="post" action="{{site}}/community/edit-community" class="mutual_form" id="community_edit_form">
-				<fieldset>
-					<div id="community_id_group" class="form-group">
-						<input class="form-control" type="hidden" name="community_id" id="input_community_id" maxlength="20">
-					</div>
-					<div id="community_desc_group" class="form-group">
-						<label for="description">Community Description (Doesn't show up in sidebar)</label>
-						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Description must be a max of {{max_description_length}} characters" data-trigger="focus" type="text" name="description" id="edit_community_desc" placeholder="Write a very short description of the content in your community" maxlength="{{max_description_length}}">
-					</div>
-					<div id="community_info_group" class="form-group">
-						<label for="info">Community Info (Sidebar Description, Posting Rules, etc)</label>
-						<textarea class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Info must be a max of {{max_info_length}} characters" data-trigger="focus" name="info" id="edit_community_info" rows=10 maxlength="{{max_info_length}}"></textarea>
-					</div>
-					<div id="mod_info_group" class="form-group">
-						<label for="mods" style="width:100%;">Appoint mods (max:20) <small>*must be subscribed </small><small id="mod_request_sent" class="green_color pull-right" style="display:none;">Request Sent</small></label>
-						<input class="form-control" data-toggle="popover" data-user-id="" data-community-id="{{curr_community_id}}" data-community-name="{{curr_community.name}}" data-content="<div>Some content</div>" data-container="body" data-placement="auto top" type="text" name="mods" id="mod_input" placeholder="Use enter or mouse to select from list" autocomplete="off" maxlength="{{max_user_length}}">
-					</div>
-					<div id="admin_info_group" class="form-group">
-						<label for="admins" style="width:100%;">Appoint new admin <small>*must be subscribed </small><small id="admin_request_sent" class="green_color pull-right" style="display:none;">Request Sent</small></label>
-						<input class="form-control" data-toggle="popover" data-user-id="" data-community-id="{{curr_community_id}}" data-community-name="{{curr_community.name}}" data-content="<div>Some content</div>" data-container="body" data-placement="auto top" type="text" name="admins" id="admin_input" placeholder="Use enter or mouse to select from list" autocomplete="off" maxlength="{{max_user_length}}">
-					</div>
-				</fieldset>
-			</div>
-			<div class="modal-footer">
-				<button class="btn btn-primary" type="Submit">Save</button>
-				<button type="button" class="btn" data-dismiss="modal">Close</button>
-				</form>
 			</div>
 		</div>
 	</div>	

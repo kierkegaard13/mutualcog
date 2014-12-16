@@ -1,5 +1,6 @@
 {% extends 'home_layout.twig' %}
 {% use 'common.twig' %}
+{% use 'home_common.twig' %}
 
 {% block header %} 
 	{{parent()}}
@@ -18,6 +19,10 @@
 {% endblock %}
 
 {% block modals %}
+	{{parent()}}
+{% endblock %}
+
+{% block home_modals %}
 	{{parent()}}
 {% endblock %}
 
