@@ -682,18 +682,8 @@ a.grey_link {
 .mobile_pm_status{
   position:absolute;
   left:5px;
-  top:18px;
+  top:16px;
   margin-left:5px;
-}
-.mobile_pm_remove {
-  float:right;
-  color:@dark_text_primary;
-  top:4px;
-  transition:color .5s;
-  -webkit-transition:color .5s;
-}
-.mobile_pm_remove:hover {
-  color:@brighter_red;
 }
 .mobile_pm_cont {
   width:100%;
@@ -718,9 +708,38 @@ a.grey_link {
 .pm_name:hover {
   color:white;
 }
+.mobile_pm_name {
+  margin-left:18px;
+  color:@dark_text_primary;
+}
+.mobile_pm_name:hover {
+  color:@dark_text_primary;
+}
+.mobile_pm_return {
+  float:right;
+  color:@dark_text_primary;
+  margin:-12px -10px 0 0;
+  padding:12px 15px 12px 15px;
+  border-left:solid 1px #ddd;
+  top:3px;
+  transition:color .5s;
+  -webkit-transition:color .5s;
+}
 .pm_remove {
   float:right;
   color:white;
+}
+.mobile_pm_remove {
+  margin:-10px -5px 0 0;
+  padding:10px;
+  float:right;
+  color:@dark_text_primary;
+  top:3px;
+  transition:color .5s;
+  -webkit-transition:color .5s;
+}
+.mobile_pm_remove:hover {
+  color:@brighter_red;
 }
 .pm_status{
   position:absolute;
@@ -731,6 +750,15 @@ a.grey_link {
   box-shadow:0 -3px 6px #999;
   margin-right:5px;
   display:inline-block;
+}
+.mobile_pm_window {
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:10;
+  background-color:#fff; 
 }
 .pm_header {
   position:relative;
@@ -748,6 +776,27 @@ a.grey_link {
 }
 .pm_header:hover {
   background-color:darken(@navbar_color,10%);
+}
+.mobile_pm_header {
+  color:@dark_text_primary;
+  padding:10px;
+  line-height:20px;
+  cursor:pointer;
+  border-bottom:solid 1px #ddd;
+  transition:background-color .5s;
+  -webkit-transition:background-color .5s;
+}
+.mobile_pm_header:hover {
+  background-color:#ddd;
+}
+.mobile_pm_body {
+  background-color: #222;
+  padding: 5px;
+  position: absolute;
+  width: 100%;
+  top: 41px;
+  left: 0;
+  bottom: 40px;
 }
 .pm_body {
   overflow:auto;
@@ -784,6 +833,11 @@ a.grey_link {
   padding:2px 10px 2px 10px;
   font-size:15px;
   border-radius:2px; 
+}
+.mobile_pm_text {
+  position:absolute;
+  bottom:0;
+  left:0;
 }
 .pm_text {
   border:none;

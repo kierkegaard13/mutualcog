@@ -87,7 +87,7 @@
 	</div>
 	<div class="mobile_pms">
 		{% for pm in user.privateChats %}
-			<div class="mobile_pm_cont" id="pm_{{pm.friends[0].id}}_{{pm.id}}">
+			<div class="mobile_pm_cont" id="ident_pm_{{pm.friends[0].id}}_{{pm.id}}">
 				<div class="mobile_pm">
 					{% if pm.friends[0].online_score < 600 %}
 					<div class="green_ball mobile_pm_status"></div>
@@ -98,6 +98,9 @@
 					{% endif %}
 					<div class="glyphicon glyphicon-remove mobile_pm_remove"></div>
 					<div style="color:#333;margin-left:18px;">{{pm.friends[0].name}}</div>
+					<div style="color:#777;margin-left:20px;font-size:15px;">
+						{{pm.messages[pm.messages | length - 1].message | raw}}
+					</div>
 				</div>
 			</div>
 		{% endfor %}
@@ -125,6 +128,37 @@
 			</div>
 		{% endfor %}
 	</div>
+	{% for pm in user.privateChats %}
+	<div class="mobile_pm_window" id="mobile_pm_{{pm.friends[0].id}}_{{pm.id}}" style="display:none;">
+		<div class="mobile_pm_header">
+			{% if pm.friends[0].online_score < 600 %}
+			<div class="green_ball mobile_pm_status"></div>
+			{% elseif pm.friends[0].online_score < 7200%}
+			<div class="yellow_ball mobile_pm_status"></div>
+			{% else %}
+			<div class="red_ball mobile_pm_status"></div>
+			{% endif %}
+			<div class="glyphicon glyphicon-arrow-left mobile_pm_return" title="Back"></div>
+			<a class="mobile_pm_name" href="{{site}}/u/{{pm.friends[0].name}}">{{pm.friends[0].name}}</a>
+		</div>
+		<div class="mobile_pm_body">
+			<div class="pm_body_mssgs">
+			{% for message in pm.messages %}
+				<div class="pm_mssg_cont">
+					<div class="pm_message {% if message.author_id == user.id %}pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;"{% else %} pull-left darker_bright_blue_background" style="margin-right:30px;margin-left:5px;"{% endif %} title="{{message.created_at}}">
+						{{message.message|raw}}
+					</div>	
+				</div>
+			{% endfor %} 
+			</div>
+			<div class="pm_body_alerts">
+				<div class="pm_mssg_alert pm_unseen" {% if not pm.pivot.unseen %}style="display:none;"{% endif %}>Not seen</div>
+				<div class="pm_mssg_alert pm_typing" style="display:none;">{{pm.friends[0].name}} is typing...</div>
+			</div>
+		</div>
+		<textarea class="mobile_pm_text" rows=1 {% if pm.pivot.visible == 2 %}style="display:none;"{% endif %}></textarea>
+	</div>
+	{% endfor %}
 </div>
 {% endblock %}
 
@@ -211,39 +245,39 @@
 {% endblock %}
 
 {% block pm_bar %}
-	<div class="pm_bar hidden-xs">
-		{% for pm in user.privateChats %}
-			<div class="pm_cont {% if pm.pivot.visible == 1 %}pm_visible" style="visibility:hidden;{% endif %}" id="pm_{{pm.friends[0].id}}_{{pm.id}}">
-				<div class="pm_header">
-					{% if pm.friends[0].online_score < 600 %}
-					<div class="green_ball pm_status"></div>
-					{% elseif pm.friends[0].online_score < 7200%}
-					<div class="yellow_ball pm_status"></div>
-					{% else %}
-					<div class="red_ball pm_status"></div>
-					{% endif %}
-					<div class="glyphicon glyphicon-remove pm_remove"></div>
-					<a class="pm_name" href="{{site}}/u/{{pm.friends[0].name}}">{{pm.friends[0].name}}</a>
-				</div>
-				<div class="pm_body" {% if pm.pivot.visible == 2 %}style="display:none;"{% endif %}>
-					<div class="pm_body_mssgs">
-					{% for message in pm.messages %}
-						<div class="pm_mssg_cont">
-							<div class="pm_message {% if message.author_id == user.id %}pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;"{% else %} pull-left darker_bright_blue_background" style="margin-right:30px;margin-left:5px;"{% endif %} title="{{message.created_at}}">
-								{{message.message|raw}}
-							</div>	
-						</div>
-					{% endfor %} 
-					</div>
-					<div class="pm_body_alerts">
-						<div class="pm_mssg_alert pm_unseen" {% if not pm.pivot.unseen %}style="display:none;"{% endif %}>Not seen</div>
-						<div class="pm_mssg_alert pm_typing" style="display:none;">{{pm.friends[0].name}} is typing...</div>
-					</div>
-				</div>
-				<textarea class="pm_text" rows=1 {% if pm.pivot.visible == 2 %}style="display:none;"{% endif %}></textarea>
+<div class="pm_bar hidden-xs">
+	{% for pm in user.privateChats %}
+		<div class="pm_cont {% if pm.pivot.visible == 1 %}pm_visible" style="visibility:hidden;{% endif %}" id="pm_{{pm.friends[0].id}}_{{pm.id}}">
+			<div class="pm_header">
+				{% if pm.friends[0].online_score < 600 %}
+				<div class="green_ball pm_status"></div>
+				{% elseif pm.friends[0].online_score < 7200%}
+				<div class="yellow_ball pm_status"></div>
+				{% else %}
+				<div class="red_ball pm_status"></div>
+				{% endif %}
+				<div class="glyphicon glyphicon-remove pm_remove"></div>
+				<a class="pm_name" href="{{site}}/u/{{pm.friends[0].name}}">{{pm.friends[0].name}}</a>
 			</div>
-		{% endfor %}
-	</div>
+			<div class="pm_body" {% if pm.pivot.visible == 2 %}style="display:none;"{% endif %}>
+				<div class="pm_body_mssgs">
+				{% for message in pm.messages %}
+					<div class="pm_mssg_cont">
+						<div class="pm_message {% if message.author_id == user.id %}pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;"{% else %} pull-left darker_bright_blue_background" style="margin-right:30px;margin-left:5px;"{% endif %} title="{{message.created_at}}">
+							{{message.message|raw}}
+						</div>	
+					</div>
+				{% endfor %} 
+				</div>
+				<div class="pm_body_alerts">
+					<div class="pm_mssg_alert pm_unseen" {% if not pm.pivot.unseen %}style="display:none;"{% endif %}>Not seen</div>
+					<div class="pm_mssg_alert pm_typing" style="display:none;">{{pm.friends[0].name}} is typing...</div>
+				</div>
+			</div>
+			<textarea class="pm_text" rows=1 {% if pm.pivot.visible == 2 %}style="display:none;"{% endif %}></textarea>
+		</div>
+	{% endfor %}
+</div>
 {% endblock %}
 
 {% block modals %}

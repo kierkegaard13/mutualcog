@@ -392,6 +392,14 @@ $(document).ready(function(){
 		$('#mobile_notifications_cont').toggle('blind');
 		$('#mobile_pms_cont').hide();
 	});
+	$('body').on('click','.mobile_pm_return',function(){
+		$(this).parents('.mobile_pm_window').hide('slide');
+	});
+	$('body').on('click','.mobile_pm_cont',function(){
+		var pm_id = 'mobile_' + $(this).attr('id').replace('ident_','');
+		console.log(pm_id);
+		$('#' + pm_id).show('slide');
+	});
 	$('.register_link').click(function(){
 		$('#reg_modal_title').text('Create an account');
 	});
@@ -455,6 +463,8 @@ $(document).ready(function(){
 		var pm_info = $(this).parent().parent().attr('id').split('_');
 		module.socket.emit('leave_pm',{pm_id:pm_info[2],friend_id:pm_info[1]});
 		return false;
+	});
+	$('body').on('click','.mobile_friend_box',function(){
 	});
 	$('body').on('click','.friend_box',function(){
 		var friend_name = $(this).attr('id').replace('friend_box_for_','');
