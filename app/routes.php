@@ -25,11 +25,25 @@ function getUniqueSerialNumber($serial_number=null){
 			$temp->ip_address = Request::getClientIp();
 			$temp->welcomed = 0;
 			$temp->save();
-			if(Auth::check()){
-				Auth::user()->serial_id = $temp->id;
-			}
 			Session::put('unique_serial',$temp->serial_id);
 			Session::put('serial_id',$temp->id);
+			if(Auth::check()){
+				Auth::user()->serial_id = $temp->id;
+				Auth::user()->disconnecting = 0;
+				Auth::user()->online = 1;
+				Auth::user()->save();
+				$node = new NodeAuth();
+				$node->serial = $serial->serial_id;
+				$node->sid = Session::getId();
+				$node->authorized = 1;
+				if($node->findAll()){
+					$node = $node->findAll();
+				}
+				$node->user_id = Auth::user()->id;
+				$node->user = Auth::user()->name;
+				$node->serial_id = $serial->id;
+				$node->save();
+			}
 			return true;
 		}
 		$serial_number = mt_rand(0,16777215);
@@ -38,14 +52,25 @@ function getUniqueSerialNumber($serial_number=null){
 	$serial->ip_address = Request::getClientIp();
 	$serial->welcomed = 0;
 	$serial->save();
+	Session::put('unique_serial',$serial->serial_id);
+	Session::put('serial_id',$serial->id);
 	if(Auth::check()){
 		Auth::user()->serial_id = $serial->id;
 		Auth::user()->disconnecting = 0;
 		Auth::user()->online = 1;
 		Auth::user()->save();
+		$node = new NodeAuth();
+		$node->serial = $serial->serial_id;
+		$node->sid = Session::getId();
+		$node->authorized = 1;
+		if($node->findAll()){
+			$node = $node->findAll();
+		}
+		$node->user_id = Auth::user()->id;
+		$node->user = Auth::user()->name;
+		$node->serial_id = $serial->id;
+		$node->save();
 	}
-	Session::put('unique_serial',$serial->serial_id);
-	Session::put('serial_id',$serial->id);
 	return true;
 }
 

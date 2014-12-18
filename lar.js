@@ -138,6 +138,8 @@ io.sockets.on('connection', function(client) {
 		client.authorized = handshake.authorized;
 	}
 
+	console.log(client.user + ' has connected');
+
 	//client variable unique to user but globals apply to all
 	client.on('room',function(room){
 		client.room = 'chat_' + sanitize(room);  //sanitize
@@ -254,6 +256,7 @@ io.sockets.on('connection', function(client) {
 	});
 
 	client.on('send_pm',function(pm_info,fn){
+		console.log(pm_info);
 		if(client.authorized && pm_info.message.length < 10000){
 			var mssg_id = 0;
 			/* Figure out if recipient has disconnected */

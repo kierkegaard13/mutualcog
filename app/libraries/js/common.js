@@ -416,6 +416,17 @@ $(document).ready(function(){
 	$('body').on('click','.mobile_pm_cont',function(){
 		var pm_id = 'mobile_' + $(this).attr('id').replace('ident_','');
 		$('#' + pm_id).show('slide');
+		$('#' + pm_id).find('.mobile_pm_body').mCustomScrollbar({theme:'light-2',callbacks:{onScroll:function(){
+			var $this = $(this);
+			var par_id = $this.parent().attr('id');
+			var scrollBottom = this.mcs.draggerTop + $this.find('.mCSB_dragger').height();
+			if(scrollBottom == $this.height()){
+				module.pm_scroll_inactive[par_id] = 0;
+			}else{
+				module.pm_scroll_inactive[par_id] = 1;
+			}
+		}}});	
+		$('#' + pm_id).find('.mobile_pm_body').mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
 	});
 	$('.register_link').click(function(){
 		$('#reg_modal_title').text('Create an account');
@@ -1442,6 +1453,12 @@ $('body').on('keyup','.pm_text',function(e){
 			}
 			if($(this).val().trim() != ""){
 				var pm_sent = processMessage($(this).val());
+				$(this).css('height','');
+				var mssg = '<div class="pm_mssg_cont tmp_message">';
+				mssg += '<div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment().format("hh:mma") + '">' + pm_sent + '</div>';
+				mssg += '</div>'; 
+				$(this).val("");
+				$('#pm_' + module.pm_info[1] + '_' + module.pm_info[2]).find('.pm_body_mssgs').append(mssg);
 				module.socket.emit('send_pm',{message:pm_sent,pm_id:module.pm_info[2],friend_id:module.pm_info[1],user_id:module.user_id},function(info){
 					var chat_cont = $('#pm_' + info.friend_id + '_' + info.pm_id);
 					var tmp_message = chat_cont.find('.tmp_message');
@@ -1451,12 +1468,6 @@ $('body').on('keyup','.pm_text',function(e){
 						chat_cont.find('.pm_unseen').show();
 					}
 				});
-				$(this).css('height','');
-				var mssg = '<div class="pm_mssg_cont tmp_message">';
-				mssg += '<div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment().format("hh:mma") + '">' + $(this).val() + '</div>';
-				mssg += '</div>'; 
-				$(this).val("");
-				$('#pm_' + module.pm_info[1] + '_' + module.pm_info[2]).find('.pm_body_mssgs').append(mssg);
 				if(module.pm_scroll_inactive[chat_cont.attr('id')] == 0 || !(chat_cont.attr('id') in module.pm_scroll_inactive)){
 					var pm_body = chat_cont.find('.pm_body');
 					window.setTimeout(function(){
@@ -1484,12 +1495,21 @@ $('body').on('keyup','.pm_text',function(e){
 	return true;
 });
 
+$('body').on('cut','.mobile_pm_text',function(e){
+	var $this = $(this);
+	var self = this;
+	window.setTimeout(function(){
+		$this.height(0);
+		$this.height(self.scrollHeight - 20);
+	},0);
+});
+
 $('body').on('paste','.mobile_pm_text',function(e){
 	var $this = $(this);
 	var self = this;
 	window.setTimeout(function(){
 		$this.height(0);
-		$this.height(self.scrollHeight - 10);
+		$this.height(self.scrollHeight - 20);
 	},0);
 });
 
@@ -1497,13 +1517,13 @@ $('body').on('keydown','.mobile_pm_text',function(e){
 	pm_keys.push(e.which);
 	var $this = $(this);
 	var self = this;
-	if(e.which == 13 && $(this).val().trim() == ""){
+	if(e.which == 13 && $(this).val().trim() == ""){  /* 13 is enter */
 		return false;
 	}
 	window.setTimeout(function(){
 		if((e.which != 13 || pm_keys.indexOf(16) != -1) && $this.val().trim() != ""){
 			$this.height(0);
-			$this.height(self.scrollHeight - 10);
+			$this.height(self.scrollHeight - 20);
 		}
 	},0);
 });
@@ -1525,8 +1545,14 @@ $('body').on('keyup','.mobile_pm_text',function(e){
 			}
 			if($(this).val().trim() != ""){
 				var pm_sent = processMessage($(this).val());
+				$(this).css('height','');
+				var mssg = '<div class="pm_mssg_cont tmp_message">';
+				mssg += '<div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment().format("hh:mma") + '">' + pm_sent + '</div>';
+				mssg += '</div>'; 
+				$(this).val("");
+				$('#mobile_pm_' + module.pm_info[2] + '_' + module.pm_info[3]).find('.pm_body_mssgs').append(mssg);
 				module.socket.emit('send_pm',{message:pm_sent,pm_id:module.pm_info[3],friend_id:module.pm_info[2],user_id:module.user_id},function(info){
-					var chat_cont = $('#pm_' + info.friend_id + '_' + info.pm_id);
+					var chat_cont = $('#mobile_pm_' + info.friend_id + '_' + info.pm_id);
 					var tmp_message = chat_cont.find('.tmp_message');
 					tmp_message.find('.pm_message').html(info.message);
 					tmp_message.attr('class',tmp_message.attr('class').replace('tmp_message',''));
@@ -1534,12 +1560,6 @@ $('body').on('keyup','.mobile_pm_text',function(e){
 						chat_cont.find('.pm_unseen').show();
 					}
 				});
-				$(this).css('height','');
-				var mssg = '<div class="pm_mssg_cont tmp_message">';
-				mssg += '<div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment().format("hh:mma") + '">' + $(this).val() + '</div>';
-				mssg += '</div>'; 
-				$(this).val("");
-				$('#mobile_pm_' + module.pm_info[2] + '_' + module.pm_info[3]).find('.pm_body_mssgs').append(mssg);
 				if(module.pm_scroll_inactive[chat_cont.attr('id')] == 0 || !(chat_cont.attr('id') in module.pm_scroll_inactive)){
 					var pm_body = chat_cont.find('.mobile_pm_body');
 					window.setTimeout(function(){
