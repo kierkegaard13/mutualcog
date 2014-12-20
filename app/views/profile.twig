@@ -68,26 +68,30 @@
 	<li class="active"><a href="#posts" data-toggle="tab" style="color:#075de9">Posts</a></li>
 	<li><a href="#comments" data-toggle="tab" style="color:#075de9">Comments</a></li>
 	<li><a href="#friendships" data-toggle="tab" style="color:#075de9">Friends</a></li>
+	{% if logged_in and user.id == profile.id %}
+		<li><a href="#rewards" data-toggle="tab" style="color:#075de9">Rewards</a></li>
+	{% endif %}
 </ul>
 
 <div id="tab_content" class="tab-content">
 
 <div class="tab-pane fade active in" id="posts">
-	<div class="frame" style="height:620px;padding:0;white-space:normal;">
-		<div id="chat_list">
-			{% for chat in profile.chats %}
-				{% block chat_box %}
-					{{parent()}}
-				{% endblock %}
-			{% endfor %}
-		</div>
+	<div id="chat_list">
+		{% for chat in chats %}
+			{% block chat_box %}
+				{{parent()}}
+			{% endblock %}
+		{% endfor %}
+	</div>
+	<div class="page_links">
+		{{chats.links|raw}}
 	</div>
 </div>
 
 <div class="tab-pane fade in" id="comments">
 	<div class="frame" id="chat_messages" style="height:620px;padding:0;white-space:normal;">
 		<div id="chat_display">
-			{% for message in profile.messages %}
+			{% for message in messages %}
 				<div class='p_chat_mssg' id="{{message.id}}">
 					<span class="mssg_vote_box">
 						{% if message.id in mssg_upvoted %}
@@ -149,6 +153,9 @@
 			{% endfor %}
 		</div>
 	</div>
+	<div class="page_links">
+		{{messages.links|raw}}
+	</div>
 </div>
 
 <div class="tab-pane fade in" id="friendships">
@@ -162,6 +169,12 @@
 			</div>
 		{% endfor %}
 	</div>
+	<div class="page_links">
+		{{friendships.links|raw}}
+	</div>
+</div>
+
+<div class="tab-pane fade in" id="rewards">
 </div>
 
 </div>
