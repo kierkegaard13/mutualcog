@@ -93,7 +93,7 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 	}
 
 	public function rooms(){
-		return $this->belongsToMany('Chats','members_to_chats','user_id','chat_id');
+		return $this->belongsToMany('Chats','users_to_chats','user_id','chat_id');
 	}
 
 	public function friendships(){
@@ -101,7 +101,7 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 	}
 
 	public function friendshipsP(){
-		return InteractionUsers::wheretype(0)->wherefriended(1)->whereuser_id($this->id)->orderBy(DB::raw('bond + bond * timestampdiff(minute,"2013-1-1 12:00:00",interaction_users.updated_at)/45000'),'desc')->paginate(25);
+		return InteractionUsers::wheretype(0)->wherefriended(1)->whereuser_id($this->id)->orderBy(DB::raw('bond + bond * timestampdiff(minute,"2013-1-1 12:00:00",interaction_users.updated_at)/45000'),'desc')->paginate(50);
 	}
 
 	public function subscriptions(){
@@ -151,6 +151,10 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 
 	public function friendNotifications(){
 		return $this->hasMany('Notifications','user_id')->wheretype(2)->take(5);
+	}
+
+	public function rewards(){
+		return $this->belongsToMany('Rewards','users_to_rewards','user_id','reward_id');
 	}
 
 	public function online_score(){

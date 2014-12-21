@@ -135,10 +135,9 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">{{curr_community.name}}</h4>
+				<div><a href="{{site}}/c/{{curr_community.name}}" style="font-size:18px;color:#333;">{{curr_community.name}}{% if user %}{% if community_admin.user_id == user.id %} (Admin) {% elseif user.id in curr_community.moderators %} (Mod) {% endif %}{% endif %}</a></div>
 			</div>
 			<div class="modal-body">
-				<div><a href="{{site}}/c/{{curr_community.name}}" style="font-size:18px;color:#333;">{{curr_community.name}}{% if user %}{% if community_admin.user_id == user.id %} (Admin) {% elseif user.id in curr_community.moderators %} (Mod) {% endif %}{% endif %}</a></div>
 				<div style="margin-top:5px;">
 					{% if user_subscribed %}
 						<span><a href="{{site}}/community/unsubscribe/{{curr_community.id}}" class="btn btn-danger" style="width:100%;">Unsubscribe</a></span>

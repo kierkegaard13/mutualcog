@@ -154,7 +154,11 @@
 			{% for message in pm.messages %}
 				<div class="pm_mssg_cont">
 					<div class="pm_message {% if message.author_id == user.id %}pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;"{% else %} pull-left darker_bright_blue_background" style="margin-right:30px;margin-left:5px;"{% endif %} title="{{message.created_at}}">
-						{{message.message|raw}}
+						{% if message | length > 50 %}
+							{{message.message|raw|slice(0,50)}}...
+						{% else %}
+							{{message.message|raw}}
+						{% endif %}
 					</div>	
 				</div>
 			{% endfor %} 

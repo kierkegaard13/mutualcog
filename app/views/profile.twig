@@ -55,7 +55,7 @@
 {% elseif friended %}
 	<a class="btn btn-danger add_friend" href="{{site}}/profile/unfriend/{{profile.id}}"><div class="glyphicon glyphicon-minus" id="request_glyph"> </div> Remove Friend</a>
 {% endif %}
-<div>Posts: {{profile.posts | length}}</div>
+<div>Posts: {{profile.chats | length}}</div>
 <div>Comments: {{profile.messages | length}}</div>
 <div>Level: {{profile.level}}</div>
 <div>Cognizance: {{profile.cognizance}}/{{profile.next_level}}
@@ -89,69 +89,67 @@
 </div>
 
 <div class="tab-pane fade in" id="comments">
-	<div class="frame" id="chat_messages" style="height:620px;padding:0;white-space:normal;">
-		<div id="chat_display">
-			{% for message in messages %}
-				<div class='p_chat_mssg' id="{{message.id}}">
-					<span class="mssg_vote_box">
-						{% if message.id in mssg_upvoted %}
-							<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
-							<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
-							<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
-						{% elseif message.id in mssg_downvoted %}
-							<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
-							<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
-							<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
-						{% else %}
-							<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
-							<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
-							<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
-						{% endif %}
-					</span>
-					<span class="chat_id_{{message.id}} p_mssg_body" id="{{message.chat_id}}">
-						<strong class='mssg_op' id="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}} (<span class='response_count' id="{{message.id}}">{{message.responses}}</span>)</strong> : {{message.message | raw}}
-					</span>
-					<div class="p_time_box">
-						{% set time_passed = server_time|date('U') - message.created_at|date('U') %}
-						<div class='p_time' id="{{message.created_at}}">
-							{% if time_passed < 45 %}
-								seconds ago
-							{% elseif time_passed < 2700 %}
-								{% if time_passed < 90 %}
-									a minute ago
-								{% else %}
-									{{(time_passed/60)|round}} minutes ago
-								{% endif %}
-							{% elseif time_passed < 79200%}
-								{% if time_passed < 5400 %}
-									an hour ago
-								{% else %}
-									{{(time_passed/3600)|round}} hours ago
-								{% endif %}
-							{% elseif time_passed < 2160000 %}
-								{% if time_passed < 129600 %}
-									a day ago
-								{% else %}
-									{{(time_passed/86400)|round}} days ago
-								{% endif %}
-							{% elseif time_passed < 29808000 %}
-								{% if time_passed < 3888000 %}
-									a month ago
-								{% else %}
-									{{(time_passed/2592000)|round}} months ago
-								{% endif %}
+	<div style="padding:10px 0;white-space:normal;">
+		{% for message in messages %}
+			<div class='p_chat_mssg' id="{{message.id}}">
+				<span class="mssg_vote_box">
+					{% if message.id in mssg_upvoted %}
+						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
+						<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
+						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
+					{% elseif message.id in mssg_downvoted %}
+						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
+						<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
+						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
+					{% else %}
+						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
+						<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
+						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
+					{% endif %}
+				</span>
+				<span class="chat_id_{{message.id}} p_mssg_body" id="{{message.chat_id}}">
+					<strong class='mssg_op' id="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}} (<span class='response_count' id="{{message.id}}">{{message.responses}}</span>)</strong> : {{message.message | raw}}
+				</span>
+				<div class="p_time_box">
+					{% set time_passed = server_time|date('U') - message.created_at|date('U') %}
+					<div class='p_time' id="{{message.created_at}}">
+						{% if time_passed < 45 %}
+							seconds ago
+						{% elseif time_passed < 2700 %}
+							{% if time_passed < 90 %}
+								a minute ago
 							{% else %}
-								{% if time_passed < 47260800 %}
-									a year ago
-								{% else %}
-									{{(time_passed/31536000)|round}} years ago
-								{% endif %}
+								{{(time_passed/60)|round}} minutes ago
 							{% endif %}
-						</div>
+						{% elseif time_passed < 79200%}
+							{% if time_passed < 5400 %}
+								an hour ago
+							{% else %}
+								{{(time_passed/3600)|round}} hours ago
+							{% endif %}
+						{% elseif time_passed < 2160000 %}
+							{% if time_passed < 129600 %}
+								a day ago
+							{% else %}
+								{{(time_passed/86400)|round}} days ago
+							{% endif %}
+						{% elseif time_passed < 29808000 %}
+							{% if time_passed < 3888000 %}
+								a month ago
+							{% else %}
+								{{(time_passed/2592000)|round}} months ago
+							{% endif %}
+						{% else %}
+							{% if time_passed < 47260800 %}
+								a year ago
+							{% else %}
+								{{(time_passed/31536000)|round}} years ago
+							{% endif %}
+						{% endif %}
 					</div>
 				</div>
-			{% endfor %}
-		</div>
+			</div>
+		{% endfor %}
 	</div>
 	<div class="page_links">
 		{{messages.links|raw}}
@@ -159,7 +157,7 @@
 </div>
 
 <div class="tab-pane fade in" id="friendships">
-	<div class="frame" style="height:620px;white-space:normal;">
+	<div style="padding:10px 0;white-space:normal;">
 		{% for friendship in friendships %}
 			<div class="col-lg-3 interaction">
 				<a href="{{site}}/u/{{friendship.entity.name}}" style="color:black;"><strong>{{friendship.entity.name}}</strong></a>
