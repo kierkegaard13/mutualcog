@@ -44,7 +44,6 @@ class C extends BaseController {
 		$chats_rising = $chats_rising->orderBy(DB::raw('chats_to_communities.pinned'),'desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
 		$chats_removed = $chats_removed->orderBy(DB::raw('chats_to_communities.pinned'),'desc')->orderBy('created_at','desc')->paginate(25);
 		$chats = $chats->orderBy(DB::raw('chats_to_communities.pinned'),'desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
-		$communities = Communities::take(30)->orderBy('popularity','desc')->get();
 		$upvoted = array();
 		$downvoted = array();
 		if(Auth::check()){
@@ -81,7 +80,6 @@ class C extends BaseController {
 		$view['community_admin'] = UsersToCommunities::whereis_admin('1')->wherecommunity_id($curr_community->id)->first();
 		$view['upvoted'] = $upvoted;
 		$view['downvoted'] = $downvoted;
-		$view['communities'] = $communities;
 		$view['curr_time'] = date('Y:m:d:H:i'); 
 		$view['chats'] = $chats;
 		$view['chats_new'] = $chats_new;

@@ -153,8 +153,8 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 		return $this->hasMany('Notifications','user_id')->wheretype(2)->take(5);
 	}
 
-	public function rewards(){
-		return $this->belongsToMany('Rewards','users_to_rewards','user_id','reward_id');
+	public function abilities(){
+		return $this->belongsToMany('Abilities','users_to_abilities','user_id','ability_id')->withPivot('active','level');
 	}
 
 	public function online_score(){

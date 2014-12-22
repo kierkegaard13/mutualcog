@@ -29,6 +29,7 @@ class BaseController extends Controller {
 		}
 		$this->sid = Session::getId();
 		View::share('sid',$this->sid);
+		View::share('communities',Communities::take(30)->orderBy('popularity','desc')->get());
 		View::share('base',$this->base_url);
 		View::share('site',$this->site_url);
 		View::share('io_url',$this->io_url);

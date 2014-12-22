@@ -52,7 +52,6 @@ class Home extends BaseController {
 		$chats_new = $chats_new->orderBy('pinned','desc')->orderBy('created_at','desc')->paginate(25);
 		$chats_rising = $chats_rising->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
 		$chats_removed = $chats_removed->orderBy(DB::raw('score'),'desc')->paginate(25);
-		$communities = Communities::take(30)->orderBy('popularity','desc')->get();
 		$upvoted = array();
 		$downvoted = array();
 		if(Auth::check()){
@@ -74,7 +73,6 @@ class Home extends BaseController {
 		$view['curr_community_id'] = '';
 		$view['upvoted'] = $upvoted;
 		$view['downvoted'] = $downvoted;
-		$view['communities'] = $communities;
 		$view['chats'] = $chats;
 		$view['chats_new'] = $chats_new;
 		$view['chats_rising'] = $chats_rising;
@@ -96,7 +94,6 @@ class Home extends BaseController {
 		$chats_new = $chats_new->orderBy('pinned','desc')->orderBy('created_at','desc')->paginate(25);
 		$chats_rising = $chats_rising->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
 		$chats_removed = $chats_removed->orderBy(DB::raw('score'),'desc')->paginate(25);
-		$communities = Communities::take(30)->orderBy('popularity','desc')->get();
 		$upvoted = array();
 		$downvoted = array();
 		if(Auth::check()){
@@ -118,7 +115,6 @@ class Home extends BaseController {
 		$view['curr_community_id'] = '';
 		$view['upvoted'] = $upvoted;
 		$view['downvoted'] = $downvoted;
-		$view['communities'] = $communities;
 		$view['chats'] = $chats;
 		$view['chats_new'] = $chats_new;
 		$view['chats_rising'] = $chats_rising;
@@ -140,7 +136,6 @@ class Home extends BaseController {
 		$chats_new = $chats_new->orderBy('pinned','desc')->orderBy('created_at','desc')->paginate(25);
 		$chats_rising = $chats_rising->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
 		$chats_removed = $chats_removed->orderBy(DB::raw('score'),'desc')->paginate(25);
-		$communities = Communities::take(30)->orderBy('popularity','desc')->get();
 		$upvoted = array();
 		$downvoted = array();
 		if(Auth::check()){
@@ -162,7 +157,6 @@ class Home extends BaseController {
 		$view['curr_community_id'] = '';
 		$view['upvoted'] = $upvoted;
 		$view['downvoted'] = $downvoted;
-		$view['communities'] = $communities;
 		$view['chats'] = $chats;
 		$view['chats_new'] = $chats_new;
 		$view['chats_rising'] = $chats_rising;

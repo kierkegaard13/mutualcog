@@ -5,7 +5,6 @@ class U extends BaseController {
 	public function getIndex($username){
 		$view = View::make('profile');
 		$view['friended'] = 0;
-		$communities = Communities::take(30)->orderBy('popularity','desc')->get();
 		$upvoted = array();
 		$downvoted = array();
 		$mssg_upvoted = array();
@@ -38,6 +37,27 @@ class U extends BaseController {
 				}
 			}
 		}
+		$all_abilities = Abilities::all();
+		$user_abilities = $user->abilities;
+		foreach($all_abilities as $ability){
+			if(sizeof($user_abilities) > 0){
+				foreach($user_abilities as $user_ability){
+					if($ability->name == $user_ability->name){
+						$ability->active = $user_ability->active;
+						$ability->level = $user_ability->level;
+						$ability->unlocked = $user_ability->unlocked;
+					}else{
+						$ability->active = 0;
+						$ability->level = 0;
+						$ability->unlocked = 0;
+					}
+				}
+			}else{
+				$ability->active = 0;
+				$ability->level = 0;
+				$ability->unlocked = 0;
+			}
+		}
 		Session::put('curr_page',URL::full());
 		$view['requested'] = $requested;
 		$view['friendships'] = $user->friendshipsP();
@@ -49,7 +69,7 @@ class U extends BaseController {
 		$view['downvoted'] = $downvoted;
 		$view['mssg_upvoted'] = $mssg_upvoted;
 		$view['mssg_downvoted'] = $mssg_downvoted;
-		$view['communities'] = $communities;
+		$view['abilities'] = $all_abilities;
 		$view['profile'] = $user;
 		return $view;
 	}

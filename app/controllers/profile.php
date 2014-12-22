@@ -35,6 +35,20 @@ class Profile extends BaseController {
 		return $this->returnToCurrPage();
 	}
 
+	public function getUnlock($ability_id){
+		if(Auth::check()){
+			$ability = Abilities::find($ability_id);
+			//TODO: finish 
+		}
+	}
+
+	public function getLevel($ability_id){
+		if(Auth::check()){
+			$ability = Abilities::find($ability_id);
+			//TODO: finish
+		}
+	}
+
 	public function postMessageUser($user_id){
 		if(Auth::check()){
 			$message_body = htmlentities(Input::get('message_body'));

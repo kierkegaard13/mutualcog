@@ -91,14 +91,12 @@ class Chat extends BaseController {
 				$user_to_chat->save();
 			}
 		}
-		$communities = Communities::take(30)->orderBy('popularity','desc')->get();
 		$community_arr = array();
 		$mods = array();
 		foreach($chat->moderators as $mod){
 			$mods[] = $mod->user;
 		}
 		Session::put('curr_page',URL::full());
-		$view['communities'] = $communities;
 		$view['curr_time'] = date('Y:m:d:H:i');
 		$view['upvoted'] = $upvoted;
 		$view['downvoted'] = $downvoted;
@@ -174,14 +172,12 @@ class Chat extends BaseController {
 				}
 			}
 		}
-		$communities = Communities::take(30)->orderBy('popularity','desc')->get();
 		$community_arr = array();
 		$mods = array();
 		foreach($chat->moderators as $mod){
 			$mods[] = $mod->user;
 		}
 		Session::put('curr_page',URL::full());
-		$view['communities'] = $communities;
 		$view['curr_time'] = date('Y:m:d:H:i');
 		$view['upvoted'] = $upvoted;
 		$view['downvoted'] = $downvoted;

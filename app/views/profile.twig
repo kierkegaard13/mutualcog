@@ -69,7 +69,7 @@
 	<li><a href="#comments" data-toggle="tab" style="color:#075de9">Comments</a></li>
 	<li><a href="#friendships" data-toggle="tab" style="color:#075de9">Friends</a></li>
 	{% if logged_in and user.id == profile.id %}
-		<li><a href="#rewards" data-toggle="tab" style="color:#075de9">Rewards</a></li>
+		<li><a href="#abilities" data-toggle="tab" style="color:#075de9">Abilities</a></li>
 	{% endif %}
 </ul>
 
@@ -172,7 +172,37 @@
 	</div>
 </div>
 
-<div class="tab-pane fade in" id="rewards">
+<div class="tab-pane fade in" id="abilities">
+	<div id="ability_list" style="font-size:18px;">
+		{% for ability in abilities %}
+			{% if user.level < ability.required_level %}
+				<div class="ability_locked">
+					Unlocked at level {{ability.required_level}}
+				</div>
+			{% else %}
+				<div style="padding:15px;border-bottom:solid 1px #ddd;">
+					{% if ability.unlocked and ability.scalable %}
+						<a href="{{site}}/profile/level/{{ability.id}}" class="btn btn-default btn-lg pull-right" title="Level Up" style="margin-top:15px;"><div class="glyphicon glyphicon-arrow-up"></div></a>
+					{% elseif ability.unlocked and not ability.scalable %}
+					{% else %}
+						<a href="{{site}}/profile/unlock/{{ability.id}}" class="btn btn-default btn-lg pull-right" title="Unlock" style="margin-top:15px;"><div class="glyphicon glyphicon-lock"></div></a>
+					{% endif %}
+					<div>
+						{{ability.name}}
+					</div>
+					<div class="ability_info ability_description">
+						{{ability.description}}
+					</div>
+					<div class="ability_info">
+						Required Level: {{ability.required_level}}, Cost: {{ability.cost}}
+					</div>
+				</div>
+			{% endif %}
+		{% endfor %}
+	</div>
+	<div class="page_links">
+		{{chats.links|raw}}
+	</div>
 </div>
 
 </div>
