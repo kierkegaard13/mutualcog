@@ -38,15 +38,74 @@ class Profile extends BaseController {
 	public function getUnlock($ability_id){
 		if(Auth::check()){
 			$ability = Abilities::find($ability_id);
-			//TODO: finish 
+			if(Auth::user()->level >= $ability->required_level){
+				if(Auth::user()->cognizance >= $ability->cost){
+					Auth::user()->cognizance = Auth::user()->cognizance - $ability->cost;
+					Auth::user()->total_cognizance = Auth::user()->total_cognizance - $ability->cost;
+					Auth::user()->save();
+					$user_ability = new UsersToAbilities();
+					$user_ability->ability_id = $ability->id;
+					$user_ability->user_id = Auth::user()->id;
+					$user_ability->unlocked = 1;
+					$user_ability->active = 1;
+					$user_ability->save();
+				}else if(Auth::user()->total_cognizance >= $ability->cost){
+					Auth::user()->total_cognizance = Auth::user()->total_cognizance - $ability->cost;
+					if(Auth::user()->total_cognizance - 121 < 0){
+						Auth::user()->level = 0;
+						Auth::user()->next_level = $this->nextLevel(0);
+						Auth::user()->cognizance = Auth::user()->total_cognizance;
+					}else{
+						Auth::user()->level = ceil(5 - log(3000/(Auth::user()->total_cognizance - 100) - 1));
+						Auth::user()->next_level = $this->nextLevel(Auth::user()->level);
+						Auth::user()->cognizance = Auth::user()->total_cognizance - $this->nextLevel(Auth::user()->level - 1);
+					}
+					Auth::user()->save();
+					$user_ability = new UsersToAbilities();
+					$user_ability->ability_id = $ability->id;
+					$user_ability->user_id = Auth::user()->id;
+					$user_ability->unlocked = 1;
+					$user_ability->active = 0;
+					$user_ability->save();
+				}
+			}
 		}
+		return $this->returnToCurrPage();
 	}
 
 	public function getLevel($ability_id){
 		if(Auth::check()){
 			$ability = Abilities::find($ability_id);
-			//TODO: finish
+			$user_ability = UsersToAbilities::whereuser_id(Auth::user()->id)->whereability_id($ability_id)->first();
+			if(Auth::user()->level >= $ability->required_level && $user_ability->unlocked){
+				$level_cost = $ability->cost * $user_ability->level * $ability->scale;
+				if(Auth::user()->cognizance >= $level_cost){
+					Auth::user()->cognizance = Auth::user()->cognizance - $level_cost;
+					Auth::user()->total_cognizance = Auth::user()->total_cognizance - $level_cost;
+					Auth::user()->save();
+					$user_ability->level = $user_ability->level + 1;
+					$user_ability->active = 1;
+					$user_ability->save();
+				}else if(Auth::user()->total_cognizance >= $level_cost){
+					Auth::user()->total_cognizance = Auth::user()->total_cognizance - $level_cost;
+					if(Auth::user()->total_cognizance - 121 < 0){
+						Auth::user()->level = 0;
+						Auth::user()->next_level = $this->nextLevel(0);
+						Auth::user()->cognizance = Auth::user()->total_cognizance;
+					}else{
+						Auth::user()->level = ceil(5 - log(3000/(Auth::user()->total_cognizance - 100) - 1));
+						Auth::user()->next_level = $this->nextLevel(Auth::user()->level);
+						Auth::user()->cognizance = Auth::user()->total_cognizance - $this->nextLevel(Auth::user()->level - 1);
+					}
+					Auth::user()->save();
+					$user_ability->level = $user_ability->level + 1;
+					$user_ability->unlocked = 1;
+					$user_ability->active = 0;
+					$user_ability->save();
+				}
+			}
 		}
+		return $this->returnToCurrPage();
 	}
 
 	public function postMessageUser($user_id){

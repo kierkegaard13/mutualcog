@@ -58,7 +58,7 @@
 <div>Posts: {{profile.chats | length}}</div>
 <div>Comments: {{profile.messages | length}}</div>
 <div>Level: {{profile.level}}</div>
-<div>Cognizance: {{profile.cognizance}}/{{profile.next_level}}
+<div>Cognizance: {{profile.cognizance}}/{{profile.next_level}}, Total: {{profile.total_cognizance}}
 <div class="progress progress-striped active">
 	<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{profile.cognizance}}" aria-valuemin="0" aria-valuemax="{{100 + 20*profile.level}}" style="width:{{(profile.cognizance/profile.next_level) * 100}}%;">
 		<span class="sr-only">Only {{profile.cognizance}}% Complete</span>
@@ -182,26 +182,37 @@
 			{% else %}
 				<div style="padding:15px;border-bottom:solid 1px #ddd;">
 					{% if ability.unlocked and ability.scalable %}
-						<a href="{{site}}/profile/level/{{ability.id}}" class="btn btn-default btn-lg pull-right" title="Level Up" style="margin-top:15px;"><div class="glyphicon glyphicon-arrow-up"></div></a>
+						{% if user.cognizance > ability.cost %}
+							<a href="{{site}}/profile/level/{{ability.id}}" class="btn btn-default btn-lg pull-right" title="Level Up" style="margin-top:15px;"><div class="glyphicon glyphicon-arrow-up"></div></a>
+						{% elseif user.total_cognizance > ability.cost %}
+							<a href="{{site}}/profile/level/{{ability.id}}" class="btn btn-default btn-lg pull-right" title="Warning: you will lose levels if you level up" style="margin-top:15px;"><div class="glyphicon glyphicon-arrow-up"></div></a>
+						{% else %}
+							<a href="{{site}}/profile/level/{{ability.id}}" class="btn btn-default btn-lg pull-right" title="Not enough cognizance" style="margin-top:15px;" disabled="disabled"><div class="glyphicon glyphicon-arrow-up"></div></a>
+						{% endif %}
 					{% elseif ability.unlocked and not ability.scalable %}
 					{% else %}
-						<a href="{{site}}/profile/unlock/{{ability.id}}" class="btn btn-default btn-lg pull-right" title="Unlock" style="margin-top:15px;"><div class="glyphicon glyphicon-lock"></div></a>
+						{% if user.cognizance > ability.cost %}
+							<a href="{{site}}/profile/unlock/{{ability.id}}" class="btn btn-default btn-lg pull-right" title="Unlock" style="margin-top:15px;"><div class="glyphicon glyphicon-lock"></div></a>
+						{% elseif user.total_cognizance > ability.cost %}
+							<a href="{{site}}/profile/unlock/{{ability.id}}" class="btn btn-default btn-lg pull-right" title="Warning: you will lose levels if you unlock" style="margin-top:15px;"><div class="glyphicon glyphicon-lock"></div></a>
+						{% else %}
+							<a href="{{site}}/profile/unlock/{{ability.id}}" class="btn btn-default btn-lg pull-right" title="Not enough cognizance" style="margin-top:15px;" disabled="disabled"><div class="glyphicon glyphicon-lock"></div></a>
+						{% endif %}
 					{% endif %}
 					<div>
 						{{ability.name}}
 					</div>
-					<div class="ability_info ability_description">
-						{{ability.description}}
-					</div>
-					<div class="ability_info">
-						Required Level: {{ability.required_level}}, Cost: {{ability.cost}}
+					<div style="line-height:18px;">
+						<div class="ability_info ability_description">
+							{{ability.description}}
+						</div>
+						<div class="ability_info">
+							<strong>Required Level:</strong> {{ability.required_level}}, <strong>Cost:</strong> {{ability.cost}}
+						</div>
 					</div>
 				</div>
 			{% endif %}
 		{% endfor %}
-	</div>
-	<div class="page_links">
-		{{chats.links|raw}}
 	</div>
 </div>
 

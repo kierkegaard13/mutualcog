@@ -11,6 +11,35 @@
    |
  */
 
+function compareTimes($time1, $format = 'minutes', $time2 = null){
+	$time_diff = 0;
+	$time1 = date('Y:W:w:H:i',strtotime($time1));
+	if($time2){
+		$time2 = date('Y:W:w:H:i',strtotime($time2));
+	}else{
+		$time2 = date('Y:W:w:H:i');
+	}
+	list($year1,$week1,$day1,$hour1,$minute1) = explode(':',$time1);
+	list($year2,$week2,$day2,$hour2,$minute2) = explode(':',$time2);
+	$year_diff = ($year1 - $year2) * 525949;
+	$week_diff = ($week1 - $week2) * 10080;
+	$day_diff = ($day1 - $day2) * 1440;
+	$hour_diff = ($hour1 - $hour2) * 60;
+	$minute_diff = $minute1 - $minute2;
+	$time_diff = $year_diff + $week_diff + $day_diff + $hour_diff + $minute_diff;
+	if($format == 'minutes'){
+		return $time_diff;
+	}else if($format == 'hours'){
+		return $time_diff/60;
+	}else if($format == 'days'){
+		return $time_diff/1440;
+	}else if($format == 'weeks'){
+		return $time_diff/10080;
+	}else{
+		return $time_diff/525949;
+	}
+}
+
 function getUniqueSerialNumber($serial_number=null){
 	if(!$serial_number){
 		$serial_number = mt_rand(2,268435455);
@@ -21,7 +50,7 @@ function getUniqueSerialNumber($serial_number=null){
 	$temp = $serial->findAll();
 	if($temp){  //serial number exists
 		/* if temp is more than 8 hours old */
-		if(abs($this->compareTimes($temp->updated_at)) > 721){
+		if(abs(compareTimes($temp->updated_at)) > 721){
 			$temp->ip_address = Request::getClientIp();
 			$temp->welcomed = 0;
 			$temp->save();

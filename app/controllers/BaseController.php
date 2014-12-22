@@ -85,6 +85,10 @@ class BaseController extends Controller {
 		}
 	}
 
+	public function nextLevel($level){
+		return 100 + 3000/(1 + exp(5 - $level));
+	}
+
 	public function youtubeLogo(){
 		return $this->base_url . '/YouTube-logo-full_color.png';
 	}
@@ -229,7 +233,7 @@ class BaseController extends Controller {
 					if($user->cognizance + 1 >= $user->next_level){
 						$user->cognizance = ($user->cognizance + 1) % $user->next_level;
 						$user->level = $user->level + 1;
-						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
+						$user->next_level = $this->nextLevel($user->level);
 					}else{
 						$user->cognizance = ($user->cognizance + 1) % $user->next_level;
 					}
@@ -237,7 +241,7 @@ class BaseController extends Controller {
 					$user->total_cognizance = $user->total_cognizance - 1;
 					if($user->level > 0 && $user->cognizance - 1 < 0){
 						$user->level = $user->level - 1;
-						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
+						$user->next_level = $this->nextLevel($user->level);
 						$user->cognizance = $user->next_level - 1;
 					}else{
 						$user->cognizance = ($user->cognizance - 1) % $user->next_level;
@@ -247,7 +251,7 @@ class BaseController extends Controller {
 					if($user->cognizance - $status + $type >= $user->next_level){
 						$user->cognizance = ($user->cognizance - $status + $type) % $user->next_level;
 						$user->level = $user->level + 1;
-						$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
+						$user->next_level = $this->nextLevel($user->level);
 					}else{
 						$user->cognizance = ($user->cognizance - $status + $type) % $user->next_level;
 					}
@@ -257,10 +261,10 @@ class BaseController extends Controller {
 				if($user->cognizance - $status + $type >= $user->next_level){
 					$user->cognizance = ($user->cognizance - $status + $type) % $user->next_level;
 					$user->level = $user->level + 1;
-					$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
+					$user->next_level = $this->nextLevel($user->level);
 				}else if($user->level > 0 && $user->cognizance - $status + $type < 0){
 					$user->level = $user->level - 1;
-					$user->next_level = 100 + 3000/(1 + exp(5 - $user->level));
+					$user->next_level = $this->nextLevel($user->level);
 					$user->cognizance = $user->next_level - $status + $type;
 				}else{
 					$user->cognizance = ($user->cognizance - $status + $type) % $user->next_level;
