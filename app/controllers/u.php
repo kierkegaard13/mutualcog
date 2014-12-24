@@ -43,9 +43,9 @@ class U extends BaseController {
 			if(sizeof($user_abilities) > 0){
 				foreach($user_abilities as $user_ability){
 					if($ability->name == $user_ability->name){
-						$ability->active = $user_ability->active;
-						$ability->level = $user_ability->level;
-						$ability->unlocked = $user_ability->unlocked;
+						$ability->active = $user_ability->pivot->active;
+						$ability->level = $user_ability->pivot->level;
+						$ability->unlocked = $user_ability->pivot->unlocked;
 					}else{
 						$ability->active = 0;
 						$ability->level = 0;

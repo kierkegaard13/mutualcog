@@ -17,8 +17,7 @@ class Chat extends BaseController {
 		$mssg_upvoted = array();
 		$mssg_downvoted = array();
 		if(Auth::check()){
-			$ip_address = Auth::user()->serial->ip_address;
-			if(UsersToChats::whereip_address($ip_address)->wherebanned(1)->first()){
+			if(UsersToChats::whereuser(Auth::user()->name)->wherebanned(1)->first()){
 				return Redirect::to('home');
 			}
 			Auth::user()->chat_id = $chat_id;
@@ -71,7 +70,7 @@ class Chat extends BaseController {
 			}
 		}else{  //not logged in
 			$ip_address = Serials::find(Session::get('serial_id'))->ip_address;
-			if(UsersToChats::whereip_address($ip_address)->wherebanned(1)->first()){
+			if(UsersToChats::whereuser(Session::get('serial'))->wherebanned(1)->first()){
 				return Redirect::to('home');
 			}
 			$user_to_chat = new UsersToChats();

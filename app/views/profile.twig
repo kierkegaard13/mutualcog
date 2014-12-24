@@ -76,7 +76,7 @@
 <div id="tab_content" class="tab-content">
 
 <div class="tab-pane fade active in" id="posts">
-	<div id="chat_list">
+	<div id="chat_list" style="margin-bottom:35px;">
 		{% for chat in chats %}
 			{% block chat_box %}
 				{{parent()}}
@@ -89,21 +89,21 @@
 </div>
 
 <div class="tab-pane fade in" id="comments">
-	<div style="padding:10px 0;white-space:normal;">
+	<div style="padding:10px 0;white-space:normal;margin-bottom:35px;">
 		{% for message in messages %}
 			<div class='p_chat_mssg' id="{{message.id}}">
 				<span class="mssg_vote_box">
 					{% if message.id in mssg_upvoted %}
 						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
-						<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
+						<div style="margin-top:-4px;margin-bottom:-6px;text-align:center;" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
 						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
 					{% elseif message.id in mssg_downvoted %}
 						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
-						<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
+						<div style="margin-top:-4px;margin-bottom:-6px;text-align:center;" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
 						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
 					{% else %}
 						<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span>
-						<div style="margin-top:-5px;margin-bottom:-5px;text-align:center;" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
+						<div style="margin-top:-4px;margin-bottom:-6px;text-align:center;" id="mssg_votes_{{message.id}}">{{message.upvotes - message.downvotes}}</div>
 						<span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
 					{% endif %}
 				</span>
@@ -157,7 +157,7 @@
 </div>
 
 <div class="tab-pane fade in" id="friendships">
-	<div style="padding:10px 0;white-space:normal;">
+	<div style="padding:10px 0;white-space:normal;style="margin-bottom:35px;">
 		{% for friendship in friendships %}
 			<div class="col-lg-3 interaction">
 				<a href="{{site}}/u/{{friendship.entity.name}}" style="color:black;"><strong>{{friendship.entity.name}}</strong></a>
@@ -173,7 +173,7 @@
 </div>
 
 <div class="tab-pane fade in" id="abilities">
-	<div id="ability_list" style="font-size:18px;">
+	<div id="ability_list" style="font-size:18px;margin-bottom:35px;">
 		{% for ability in abilities %}
 			{% if user.level < ability.required_level %}
 				<div class="ability_locked">
@@ -200,14 +200,14 @@
 						{% endif %}
 					{% endif %}
 					<div>
-						{{ability.name}}
+						{{ability.name}} (Level {{ability.level}})
 					</div>
 					<div style="line-height:18px;">
 						<div class="ability_info ability_description">
 							{{ability.description}}
 						</div>
 						<div class="ability_info">
-							<strong>Required Level:</strong> {{ability.required_level}}, <strong>Cost:</strong> {{ability.cost}}
+							<strong>Required Level:</strong> {{ability.required_level}}, <strong>Cost:</strong> {{ability.cost * ability.level * ability.scale}}
 						</div>
 					</div>
 				</div>
