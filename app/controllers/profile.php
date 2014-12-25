@@ -56,7 +56,7 @@ class Profile extends BaseController {
 						Auth::user()->next_level = $this->nextLevel(0);
 						Auth::user()->cognizance = Auth::user()->total_cognizance;
 					}else{
-						Auth::user()->level = ceil(5 - log(3000/(Auth::user()->total_cognizance - 100) - 1));
+						Auth::user()->level = $this->previousLevel(Auth::user()->total_cognizance);
 						Auth::user()->next_level = $this->nextLevel(Auth::user()->level);
 						Auth::user()->cognizance = Auth::user()->total_cognizance - $this->nextLevel(Auth::user()->level - 1);
 					}
@@ -93,7 +93,7 @@ class Profile extends BaseController {
 						Auth::user()->next_level = $this->nextLevel(0);
 						Auth::user()->cognizance = Auth::user()->total_cognizance;
 					}else{
-						Auth::user()->level = ceil(5 - log(3000/(Auth::user()->total_cognizance - 100) - 1));
+						Auth::user()->level = $this->previousLevel(Auth::user()->total_cognizance);
 						Auth::user()->next_level = $this->nextLevel(Auth::user()->level);
 						Auth::user()->cognizance = Auth::user()->total_cognizance - $this->nextLevel(Auth::user()->level - 1);
 					}

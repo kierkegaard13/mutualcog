@@ -86,7 +86,11 @@ class BaseController extends Controller {
 	}
 
 	public function nextLevel($level){
-		return 100 + 3000/(1 + exp(5 - $level));
+		return 98 + 50000/(1 + exp(10 - $level));
+	}
+
+	public function previousLevel($cognizance){
+		return ceil(10 - log(50000/($cognizance - 98) - 1));
 	}
 
 	public function youtubeLogo(){

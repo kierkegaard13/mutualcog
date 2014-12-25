@@ -106,6 +106,19 @@ function getUniqueSerialNumber($serial_number=null){
 Route::filter('assignSerial',function(){
 		if(!Session::has('unique_serial')){
 			getUniqueSerialNumber();
+			//TODO: iterate through connections to generate bond score
+			if(Auth::check()){
+				$interactions = InteractionUsers::whereuser_id(Auth::user()->id)->wheretype(0)->wherefriended(1)->get();
+				$first_id_arr = array();
+				$second_id_arr = array();
+				foreach($interactions as $interaction){  //generate first level nodes
+					$first_id_arr[] = $interaction->entity_id;
+					$sec_inters = InteractionUsers::whereuser_id($interaction->entity_id)->wheretype(0)->wherefriended(1)->get();
+					foreach($sec_inters as $sec_inter){  //generate second level nodes
+						$second_id_arr[] = $sec_inter->entity_id;
+					}
+				}
+			}
 		}else{
 			$serial = Serials::whereserial_id(Session::get('unique_serial'))->first();
 			if($serial){
