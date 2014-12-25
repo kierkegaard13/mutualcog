@@ -43,7 +43,6 @@ function compareTimes($time1, $format = 'minutes', $time2 = null){
 function getUniqueSerialNumber($serial_number=null){
 	if(!$serial_number){
 		$serial_number = mt_rand(2,268435455);
-		return getUniqueSerialNumber($serial_number);
 	}
 	$serial = new Serials();
 	$serial->serial_id = $serial_number;
@@ -107,16 +106,59 @@ Route::filter('assignSerial',function(){
 		if(!Session::has('unique_serial')){
 			getUniqueSerialNumber();
 			//TODO: iterate through connections to generate bond score
+			/* each node has a base score of 1 * bond
+			multiply times distance which is a max of 5
+			check sec_id for matches to iteslf or first_id
+			*/
 			if(Auth::check()){
 				$interactions = InteractionUsers::whereuser_id(Auth::user()->id)->wheretype(0)->wherefriended(1)->get();
 				$first_id_arr = array();
 				$second_id_arr = array();
+				$second_info_arr = array();
+				$passive = 0;
 				foreach($interactions as $interaction){  //generate first level nodes
-					$first_id_arr[] = $interaction->entity_id;
+					if(array_key_exists($interaction->entity_id,$first_id_arr)){
+						$first_id_arr[$interaction->entity_id] += 1;
+					}else{
+						$first_id_arr[$interaction->entity_id] = 1;
+					}
 					$sec_inters = InteractionUsers::whereuser_id($interaction->entity_id)->wheretype(0)->wherefriended(1)->get();
 					foreach($sec_inters as $sec_inter){  //generate second level nodes
-						$second_id_arr[] = $sec_inter->entity_id;
+						if(array_key_exists($sec_inter->entity_id,$second_id_arr)){
+							$second_id_arr[$sec_inter->entity_id] += 1;
+						}else{
+							$second_id_arr[$sec_inter->entity_id] = 1;
+						}
+						if(array_key_exists($interaction->entity_id,$second_info_arr)){
+							$second_info_arr[$interaction->entity_id][] = $sec_inter->entity_id;
+						}else{
+							$second_info_arr[$interaction->entity_id] = array($interaction->bond,$sec_inter->entity_id);
+						}
 					}
+				}
+				foreach($second_info_arr as $key => $second){  //each el is an array, key is first level id
+					$loop_idx = 0;
+					$distance = 5;
+					foreach($second as $sec){  //each el is a second level id
+						if($loop_idx != 0){
+							if(array_key_exists($sec,$first_id_arr)){
+								if($distance > 1){
+									$distance -= 1;
+								}
+							}
+							if($second_id_arr[$sec] > 1){
+								if($distance > 1){
+									$distance -= .5 * $second_id_arr[$sec];
+									if($distance > 1){
+										$distance = ceil($distance);
+									}else{
+										$distance = 1;
+									}
+								}
+							}
+						}
+					}
+					$passive += $second[0] * $distance;
 				}
 			}
 		}else{
