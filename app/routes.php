@@ -11,6 +11,10 @@
    |
  */
 
+function nextLevel($level){
+	return 98 + 50000/(1 + exp(10 - $level));
+}
+
 function compareTimes($time1, $format = 'minutes', $time2 = null){
 	$time_diff = 0;
 	$time1 = date('Y:W:w:H:i',strtotime($time1));
@@ -117,6 +121,9 @@ Route::filter('assignSerial',function(){
 				$second_info_arr = array();
 				$passive = 0;
 				foreach($interactions as $interaction){  //generate first level nodes
+					if(abs(compareTimes($interaction->updated_at,'days')) > 2){
+						$interaction->bond = $interaction->bond - .05;
+					}
 					if(array_key_exists($interaction->entity_id,$first_id_arr)){
 						$first_id_arr[$interaction->entity_id] += 1;
 					}else{
@@ -131,9 +138,9 @@ Route::filter('assignSerial',function(){
 						}
 						if(array_key_exists($interaction->entity_id,$second_info_arr)){
 							$second_info_arr[$interaction->entity_id][] = $sec_inter->entity_id;
-						}else{
+						}else{  //bond is attached to first level node which is attached to multiple second level nodes
 							$second_info_arr[$interaction->entity_id] = array($interaction->bond,$sec_inter->entity_id);
-						}
+						}  
 					}
 				}
 				foreach($second_info_arr as $key => $second){  //each el is an array, key is first level id
@@ -158,8 +165,17 @@ Route::filter('assignSerial',function(){
 							}
 						}
 					}
+					//passive = bond * distance
 					$passive += $second[0] * $distance;
 				}
+				Auth::user()->passive = $passive;
+				Auth::user()->total_cognizance += $passive;
+				Auth::user()->cognizance = (Auth::user()->cognizance + $passive) % Auth::user()->next_level;
+				if((Auth::user()->cognizance + $passive) >= Auth::user()->next_level){
+					Auth::user()->level += 1;
+					Auth::user()->next_level = nextLevel(Auth::user()->level); 
+				}
+				Auth::user()->save();
 			}
 		}else{
 			$serial = Serials::whereserial_id(Session::get('unique_serial'))->first();
