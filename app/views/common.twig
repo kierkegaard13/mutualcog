@@ -601,8 +601,7 @@
 	</fieldset>
 	</form>
 {% else %}
-	<div style="font-size:14px;">Cognizance: {{user.cognizance}}/{{user.next_level}} (Level: {{user.level}})</div>
-	<div class="progress progress-striped active">
+	<div class="progress progress-striped active" title="Cognizance: {{user.cognizance}}/{{user.next_level}}">
 		<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{user.cognizance}}" aria-valuemin="0" aria-valuemax="{{user.next_level}}" style="width:{{(user.cognizance / user.next_level) * 100}}%;">
 			<span class="sr-only">Only {{user.cognizance}}% Complete</span>
 		</div>

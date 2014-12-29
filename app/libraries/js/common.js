@@ -220,7 +220,8 @@ $(document).ready(function(){
 				module.typ_cnt--;
 				module.socket.emit('not_typing',{pm_id:module.pm_info[2],friend_id:module.pm_info[1],user_id:module.user_id});
 			}
-			if(module.recent > 120){
+			if(module.recent == 120){
+				console.log(module.recent);
 				$.ajax({
 					type:'POST',
 					data:{user_id:module.user_id},
@@ -228,9 +229,8 @@ $(document).ready(function(){
 					success:function(){},
 					error:function(){}	
 				});
-			}else{
-				module.recent++;	
-			}	
+			}
+			module.recent++;	
 		},1000);
 		$(window).on('mousemove',function(){
 			if(module.recent > 120){
