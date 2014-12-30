@@ -270,9 +270,15 @@ io.sockets.on('connection', function(client) {
 			conn.where({user_id:client.user_id,entity_id:pm_info.friend_id,type:0}).get('interaction_users',function(err,rows){
 				if(err)console.log(err);
 				//TODO: Need to come up with bond function
-				conn.where({user_id:client.user_id,entity_id:pm_info.friend_id,type:0}).update('interaction_users',{bond:rows[0].bond + 1},function(err,rows){
-					if(err)console.log(err);
-				});
+				if(rows.length > 0){
+					var new_bond = rows[0].bond;
+					if(new_bond < 1.05){
+						new_bond = new_bond + .01;
+					}
+					conn.where({user_id:client.user_id,entity_id:pm_info.friend_id,type:0}).update('interaction_users',{bond:new_bond,updated_at:moment.utc().format()},function(err,rows){
+						if(err)console.log(err);
+					});
+				}
 			});
 			/* Find out if recipient has chat maximized, minimized, or closed */
 			conn.where({user_id:pm_info.friend_id,entity_id:client.user_id,entity_type:0}).get('users_to_private_chats',function(err,rows){
