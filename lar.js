@@ -18,68 +18,11 @@ marked.setOptions({
 
 process.env.TZ = 'UTC';
 
-function hashHtml(text){
-	return text.replace(/#/,'&#035;');
-}
-
 function sanitize(text) {
 	return text.replace(/&/g, '&amp;').
 		replace(/</g, '&lt;').  // it's not neccessary to escape >
 		replace(/"/g, '&quot;').
 		replace(/'/g, '&#039;');
-}
-
-function emoji(text){
-	var mapArr = ['\\&lt\\;3',':\\)',':\\(',':D',":\\&\\#39\\;\\(",'spec_face_angr','spec_face_rage',':\\|',':O',':P','T_T'];
-
-	var mapObj = {
-		'&lt;3':'<img style="height:18px;" src="//localhost/laravel/app/emoji/heart.png"></img>',
-		':D':'<img style="height:18px;" src="//localhost/laravel/app/emoji/smile.png"></img>',
-		':)':'<img style="height:18px;" src="//localhost/laravel/app/emoji/smiley.png"></img>',
-		':(':'<img style="height:18px;" src="//localhost/laravel/app/emoji/disappointed.png"></img>',
-		':|':'<img style="height:18px;" src="//localhost/laravel/app/emoji/neutral_face.png"></img>',
-		//':/':'<img style="height:18px;" src="//localhost/laravel/app/emoji/confused.png"></img>',
-		":&#39;(":'<img style="height:18px;" src="//localhost/laravel/app/emoji/cry.png"></img>',
-		':O':'<img style="height:18px;" src="//localhost/laravel/app/emoji/open_mouth.png"></img>',
-		':P':'<img style="height:18px;" src="//localhost/laravel/app/emoji/stuck_out_tongue_closed_eyes.png"></img>',
-		'T_T':'<img style="height:18px;" src="//localhost/laravel/app/emoji/sob.png"></img>',
-		'spec_face_angr':'<img style="height:18px;" src="//localhost/laravel/app/emoji/angry.png"></img>',
-		'spec_face_rage':'<img style="height:18px;" src="//localhost/laravel/app/emoji/rage.png"></img>'
-	};
-
-	var re = new RegExp(mapArr.join("|"),"gi");
-	text = text.replace(re, function(matched){
-		return mapObj[matched];
-	});
-	return text;
-}
-
-function processMessage(message){
-	var url_reg = /(\b)(https?:\/\/)?([\da-z-]+)\.([a-z]{2,6})([\/\w\.-]*)*\/?/g;
-	var url_reg3 = /(img)(\s)(src\=)/g;
-	var t_reg = /\/c\/([^\s]*)(\s*)/g; 
-	var p_reg = /\/u\/([^\s]*)(\s*)/g; 
-	var at_reg = /\@([^\s]*)(\s*)/g;
-	var hash_reg = /\&\#035\;([^\s]*)(\s*)/g; 
-	var re1 = new RegExp('^<p>','g');
-	var re2 = new RegExp('</p>$','g');
-	message = hashHtml(message);
-	message = message.replace('>:|','spec_face_angr');
-	message = message.replace('>:(','spec_face_rage');
-	message = marked(message);
-	message = message.replace(url_reg,"$1<a class='chat_link' href='\/\/$3\.$4$5'>$3\.$4$5</a>");
-	if(message.length){
-		message = message.replace(/^\s+|\s+$/g,'');
-		message = message.replace(re1,'');
-		message = message.replace(re2,'');
-		message = message.replace(p_reg,"<a class='chat_link' href='\/\/mutualcog.com/u/$1'>\/u\/$1</a>$2");
-		message = message.replace(t_reg,"<a class='chat_link' href='\/\/mutualcog.com/c/$1'>\/c\/$1</a>$2");
-		message = message.replace(at_reg,"<a class='chat_link' href='\/\/mutualcog.com/u/$1'>@$1</a>$2");
-		message = message.replace(hash_reg,"<a class='chat_link' href='\/\/mutualcog.com/c/$1'>#$1</a>$2");
-		message = message.replace(url_reg3,"$1$2style='max-width:300px;max-height:200px;margin-bottom:5px;' $3");
-	}
-	message = emoji(message);
-	return message;
 }
 
 function repeatString(x,n){
@@ -95,7 +38,7 @@ function repeatString(x,n){
 
 var io = require('socket.io').listen(3000);
 
-io.sockets.on('connection', function(client) {
+io.on('connection', function(client) {
 
 	client.authorized = 0;
 
@@ -256,10 +199,10 @@ io.sockets.on('connection', function(client) {
 						mssg_id = info.insertId;
 						/* Check whether recipient is online */
 						if(friend_online){
-							io.sockets.in('user_' + pm_info.friend_id).emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.friend_id,friend_id:pm_info.user_id,friend_name:client.user,state:visibility,time:moment.utc().format(),mssg_id:mssg_id});
+							io.in('user_' + pm_info.friend_id).emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.friend_id,friend_id:pm_info.user_id,friend_name:client.user,state:visibility,time:moment.utc().format(),mssg_id:mssg_id});
 							fn({message:pm_info.message,unseen:0,pm_id:pm_info.pm_id,friend_id:pm_info.friend_id});
 						}else{
-							io.sockets.in('user_' + pm_info.friend_id).emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.friend_id,friend_id:pm_info.user_id,friend_name:client.user,state:visibility,time:moment.utc().format(),mssg_id:mssg_id});
+							io.in('user_' + pm_info.friend_id).emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.friend_id,friend_id:pm_info.user_id,friend_name:client.user,state:visibility,time:moment.utc().format(),mssg_id:mssg_id});
 							fn({message:pm_info.message,unseen:1,pm_id:pm_info.pm_id,friend_id:pm_info.friend_id});
 							/* You need to set unseen for the recipient for when they come back online and need to emit chats seen */
 							conn.where({user_id:client.user_id,entity_id:pm_info.friend_id,entity_type:0}).update('users_to_private_chats',{unseen:1,visible:1},function(err,rows){
@@ -280,7 +223,7 @@ io.sockets.on('connection', function(client) {
 			conn.where({entity_id:client.user_id,unseen:1}).get('users_to_private_chats',function(err,rows){
 				if(err)console.log(err);
 				for(var i = 0; i < rows.length; i++){
-					io.sockets.in('user_' + rows[i].user_id).emit('chat_seen',{pm_id:rows[i].chat_id,friend_id:client.user_id});
+					io.in('user_' + rows[i].user_id).emit('chat_seen',{pm_id:rows[i].chat_id,friend_id:client.user_id});
 					conn.where({id:rows[i].chat_id}).update('private_chats',{seen:1},function(err,info){
 						if(err)console.log(err);
 					});
@@ -296,11 +239,11 @@ io.sockets.on('connection', function(client) {
 	});
 
 	client.on('is_typing',function(info){
-		io.sockets.in('user_' + info.friend_id).emit('is_typing',{pm_id:info.pm_id,friend_id:info.user_id});
+		io.in('user_' + info.friend_id).emit('is_typing',{pm_id:info.pm_id,friend_id:info.user_id});
 	});
 
 	client.on('not_typing',function(info){
-		io.sockets.in('user_' + info.friend_id).emit('not_typing',{pm_id:info.pm_id,friend_id:info.user_id});
+		io.in('user_' + info.friend_id).emit('not_typing',{pm_id:info.pm_id,friend_id:info.user_id});
 	});
 
 	client.on('change_stealth',function(info){
@@ -337,9 +280,9 @@ io.sockets.on('connection', function(client) {
 				conn.where({id:info.insertId}).update('notifications',{message:message},function(err,info){
 					if(err)console.log(err);
 					if(type == 2){
-						io.sockets.in('user_' + request_info.user_id).emit('displayFriendRequests',{id:request_id,sender:client.user,sender_id:client.user_id,message:message});
+						io.in('user_' + request_info.user_id).emit('displayFriendRequests',{id:request_id,sender:client.user,sender_id:client.user_id,message:message});
 					}else{
-						io.sockets.in('user_' + request_info.user_id).emit('displayGlobalRequests',{id:request_id,sender:client.user,sender_id:client.user_id,message:message,type:request_info.type});
+						io.in('user_' + request_info.user_id).emit('displayGlobalRequests',{id:request_id,sender:client.user,sender_id:client.user_id,message:message,type:request_info.type});
 					}
 				});
 			});
@@ -355,7 +298,7 @@ io.sockets.on('connection', function(client) {
 				var message = "<div class='request_cont'> <div class='request_text'> <a class='chat_link' href='//mutualcog.com/u/" + client.user + "'>" + client.user + "</a> has requested your friendship </div> <div class='request_text'> <a class='chat_link accept_request' id='accept_friendship_" + client.user_id + "' href='//mutualcog.com/profile/accept/" + request_id + "'>Accept</a> / <a class='chat_link decline_request' id='decline_friendship_" + client.user_id + "' href='//mutualcog.com/profile/decline/" + request_id + "'>Decline</a> </div> </div>";
 				conn.where({id:info.insertId}).update('notifications',{message:message},function(err,info){
 					if(err)console.log(err);
-					io.sockets.in('user_' + request_info.user_id).emit('displayFriendRequests',{id:request_id,sender:client.user,sender_id:client.user_id,message:message});
+					io.in('user_' + request_info.user_id).emit('displayFriendRequests',{id:request_id,sender:client.user,sender_id:client.user_id,message:message});
 				});
 			});
 		}
@@ -379,7 +322,7 @@ io.sockets.on('connection', function(client) {
 										var request_id = info.insertId;
 										conn.where({id:request_id}).update('notifications',{message:message},function(err,info){
 											if(err)console.log(err);
-											io.sockets.in('user_' + request_info.user_id).emit('displayGlobalRequests',{id:request_id,sender:client.user,sender_id:client.user_id,message:message,type:'mod'});
+											io.in('user_' + request_info.user_id).emit('displayGlobalRequests',{id:request_id,sender:client.user,sender_id:client.user_id,message:message,type:'mod'});
 											fn(1);
 										});
 									});
@@ -414,7 +357,7 @@ io.sockets.on('connection', function(client) {
 										var request_id = info.insertId;
 										conn.where({id:request_id}).update('notifications',{message:message},function(err,info){
 											if(err)console.log(err);
-											io.sockets.in('user_' + request_info.user_id).emit('displayGlobalRequests',{id:request_id,sender:client.user,sender_id:client.user_id,message:message,type:'admin'});
+											io.in('user_' + request_info.user_id).emit('displayGlobalRequests',{id:request_id,sender:client.user,sender_id:client.user_id,message:message,type:'admin'});
 											fn(1);
 										});
 									});
@@ -433,12 +376,11 @@ io.sockets.on('connection', function(client) {
 
 	client.on('pause_all',function(){
 		if(client.is_admin){
-			io.sockets.clients(client.room).live = 0;
 			conn.where({id:client.chat_id}).update('chats',{live:0},function(err,info){
 				if(err)console.log(err);
-				io.sockets.in(client.room).emit('pause');
+				io.in(client.room).emit('pause');
 			});
-			conn.where({chat_id:chat_id}).update('users_to_chats',{live:0},function(err,info){
+			conn.where({chat_id:client.chat_id}).update('users_to_chats',{live:0},function(err,info){
 				if(err)console.log(err);
 			});
 		}
@@ -446,12 +388,11 @@ io.sockets.on('connection', function(client) {
 
 	client.on('play_all',function(){
 		if(client.is_admin){
-			io.sockets.clients(client.room).live = 1;
 			conn.where({id:client.chat_id}).update('chats',{live:1},function(err,info){
 				if(err)console.log(err);
-				io.sockets.in(client.room).emit('play');
+				io.in(client.room).emit('play');
 			});
-			conn.where({chat_id:chat_id}).update('users_to_chats',{live:1},function(err,info){
+			conn.where({chat_id:client.chat_id}).update('users_to_chats',{live:1},function(err,info){
 				if(err)console.log(err);
 			});
 		}
@@ -471,7 +412,7 @@ io.sockets.on('connection', function(client) {
 			conn.where({user_id:user_id,chat_id:chat_id}).update('users_to_chats',{is_mod:insert_mod},function(err,info){
 				if(err)console.log(err);
 				console.log(info);
-				io.sockets.in(client.room + '_user_' + name).emit('add_mod_funcs');
+				io.in(client.room + '_user_' + name).emit('add_mod_funcs');
 				fn({user_id:user_id,is_mod:is_mod});
 			});
 		}
@@ -479,7 +420,7 @@ io.sockets.on('connection', function(client) {
 
 	client.on('warn',function(info){
 		if(client.is_admin || client.is_mod){
-			io.sockets.in(client.room + '_user_' + info.user).emit('warn');
+			io.in(client.room + '_user_' + info.user).emit('warn');
 			client.emit('warn_confirm',info.user);
 		}
 	});
@@ -489,14 +430,14 @@ io.sockets.on('connection', function(client) {
 		if(client.is_admin || client.is_mod){
 			conn.where({chat_id:client.chat_id,user:user}).update('users_to_chats',{banned:1},function(err,info){
 				if(err)console.log(err);
-				io.sockets.in(client.room + '_user_' + user).emit('kick');
+				io.in(client.room + '_user_' + user).emit('kick');
 				client.emit('kick_confirm',user);
 			});
 		}
 	});
 
 	client.on('update_votes',function(info){
-		io.sockets.in(client.room).emit('updateVotes',{message_id:info.id,response:info.response});
+		io.in(client.room).emit('updateVotes',{message_id:info.id,response:info.response});
 	});
 
 	// Success!  Now listen to messages to be received
@@ -508,7 +449,7 @@ io.sockets.on('connection', function(client) {
 					conn.insert('messages',{message:mssg_info.message,chat_id:client.chat_id,user_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:mssg_info.responseto,y_dim:mssg_info.y_dim,parent:mssg_info.parent,author:client.user,serial:client.serial},function(err,info){
 						if(err) console.log(err);
 						var insert_id = info.insertId;
-						io.sockets.in(client.room).emit('publishMessage',{id:insert_id,message:mssg_info.message,chat_id:client.chat_id,user_id:client.memb_id,created_at:moment.utc().format(),responseto:mssg_info.responseto,author:client.user,serial:client.serial,y_dim:mssg_info.y_dim,parent:mssg_info.parent});
+						io.in(client.room).emit('publishMessage',{id:insert_id,message:mssg_info.message,chat_id:client.chat_id,user_id:client.memb_id,created_at:moment.utc().format(),responseto:mssg_info.responseto,author:client.user,serial:client.serial,y_dim:mssg_info.y_dim,parent:mssg_info.parent});
 						fn();
 						if(mssg_info.responseto == 0){
 							conn.where({id:insert_id}).update('messages',{path:"0" + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id,readable:1},function(err,info){
@@ -528,7 +469,7 @@ io.sockets.on('connection', function(client) {
 												}else{
 													var message = "<div class='request_cont request_link' data-request-link='//mutualcog.com/chat/static/" + client.chat_id + "/" + mssg_info.responseto + "' data-request-id='" + info.insertId + "'><div class='request_text'>" + client.user + " has responded to your message</div></div>";
 												}
-												io.sockets.in('user_' + rows[0].id).emit('displayGlobalRequests',{id:info.insertId,sender:client.user,sender_id:client.user_id,message:message,type:'response'});
+												io.in('user_' + rows[0].id).emit('displayGlobalRequests',{id:info.insertId,sender:client.user,sender_id:client.user_id,message:message,type:'response'});
 												conn.where({id:info.insertId}).update('notifications',{message:message},function(err,info){
 													if(err)console.log(err);
 												});
@@ -541,9 +482,9 @@ io.sockets.on('connection', function(client) {
 								});
 								conn.where({id:mssg_info.responseto}).update('messages',{responses:rows[0].responses + 1},function(err,info){
 									if(err)console.log(err);
-									io.sockets.in(client.room).emit('updateResponseCount',{count:rows[0].responses + 1,id:mssg_info.responseto,serial:rows[0].serial});
+									io.in(client.room).emit('updateResponseCount',{count:rows[0].responses + 1,id:mssg_info.responseto,serial:rows[0].serial});
 									if(rows[0].author != client.serial || rows[0].author != client.user){
-										io.sockets.in(client.room + '_user_' + rows[0].author).emit('alertUserToResponse',{mssg_id:mssg_info.responseto,resp_id:insert_id,parent:mssg_info.parent});
+										io.in(client.room + '_user_' + rows[0].author).emit('alertUserToResponse',{mssg_id:mssg_info.responseto,resp_id:insert_id,parent:mssg_info.parent});
 									}
 								});
 							});
@@ -578,7 +519,7 @@ io.sockets.on('connection', function(client) {
 					}else{
 						var message = "<div class='request_cont request_link' data-request-link='//mutualcog.com/chat/static/" + client.chat_id + "/" + mssg_id + "' data-request-id='" + info.insertId + "'><div class='request_text'>" + client.user + " has responded to your message</div></div>";
 					}
-					io.sockets.in('user_' + user_id).emit('displayGlobalRequests',{id:info.insertId,sender:client.user,sender_id:client.user_id,message:message,type:'response'});
+					io.in('user_' + user_id).emit('displayGlobalRequests',{id:info.insertId,sender:client.user,sender_id:client.user_id,message:message,type:'response'});
 					conn.where({id:info.insertId}).update('notifications',{message:message},function(err,info){
 						if(err)console.log(err);
 					});
@@ -595,7 +536,7 @@ io.sockets.on('connection', function(client) {
 			if(rows[0].user_id == client.memb_id){
 				conn.where({id:mssg_info.id}).update('messages',{message:replace},function(err,info){
 					if(err)console.log(err);
-					io.sockets.in(client.room).emit('softDelete',{id:mssg_info.id,user:mssg_info.user,mssg_serial:message.serial,serial:mssg_info.serial,responses:mssg_info.responses});
+					io.in(client.room).emit('softDelete',{id:mssg_info.id,user:mssg_info.user,mssg_serial:message.serial,serial:mssg_info.serial,responses:mssg_info.responses});
 				});
 			}
 		});

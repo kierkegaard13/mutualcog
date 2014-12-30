@@ -92,7 +92,7 @@ function processMessage(message){
 	message = message.replace('>:|','spec_face_angr');
 	message = message.replace('>:(','spec_face_rage');
 	message = marked(message);
-	message = message.replace(url_reg,"<a class='chat_link' href='$1$4'>$1$4</a>");
+	message = message.replace(url_reg,"<a class='chat_link' href='//$3$4'>$3$4</a>");
 	if(message.length){
 		message = message.replace(/^\s+|\s+$/g,'');
 		message = message.replace(re1,'');

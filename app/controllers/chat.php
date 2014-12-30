@@ -28,7 +28,7 @@ class Chat extends BaseController {
 			$node->serial_id = Auth::user()->serial_id;
 			if($node->findAll()){
 				$node = $node->findAll();
-				if(sizeof($node) > 0){
+				if(sizeof($node) > 1){
 					$node = $node[0];
 				}
 			}
