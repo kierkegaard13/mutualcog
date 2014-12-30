@@ -95,71 +95,37 @@ function repeatString(x,n){
 
 var io = require('socket.io').listen(3000);
 
-io.set('authorization',function(handshake,cb){  //find out if user is logged in
-	handshake.sid = handshake.query.sid;
-	handshake.serial = handshake.query.serial;
-	conn.where({sid:handshake.sid,serial:handshake.serial,authorized:1}).get('node_auth',function(err,rows){
-		if(err)console.log(err);
-		if(rows.length > 0){
-			handshake.authorized = 1;
-			handshake.user = rows[0].user;
-			handshake.user_id = rows[0].user_id;
-			handshake.memb_id = rows[0].user_id;
-			handshake.serial = rows[0].serial;
-			handshake.serial_id = rows[0].serial_id;
-		}else{
-			handshake.authorized = 0;
-		}
-		cb(null,true);
-	});
-});
-
 io.sockets.on('connection', function(client) {
 
-	var handshake = client.handshake;
-	client.sid = handshake.sid;
+	client.authorized = 0;
 
-	if(handshake.authorized){
-		client.authorized = handshake.authorized;
-		client.user = handshake.user;
-		client.user_id = handshake.user_id;
-		client.memb_id = handshake.memb_id;
-		client.serial = handshake.serial;
-		client.serial_id = handshake.serial_id;
-		client.join('user_' + client.user_id);
-		client.pm_obj = {};
-		conn.where({user_id:client.user_id}).get('users_to_private_chats',function(err,rows){
+	client.on('authorize',function(info,fn){
+		client.sid = info.sid;
+		conn.where({sid:info.sid,serial:info.serial,authorized:1}).get('node_auth',function(err,rows){
 			if(err)console.log(err);
-			for(var row in rows){
-				client.pm_obj[row.friend_id] = row.id;
+			if(rows.length > 0){
+				client.authorized = 1;
+				client.user = rows[0].user;
+				client.user_id = rows[0].user_id;
+				client.memb_id = rows[0].user_id;
+				client.serial = rows[0].serial;
+				client.serial_id = rows[0].serial_id;
+				client.join('user_' + client.user_id);
+				console.log(client.user + ' has connected');
+			}else{
+				client.authorized = 0;
 			}
+			fn();
 		});
-	}else{
-		client.authorized = handshake.authorized;
-	}
-
-	console.log(client.user + ' has connected');
+	});
 
 	//client variable unique to user but globals apply to all
 	client.on('room',function(room){
 		client.room = 'chat_' + sanitize(room);  //sanitize
 		client.chat_id = sanitize(room);  //sanitize
 		client.join(client.room);
-		var rooms_joined = io.sockets.manager.roomClients[client.id];
-		client.rooms = new Array();
-		for(var prop in rooms_joined){  //currently not used
-			prop = prop.substr(1);
-			client.rooms.push(prop);
-		}
 		conn.where({id:client.chat_id}).get('chats',function(err,rows){
 			if(err)console.log(err);
-			var all_clients = io.sockets.clients(client.room);
-			for(var i = 0;i < all_clients.length;i++){
-				if(all_clients[i].sid == client.sid && all_clients[i].room == client.room){
-					all_clients[i].live = rows[0].live;
-					client.arr_index = i;
-				}
-			}
 			client.emit('check_live',rows[0].live);
 		});
 	});
@@ -168,9 +134,9 @@ io.sockets.on('connection', function(client) {
 		var users = new Array();
 		if(!client.authorized){
 			client.user = sanitize(info.new_user);  //sanitize
+			console.log(client.user + ' has connected');
 		}
 		client.join(client.room + '_user_' + client.user);
-		console.log(client.user + ' has connected');
 		conn.where({id:client.chat_id}).get('chats',function(err,rows){
 			if(err)console.log(err);
 			client.admin = rows[0].admin;
@@ -211,14 +177,12 @@ io.sockets.on('connection', function(client) {
 					if(err)console.log(err);
 					conn.where({id:pm_info.pm_id}).get('private_chats',function(err,rows){
 						if(err)console.log(err);
-						client.pm_obj[pm_info.friend_id] = pm_info.pm_id;
 						fn({pm_id:pm_info.pm_id,friend_name:pm_info.friend_name,friend_id:pm_info.friend_id});
 					});
 				});
 			}else{
 				conn.insert('private_chats',{created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
 					if(err)console.log(err);
-					client.pm_obj[pm_info.friend_id] = info.insertId;
 					fn({pm_id:info.insertId,friend_name:pm_info.friend_name,friend_id:pm_info.friend_id});
 					conn.insert('users_to_private_chats',{chat_id:info.insertId,user_id:client.user_id,entity_id:pm_info.friend_id},function(err,info){
 						if(err)console.log(err);
@@ -469,28 +433,26 @@ io.sockets.on('connection', function(client) {
 
 	client.on('pause_all',function(){
 		if(client.is_admin){
-			var all_clients = io.sockets.clients(client.room);
-			for(var i = 0;i < all_clients.length;i++){
-				all_clients[i].live = 0;
-			}
 			io.sockets.clients(client.room).live = 0;
 			conn.where({id:client.chat_id}).update('chats',{live:0},function(err,info){
 				if(err)console.log(err);
 				io.sockets.in(client.room).emit('pause');
+			});
+			conn.where({chat_id:chat_id}).update('users_to_chats',{live:0},function(err,info){
+				if(err)console.log(err);
 			});
 		}
 	});
 
 	client.on('play_all',function(){
 		if(client.is_admin){
-			var all_clients = io.sockets.clients(client.room);
-			for(var i = 0;i < all_clients.length;i++){
-				all_clients[i].live = 1;
-			}
 			io.sockets.clients(client.room).live = 1;
 			conn.where({id:client.chat_id}).update('chats',{live:1},function(err,info){
 				if(err)console.log(err);
 				io.sockets.in(client.room).emit('play');
+			});
+			conn.where({chat_id:chat_id}).update('users_to_chats',{live:1},function(err,info){
+				if(err)console.log(err);
 			});
 		}
 	});
@@ -525,12 +487,6 @@ io.sockets.on('connection', function(client) {
 	client.on('kick',function(info){ //banned array applies to all chats
 		var user = info.user;
 		if(client.is_admin || client.is_mod){
-			var all_clients = io.sockets.clients(client.room);
-			for(var i = 0;i < all_clients.length;i++){
-				if(all_clients[i].user == info.user && all_clients[i].room == client.room){
-					all_clients[i].banned = 1;
-				}
-			}
 			conn.where({chat_id:client.chat_id,user:user}).update('users_to_chats',{banned:1},function(err,info){
 				if(err)console.log(err);
 				io.sockets.in(client.room + '_user_' + user).emit('kick');
@@ -543,69 +499,70 @@ io.sockets.on('connection', function(client) {
 		io.sockets.in(client.room).emit('updateVotes',{message_id:info.id,response:info.response});
 	});
 
-	client.on('update_details',function(info){
-		io.sockets.in(client.room).emit('display_details',info);
-	});
-
 	// Success!  Now listen to messages to be received
 	client.on('message_sent',function(mssg_info,fn){ 
-		if(io.sockets.clients(client.room)[client.arr_index].live && !client.banned && mssg_info.message.replace(/^\s+|\s+$/g,'') != '' && mssg_info.message.length < 2500){
-			conn.insert('messages',{message:mssg_info.message,chat_id:client.chat_id,user_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:mssg_info.responseto,y_dim:mssg_info.y_dim,parent:mssg_info.parent,author:client.user,serial:client.serial},function(err,info){
-				if(err) console.log(err);
-				var insert_id = info.insertId;
-				io.sockets.in(client.room).emit('publishMessage',{id:insert_id,message:mssg_info.message,chat_id:client.chat_id,user_id:client.memb_id,created_at:moment.utc().format(),responseto:mssg_info.responseto,author:client.user,serial:client.serial,y_dim:mssg_info.y_dim,parent:mssg_info.parent});
-				fn();
-				if(mssg_info.responseto == 0){
-					conn.where({id:insert_id}).update('messages',{path:"0" + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id,readable:1},function(err,info){
-						if(err)console.log(err);
-					});
-				}else{  //if it is a response
-					conn.where({id:mssg_info.responseto}).get('messages',function(err,rows){  //update response count, message path, and he_level and alert user to response
-						if(err)console.log(err);
-						if(rows[0].author.match(/\D/g)){
-							conn.where({id:rows[0].user_id}).get('users',function(err,rows){
+		conn.where({chat_id:client.chat_id,user:client.user}).get('users_to_chats',function(err,rows){
+			if(err)console.log(err);
+			if(rows.length > 0){
+				if(rows[0].live && !rows[0].banned && mssg_info.message.replace(/^\s+|\s+$/g,'') != '' && mssg_info.message.length < 2500){
+					conn.insert('messages',{message:mssg_info.message,chat_id:client.chat_id,user_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:mssg_info.responseto,y_dim:mssg_info.y_dim,parent:mssg_info.parent,author:client.user,serial:client.serial},function(err,info){
+						if(err) console.log(err);
+						var insert_id = info.insertId;
+						io.sockets.in(client.room).emit('publishMessage',{id:insert_id,message:mssg_info.message,chat_id:client.chat_id,user_id:client.memb_id,created_at:moment.utc().format(),responseto:mssg_info.responseto,author:client.user,serial:client.serial,y_dim:mssg_info.y_dim,parent:mssg_info.parent});
+						fn();
+						if(mssg_info.responseto == 0){
+							conn.where({id:insert_id}).update('messages',{path:"0" + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id,readable:1},function(err,info){
 								if(err)console.log(err);
-								if(rows[0].chat_id != client.chat_id){
-									conn.insert('notifications',{type:0,user_id:rows[0].id,sender_id:client.user_id,sender:client.user,global_type:'response',created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
+							});
+						}else{  //if it is a response
+							conn.where({id:mssg_info.responseto}).get('messages',function(err,rows){  //update response count, message path, and he_level and alert user to response
+								if(err)console.log(err);
+								if(rows[0].author.match(/\D/g)){
+									conn.where({id:rows[0].user_id}).get('users',function(err,rows){
 										if(err)console.log(err);
-										if(client.authorized){
-											var message = "<div class='request_cont request_link' data-request-link='//mutualcog.com/chat/static/" + client.chat_id + "/" + mssg_info.responseto + "' data-request-id='" + info.insertId + "'><div class='request_text'><a class='chat_link' href='//mutualcog.com/u/" + client.user + "'>" + client.user + "</a> has responded to your message</div></div>";
-										}else{
-											var message = "<div class='request_cont request_link' data-request-link='//mutualcog.com/chat/static/" + client.chat_id + "/" + mssg_info.responseto + "' data-request-id='" + info.insertId + "'><div class='request_text'>" + client.user + " has responded to your message</div></div>";
+										if(rows[0].chat_id != client.chat_id){
+											conn.insert('notifications',{type:0,user_id:rows[0].id,sender_id:client.user_id,sender:client.user,global_type:'response',created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
+												if(err)console.log(err);
+												if(client.authorized){
+													var message = "<div class='request_cont request_link' data-request-link='//mutualcog.com/chat/static/" + client.chat_id + "/" + mssg_info.responseto + "' data-request-id='" + info.insertId + "'><div class='request_text'><a class='chat_link' href='//mutualcog.com/u/" + client.user + "'>" + client.user + "</a> has responded to your message</div></div>";
+												}else{
+													var message = "<div class='request_cont request_link' data-request-link='//mutualcog.com/chat/static/" + client.chat_id + "/" + mssg_info.responseto + "' data-request-id='" + info.insertId + "'><div class='request_text'>" + client.user + " has responded to your message</div></div>";
+												}
+												io.sockets.in('user_' + rows[0].id).emit('displayGlobalRequests',{id:info.insertId,sender:client.user,sender_id:client.user_id,message:message,type:'response'});
+												conn.where({id:info.insertId}).update('notifications',{message:message},function(err,info){
+													if(err)console.log(err);
+												});
+											});
 										}
-										io.sockets.in('user_' + rows[0].id).emit('displayGlobalRequests',{id:info.insertId,sender:client.user,sender_id:client.user_id,message:message,type:'response'});
-										conn.where({id:info.insertId}).update('notifications',{message:message},function(err,info){
-											if(err)console.log(err);
-										});
 									});
 								}
+								conn.where({id:insert_id}).update('messages',{path:rows[0].path + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id,res_num:rows[0].responses + 1,readable:1},function(err,info){
+									if(err)console.log(err);
+								});
+								conn.where({id:mssg_info.responseto}).update('messages',{responses:rows[0].responses + 1},function(err,info){
+									if(err)console.log(err);
+									io.sockets.in(client.room).emit('updateResponseCount',{count:rows[0].responses + 1,id:mssg_info.responseto,serial:rows[0].serial});
+									if(rows[0].author != client.serial || rows[0].author != client.user){
+										io.sockets.in(client.room + '_user_' + rows[0].author).emit('alertUserToResponse',{mssg_id:mssg_info.responseto,resp_id:insert_id,parent:mssg_info.parent});
+									}
+								});
 							});
 						}
-						conn.where({id:insert_id}).update('messages',{path:rows[0].path + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id,res_num:rows[0].responses + 1,readable:1},function(err,info){
-							if(err)console.log(err);
-						});
-						conn.where({id:mssg_info.responseto}).update('messages',{responses:rows[0].responses + 1},function(err,info){
-							if(err)console.log(err);
-							io.sockets.in(client.room).emit('updateResponseCount',{count:rows[0].responses + 1,id:mssg_info.responseto,serial:rows[0].serial});
-							if(rows[0].author != client.serial || rows[0].author != client.user){
-								io.sockets.in(client.room + '_user_' + rows[0].author).emit('alertUserToResponse',{mssg_id:mssg_info.responseto,resp_id:insert_id,parent:mssg_info.parent});
-							}
+						if(client.authorized){
+							conn.insert('messages_voted',{message_id:insert_id,user_id:client.memb_id,status:1},function(err,info){
+								if(err)console.log(err);
+							});
+							conn.where({id:client.user_id}).update('users',{updated_at:moment.utc().format()},function(err,info){
+								if(err) console.log(err);
+							});
+						}
+						conn.where({serial_id:client.serial}).update('serials',{updated_at:moment.utc().format()},function(err,info){
+							if(err) console.log(err);
 						});
 					});
 				}
-				if(client.authorized){
-					conn.insert('messages_voted',{message_id:insert_id,user_id:client.memb_id,status:1},function(err,info){
-						if(err)console.log(err);
-					});
-					conn.where({id:client.user_id}).update('users',{updated_at:moment.utc().format()},function(err,info){
-						if(err) console.log(err);
-					});
-				}
-				conn.where({serial_id:client.serial}).update('serials',{updated_at:moment.utc().format()},function(err,info){
-					if(err) console.log(err);
-				});
-			});
-		}
+			}
+		});
 	});
 
 	client.on('notify_response',function(mssg_id){

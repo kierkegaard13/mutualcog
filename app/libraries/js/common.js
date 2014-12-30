@@ -15,7 +15,7 @@ module = function(){
 		var downvoted = jQuery.parseJSON($('#down_arr').text());
 	}
 	if(typeof io !== 'undefined'){
-		var socket = io.connect('http://localhost:3000/',{query:"sid=" + $('#sid').attr('data-sid') + "&serial=" + $('#serial_tracker').text()});
+		var socket = io('http://localhost:3000/');
 	}else{
 		var socket = $('body');
 	}
@@ -238,9 +238,6 @@ $(document).ready(function(){
 			}
 			module.recent = 0;
 		});
-	}
-	if(typeof socket !== 'undefined'){
-		module.socket.emit('seen_chats');
 	}
 	if($('.pm_body').length){
 		if($('.pm_bar').width() > $(window).width() - 30){

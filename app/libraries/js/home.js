@@ -197,9 +197,12 @@ $(document).ready(function(){
 module.socket.on('connect',function() {
 	console.log('Client has connected');
 	module.connected = 1;
-	if(module.chat_id){
-		module.socket.emit('room',module.chat_id);
-	}
+	module.socket.emit('authorize',{sid:$('#sid').attr('data-sid'),serial:$('#serial_tracker').text()},function(){
+		if(module.chat_id){
+			module.socket.emit('room',module.chat_id);
+		}
+		module.socket.emit('seen_chats');
+	});
 });
 
 function cookiesEnabled() {

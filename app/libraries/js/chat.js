@@ -77,7 +77,6 @@ $(document).ready(function(){
 			url:'//mutualcog.com/chat/details',
 			success:function(hresp){
 				$('#curr_details').html(hresp);
-				module.socket.emit('update_details',hresp);
 			},
 			error:function(){
 			}
@@ -289,17 +288,20 @@ notifyMessage = function(){
 module.socket.on('connect',function() {
 	console.log('Client has connected');
 	module.connected = 1;
-	module.socket.emit('room',module.chat_id);
+	module.socket.emit('authorize',{sid:$('#sid').attr('data-sid'),serial:$('#serial_tracker').text()},function(){
+		module.socket.emit('room',module.chat_id);
+		if($('#logged_in').text() == 1){
+			module.socket.emit('add_user',{new_user:module.user_tracker,serial_id:module.serial_id});
+		}else{
+			module.socket.emit('add_user',{new_user:module.serial_tracker,serial_id:module.serial_id});
+		}
+		module.socket.emit('seen_chats');
+	});
 	if($('.enter_hint').text() == 'You are disconnected'){
 		$('.enter_hint').text("Press Shift+Enter for new line");
 		$('.response_hint').text("Click on a message to respond to it");
 		$('.pm_unseen').text("");
 		$('.pm_unseen').hide();
-	}
-	if($('#logged_in').text() == 1){
-		module.socket.emit('add_user',{new_user:module.user_tracker,serial_id:module.serial_id});
-	}else{
-		module.socket.emit('add_user',{new_user:module.serial_tracker,serial_id:module.serial_id});
 	}
 });
 
@@ -336,10 +338,6 @@ module.socket.on('alertUserToResponse',function(info){
 			$('#notify_cont_bottom').show('blind');
 		}
 	}
-});
-
-module.socket.on('display_details',function(info){
-	$('#curr_details').html(info);
 });
 
 module.socket.on('updateResponseCount',function(info){
