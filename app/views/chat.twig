@@ -136,9 +136,16 @@
 	{% endfor %}
 </div>
 </div>
+<div class="chat_community_str" style="display:none;">#{{chat.communities|join(' #')}}</div>
+<div class="chat_link_str" style="display:none;">{{chat.link}}</div>
+<div class="chat_title_str" style="display:none;">{{chat.title}}</div>
+<div class="chat_desc_str" style="display:none;">{{chat.raw_details}}</div>
+<div class="chat_live_str" style="display:none;">{{chat.live}}</div>
+<div class="chat_nsfw_str" style="display:none;">{{chat.nsfw}}</div>
+<div class="chat_id_str" style="display:none;">{{chat.id}}</div>
 <div class="top_5">
 {% if user.name == chat.admin or serial == chat.admin %}
-	<button class="btn btn-primary fill_cont bottom_5" data-toggle="modal" data-target="#description_modal">Edit Description</button>
+	<button class="btn btn-primary fill_cont bottom_5 edit_chat_link" data-toggle="modal" data-target="edit_modal">Edit Chat</button>
 {% else %}
 	{% if chat.details | length > 0 %}
 		<button class="btn btn-primary fill_cont" data-toggle="modal" data-target="#continue_modal">Read Description</button>

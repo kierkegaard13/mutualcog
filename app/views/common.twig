@@ -16,7 +16,7 @@
 			<btn class="navbar-brand visible-xs" data-toggle="modal" data-target="#register_modal" title="Login"><div class="glyphicon glyphicon-log-in"></div></btn>
 		{% endif %}
 		{% if (chat.admin | length > 0) and (user.name == chat.admin or serial == chat.admin) %}
-			<btn class="navbar-brand visible-xs" data-toggle="modal" data-target="#description_modal" title="Edit description"><div class="glyphicon glyphicon-book"></div></btn>
+			<btn class="navbar-brand visible-xs edit_chat_link" data-toggle="modal" data-target="edit_modal" title="Edit Chat"><div class="glyphicon glyphicon-book"></div></btn>
 		{% else %}
 			{% if chat.details | length > 0 %}
 				<btn class="navbar-brand visible-xs" data-toggle="modal" data-target="#continue_modal" title="Read description"><div class="glyphicon glyphicon-book"></div></btn>
@@ -307,22 +307,6 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn" data-dismiss="modal">Close</button>
-			</div>
-		</div>
-	</div>	
-</div>
-<div class="modal fade" id="description_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="description_modalLabel">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Edit Chat Description</h4>
-			</div>
-			<div class="modal-body">
-				<textarea rows="7" id="detail_text" maxlength="{{max_static_length}}">{{chat.raw_details | raw}}</textarea>
-			</div>
-			<div class="modal-footer">
-				<button class="btn btn-success" id="save_details">Save Details</button>
 			</div>
 		</div>
 	</div>	

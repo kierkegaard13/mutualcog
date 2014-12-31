@@ -17,7 +17,7 @@ class Chat extends BaseController {
 		$mssg_upvoted = array();
 		$mssg_downvoted = array();
 		if(Auth::check()){
-			if(UsersToChats::whereuser(Auth::user()->name)->wherebanned(1)->first()){
+			if(UsersToChats::whereuser(Auth::user()->name)->wherechat_id($chat_id)->wherebanned(1)->first()){
 				return Redirect::to('home');
 			}
 			Auth::user()->chat_id = $chat_id;

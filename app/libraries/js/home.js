@@ -125,23 +125,6 @@ $(document).ready(function(){
 		$('#advanced_modal').modal();
 		return false;
 	});
-	$('#community_edit').click(function(e){
-		var community_cont = $(this).parents('.side_content');
-		console.log(community_cont.find('#community_id_str').text());
-		$('#input_community_id').val(community_cont.find('#community_id_str').text());
-		$('#edit_community_info').val(community_cont.find('#community_info_str').text());
-		$('#input_community_desc').val(community_cont.find('#community_desc_str').text());
-		$('#community_edit_modal').modal();
-		return false;
-	});
-	$('#mobile_community_edit').click(function(e){
-		var community_cont = $('#community_edit').parents('.side_content');
-		$('#input_community_id').val(community_cont.find('#community_id_str').text());
-		$('#edit_community_info').val(community_cont.find('#community_info_str').text());
-		$('#input_community_desc').val(community_cont.find('#community_desc_str').text());
-		$('#community_edit_modal').modal();
-		return false;
-	});
 	$('.edit_chat_link').click(function(e){
 		var chat_cont = $(this).parents('.chat_title_box');
 		$('#Title_v3').val(chat_cont.find('.chat_title_str').text());
@@ -160,6 +143,23 @@ $(document).ready(function(){
 			$('#nsfw_v3').attr('checked',false);
 		}
 		$('#edit_modal').modal();
+		return false;
+	});
+	$('#community_edit').click(function(e){
+		var community_cont = $(this).parents('.side_content');
+		console.log(community_cont.find('#community_id_str').text());
+		$('#input_community_id').val(community_cont.find('#community_id_str').text());
+		$('#edit_community_info').val(community_cont.find('#community_info_str').text());
+		$('#input_community_desc').val(community_cont.find('#community_desc_str').text());
+		$('#community_edit_modal').modal();
+		return false;
+	});
+	$('#mobile_community_edit').click(function(e){
+		var community_cont = $('#community_edit').parents('.side_content');
+		$('#input_community_id').val(community_cont.find('#community_id_str').text());
+		$('#edit_community_info').val(community_cont.find('#community_info_str').text());
+		$('#input_community_desc').val(community_cont.find('#community_desc_str').text());
+		$('#community_edit_modal').modal();
 		return false;
 	});
 	$('.remove_mod').click(function(e){
@@ -270,46 +270,6 @@ $('#home_form_v2').submit(function(){
 		$('#Title_v2').tooltip('show');
 		return false;
 	}
-});
-
-$('#home_form_v3').submit(function(){
-	var title = $('#Title_v3').val();
-	var link = $('#Link_v3').val();
-	var communities = $('#Communities_v3').val();
-	var desc = $('#description_v3').val();
-	$('.form_error').hide();
-	$('.form-group').attr('class','form-group');
-	if(title.length < 5 || title.length > module.max_title_length){
-		$('#Title_v3').attr('data-original-title','Title must be between 5 and ' + module.max_title_length + ' characters');
-		$('#Title_v3').tooltip('show');
-		$('#title_group_v3').attr('class','form-group has-error');
-		return false;
-	}
-	if(communities.split(' ')[0] == "" || communities.split(' ').length > 5){
-		$('#communities_group_v3').attr('class','form-group has-error');		
-		$('#Communities_v3').attr('data-original-title','Must have at least 1 community but less than 6');
-		$('#Communities_v3').tooltip({placement:'bottom',trigger:'focus'});
-		$('#Communities_v3').tooltip('show');
-		return false;
-	}else{
-		communities = communities.split(' ');
-		$.each(communities,function(index,value){
-			value = value.replace('#','');
-			if((value.length < 3 || value.length > 20) && value.length != 0){
-				$('#communities_group_v3').attr('class','form-group has-error');
-				$('#Communities_v3').attr('data-original-title','Communities must be between 3 and 20 characters');
-				$('#Communities_v3').tooltip({placement:'bottom',trigger:'focus'});
-				$('#Communities_v3').tooltip('show');
-				return false;
-			}
-		});
-	}
-	if(desc.length > module.max_static_length){
-		$('#description_group_v3').attr('class','form-group has-error');
-		$('#description_v3').tooltip('show');
-	}
-	$('#home_form_v3').append('<input type="hidden" name="js_key" value="js_enabled" id="js_key">');
-	return true;
 });
 
 $('#community_edit_form').submit(function(){
