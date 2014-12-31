@@ -53,7 +53,7 @@ function getUniqueSerialNumber($serial_number=null){
 	$temp = $serial->findAll();
 	if($temp){  //serial number exists
 		/* if temp is more than 8 hours old */
-		if(abs(compareTimes($temp->updated_at)) > 721){
+		if(abs(compareTimes($temp->updated_at)) > 1440){
 			$temp->ip_address = Request::getClientIp();
 			$temp->welcomed = 0;
 			$temp->save();
