@@ -11,23 +11,24 @@ $(document).ready(function(){
 		if(scrollBottom == $('.chat_main').height() - 4){
 			module.stop_scroll = 0;
 			module.scroll_mod_active = 1;
-			$('#stop_scroll').removeClass('highlight_red');	
-			$('#stop_scroll').attr('data-original-title','Stop scrollbar');
+			$('.stop_scroll').removeClass('highlight_red');	
+			$('.stop_scroll').attr('data-original-title','Stop scrollbar');
 		}else if(scroll_mod_active){
+			console.log('hihi');
 			module.stop_scroll = 1;
 			module.chat_scroll_timer = 10;
-			if($('#stop_scroll').hasClass('highlight_red')){
+			if($('.stop_scroll').hasClass('highlight_red')){
 			}else{
-				$('#stop_scroll').addClass('highlight_red');
-				$('#stop_scroll').attr('data-original-title','Resume scrolling');
+				$('.stop_scroll').addClass('highlight_red');
+				$('.stop_scroll').attr('data-original-title','Resume scrolling');
 			}	
 		}
 	}}});	
 	window.setInterval(function(){
 		if(module.chat_scroll_timer == 0){
 			if(module.scroll_button_clicked == 0 && module.stop_scroll){
-				$('#stop_scroll').removeClass('highlight_red');	
-				$('#stop_scroll').attr('data-original-title','Stop scrollbar');
+				$('.stop_scroll').removeClass('highlight_red');	
+				$('.stop_scroll').attr('data-original-title','Stop scrollbar');
 				module.stop_scroll = 0;
 			}
 		}else{
@@ -38,8 +39,8 @@ $(document).ready(function(){
 	$('#chat_messages').click(function(){
 		if(module.scroll_mod_active == 0){
 			if(module.stop_scroll == 1){
-				$('#stop_scroll').removeClass('highlight_red');	
-				$('#stop_scroll').attr('data-original-title','Stop scrollbar');
+				$('.stop_scroll').removeClass('highlight_red');	
+				$('.stop_scroll').attr('data-original-title','Stop scrollbar');
 			}
 			module.scroll_mod_active = 1;
 			module.scroll_button_clicked = 0;
@@ -209,8 +210,8 @@ setClicked = function(e){
 	$(this).find('.reply_link').find('strong').text('Replying');
 	$('#message').attr('class',$(this).attr('id').replace('message_',''));
 	if(module.stop_scroll == 0){
-		$('#stop_scroll').addClass('highlight_red');
-		$('#stop_scroll').attr('data-original-title','Resume scrolling');
+		$('.stop_scroll').addClass('highlight_red');
+		$('.stop_scroll').attr('data-original-title','Resume scrolling');
 	}
 	module.scroll_mod_active = 0;
 	module.scroll_button_clicked = 1;
@@ -453,7 +454,7 @@ generateMssg = function(info,is_mssg,tmp){
 	}
 	tmp += "<div class='row' style='margin:0;'> <div class='mssg_body_cont'><div class='vote_box'>";
 	if(module.user_tracker == info.author || module.serial_tracker == info.author){
-		tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" style="color:#57bf4b;" id="mssg_upvote_' + info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + info.id + '">0</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>';
+		tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote green_color" id="mssg_upvote_' + info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + info.id + '">0</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>';
 	}else{
 		tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + info.id + '">0</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>';
 	}

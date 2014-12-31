@@ -490,11 +490,8 @@ io.on('connection', function(client) {
 							});
 						}
 						if(client.authorized){
-							conn.insert('messages_voted',{message_id:insert_id,user_id:client.memb_id,status:1},function(err,info){
+							conn.insert('messages_voted',{message_id:insert_id,user_id:client.memb_id,status:1,updated_at:moment.utc().format(),created_at:moment.utc().format()},function(err,info){
 								if(err)console.log(err);
-							});
-							conn.where({id:client.user_id}).update('users',{updated_at:moment.utc().format()},function(err,info){
-								if(err) console.log(err);
 							});
 						}
 						conn.where({serial_id:client.serial}).update('serials',{updated_at:moment.utc().format()},function(err,info){

@@ -156,7 +156,7 @@ class BaseController extends Controller {
 		return Redirect::to('home');
 	}
 
-	public function voteEntity($type,$entity_type){
+	public function voteEntity($type,$entity_type){  //status is 1 for upvote, 0 for none, -1 for downvote
 		$entity_id = Input::get('id');
 		$member = Auth::user()->id;
 		$status = 0;
