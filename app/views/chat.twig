@@ -213,7 +213,7 @@
 								{% if message.author in mods %}
 									<span class="glyphicon glyphicon-tower"></span>	
 								{% endif %}
-								<strong class="mssg_op" data-author="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}} (<span class="response_count" id="{{message.id}}">{{message.responses}}</span>)</strong> : {{message.message | raw}}
+								<strong class="mssg_op" data-author="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}}</strong>: {{message.message | raw}}
 								<div class="time_box">
 									{% if chat.live %}<div class="reply"><a href="#" class="reply_link" data-mssg-id="{{message.id}}"><strong>Reply</strong></a></div>{% endif %}
 									{% set time_passed = server_time|date('U') - message.created_at|date('U') %}

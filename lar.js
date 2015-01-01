@@ -58,18 +58,16 @@ io.on('connection', function(client) {
 			}else{
 				client.authorized = 0;
 			}
-			fn();
-		});
-	});
-
-	//client variable unique to user but globals apply to all
-	client.on('room',function(room){
-		client.room = 'chat_' + sanitize(room);  //sanitize
-		client.chat_id = sanitize(room);  //sanitize
-		client.join(client.room);
-		conn.where({id:client.chat_id}).get('chats',function(err,rows){
-			if(err)console.log(err);
-			client.emit('check_live',rows[0].live);
+			if(info.room){
+				client.room = 'chat_' + sanitize(info.room);  //sanitize
+				client.chat_id = sanitize(info.room);  //sanitize
+				client.join(client.room);
+				conn.where({id:client.chat_id}).get('chats',function(err,rows){
+					if(err)console.log(err);
+					client.emit('check_live',rows[0].live);
+					fn();
+				});
+			}
 		});
 	});
 
@@ -482,7 +480,6 @@ io.on('connection', function(client) {
 								});
 								conn.where({id:mssg_info.responseto}).update('messages',{responses:rows[0].responses + 1},function(err,info){
 									if(err)console.log(err);
-									io.in(client.room).emit('updateResponseCount',{count:rows[0].responses + 1,id:mssg_info.responseto,serial:rows[0].serial});
 									if(rows[0].author != client.serial || rows[0].author != client.user){
 										io.in(client.room + '_user_' + rows[0].author).emit('alertUserToResponse',{mssg_id:mssg_info.responseto,resp_id:insert_id,parent:mssg_info.parent});
 									}

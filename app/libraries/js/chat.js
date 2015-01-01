@@ -308,8 +308,7 @@ notifyMessage = function(){
 module.socket.on('connect',function() {
 	console.log('Client has connected');
 	module.connected = 1;
-	module.socket.emit('authorize',{sid:$('#sid').attr('data-sid'),serial:$('#serial_tracker').text()},function(){
-		module.socket.emit('room',module.chat_id);
+	module.socket.emit('authorize',{room:module.chat_id,sid:$('#sid').attr('data-sid'),serial:$('#serial_tracker').text()},function(){
 		if($('#logged_in').text() == 1){
 			module.socket.emit('add_user',{new_user:module.user_tracker,serial_id:module.serial_id});
 		}else{
@@ -472,10 +471,13 @@ generateMssg = function(info,is_mssg,tmp){
 		tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + info.id + '">0</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>';
 	}
 	tmp += '</div><div class="mssg_body author_' + info.author + '"><div id="toggle_' + info.id + '" class="toggle_responses"> <span class="caret caret_tooltip" id="caret_' + info.id + '" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span> </div> ';
+	//TODO: Add mod symbol fix admin array and mods array
 	if((module.serial_tracker == info.author || module.user_tracker == info.author) && info.message != '<i>This message has been deleted</i>'){
 		tmp += "<span id='remove_" + info.id + "' style='margin-right:4px;' class='glyphicon glyphicon-remove mssg_icon' data-mssg-serial='" + info.serial + "' data-toggle='tooltip' title='Delete post' data-container='body' data-placement='top'></span>";
+		tmp += "<span class='glyphicon glyphicon-star'></span><strong class='mssg_op' data-author='" + info.author + "' style='color:" + module.color_arr[info.serial % 7] + ";'> " + info.author + " (<span class='response_count' id='" + info.id + "'>0</span>)</strong> : " + info.message + "<div class='time_box'><div class='reply'><a href='#' class='reply_link' data-mssg-id='" + info.id + "'><strong>Reply</strong></a></div><div class='time' id='" + info.created_at + "'>" + moment.utc(info.created_at).fromNow() + "</div></div></div></div></div></div></div>"	
+	}else{
+		tmp += "<strong class='mssg_op' data-author='" + info.author + "' style='color:" + module.color_arr[info.serial % 7] + ";'> " + info.author + " (<span class='response_count' id='" + info.id + "'>0</span>)</strong> : " + info.message + "<div class='time_box'><div class='reply'><a href='#' class='reply_link' data-mssg-id='" + info.id + "'><strong>Reply</strong></a></div><div class='time' id='" + info.created_at + "'>" + moment.utc(info.created_at).fromNow() + "</div></div></div></div></div></div></div>"	
 	}
-	tmp += "<strong class='mssg_op' data-author='" + info.author + "' style='color:" + module.color_arr[info.serial % 7] + ";'> " + info.author + " (<span class='response_count' id='" + info.id + "'>0</span>)</strong> : " + info.message + "<div class='time_box'><div class='reply'><a href='#' class='reply_link' data-mssg-id='" + info.id + "'><strong>Reply</strong></a></div><div class='time' id='" + info.created_at + "'>" + moment.utc(info.created_at).fromNow() + "</div></div></div></div></div></div></div>"	
 	return tmp;
 }
 
@@ -501,12 +503,6 @@ module.socket.on('publishMessage',function(chat_info){
 			module.scroll_mod_active = 1;
 		},100);
 	}
-});
-
-module.socket.on('updateResponseCount',function(info){
-	$('#' + info.id + '.response_count').animate({color:module.color_arr[info.serial % 7]},'slow');	
-	$('#' + info.id + '.response_count').animate({color:'black'},'slow');	
-	$('#' + info.id + '.response_count').text(info.count);
 });
 
 /* Add a disconnect listener*/

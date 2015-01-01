@@ -190,21 +190,21 @@
 			<span class="badge pull-right top_5" id="mobile_global_requests_count">{% if user.globalNotifications|length > 0 %}{{user.globalNotifications|length}}{% endif %}</span>
 		</div>
 	</div>
-	<div class="mobile_friend_requests" style="margin:5px 15px;">
+	<div class="mobile_friend_requests" style="margin:10px 15px;">
 		{% for request in user.friendNotifications %}
 			{{request.message | raw}}
 		{% else %}
 			<div class='request_text'>No friend requests</div>
 		{% endfor %}
 	</div>
-	<div class="mobile_mssg_requests" style="display:none;margin:5px 15px;">
+	<div class="mobile_mssg_requests" style="display:none;margin:10px 15px;">
 		{% for request in user.mssgNotifications %}
 			{{request.message | raw}}
 		{% else %}
 			<div class='request_text'>No messages</div>
 		{% endfor %}
 	</div>
-	<div class="mobile_global_requests" style="display:none;margin:5px 15px;">
+	<div class="mobile_global_requests" style="display:none;margin:10px 15px;">
 		{% for request in user.globalNotifications %}
 			{{request.message | raw}}
 		{% else %}
