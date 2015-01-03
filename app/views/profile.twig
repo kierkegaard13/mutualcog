@@ -109,7 +109,7 @@
 					{% endif %}
 				</span>
 				<span class="chat_id_{{message.id}} p_mssg_body" id="{{message.chat_id}}">
-					<strong class='mssg_op' id="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}} (<span class='response_count' id="{{message.id}}">{{message.responses}}</span>)</strong> : {{message.message | raw}}
+					<strong class='mssg_op' id="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}} </strong> : {{message.message | raw}}
 				</span>
 				<div class="p_time_box">
 					{% set time_passed = server_time|date('U') - message.created_at|date('U') %}
