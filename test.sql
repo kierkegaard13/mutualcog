@@ -1,32 +1,61 @@
--- phpMyAdmin SQL Dump
--- version 3.4.10.1deb1
--- http://www.phpmyadmin.net
+CREATE DATABASE  IF NOT EXISTS `test` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `test`;
+-- MySQL dump 10.13  Distrib 5.5.40, for debian-linux-gnu (x86_64)
 --
--- Host: localhost
--- Generation Time: Aug 26, 2014 at 06:57 PM
--- Server version: 5.5.38
--- PHP Version: 5.3.10-1ubuntu3.13
-
-SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
-
+-- Host: 127.0.0.1    Database: test
+-- ------------------------------------------------------
+-- Server version	5.5.40-0ubuntu0.14.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Database: `test`
+-- Table structure for table `abilities`
 --
 
--- --------------------------------------------------------
+DROP TABLE IF EXISTS `abilities`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `abilities` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `cost` int(11) NOT NULL DEFAULT '0',
+  `required_level` int(11) NOT NULL DEFAULT '0',
+  `description` text,
+  `scalable` int(11) NOT NULL DEFAULT '1',
+  `scale` float NOT NULL DEFAULT '1',
+  `standard` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `abilities`
+--
+
+LOCK TABLES `abilities` WRITE;
+/*!40000 ALTER TABLE `abilities` DISABLE KEYS */;
+INSERT INTO `abilities` VALUES (1,'rew1',150,1,'It has a description',1,2,0);
+/*!40000 ALTER TABLE `abilities` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `chats`
 --
 
-CREATE TABLE IF NOT EXISTS `chats` (
+DROP TABLE IF EXISTS `chats`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `chats` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `admin` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
@@ -47,115 +76,174 @@ CREATE TABLE IF NOT EXISTS `chats` (
   `members` int(11) NOT NULL DEFAULT '0',
   `group` int(11) NOT NULL DEFAULT '0',
   `nsfw` int(11) NOT NULL DEFAULT '0',
+  `pinned` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `title` (`title`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `chats`
 --
 
-INSERT INTO `chats` (`id`, `title`, `admin`, `admin_id`, `live`, `details`, `raw_details`, `created_at`, `updated_at`, `type`, `upvotes`, `downvotes`, `link`, `image`, `site_name`, `views`, `removed`, `members`, `group`, `nsfw`) VALUES
-(1, 'A new test chat', 'Omnium', 1, 1, NULL, NULL, '2014-01-12 05:59:23', '2014-08-26 05:15:40', 'open', 0, 0, NULL, NULL, NULL, 52, 1, 0, 0, 0),
-(2, 'A test chat', 'Omnium', 1, 0, '', '', '2014-01-12 22:02:41', '2014-03-14 22:27:39', 'open', 0, 0, NULL, NULL, NULL, 839, 0, 0, 0, 0),
-(3, 'Testing images', 'Omnium', 1, 1, 'Just a test description with some <em>markdown</em> basics in it and a link<br />\nto the author of course <a class=''chat_link'' href=''\\/\\/mutualcog.com/u/Omnium''>/u/Omnium</a><br />\nwhat happens if I put another line in here? <strong>hmmmm</strong>', 'Just a test description with some *markdown* basics in it and a link\r\nto the author of course /p/Omnium\r\nwhat happens if I put another line in here? **hmmmm**', '2014-03-10 16:28:56', '2014-08-26 19:50:10', 'live', 0, 0, 'http://i.imgur.com/LJ8zguP.jpg', 'http://i.imgur.com/LJ8zguP.jpg', 'i.imgur.com', 288, 0, 0, 0, 0),
-(4, 'Testing the advanced controls and stuff', 'Omnium', 1, 1, 'Just a description <em>with</em> some markdown <a class=''chat_link'' href=''\\/\\/mutualcog.com/p/Omnium''>/p/Omnium</a>', 'Just a description *with* some markdown /p/Omnium', '2014-03-13 03:26:10', '2014-08-05 19:27:41', 'open', 0, 0, NULL, NULL, NULL, 14, 0, 0, 0, 0),
-(5, 'Creating a static chat', 'Omnium', 1, 1, 'Hello <a class=''chat_link'' href=''\\/\\/mutualcog.com/p/Omnium''>@Omnium</a>', 'Hello @Omnium', '2014-03-13 03:29:03', '2014-08-05 04:46:07', 'open', 0, 0, NULL, NULL, NULL, 459, 1, 0, 0, 0),
-(6, 'testing static stuff', 'Omnium', 1, 1, NULL, NULL, '2014-03-13 03:37:28', '2014-08-13 23:25:51', 'open', 0, 0, NULL, NULL, NULL, 192, 0, 0, 0, 0),
-(8, 'A second chat', 'Bob', 4, 1, NULL, NULL, '2014-04-06 20:35:38', '2014-08-26 20:02:10', 'open', 0, 0, NULL, NULL, NULL, 232, 0, 0, 0, 0);
-
--- --------------------------------------------------------
+LOCK TABLES `chats` WRITE;
+/*!40000 ALTER TABLE `chats` DISABLE KEYS */;
+INSERT INTO `chats` VALUES (1,'A new test chat','Omnium',1,1,NULL,NULL,'2014-01-12 05:59:23','2014-12-28 19:59:01','open',0,0,NULL,NULL,NULL,56,1,0,0,0,0),(2,'A test chat','Omnium',1,0,'','','2014-01-12 22:02:41','2014-12-21 23:17:36','open',0,0,NULL,NULL,NULL,921,0,0,0,0,0),(3,'Testing images','Omnium',1,1,'Just a test description with some <em>markdown</em> basics in it and a link<br />\nto the author of course <a class=\'chat_link\' href=\'\\/\\/mutualcog.com/u/Omnium\'>/u/Omnium</a><br />\nwhat happens if I put another line in here? <strong>hmmmm</strong>','Just a test description with some *markdown* basics in it and a link\r\nto the author of course /p/Omnium\r\nwhat happens if I put another line in here? **hmmmm**','2014-03-10 16:28:56','2014-10-30 17:59:03','live',0,0,'http://i.imgur.com/LJ8zguP.jpg','http://i.imgur.com/LJ8zguP.jpg','i.imgur.com',294,0,0,0,0,0),(4,'Testing the advanced controls and stuff','Omnium',1,0,'Just a description <em>with</em> some markdown <a class=\'chat_link\' href=\'\\/\\/mutualcog.com/u/Omnium\'>/u/Omnium</a>','Just a description *with* some markdown /p/Omnium','2014-03-13 03:26:10','2014-12-23 23:39:12','open',100,0,NULL,NULL,NULL,22,0,0,0,0,0),(5,'Creating a static chat','Omnium',1,1,'Hello <a class=\'chat_link\' href=\'\\/\\/mutualcog.com/p/Omnium\'>@Omnium</a>','Hello @Omnium','2014-03-13 03:29:03','2014-08-05 04:46:07','open',0,0,NULL,NULL,NULL,459,1,0,0,0,0),(6,'testing static stuff','Omnium',1,1,'a chat about testing','a chat about testing','2014-03-13 03:37:28','2014-12-23 23:15:29','open',0,0,NULL,NULL,NULL,350,0,0,0,0,0),(8,'A second chat','Bob',4,1,'Stuff I need to look at','Stuff I need to look at','2014-04-06 20:35:38','2014-12-31 22:28:04','open',0,0,NULL,NULL,NULL,431,0,0,0,0,1),(11,'Spam and stuff','Omnium',1,1,'lots of spam','lots of spam','2014-09-03 17:50:50','2014-10-31 22:11:06','public',0,0,'http://imgur.com/gallery/jOnfC','//i.imgur.com/RVrn058.jpg?1','imgur.com',13,0,0,0,0,0),(12,'Lots and lots of philosophy','Omnium',1,1,'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa<strong>aaaaaaaaaa</strong>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa','aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa**aaaaaaaaaa**aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa','2014-10-16 18:07:13','2014-11-11 15:52:08','public',0,0,NULL,NULL,NULL,127,0,0,0,0,0),(13,'High level thought','Omnium',1,1,'Blah de blah de existentialism blah','Blah de blah de existentialism blah','2014-10-16 18:07:55','2014-11-27 20:59:19','public',0,0,NULL,NULL,NULL,2,0,0,0,1,0),(14,'My first post','Bob',2,1,'A post  about science and philosophy and math','A post  about science and philosophy and math','2014-10-17 19:19:26','2015-01-01 16:25:57','public',0,0,NULL,NULL,NULL,71,0,0,0,0,0),(16,'Kittenses','Omnium',1,1,'cuteness','cuteness','2014-10-22 01:31:05','2014-12-31 22:27:02','public',0,0,'http://www.youtube.com/watch?v=_zqn6FtdDGc','http://localhost/laravel/YouTube-logo-full_color.png','www.youtube.com',27,0,0,0,0,0);
+/*!40000 ALTER TABLE `chats` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
--- Table structure for table `chats_to_tags`
+-- Table structure for table `chats_to_communities`
 --
 
-CREATE TABLE IF NOT EXISTS `chats_to_tags` (
+DROP TABLE IF EXISTS `chats_to_communities`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `chats_to_communities` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `chat_id` int(11) NOT NULL,
-  `tag_id` int(11) NOT NULL,
+  `community_id` int(11) NOT NULL,
   `removed` int(11) NOT NULL DEFAULT '0',
+  `pinned` int(11) NOT NULL DEFAULT '0',
+  `upvotes` int(11) NOT NULL DEFAULT '0',
+  `downvotes` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  KEY `chat_id` (`chat_id`,`tag_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=39 ;
+  KEY `chat_id` (`chat_id`,`community_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `chats_to_tags`
+-- Dumping data for table `chats_to_communities`
 --
 
-INSERT INTO `chats_to_tags` (`id`, `chat_id`, `tag_id`, `removed`) VALUES
-(1, 1, 1, 0),
-(2, 2, 2, 0),
-(3, 3, 2, 0),
-(4, 4, 2, 0),
-(5, 5, 3, 0),
-(6, 5, 4, 0),
-(7, 5, 5, 0),
-(8, 6, 6, 0),
-(9, 6, 7, 0),
-(10, 6, 8, 0),
-(11, 6, 9, 0),
-(12, 8, 10, 0),
-(13, 8, 11, 0),
-(14, 8, 12, 0),
-(15, 8, 13, 0),
-(16, 9, 14, 0),
-(17, 10, 1, 0),
-(18, 11, 1, 0),
-(19, 12, 1, 0),
-(20, 13, 1, 0),
-(21, 14, 1, 0),
-(22, 15, 1, 0),
-(23, 16, 1, 0),
-(24, 17, 1, 0),
-(25, 18, 1, 0),
-(26, 19, 1, 0),
-(27, 20, 1, 0),
-(28, 21, 1, 0),
-(29, 22, 1, 0),
-(30, 1, 1, 0),
-(31, 2, 2, 0),
-(32, 3, 1, 0),
-(33, 4, 1, 0),
-(34, 5, 1, 0),
-(35, 6, 1, 0),
-(36, 7, 1, 0),
-(37, 8, 1, 0),
-(38, 9, 3, 0);
-
--- --------------------------------------------------------
+LOCK TABLES `chats_to_communities` WRITE;
+/*!40000 ALTER TABLE `chats_to_communities` DISABLE KEYS */;
+INSERT INTO `chats_to_communities` VALUES (1,1,1,0,0,0,0),(2,2,2,0,1,0,0),(3,3,2,0,0,0,0),(4,4,2,0,0,0,0),(5,5,3,0,0,0,0),(6,5,4,0,0,0,0),(7,5,5,0,0,0,0),(8,6,6,0,0,0,0),(9,6,7,0,0,0,0),(10,6,8,0,0,0,0),(11,6,9,0,0,0,0),(12,8,10,0,0,0,0),(13,8,11,0,0,0,0),(14,8,12,0,0,0,0),(15,8,13,0,0,0,0),(18,11,1,0,0,0,0),(19,12,1,0,0,0,0),(20,13,1,0,0,0,0),(21,14,1,0,0,0,0),(23,16,1,0,0,0,0),(25,18,1,0,0,0,0),(26,19,1,0,0,0,0),(27,20,1,0,0,0,0),(28,21,1,0,0,0,0),(29,22,1,0,0,0,0),(30,1,1,0,0,0,0),(31,2,2,0,0,0,0),(32,3,1,0,0,0,0),(33,4,1,0,0,0,0),(34,5,1,0,0,0,0),(35,6,1,0,1,0,0),(36,7,1,0,0,0,0),(37,8,1,0,0,0,0),(41,11,15,0,0,0,0),(42,12,4,0,0,0,0),(43,13,3,0,0,0,0),(44,14,5,0,0,0,0),(45,14,6,0,0,0,0),(47,16,16,0,0,0,0);
+/*!40000 ALTER TABLE `chats_to_communities` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `chats_voted`
 --
 
-CREATE TABLE IF NOT EXISTS `chats_voted` (
+DROP TABLE IF EXISTS `chats_voted`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `chats_voted` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `chat_id` int(11) NOT NULL,
-  `member_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `status` int(11) NOT NULL DEFAULT '0',
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `chats_voted`
 --
 
-INSERT INTO `chats_voted` (`id`, `chat_id`, `member_id`, `status`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 1, NULL, NULL),
-(2, 7, 4, 1, NULL, NULL),
-(3, 8, 4, 1, NULL, NULL),
-(4, 9, 1, 1, '2014-08-26 19:50:56', '2014-08-26 19:50:56');
+LOCK TABLES `chats_voted` WRITE;
+/*!40000 ALTER TABLE `chats_voted` DISABLE KEYS */;
+INSERT INTO `chats_voted` VALUES (1,12,1,1,'2014-10-16 18:07:13','2014-10-24 16:45:27'),(2,13,1,1,'2014-10-16 18:07:55','2014-10-16 18:07:55'),(3,14,2,1,'2014-10-17 19:19:26','2014-10-17 19:19:26'),(4,15,1,1,'2014-10-22 01:15:57','2014-10-22 01:15:57'),(5,16,1,1,'2014-10-22 01:31:05','2014-10-22 01:31:05'),(6,6,1,0,'2014-10-24 16:27:53','2014-10-24 16:45:18'),(7,17,1,1,'2014-10-29 19:06:10','2014-10-29 19:06:10');
+/*!40000 ALTER TABLE `chats_voted` ENABLE KEYS */;
+UNLOCK TABLES;
 
--- --------------------------------------------------------
+--
+-- Table structure for table `communities`
+--
+
+DROP TABLE IF EXISTS `communities`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `communities` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `popularity` int(11) NOT NULL DEFAULT '1',
+  `admin` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
+  `description` text COLLATE utf8_unicode_ci,
+  `info` text COLLATE utf8_unicode_ci,
+  `raw_info` text COLLATE utf8_unicode_ci,
+  `nsfw` int(11) NOT NULL DEFAULT '0',
+  `concept_id` int(11) NOT NULL,
+  `tier` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `tag` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `communities`
+--
+
+LOCK TABLES `communities` WRITE;
+/*!40000 ALTER TABLE `communities` DISABLE KEYS */;
+INSERT INTO `communities` VALUES (1,'testing',NULL,'2014-10-24 16:45:27',22,'Omnium','','<strong>General Info</strong><br />\nA community for:</p>\n<ol>\n<li>testing</li>\n<li>more testing</li>\n<li>even more testing</li>\n</ol>','**General Info**\r\nA community for:\r\n1. testing\r\n2. more testing\r\n3. even more testing\r\n\r\n\r\n\r\n',0,0,0),(2,'test',NULL,'2014-08-25 23:36:20',4,'Omnium','','','',0,0,0),(3,'science',NULL,'2014-10-16 18:07:55',2,'Omnium',NULL,NULL,'',0,0,0),(4,'philosophy',NULL,'2014-10-24 16:45:27',1,'0',NULL,NULL,'',0,0,0),(5,'nature',NULL,'2014-10-17 19:19:26',1,'0',NULL,NULL,'',0,0,0),(6,'something',NULL,'2014-10-24 16:45:16',1,'0',NULL,NULL,'',0,0,0),(7,'technology',NULL,'2014-10-24 16:45:16',0,'0',NULL,NULL,'',0,0,0),(8,'physics',NULL,'2014-10-24 16:45:16',0,'0',NULL,NULL,'',0,0,0),(9,'probability',NULL,'2014-10-24 16:45:16',0,'0',NULL,NULL,'',0,0,0),(10,'asfasdfasdfasdf',NULL,NULL,0,'0',NULL,NULL,'',0,0,0),(11,'asffdsweffdwe',NULL,NULL,0,'0',NULL,NULL,'',0,0,0),(12,'sdfwefdsasdfwf',NULL,NULL,0,'0',NULL,NULL,'',0,0,0),(13,'sdfewfasdwef',NULL,NULL,0,'0',NULL,NULL,'',0,0,0),(14,'asdfsdfdsfewdffs',NULL,NULL,0,'0',NULL,NULL,'',0,0,0),(15,'spam','2014-09-03 17:28:47','2014-09-03 17:50:50',3,'0',NULL,NULL,NULL,0,0,0),(16,'aww','2014-10-22 01:15:57','2014-10-22 01:31:05',2,'0',NULL,NULL,NULL,0,0,0),(17,'tag','2014-10-29 19:06:10','2014-10-29 19:06:10',1,'0',NULL,NULL,NULL,0,0,0);
+/*!40000 ALTER TABLE `communities` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `concepts`
+--
+
+DROP TABLE IF EXISTS `concepts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `concepts` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `concepts`
+--
+
+LOCK TABLES `concepts` WRITE;
+/*!40000 ALTER TABLE `concepts` DISABLE KEYS */;
+/*!40000 ALTER TABLE `concepts` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `entities_to_concepts`
+--
+
+DROP TABLE IF EXISTS `entities_to_concepts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `entities_to_concepts` (
+  `id` int(11) NOT NULL,
+  `entity_id` int(11) NOT NULL,
+  `concept_id` int(11) NOT NULL,
+  `entity_type` varchar(255) NOT NULL DEFAULT 'user',
+  `similarity` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `concept_idx` (`concept_id`),
+  KEY `entity_idx` (`entity_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `entities_to_concepts`
+--
+
+LOCK TABLES `entities_to_concepts` WRITE;
+/*!40000 ALTER TABLE `entities_to_concepts` DISABLE KEYS */;
+/*!40000 ALTER TABLE `entities_to_concepts` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `interaction_users`
 --
 
-CREATE TABLE IF NOT EXISTS `interaction_users` (
+DROP TABLE IF EXISTS `interaction_users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `interaction_users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `entity_id` int(11) NOT NULL,
@@ -163,97 +251,35 @@ CREATE TABLE IF NOT EXISTS `interaction_users` (
   `friended` int(11) NOT NULL DEFAULT '0',
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
-  `bond` int(11) NOT NULL DEFAULT '0',
+  `bond` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `user_idx` (`user_id`),
   KEY `interaction_idx` (`entity_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `interaction_users`
 --
 
-INSERT INTO `interaction_users` (`id`, `user_id`, `entity_id`, `type`, `friended`, `created_at`, `updated_at`, `bond`) VALUES
-(1, 4, 1, 0, 1, '2014-05-25 20:47:34', '2014-08-26 00:23:17', 129),
-(2, 1, 4, 0, 1, '2014-05-25 20:47:34', '2014-08-26 00:23:17', 179);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `members_to_chats`
---
-
-CREATE TABLE IF NOT EXISTS `members_to_chats` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `chat_id` int(11) NOT NULL,
-  `member_id` int(11) NOT NULL,
-  `is_mod` int(11) NOT NULL,
-  `is_admin` int(11) NOT NULL,
-  `user` varchar(255) NOT NULL,
-  `active` int(11) NOT NULL DEFAULT '0',
-  `banned` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `chat_id` (`chat_id`,`member_id`),
-  KEY `author` (`user`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=41 ;
-
---
--- Dumping data for table `members_to_chats`
---
-
-INSERT INTO `members_to_chats` (`id`, `chat_id`, `member_id`, `is_mod`, `is_admin`, `user`, `active`, `banned`) VALUES
-(1, 8, 1, 0, 0, 'Omnium', 0, 0),
-(2, 5, 1, 0, 1, 'Omnium', 0, 0),
-(3, 8, 155, 0, 0, '137880073', 1, 0),
-(4, 8, 4, 0, 1, 'Bob', 0, 0),
-(5, 8, 156, 0, 0, '169693618', 1, 0),
-(6, 8, 161, 0, 0, '145867030', 1, 0),
-(7, 8, 162, 0, 0, '104808579', 0, 0),
-(8, 8, 163, 0, 0, '116236217', 0, 0),
-(9, 8, 164, 0, 0, '38816918', 1, 0),
-(10, 8, 167, 0, 0, '216684825', 0, 0),
-(11, 5, 174, 0, 0, '100288325', 0, 0),
-(12, 8, 190, 0, 0, '47903202', 1, 0),
-(13, 8, 192, 0, 0, '153251245', 1, 0),
-(14, 8, 193, 0, 0, '97168747', 1, 0),
-(15, 8, 195, 0, 0, '114919667', 0, 0),
-(16, 7, 199, 0, 0, '117667229', 0, 0),
-(17, 6, 1, 0, 1, 'Omnium', 0, 0),
-(18, 6, 205, 0, 0, '224785232', 0, 0),
-(19, 6, 206, 0, 0, '24282545', 0, 0),
-(20, 8, 213, 0, 0, '31541016', 0, 0),
-(21, 8, 214, 0, 0, '260324891', 0, 0),
-(22, 6, 214, 0, 0, '260324891', 0, 0),
-(23, 6, 216, 0, 0, '125063196', 0, 0),
-(24, 6, 218, 0, 0, '69574714', 0, 0),
-(25, 7, 220, 0, 0, '164434223', 0, 0),
-(26, 6, 220, 0, 0, '164434223', 0, 0),
-(27, 8, 220, 0, 0, '164434223', 0, 0),
-(28, 8, 229, 0, 0, '66840329', 0, 0),
-(29, 3, 230, 0, 0, '186748993', 0, 0),
-(30, 3, 1, 0, 1, 'Omnium', 0, 0),
-(31, 3, 231, 0, 0, '56770169', 0, 0),
-(32, 6, 234, 0, 0, '205801104', 0, 0),
-(33, 6, 4, 0, 0, 'Bob', 0, 0),
-(34, 8, 242, 0, 0, '72100981', 0, 0),
-(35, 3, 242, 0, 0, '72100981', 0, 0),
-(36, 3, 4, 0, 0, 'Bob', 0, 0),
-(37, 8, 244, 0, 0, '18716786', 0, 0),
-(38, 8, 248, 0, 0, '79472836', 0, 0),
-(39, 1, 1, 0, 1, 'Omnium', 0, 0),
-(40, 9, 1, 0, 1, 'Omnium', 0, 0);
-
--- --------------------------------------------------------
+LOCK TABLES `interaction_users` WRITE;
+/*!40000 ALTER TABLE `interaction_users` DISABLE KEYS */;
+INSERT INTO `interaction_users` VALUES (1,1,2,0,1,'2014-10-09 14:51:00','2014-12-30 19:33:21',0.97),(2,2,1,0,1,'2014-10-09 14:51:00','2015-01-01 16:26:32',0.91),(3,2,3,0,1,'2014-10-20 18:57:30','2015-01-01 15:36:53',0.9),(4,3,2,0,1,'2014-10-20 18:57:30','2014-10-20 18:58:18',1);
+/*!40000 ALTER TABLE `interaction_users` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `messages`
 --
 
-CREATE TABLE IF NOT EXISTS `messages` (
+DROP TABLE IF EXISTS `messages`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `messages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `message` text COLLATE utf8_unicode_ci NOT NULL,
   `chat_id` int(11) NOT NULL,
-  `member_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `responseto` int(11) NOT NULL,
@@ -269,69 +295,81 @@ CREATE TABLE IF NOT EXISTS `messages` (
   `readable` int(11) NOT NULL DEFAULT '0',
   `type` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'public',
   PRIMARY KEY (`id`),
-  KEY `chat_id` (`chat_id`,`member_id`),
-  KEY `member_idx` (`member_id`),
+  KEY `chat_id` (`chat_id`,`user_id`),
+  KEY `member_idx` (`user_id`),
   KEY `responseto` (`responseto`),
   KEY `author` (`author`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=18 ;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `messages`
 --
 
-INSERT INTO `messages` (`id`, `message`, `chat_id`, `member_id`, `created_at`, `updated_at`, `responseto`, `parent`, `y_dim`, `res_num`, `responses`, `author`, `serial`, `upvotes`, `downvotes`, `path`, `readable`, `type`) VALUES
-(1, 'test1', 8, 1, '2014-08-24 16:25:44', '2014-08-24 16:34:07', 0, 0, 0, 0, 0, 'Omnium', 18716786, 2, 1, '0.00000001', 1, 'public'),
-(2, 'test2', 8, 1, '2014-08-24 16:25:46', '2014-08-24 16:25:46', 0, 0, 0, 0, 0, 'Omnium', 18716786, 0, 0, '0.00000002', 1, 'public'),
-(3, 'test3', 8, 1, '2014-08-24 16:25:47', '2014-08-24 16:25:47', 0, 0, 0, 0, 0, 'Omnium', 18716786, 0, 0, '0.00000003', 1, 'public'),
-(4, 'test4', 8, 1, '2014-08-24 16:25:47', '2014-08-25 17:20:41', 0, 0, 0, 0, 3, 'Omnium', 18716786, 3, 0, '0.00000004', 1, 'public'),
-(5, 'test5', 8, 1, '2014-08-24 16:25:49', '2014-08-24 16:25:49', 0, 0, 0, 0, 0, 'Omnium', 18716786, 0, 0, '0.00000005', 1, 'public'),
-(6, 'test6', 8, 1, '2014-08-24 16:25:51', '2014-08-24 16:25:51', 0, 0, 0, 0, 0, 'Omnium', 18716786, 0, 0, '0.00000006', 1, 'public'),
-(7, 'test7', 8, 1, '2014-08-24 16:25:53', '2014-08-24 16:25:53', 0, 0, 0, 0, 0, 'Omnium', 18716786, 0, 0, '0.00000007', 1, 'public'),
-(8, 'test8', 8, 1, '2014-08-24 16:25:55', '2014-08-24 16:25:55', 0, 0, 0, 0, 0, 'Omnium', 18716786, 0, 0, '0.00000008', 1, 'public'),
-(9, 'test message', 8, 4, '2014-08-24 16:28:12', '2014-08-24 16:28:12', 0, 0, 0, 0, 0, 'Bob', 18716786, 0, 0, '0.00000009', 1, 'public'),
-(10, 'res1', 8, 4, '2014-08-25 17:30:46', '2014-08-26 19:59:09', 4, 4, 1, 1, 1, 'Bob', 79472836, 0, 0, '0.00000004.00000010', 1, 'public'),
-(11, 'res2', 8, 4, '2014-08-25 17:30:47', '2014-08-25 17:30:47', 4, 4, 1, 2, 0, 'Bob', 79472836, 0, 0, '0.00000004.00000011', 1, 'public'),
-(12, 'res3', 8, 4, '2014-08-25 17:30:48', '2014-08-25 17:30:48', 4, 4, 1, 3, 0, 'Bob', 79472836, 10, 0, '0.00000004.00000012', 1, 'public'),
-(13, 'nres1', 8, 4, '2014-08-25 17:30:52', '2014-08-25 17:30:52', 10, 4, 2, 1, 0, 'Bob', 79472836, 0, 0, '0.00000004.00000010.00000013', 1, 'public'),
-(14, 'test more', 8, 4, '2014-08-25 17:47:23', '2014-08-25 17:47:23', 0, 0, 0, 0, 0, 'Bob', 79472836, 0, 0, '0.00000014', 1, 'public'),
-(15, 'testing button', 8, 4, '2014-08-25 17:47:36', '2014-08-25 17:47:36', 0, 0, 0, 0, 0, 'Bob', 79472836, 0, 0, '0.00000015', 1, 'public'),
-(16, 'test comment', 3, 1, '2014-08-26 05:09:50', '2014-08-26 05:09:50', 0, 0, 0, 0, 0, 'Omnium', 238896752, 0, 0, '0.00000016', 1, 'public'),
-(17, 'dirty dirty porn', 9, 1, '2014-08-26 19:51:04', '2014-08-26 19:51:04', 0, 0, 0, 0, 0, 'Omnium', 155806296, 0, 0, '0.00000017', 1, 'public');
-
--- --------------------------------------------------------
+LOCK TABLES `messages` WRITE;
+/*!40000 ALTER TABLE `messages` DISABLE KEYS */;
+INSERT INTO `messages` VALUES (1,'test',14,1,'2014-12-31 17:56:50','2014-12-31 17:56:50',0,0,0,0,0,'Omnium',53045638,0,0,'0.00000001',1,'public'),(2,'testing',14,2,'2014-12-31 18:06:47','2014-12-31 18:06:47',0,0,0,0,0,'Bob',36529634,0,0,'0.00000002',1,'public'),(3,'out',14,2,'2014-12-31 18:06:48','2014-12-31 18:06:48',0,0,0,0,0,'Bob',36529634,0,0,'0.00000003',1,'public'),(4,'this',14,2,'2014-12-31 18:06:49','2014-12-31 18:06:49',0,0,0,0,0,'Bob',36529634,0,0,'0.00000004',1,'public'),(5,'chat',14,2,'2014-12-31 18:06:50','2014-12-31 18:06:50',0,0,0,0,0,'Bob',36529634,0,0,'0.00000005',1,'public'),(6,'to',14,2,'2014-12-31 18:06:51','2014-12-31 18:06:51',0,0,0,0,0,'Bob',36529634,0,0,'0.00000006',1,'public'),(7,'see',14,2,'2014-12-31 18:06:52','2014-12-31 18:06:52',0,0,0,0,0,'Bob',36529634,0,0,'0.00000007',1,'public'),(8,'if',14,2,'2014-12-31 18:06:53','2014-12-31 18:06:53',0,0,0,0,0,'Bob',36529634,0,0,'0.00000008',1,'public'),(9,'the scrollbar',14,2,'2014-12-31 18:06:55','2014-12-31 18:06:55',0,0,0,0,0,'Bob',36529634,0,0,'0.00000009',1,'public'),(10,'is',14,2,'2014-12-31 18:06:56','2014-12-31 18:06:56',0,0,0,0,0,'Bob',36529634,0,0,'0.00000010',1,'public'),(11,'going to',14,2,'2014-12-31 18:06:57','2014-12-31 18:06:57',0,0,0,0,0,'Bob',36529634,0,0,'0.00000011',1,'public'),(12,'work ',14,2,'2014-12-31 18:06:59','2014-12-31 18:06:59',0,0,0,0,0,'Bob',36529634,0,0,'0.00000012',1,'public'),(13,'properly',14,2,'2014-12-31 18:07:01','2014-12-31 18:07:01',0,0,0,0,0,'Bob',36529634,0,0,'0.00000013',1,'public'),(14,'test',14,2,'2014-12-31 18:07:25','2014-12-31 18:07:25',0,0,0,0,0,'Bob',36529634,0,0,'0.00000014',1,'public'),(15,'gotta test again',14,2,'2014-12-31 18:07:41','2014-12-31 18:07:41',0,0,0,0,1,'Bob',36529634,0,0,'0.00000015',1,'public'),(16,'test',14,2,'2015-01-01 16:04:09','2015-01-01 16:04:09',0,0,0,0,0,'Bob',223861519,0,0,'0.00000016',1,'public'),(17,'another test',14,2,'2015-01-01 16:07:40','2015-01-01 16:07:40',0,0,0,0,0,'Bob',223861519,0,0,'0.00000017',1,'public'),(18,'tes',14,2,'2015-01-01 16:11:14','2015-01-01 16:11:14',0,0,0,0,0,'Bob',223861519,0,0,'0.00000018',1,'public'),(19,'testing',14,2,'2015-01-01 16:25:24','2015-01-01 16:25:24',0,0,0,0,0,'Bob',223861519,0,0,'0.00000019',1,'public'),(20,'bleh',14,2,'2015-01-01 16:25:30','2015-01-01 16:25:30',0,0,0,0,0,'Bob',223861519,0,0,'0.00000020',1,'public'),(21,'gotta make sure <strong>everything</strong> is <em><strong>working</strong></em>',14,2,'2015-01-01 16:25:49','2015-01-01 16:25:49',15,15,1,1,0,'Bob',223861519,0,0,'0.00000015.00000021',1,'public');
+/*!40000 ALTER TABLE `messages` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `messages_voted`
 --
 
-CREATE TABLE IF NOT EXISTS `messages_voted` (
+DROP TABLE IF EXISTS `messages_voted`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `messages_voted` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `message_id` int(11) NOT NULL,
-  `member_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `status` int(11) NOT NULL DEFAULT '0',
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- --------------------------------------------------------
+--
+-- Dumping data for table `messages_voted`
+--
+
+LOCK TABLES `messages_voted` WRITE;
+/*!40000 ALTER TABLE `messages_voted` DISABLE KEYS */;
+INSERT INTO `messages_voted` VALUES (1,1,1,1,'2014-12-31 17:56:50','2014-12-31 17:56:50'),(2,2,2,1,'2014-12-31 18:06:47','2014-12-31 18:06:47'),(3,3,2,1,'2014-12-31 18:06:48','2014-12-31 18:06:48'),(4,4,2,1,'2014-12-31 18:06:49','2014-12-31 18:06:49'),(5,5,2,1,'2014-12-31 18:06:50','2014-12-31 18:06:50'),(6,6,2,1,'2014-12-31 18:06:51','2014-12-31 18:06:51'),(7,7,2,1,'2014-12-31 18:06:52','2014-12-31 18:06:52'),(8,8,2,1,'2014-12-31 18:06:53','2014-12-31 18:06:53'),(9,9,2,1,'2014-12-31 18:06:55','2014-12-31 18:06:55'),(10,10,2,1,'2014-12-31 18:06:56','2014-12-31 18:06:56'),(11,11,2,1,'2014-12-31 18:06:57','2014-12-31 18:06:57'),(12,12,2,1,'2014-12-31 18:06:59','2014-12-31 18:06:59'),(13,13,2,1,'2014-12-31 18:07:01','2014-12-31 18:07:01'),(14,14,2,1,'2014-12-31 18:07:25','2014-12-31 18:07:25'),(15,15,2,1,'2014-12-31 18:07:41','2014-12-31 18:07:41'),(16,16,2,1,'2015-01-01 16:04:09','2015-01-01 16:04:09'),(17,17,2,1,'2015-01-01 16:07:40','2015-01-01 16:07:40'),(18,18,2,1,'2015-01-01 16:11:14','2015-01-01 16:11:14'),(19,19,2,1,'2015-01-01 16:25:24','2015-01-01 16:25:24'),(20,20,2,1,'2015-01-01 16:25:30','2015-01-01 16:25:30'),(21,21,2,1,'2015-01-01 16:25:49','2015-01-01 16:25:49');
+/*!40000 ALTER TABLE `messages_voted` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `migrations`
 --
 
-CREATE TABLE IF NOT EXISTS `migrations` (
+DROP TABLE IF EXISTS `migrations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `migrations` (
   `migration` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `batch` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- --------------------------------------------------------
+--
+-- Dumping data for table `migrations`
+--
+
+LOCK TABLES `migrations` WRITE;
+/*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
+/*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `node_auth`
 --
 
-CREATE TABLE IF NOT EXISTS `node_auth` (
+DROP TABLE IF EXISTS `node_auth`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `node_auth` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `user` varchar(255) NOT NULL,
@@ -340,24 +378,27 @@ CREATE TABLE IF NOT EXISTS `node_auth` (
   `sid` text NOT NULL,
   `authorized` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=552 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `node_auth`
 --
 
-INSERT INTO `node_auth` (`id`, `user_id`, `user`, `serial`, `serial_id`, `sid`, `authorized`) VALUES
-(1, 1, 'Omnium', '155806296', 252, 'd7750816eae72f1419e0950d1fb362c98813b14f', 1),
-(2, 4, 'Bob', '238896752', 251, '4e44f192055783f02bde8b44015206242742f547', 0),
-(3, 6, 'Auros', '', 0, '', 0);
-
--- --------------------------------------------------------
+LOCK TABLES `node_auth` WRITE;
+/*!40000 ALTER TABLE `node_auth` DISABLE KEYS */;
+INSERT INTO `node_auth` VALUES (546,2,'Bob','181413442',5,'c38e29d3276ef4339c32c2bbe895f46689e7841b',1),(548,2,'Bob','36529634',7,'77796a5f35d1cf9f02c708c114c6b5a04d3d9931',1),(550,2,'Bob','25934691',8,'b3b073797621a5b11bdd1fa4c67d1d66797b19b6',1),(551,2,'Bob','223861519',9,'b3b073797621a5b11bdd1fa4c67d1d66797b19b6',1);
+/*!40000 ALTER TABLE `node_auth` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `notifications`
 --
 
-CREATE TABLE IF NOT EXISTS `notifications` (
+DROP TABLE IF EXISTS `notifications`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `notifications` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
@@ -370,15 +411,26 @@ CREATE TABLE IF NOT EXISTS `notifications` (
   `sender` varchar(255) DEFAULT NULL,
   `sender_type` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- --------------------------------------------------------
+--
+-- Dumping data for table `notifications`
+--
+
+LOCK TABLES `notifications` WRITE;
+/*!40000 ALTER TABLE `notifications` DISABLE KEYS */;
+/*!40000 ALTER TABLE `notifications` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `private_chats`
 --
 
-CREATE TABLE IF NOT EXISTS `private_chats` (
+DROP TABLE IF EXISTS `private_chats`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `private_chats` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) DEFAULT NULL,
   `created_at` datetime NOT NULL,
@@ -387,22 +439,27 @@ CREATE TABLE IF NOT EXISTS `private_chats` (
   `member_count` int(11) NOT NULL DEFAULT '2',
   `seen` int(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `private_chats`
 --
 
-INSERT INTO `private_chats` (`id`, `title`, `created_at`, `updated_at`, `total_messages`, `member_count`, `seen`) VALUES
-(1, NULL, '2014-05-26 18:13:26', '2014-05-26 18:13:26', 0, 2, 1);
-
--- --------------------------------------------------------
+LOCK TABLES `private_chats` WRITE;
+/*!40000 ALTER TABLE `private_chats` DISABLE KEYS */;
+INSERT INTO `private_chats` VALUES (1,NULL,'2014-10-09 14:51:05','2014-10-09 14:51:05',0,2,0),(2,NULL,'2014-10-09 18:25:19','2014-10-20 18:58:18',1,2,1);
+/*!40000 ALTER TABLE `private_chats` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `private_messages`
 --
 
-CREATE TABLE IF NOT EXISTS `private_messages` (
+DROP TABLE IF EXISTS `private_messages`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `private_messages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `message` text NOT NULL,
   `chat_id` int(11) NOT NULL,
@@ -411,367 +468,56 @@ CREATE TABLE IF NOT EXISTS `private_messages` (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=31 ;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `private_messages`
 --
 
-INSERT INTO `private_messages` (`id`, `message`, `chat_id`, `author`, `author_id`, `created_at`, `updated_at`) VALUES
-(1, 'gotta', 1, 'Omnium', 1, '2014-08-03 22:20:31', '2014-08-03 22:20:31'),
-(2, 'test', 1, 'Omnium', 1, '2014-08-03 22:20:32', '2014-08-03 22:20:32'),
-(3, 'some ', 1, 'Omnium', 1, '2014-08-03 22:20:33', '2014-08-03 22:20:33'),
-(4, 'nonsense', 1, 'Omnium', 1, '2014-08-03 22:20:36', '2014-08-03 22:20:36'),
-(5, 'messages', 1, 'Omnium', 1, '2014-08-03 22:20:37', '2014-08-03 22:20:37'),
-(6, 'don&#39;t', 1, 'Omnium', 1, '2014-08-03 22:20:38', '2014-08-03 22:20:38'),
-(7, 'you', 1, 'Omnium', 1, '2014-08-03 22:20:39', '2014-08-03 22:20:39'),
-(8, 'know', 1, 'Omnium', 1, '2014-08-03 22:20:40', '2014-08-03 22:20:40'),
-(9, 'this', 1, 'Omnium', 1, '2014-08-03 22:20:42', '2014-08-03 22:20:42'),
-(10, 'stuff', 1, 'Omnium', 1, '2014-08-03 22:20:43', '2014-08-03 22:20:43'),
-(11, 'i', 1, 'Omnium', 1, '2014-08-03 22:20:46', '2014-08-03 22:20:46'),
-(12, 'don&#39;t', 1, 'Omnium', 1, '2014-08-03 22:20:47', '2014-08-03 22:20:47'),
-(13, 'know', 1, 'Omnium', 1, '2014-08-03 22:20:48', '2014-08-03 22:20:48'),
-(14, 'why', 1, 'Omnium', 1, '2014-08-03 22:20:49', '2014-08-03 22:20:49'),
-(15, 'this', 1, 'Omnium', 1, '2014-08-03 22:21:12', '2014-08-03 22:21:12'),
-(16, 'is', 1, 'Omnium', 1, '2014-08-03 22:21:13', '2014-08-03 22:21:13'),
-(17, 'some', 1, 'Omnium', 1, '2014-08-03 22:21:15', '2014-08-03 22:21:15'),
-(18, 'nonsense', 1, 'Omnium', 1, '2014-08-03 22:21:17', '2014-08-03 22:21:17'),
-(19, 'stuff', 1, 'Omnium', 1, '2014-08-03 22:21:42', '2014-08-03 22:21:42'),
-(20, 'test', 1, 'Omnium', 1, '2014-08-03 22:24:55', '2014-08-03 22:24:55'),
-(21, 'more test', 1, 'Omnium', 1, '2014-08-03 22:27:41', '2014-08-03 22:27:41'),
-(22, 'test', 1, 'Omnium', 1, '2014-08-03 22:28:07', '2014-08-03 22:28:07'),
-(23, 'test', 1, 'Omnium', 1, '2014-08-03 22:28:37', '2014-08-03 22:28:37'),
-(24, 'more test', 1, 'Omnium', 1, '2014-08-03 22:28:40', '2014-08-03 22:28:40'),
-(25, 'even.. more test?', 1, 'Omnium', 1, '2014-08-03 22:28:45', '2014-08-03 22:28:45'),
-(26, 'test', 1, 'Omnium', 1, '2014-08-03 22:28:49', '2014-08-03 22:28:49'),
-(27, 'stf', 1, 'Omnium', 1, '2014-08-03 22:29:51', '2014-08-03 22:29:51'),
-(28, 'test', 1, 'Omnium', 1, '2014-08-03 22:31:49', '2014-08-03 22:31:49'),
-(29, 'please for the love of god', 1, 'Omnium', 1, '2014-08-03 22:36:32', '2014-08-03 22:36:32'),
-(30, 'does this work?', 1, 'Omnium', 1, '2014-08-03 22:36:52', '2014-08-03 22:36:52');
-
--- --------------------------------------------------------
+LOCK TABLES `private_messages` WRITE;
+/*!40000 ALTER TABLE `private_messages` DISABLE KEYS */;
+INSERT INTO `private_messages` VALUES (1,'test',1,'Omnium',1,'2014-10-15 19:26:11','2014-10-15 19:26:11'),(2,'got',1,'Bob',2,'2014-10-20 18:59:46','2014-10-20 18:59:46'),(3,'to',1,'Bob',2,'2014-10-20 18:59:48','2014-10-20 18:59:48'),(4,'get',1,'Bob',2,'2014-10-20 18:59:49','2014-10-20 18:59:49'),(5,'a',1,'Bob',2,'2014-10-20 18:59:49','2014-10-20 18:59:49'),(6,'scroll',1,'Bob',2,'2014-10-20 18:59:51','2014-10-20 18:59:51'),(7,'bar',1,'Bob',2,'2014-10-20 18:59:52','2014-10-20 18:59:52'),(8,'in',1,'Bob',2,'2014-10-20 18:59:52','2014-10-20 18:59:52'),(9,'here',1,'Bob',2,'2014-10-20 18:59:55','2014-10-20 18:59:55'),(10,'heyo',1,'Omnium',1,'2014-10-21 19:48:15','2014-10-21 19:48:15'),(11,'gotta test stuff',1,'Bob',2,'2014-12-19 22:57:08','2014-12-19 22:57:08'),(12,'testing more stuff',1,'Bob',2,'2014-12-19 22:57:11','2014-12-19 22:57:11'),(13,'do emojis work <img style=\"height:18px;\" src=\"//localhost/laravel/app/emoji/smiley.png\"></img>',1,'Bob',2,'2014-12-19 22:57:17','2014-12-19 22:57:17'),(14,'they do ;)',1,'Bob',2,'2014-12-19 22:57:21','2014-12-19 22:57:21'),(15,'hey bob <img style=\"height:18px;\" src=\"//localhost/laravel/app/emoji/smiley.png\"></img>',1,'Omnium',1,'2014-12-30 19:29:57','2014-12-30 19:29:57'),(16,'hi',1,'Omnium',1,'2014-12-30 19:33:21','2014-12-30 19:33:21'),(17,'<img style=\"height:18px;\" src=\"//localhost/laravel/app/emoji/heart.png\"></img>',1,'Bob',2,'2015-01-01 16:26:32','2015-01-01 16:26:32');
+/*!40000 ALTER TABLE `private_messages` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `serials`
 --
 
-CREATE TABLE IF NOT EXISTS `serials` (
+DROP TABLE IF EXISTS `serials`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `serials` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `serial_id` int(11) NOT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `last_post` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
+  `ip_address` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `welcomed` int(11) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=255 ;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `serials`
 --
 
-INSERT INTO `serials` (`id`, `serial_id`, `created_at`, `updated_at`, `last_post`) VALUES
-(1, 12276658, '2014-01-05 21:42:53', '2014-03-01 20:15:14', '0'),
-(2, 5130636, '2014-01-07 01:46:58', '2014-01-07 03:29:42', '0'),
-(3, 7048806, '2014-01-08 00:33:00', '2014-01-08 01:55:51', '0'),
-(4, 15110603, '2014-01-08 21:40:31', '2014-01-09 05:17:13', '0'),
-(5, 12699208, '2014-01-09 02:49:14', '2014-01-09 03:01:28', '0'),
-(6, 14827359, '2014-01-10 03:54:39', '2014-01-10 05:09:31', '0'),
-(7, 8485850, '2014-01-10 22:02:06', '2014-01-11 01:02:14', '0'),
-(8, 13998609, '2014-01-11 17:45:32', '2014-01-12 05:59:25', '2014-01-12T05:59:23+00:00'),
-(9, 15782864, '2014-01-12 04:25:55', '2014-01-12 04:26:14', '0'),
-(10, 3161968, '2014-01-12 21:01:23', '2014-01-13 05:43:13', '2014-01-12T22:02:41+00:00'),
-(11, 3529347, '2014-01-14 01:52:38', '2014-01-14 02:04:51', '0'),
-(12, 707411, '2014-01-20 01:02:56', '2014-01-20 01:25:03', '0'),
-(13, 11291252, '2014-01-22 21:07:18', '2014-01-22 21:29:59', '0'),
-(14, 2136504, '2014-01-25 01:46:13', '2014-01-25 02:39:02', '0'),
-(15, 555177, '2014-01-26 23:04:10', '2014-01-27 00:52:11', '0'),
-(16, 13153534, '2014-01-27 23:14:57', '2014-01-27 23:14:58', '0'),
-(17, 3409242, '2014-02-01 05:03:15', '2014-02-01 05:46:54', '0'),
-(18, 12471689, '2014-02-01 16:37:00', '2014-02-01 17:28:49', '0'),
-(19, 4934844, '2014-02-02 03:28:52', '2014-02-02 04:11:35', '0'),
-(20, 1718009, '2014-02-02 20:31:10', '2014-02-03 05:41:01', '0'),
-(21, 6162364, '2014-02-26 18:07:16', '2014-02-26 21:24:08', '0'),
-(22, 6147222, '2014-02-28 04:23:26', '2014-02-28 04:23:26', '0'),
-(23, 532331, '2014-02-28 04:23:30', '2014-02-28 05:32:56', '0'),
-(24, 8486181, '2014-03-01 00:53:55', '2014-03-01 00:53:57', '0'),
-(25, 15574903, '2014-03-01 00:53:55', '2014-03-01 01:05:48', '0'),
-(26, 16033942, '2014-03-01 01:11:19', '2014-03-01 01:11:19', '0'),
-(27, 9008028, '2014-03-01 01:11:22', '2014-03-01 01:11:22', '0'),
-(28, 7718129, '2014-03-01 01:11:26', '2014-03-01 01:11:26', '0'),
-(29, 14816805, '2014-03-01 01:11:26', '2014-03-01 01:11:26', '0'),
-(30, 2420337, '2014-03-01 01:11:31', '2014-03-01 01:11:31', '0'),
-(31, 13196573, '2014-03-01 01:11:37', '2014-03-01 01:11:37', '0'),
-(32, 9099539, '2014-03-01 01:11:37', '2014-03-01 01:11:37', '0'),
-(33, 2640604, '2014-03-01 01:12:00', '2014-03-01 01:12:00', '0'),
-(34, 7737291, '2014-03-01 01:12:02', '2014-03-01 01:12:02', '0'),
-(35, 1133222, '2014-03-01 01:16:05', '2014-03-01 01:16:05', '0'),
-(36, 14831695, '2014-03-01 01:16:06', '2014-03-01 01:16:06', '0'),
-(37, 9157553, '2014-03-01 01:16:07', '2014-03-01 01:16:07', '0'),
-(38, 316215, '2014-03-01 01:16:29', '2014-03-01 01:16:29', '0'),
-(39, 15490051, '2014-03-01 01:16:31', '2014-03-01 01:16:31', '0'),
-(40, 1444224, '2014-03-01 01:19:44', '2014-03-01 01:19:44', '0'),
-(41, 4202336, '2014-03-01 01:19:46', '2014-03-01 01:19:46', '0'),
-(42, 3097684, '2014-03-01 01:21:32', '2014-03-01 01:49:58', '0'),
-(43, 8200980, '2014-03-01 01:50:34', '2014-03-01 01:50:47', '0'),
-(44, 6196905, '2014-03-01 01:50:48', '2014-03-01 01:50:48', '0'),
-(45, 2945751, '2014-03-01 01:50:49', '2014-03-01 01:50:49', '0'),
-(46, 7047615, '2014-03-01 01:50:51', '2014-03-01 01:50:51', '0'),
-(47, 9433454, '2014-03-01 01:50:52', '2014-03-01 01:50:52', '0'),
-(48, 9733421, '2014-03-01 01:50:59', '2014-03-01 01:51:33', '0'),
-(49, 12746067, '2014-03-01 18:55:45', '2014-03-01 18:55:45', '0'),
-(50, 13657724, '2014-03-01 18:55:45', '2014-03-01 20:31:15', '0'),
-(51, 103290313, '2014-03-02 05:23:12', '2014-03-02 06:31:04', '0'),
-(52, 236391086, '2014-03-02 05:23:12', '2014-03-02 05:23:13', '0'),
-(53, 266970686, '2014-03-02 20:50:52', '2014-03-02 20:50:55', '0'),
-(54, 161012628, '2014-03-02 20:50:57', '2014-03-02 22:09:48', '0'),
-(55, 265245956, '2014-03-08 19:49:56', '2014-03-08 19:49:56', '0'),
-(56, 165639804, '2014-03-08 19:50:00', '2014-03-08 22:13:33', '0'),
-(57, 107297714, '2014-03-09 19:06:22', '2014-03-09 19:06:24', '0'),
-(58, 88045687, '2014-03-09 19:06:28', '2014-03-09 21:15:39', '0'),
-(59, 113422675, '2014-03-10 03:32:16', '2014-03-10 04:28:17', '0'),
-(60, 99710105, '2014-03-10 03:32:16', '2014-03-10 03:32:17', '0'),
-(61, 240851329, '2014-03-10 16:24:05', '2014-03-10 17:50:33', '2014-03-10T16:28:56+00:00'),
-(62, 164832187, '2014-03-10 16:24:05', '2014-03-10 16:24:05', '0'),
-(63, 207244722, '2014-03-11 00:39:32', '2014-03-11 00:39:33', '0'),
-(64, 121045184, '2014-03-11 00:39:32', '2014-03-11 01:07:28', '0'),
-(65, 46701670, '2014-03-11 17:30:29', '2014-03-11 17:30:30', '0'),
-(66, 14001540, '2014-03-11 17:30:29', '2014-03-11 19:14:52', '0'),
-(67, 235040219, '2014-03-12 00:25:50', '2014-03-12 00:25:51', '0'),
-(68, 85529877, '2014-03-12 00:25:50', '2014-03-12 01:20:11', '0'),
-(69, 170765005, '2014-03-12 17:26:54', '2014-03-12 17:26:55', '0'),
-(70, 138023044, '2014-03-12 17:26:54', '2014-03-12 21:55:55', '0'),
-(71, 198539645, '2014-03-13 00:55:48', '2014-03-13 04:07:30', '2014-03-13T03:37:28+00:00'),
-(72, 147637637, '2014-03-13 00:55:48', '2014-03-13 00:55:50', '0'),
-(73, 126319180, '2014-03-13 22:41:29', '2014-03-13 22:41:29', '0'),
-(74, 128598891, '2014-03-13 22:41:34', '2014-03-14 01:29:12', '0'),
-(75, 149385952, '2014-03-14 22:27:38', '2014-03-14 22:27:38', '0'),
-(76, 81062440, '2014-03-14 22:27:38', '2014-03-15 04:16:38', '0'),
-(77, 181365801, '2014-03-15 18:37:30', '2014-03-15 18:37:30', '0'),
-(78, 196286808, '2014-03-15 18:37:36', '2014-03-15 22:35:07', '0'),
-(79, 111917876, '2014-03-27 14:27:07', '2014-03-27 14:27:07', '0'),
-(80, 108792083, '2014-03-27 14:27:11', '2014-03-27 14:48:42', '0'),
-(81, 166978134, '2014-03-30 20:14:49', '2014-03-30 21:12:45', '0'),
-(82, 252173423, '2014-03-30 20:14:50', '2014-03-30 20:14:51', '0'),
-(83, 228551713, '2014-04-02 17:26:33', '2014-04-02 17:26:33', '0'),
-(84, 228566848, '2014-04-02 17:26:33', '2014-04-02 20:04:12', '0'),
-(85, 150673056, '2014-04-02 20:05:37', '2014-04-02 20:05:37', '0'),
-(86, 201703400, '2014-04-02 20:05:47', '2014-04-02 20:05:47', '0'),
-(87, 182449212, '2014-04-02 20:05:53', '2014-04-02 20:05:53', '0'),
-(88, 195781250, '2014-04-02 20:05:53', '2014-04-02 20:05:53', '0'),
-(89, 181755052, '2014-04-02 20:06:02', '2014-04-02 20:06:02', '0'),
-(90, 188092122, '2014-04-02 20:06:04', '2014-04-02 20:06:04', '0'),
-(91, 68340170, '2014-04-02 20:06:09', '2014-04-02 20:06:09', '0'),
-(92, 124735286, '2014-04-02 20:06:09', '2014-04-02 20:06:09', '0'),
-(93, 263726371, '2014-04-02 20:06:12', '2014-04-02 20:06:12', '0'),
-(94, 223346120, '2014-04-02 20:06:47', '2014-04-02 20:06:59', '0'),
-(95, 221693342, '2014-04-02 20:07:00', '2014-04-02 20:07:00', '0'),
-(96, 39545705, '2014-04-02 20:12:03', '2014-04-02 20:21:33', '0'),
-(97, 190192778, '2014-04-05 17:57:29', '2014-04-05 17:57:29', '0'),
-(98, 177648557, '2014-04-05 17:57:34', '2014-04-05 18:17:04', '0'),
-(99, 91147425, '2014-04-06 15:49:23', '2014-04-06 17:23:30', '0'),
-(100, 119659670, '2014-04-06 15:49:23', '2014-04-06 15:49:23', '0'),
-(101, 105219527, '2014-04-06 20:27:10', '2014-04-06 20:27:10', '0'),
-(102, 59274930, '2014-04-06 20:27:10', '2014-04-06 22:47:27', '2014-04-06T20:35:38+00:00'),
-(103, 156965438, '2014-04-21 01:17:27', '2014-04-21 01:17:27', '0'),
-(104, 252177145, '2014-04-21 01:17:27', '2014-04-21 05:10:55', '0'),
-(105, 194153494, '2014-04-21 04:24:40', '2014-04-21 04:24:40', '0'),
-(106, 213433632, '2014-04-21 04:24:45', '2014-04-21 04:24:45', '0'),
-(107, 87487891, '2014-04-21 04:24:49', '2014-04-21 04:24:49', '0'),
-(108, 212411161, '2014-04-21 04:24:56', '2014-04-21 04:24:56', '0'),
-(109, 229350880, '2014-04-22 00:30:26', '2014-04-22 00:30:26', '0'),
-(110, 258765523, '2014-04-22 00:30:26', '2014-04-22 00:46:20', '0'),
-(111, 241042432, '2014-04-23 23:02:11', '2014-04-23 23:29:45', '0'),
-(112, 131465589, '2014-04-23 23:02:11', '2014-04-23 23:02:11', '0'),
-(113, 120673423, '2014-04-24 23:04:00', '2014-04-24 23:04:00', '0'),
-(114, 175848572, '2014-04-24 23:04:09', '2014-04-25 00:46:31', '0'),
-(115, 110314926, '2014-04-26 00:22:36', '2014-04-26 01:44:20', '0'),
-(116, 134575089, '2014-04-26 00:22:36', '2014-04-26 00:22:36', '0'),
-(117, 95925107, '2014-04-26 16:25:31', '2014-04-26 16:25:31', '0'),
-(118, 97314496, '2014-04-26 16:25:33', '2014-04-26 17:48:30', '0'),
-(119, 86476754, '2014-04-27 03:50:28', '2014-04-27 03:50:28', '0'),
-(120, 110339485, '2014-04-27 03:50:30', '2014-04-27 04:28:41', '0'),
-(121, 166276011, '2014-04-27 17:53:54', '2014-04-27 17:53:54', '0'),
-(122, 130435529, '2014-04-27 17:53:55', '2014-04-27 20:40:37', '0'),
-(123, 139302855, '2014-04-28 16:35:03', '2014-04-28 18:08:15', '0'),
-(124, 194207296, '2014-04-28 16:35:03', '2014-04-28 16:35:03', '0'),
-(125, 10234476, '2014-04-30 00:54:38', '2014-04-30 01:56:16', '0'),
-(126, 43365243, '2014-04-30 00:54:38', '2014-04-30 00:54:38', '0'),
-(127, 19970146, '2014-05-03 17:09:51', '2014-05-03 17:09:51', '0'),
-(128, 102037388, '2014-05-03 17:09:52', '2014-05-03 18:28:03', '0'),
-(129, 42098168, '2014-05-16 18:08:27', '2014-05-16 18:08:27', '0'),
-(130, 105854833, '2014-05-16 18:08:28', '2014-05-16 19:45:17', '0'),
-(131, 23813678, '2014-05-17 19:47:55', '2014-05-17 19:47:55', '0'),
-(132, 262503274, '2014-05-17 19:48:04', '2014-05-17 19:50:15', '0'),
-(133, 180532035, '2014-05-18 21:41:22', '2014-05-18 21:41:22', '0'),
-(134, 57101931, '2014-05-18 21:41:28', '2014-05-18 23:26:15', '0'),
-(135, 142717643, '2014-05-22 00:41:35', '2014-05-22 00:41:35', '0'),
-(136, 88123491, '2014-05-22 00:41:36', '2014-05-22 01:15:22', '0'),
-(137, 219442632, '2014-05-25 19:53:02', '2014-05-25 19:53:02', '0'),
-(138, 54859409, '2014-05-25 19:53:03', '2014-05-25 20:56:47', '0'),
-(139, 168573926, '2014-05-26 17:47:41', '2014-05-26 17:47:41', '0'),
-(140, 15799328, '2014-05-26 17:47:43', '2014-05-26 19:16:50', '0'),
-(141, 220890072, '2014-05-31 21:50:33', '2014-05-31 21:50:33', '0'),
-(142, 236132433, '2014-05-31 21:50:34', '2014-05-31 22:50:30', '0'),
-(143, 193979049, '2014-06-01 21:00:44', '2014-06-01 21:00:44', '0'),
-(144, 207668607, '2014-06-01 21:00:49', '2014-06-01 22:18:52', '0'),
-(145, 119558621, '2014-06-04 01:11:17', '2014-06-04 01:11:17', '0'),
-(146, 143930345, '2014-06-04 01:11:19', '2014-06-04 01:36:44', '0'),
-(147, 54767886, '2014-06-04 05:12:00', '2014-06-04 05:14:51', '0'),
-(148, 54368729, '2014-06-06 00:38:53', '2014-06-06 00:38:53', '0'),
-(149, 86362447, '2014-06-06 00:39:03', '2014-06-06 01:42:55', '0'),
-(150, 203561134, '2014-06-10 04:48:48', '2014-06-10 04:48:48', '0'),
-(151, 266557652, '2014-06-10 04:48:49', '2014-06-10 05:22:14', '0'),
-(152, 83640547, '2014-06-11 00:12:41', '2014-06-11 00:12:41', '0'),
-(153, 226015066, '2014-06-11 00:12:42', '2014-06-11 00:41:36', '0'),
-(154, 40705980, '2014-06-11 23:41:30', '2014-06-11 23:41:30', '0'),
-(155, 137880073, '2014-06-11 23:41:31', '2014-06-12 01:57:39', '0'),
-(156, 169693618, '2014-06-12 03:43:49', '2014-06-12 04:09:27', '0'),
-(157, 103708759, '2014-06-14 17:49:13', '2014-06-14 17:49:13', '0'),
-(158, 175120539, '2014-06-14 17:49:15', '2014-06-14 18:57:43', '0'),
-(159, 261291294, '2014-06-15 01:49:03', '2014-06-15 01:59:24', '0'),
-(160, 93142323, '2014-06-15 22:53:09', '2014-06-15 22:53:09', '0'),
-(161, 145867030, '2014-06-15 22:53:09', '2014-06-15 22:53:09', '0'),
-(162, 104808579, '2014-06-21 05:16:34', '2014-06-21 05:16:34', '0'),
-(163, 116236217, '2014-06-21 05:16:34', '2014-06-21 05:39:34', '0'),
-(164, 38816918, '2014-06-24 03:29:20', '2014-06-24 03:29:20', '0'),
-(165, 126123155, '2014-06-24 03:29:20', '2014-06-24 03:49:03', '0'),
-(166, 90396983, '2014-06-26 03:41:35', '2014-06-26 03:41:35', '0'),
-(167, 216684825, '2014-06-26 03:41:36', '2014-06-26 03:45:55', '0'),
-(168, 64248701, '2014-06-27 01:16:18', '2014-06-27 01:16:18', '0'),
-(169, 134856570, '2014-06-27 01:16:19', '2014-06-27 01:25:23', '0'),
-(170, 209438963, '2014-06-29 01:12:29', '2014-06-29 01:12:29', '0'),
-(171, 83637285, '2014-06-29 01:12:30', '2014-06-29 01:42:47', '0'),
-(172, 21684705, '2014-06-29 21:55:32', '2014-06-29 21:55:32', '0'),
-(173, 29624963, '2014-06-29 21:55:37', '2014-06-29 22:37:21', '0'),
-(174, 100288325, '2014-06-29 22:29:45', '2014-06-29 22:29:56', '0'),
-(175, 110847192, '2014-07-01 03:17:51', '2014-07-01 03:17:51', '0'),
-(176, 81252728, '2014-07-01 03:17:52', '2014-07-01 03:31:09', '0'),
-(177, 146323254, '2014-07-01 22:37:51', '2014-07-01 22:37:51', '0'),
-(178, 192309694, '2014-07-01 22:37:52', '2014-07-01 22:49:18', '0'),
-(179, 59432269, '2014-07-04 15:14:20', '2014-07-04 15:14:20', '0'),
-(180, 114044275, '2014-07-04 15:14:21', '2014-07-04 15:14:21', '0'),
-(181, 130480356, '2014-07-05 16:12:35', '2014-07-05 16:12:35', '0'),
-(182, 74573145, '2014-07-05 16:12:36', '2014-07-05 16:12:36', '0'),
-(183, 93425306, '2014-07-12 17:31:47', '2014-07-12 17:31:47', '0'),
-(184, 192836642, '2014-07-12 17:31:48', '2014-07-12 19:19:31', '0'),
-(185, 129686351, '2014-07-13 01:43:52', '2014-07-13 01:44:29', '0'),
-(186, 106732960, '2014-07-13 05:15:36', '2014-07-13 05:15:36', '0'),
-(187, 224743810, '2014-07-13 17:44:29', '2014-07-13 17:44:29', '0'),
-(188, 116257704, '2014-07-13 17:44:30', '2014-07-13 17:44:30', '0'),
-(189, 32814870, '2014-07-13 21:24:34', '2014-07-13 21:24:34', '0'),
-(190, 47903202, '2014-07-14 01:36:23', '2014-07-14 01:39:59', '0'),
-(191, 155465294, '2014-07-18 22:39:07', '2014-07-18 22:39:07', '0'),
-(192, 153251245, '2014-07-18 22:39:09', '2014-07-18 22:39:17', '0'),
-(193, 97168747, '2014-07-19 00:30:27', '2014-07-19 00:30:27', '0'),
-(194, 260030445, '2014-07-19 00:30:27', '2014-07-19 00:30:27', '0'),
-(195, 114919667, '2014-07-21 01:02:08', '2014-07-21 01:54:05', '0'),
-(196, 226107687, '2014-07-22 23:23:29', '2014-07-22 23:23:29', '0'),
-(197, 80208967, '2014-07-22 23:23:31', '2014-07-22 23:23:31', '0'),
-(198, 268078701, '2014-07-26 19:49:16', '2014-07-26 19:49:16', '0'),
-(199, 117667229, '2014-07-26 19:49:17', '2014-07-26 19:49:17', '0'),
-(200, 182583132, '2014-07-28 18:53:44', '2014-07-28 18:53:44', '0'),
-(201, 13500999, '2014-07-31 03:21:00', '2014-07-31 03:21:00', '0'),
-(202, 158968135, '2014-08-01 01:41:52', '2014-08-01 01:41:52', '0'),
-(203, 43375126, '2014-08-01 01:41:52', '2014-08-01 01:41:52', '0'),
-(204, 193240867, '2014-08-01 18:47:09', '2014-08-01 19:20:32', '0'),
-(205, 224785232, '2014-08-01 19:45:56', '2014-08-01 19:45:56', '0'),
-(206, 24282545, '2014-08-02 01:16:14', '2014-08-02 01:16:14', '0'),
-(207, 232943716, '2014-08-02 21:01:28', '2014-08-02 21:01:28', '0'),
-(208, 232413078, '2014-08-02 21:01:28', '2014-08-02 21:01:28', '0'),
-(209, 207713336, '2014-08-02 21:01:28', '2014-08-02 21:01:28', '0'),
-(210, 139004494, '2014-08-02 21:01:28', '2014-08-02 21:01:28', '0'),
-(211, 103650795, '2014-08-02 21:01:28', '2014-08-02 21:01:28', '0'),
-(212, 247822271, '2014-08-02 21:01:29', '2014-08-02 21:01:29', '0'),
-(213, 31541016, '2014-08-03 03:22:47', '2014-08-03 03:50:16', '0'),
-(214, 260324891, '2014-08-03 18:09:18', '2014-08-03 18:54:25', '0'),
-(215, 213369525, '2014-08-03 19:23:09', '2014-08-03 19:23:09', '0'),
-(216, 125063196, '2014-08-03 21:33:41', '2014-08-03 21:33:41', '0'),
-(217, 239022661, '2014-08-03 21:33:41', '2014-08-03 22:08:32', '0'),
-(218, 69574714, '2014-08-04 04:35:02', '2014-08-04 04:35:02', '0'),
-(219, 630593, '2014-08-04 18:15:38', '2014-08-04 18:15:38', '0'),
-(220, 164434223, '2014-08-04 18:15:40', '2014-08-04 19:08:55', '0'),
-(221, 204823550, '2014-08-04 22:02:08', '2014-08-04 22:02:08', '0'),
-(222, 71649559, '2014-08-05 04:01:42', '2014-08-05 04:01:42', '0'),
-(223, 108512532, '2014-08-05 04:01:42', '2014-08-05 04:01:42', '0'),
-(224, 146099189, '2014-08-05 04:01:42', '2014-08-05 04:01:42', '0'),
-(225, 38979150, '2014-08-05 04:04:49', '2014-08-05 04:04:49', '0'),
-(226, 136106446, '2014-08-05 18:24:15', '2014-08-05 18:24:15', '0'),
-(227, 244133758, '2014-08-05 18:24:15', '2014-08-05 18:24:15', '0'),
-(228, 234655213, '2014-08-06 01:38:58', '2014-08-06 01:38:58', '0'),
-(229, 66840329, '2014-08-06 18:01:39', '2014-08-06 18:01:39', '0'),
-(230, 186748993, '2014-08-13 06:37:03', '2014-08-13 06:37:03', '0'),
-(231, 56770169, '2014-08-13 16:47:27', '2014-08-13 16:47:27', '0'),
-(232, 184093292, '2014-08-13 16:47:27', '2014-08-13 16:47:27', '0'),
-(233, 252549917, '2014-08-13 19:21:06', '2014-08-13 19:21:06', '0'),
-(234, 205801104, '2014-08-13 23:22:15', '2014-08-13 23:24:38', '0'),
-(235, 117978928, '2014-08-14 15:52:32', '2014-08-14 15:52:32', '0'),
-(236, 186534423, '2014-08-14 15:52:33', '2014-08-14 15:52:33', '0'),
-(237, 70127618, '2014-08-14 15:53:36', '2014-08-14 15:53:36', '0'),
-(238, 146410330, '2014-08-14 15:53:40', '2014-08-14 15:53:40', '0'),
-(239, 117534213, '2014-08-14 15:53:42', '2014-08-14 15:53:42', '0'),
-(240, 148278560, '2014-08-14 15:53:46', '2014-08-14 15:53:46', '0'),
-(241, 54942914, '2014-08-14 15:54:02', '2014-08-14 15:54:02', '0'),
-(242, 72100981, '2014-08-24 01:15:52', '2014-08-24 01:22:49', '0'),
-(243, 208072034, '2014-08-24 16:08:24', '2014-08-24 16:08:24', '0'),
-(244, 18716786, '2014-08-24 16:08:26', '2014-08-24 16:28:12', '0'),
-(245, 109761890, '2014-08-25 00:13:14', '2014-08-25 00:13:14', '0'),
-(246, 90228263, '2014-08-25 00:13:14', '2014-08-25 00:13:14', '0'),
-(247, 46393870, '2014-08-25 17:16:11', '2014-08-25 17:16:11', '0'),
-(248, 79472836, '2014-08-25 17:16:13', '2014-08-25 17:47:36', '0'),
-(249, 256620084, '2014-08-25 22:07:11', '2014-08-25 22:07:11', '0'),
-(250, 226225594, '2014-08-25 22:07:11', '2014-08-25 22:07:11', '0'),
-(251, 238896752, '2014-08-26 04:33:10', '2014-08-26 04:33:10', '0'),
-(252, 155806296, '2014-08-26 18:56:54', '2014-08-26 19:51:04', '2014-08-26T19:50:56+00:00'),
-(253, 14578219, '2014-08-26 18:56:54', '2014-08-26 18:56:54', '0'),
-(254, 171840958, '2014-08-26 23:56:11', '2014-08-26 23:56:11', '0');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tags`
---
-
-CREATE TABLE IF NOT EXISTS `tags` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
-  `popularity` int(11) NOT NULL DEFAULT '1',
-  `admin` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
-  `description` text COLLATE utf8_unicode_ci,
-  `info` text COLLATE utf8_unicode_ci,
-  `raw_info` text COLLATE utf8_unicode_ci,
-  `nsfw` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `tag` (`name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=15 ;
-
---
--- Dumping data for table `tags`
---
-
-INSERT INTO `tags` (`id`, `name`, `created_at`, `updated_at`, `popularity`, `admin`, `description`, `info`, `raw_info`, `nsfw`) VALUES
-(1, 'testing', NULL, '2014-08-06 21:16:44', 22, 'Omnium', '', '<strong>General Info</strong><br />\nA community for:</p>\n<ol>\n<li>testing</li>\n<li>more testing</li>\n<li>even more testing</li>\n</ol>', '**General Info**\r\nA community for:\r\n1. testing\r\n2. more testing\r\n3. even more testing\r\n\r\n\r\n\r\n', 0),
-(2, 'test', NULL, '2014-08-25 23:36:20', 4, 'Omnium', '', '', '', 0),
-(3, 'science', NULL, '2014-08-26 19:50:56', 1, 'Omnium', NULL, NULL, '', 0),
-(4, 'philosophy', NULL, NULL, 0, '0', NULL, NULL, '', 0),
-(5, 'nature', NULL, NULL, 0, '0', NULL, NULL, '', 0),
-(6, 'something', NULL, NULL, 0, '0', NULL, NULL, '', 0),
-(7, 'technology', NULL, NULL, 0, '0', NULL, NULL, '', 0),
-(8, 'physics', NULL, NULL, 0, '0', NULL, NULL, '', 0),
-(9, 'probability', NULL, NULL, 0, '0', NULL, NULL, '', 0),
-(10, 'asfasdfasdfasdf', NULL, NULL, 0, '0', NULL, NULL, '', 0),
-(11, 'asffdsweffdwe', NULL, NULL, 0, '0', NULL, NULL, '', 0),
-(12, 'sdfwefdsasdfwf', NULL, NULL, 0, '0', NULL, NULL, '', 0),
-(13, 'sdfewfasdwef', NULL, NULL, 0, '0', NULL, NULL, '', 0),
-(14, 'asdfsdfdsfewdffs', NULL, NULL, 0, '0', NULL, NULL, '', 0);
-
--- --------------------------------------------------------
+LOCK TABLES `serials` WRITE;
+/*!40000 ALTER TABLE `serials` DISABLE KEYS */;
+INSERT INTO `serials` VALUES (1,104085737,'2014-12-29 00:37:15','2014-12-29 00:37:15','0','127.0.0.1',0),(2,19740191,'2014-12-30 01:32:29','2014-12-30 01:32:29','0','127.0.0.1',0),(3,28062106,'2014-12-30 18:43:22','2014-12-30 19:31:30','0','127.0.0.1',0),(4,222120717,'2014-12-30 20:52:11','2014-12-30 21:27:13','0','127.0.0.1',0),(5,181413442,'2014-12-30 20:52:38','2014-12-30 21:23:05','0','127.0.0.1',0),(6,53045638,'2014-12-31 17:44:24','2014-12-31 17:56:50','0','127.0.0.1',0),(7,36529634,'2014-12-31 18:04:40','2014-12-31 18:07:41','0','127.0.0.1',0),(8,25934691,'2014-12-31 22:06:58','2014-12-31 22:06:58','0','127.0.0.1',0),(9,223861519,'2015-01-01 15:36:53','2015-01-01 16:25:49','0','127.0.0.1',0);
+/*!40000 ALTER TABLE `serials` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `users`
 --
 
-CREATE TABLE IF NOT EXISTS `users` (
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
@@ -785,8 +531,6 @@ CREATE TABLE IF NOT EXISTS `users` (
   `next_level` int(11) NOT NULL DEFAULT '120',
   `last_login` datetime NOT NULL,
   `is_admin` int(11) NOT NULL DEFAULT '0',
-  `about` text COLLATE utf8_unicode_ci,
-  `about_raw` text COLLATE utf8_unicode_ci,
   `page` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'home',
   `chat_id` int(11) NOT NULL DEFAULT '0',
   `anonymous` int(11) NOT NULL DEFAULT '0',
@@ -795,31 +539,131 @@ CREATE TABLE IF NOT EXISTS `users` (
   `disconnect_time` datetime DEFAULT NULL,
   `online` int(11) NOT NULL DEFAULT '0',
   `ip_address` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `tag_mod` int(11) NOT NULL DEFAULT '0',
-  `tag_admin` int(11) NOT NULL DEFAULT '0',
+  `community_mod` int(11) NOT NULL DEFAULT '0',
+  `community_admin` int(11) NOT NULL DEFAULT '0',
+  `remember_token` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `passive` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `name` (`name`,`level`,`is_admin`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `created_at`, `updated_at`, `name`, `password`, `email`, `serial_id`, `cognizance`, `total_cognizance`, `level`, `next_level`, `last_login`, `is_admin`, `about`, `about_raw`, `page`, `chat_id`, `anonymous`, `evaluated`, `disconnecting`, `disconnect_time`, `online`, `ip_address`, `tag_mod`, `tag_admin`) VALUES
-(1, NULL, '2014-08-26 20:23:04', 'Omnium', 'eyJpdiI6IjUwekpFZzRqWkxYdW05U1hmSTN5ZjRQb0QwdEM0QUZiRUd1dFNNN3VJUGM9IiwidmFsdWUiOiIwbitaQU5tMmZsdkFkYkJ5cEYyUTQzMEhVU0FIaHRCM0VkaGU4VmhOY2xNPSIsIm1hYyI6IjlhNmI4MjdmMzFhNDI4ZWE3YjE4ZmZjMWRmNzFlMmE3ODVhZDlkOTM4YmE0MWYzZDgwZDYzYzM5OGJjMDJkZWIifQ==', NULL, 252, 30, 23, 0, 120, '2014-08-26 19:07:52', 1, '<strong>Name</strong> : Gavin Sellers</p>\n<p><!--<strong>Birthday</strong> : --></p>\n<p><!--<strong>Location</strong> : --></p>\n<p><!--<strong>Interests</strong> : --></p>\n<p><!--<strong>About Me</strong> : -->', '**Name** : Gavin Sellers\n\n[comment]**Birthday** : [/comment]\n\n[comment]**Location** : [/comment]\n\n[comment]**Interests** : [/comment]\n\n[comment]**About Me** : [/comment]', 'home', 0, 0, 1, 0, '2014-08-26 20:13:57', 0, NULL, 0, 0),
-(2, NULL, NULL, 'Gavin', 'eyJpdiI6IkJkR0hQZWtxTktOdWdYc3NmNGFRYk1lekdkXC9SQmppa1lnVHE4RWlzMGh3PSIsInZhbHVlIjoibnFBdHFEQjBrV3JJZGVCVStUMTlCUCtvVDNmNVk2R1hLUW42STBIYWxZUT0iLCJtYWMiOiIxNDE3ZWI3NDg1MWIzYjdiNjU0MGEyZTYxMGFhYWNjYjM4YmU2NTk0NjNmMmUzNGMyMmVkMjAwMDM5YmZkNjM2In0=', NULL, 0, 0, 0, 0, 120, '2014-01-01 19:41:19', 0, NULL, NULL, 'home', 0, 0, 1, 0, NULL, 0, NULL, 0, 0),
-(3, NULL, NULL, 'B105920', 'eyJpdiI6InFrM0MwYUtGdnJMZ1lnUytLczVHQ1JvTGdSa3N0MzBIQVVqdGR4eVNBajQ9IiwidmFsdWUiOiI5bGM4dkRENVpMejd6bFBpTEVZbWVuWUJiNDFyU3JFaEpFZ3h5clBka0tJPSIsIm1hYyI6IjA3NWMwYTBhYTZkZmEyMzUyOTRjY2VhMWFmN2UwNjg2ZGNkOWE1NDAzZmM2ZmEyNTY3NzI2MjMwZmM4MzQ5Y2UifQ==', NULL, 0, 0, 0, 0, 120, '2013-12-19 20:29:40', 0, NULL, NULL, 'home', 0, 0, 1, 0, NULL, 0, NULL, 0, 0),
-(4, NULL, '2014-08-26 19:59:09', 'Bob', 'eyJpdiI6IkdjVHFRbm00VGtMRG9cL3MyMk9BZHlRYlZZT1wvNWtQSTkybkFDZ2ZZU2F5QT0iLCJ2YWx1ZSI6IlwvQ0RcL2lteUhqSVBnSXZnOEpiOFZLb1RsSDA3bWt1Nyt6R0Z3MGhGenFwWT0iLCJtYWMiOiIyNmNlNDMzZDgxNGI2MTJiZThjYzc5NDU1MjZhYzI0ZGQzMDRlZDhkYTIxMmFhMzI2OGZiMWZjMTc0NjNmYTM0In0=', NULL, 251, 1, 0, 0, 120, '2014-08-26 04:34:20', 0, NULL, NULL, 'test', 0, 0, 1, 0, '2014-08-26 04:34:22', 0, NULL, 2, 0),
-(5, NULL, NULL, 'Test', 'eyJpdiI6IkExTXFrVFVmbWlpcmJINENNSytQRlwvSG5IYklVcXpYR1VMVUFpTGtUaHVBPSIsInZhbHVlIjoidXVEY2pxdHViYkN2eTRFbHI2SUlnM0w0WXA5YWt6dzluT0I1UENBTTQ1WT0iLCJtYWMiOiJmNGVkODJiNTFjOWYzN2E1NThkYjU0Y2YyMzNjN2Q4ODVlMjg1NjUxZmQ2MGZmODM3ODIxZmNiZDM2ZWE3ODhkIn0=', NULL, 0, 0, 0, 0, 120, '2014-01-12 23:22:57', 0, NULL, NULL, 'home', 0, 0, 1, 0, NULL, 0, NULL, 0, 0),
-(6, '2014-07-28 21:00:29', '2014-07-28 21:02:09', 'Auros', 'eyJpdiI6IkErbUxtdXJOSitGQ3IyM0pSRE15alFXUmtkWlg0RnpYazE2c2JKZEpzeEk9IiwidmFsdWUiOiJ5ejlVZ0pPMStQME4wYUM5MEVYOTJweDlLZzJPTFN6QVNSVHlMUFdmc1JnPSIsIm1hYyI6IjEzZTY5ZjBjYTQwMTAwZDU3Y2YxZTA0YmRhZTNjNjIyOTE1ODJmZmYzODIxNmM3NzAxZjQyZTgwOWZjYTFlYmUifQ==', NULL, 200, 0, 0, 0, 120, '2014-07-28 21:00:29', 0, NULL, NULL, 'home', 0, 0, 1, 0, NULL, 1, '127.0.0.1', 0, 0);
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,'2014-10-09 14:47:29','2014-12-31 22:28:50','Omnium','eyJpdiI6IndPMUExaVc1am1QVWh6RERrQmJaTkpJTnhCY1dLVXRBMnR6TUtPcUlEbXM9IiwidmFsdWUiOiJrNFpGanFHZ21YTUcyMVhxUmpGdW1XeUk5V1NYNlwvb2srdFBMd3NxbXFHVT0iLCJtYWMiOiJiNzZmOWNjMDUyOTUwNzBlNjFkOTBkN2Y1MWE4YzY1YjJkODY4NDUwNjc2NzIxZDFiYTNmMTBmMzAzMzA3NzE0In0=',NULL,8,49,176,1,300,'2014-12-23 23:43:09',1,'home',0,0,1,0,'2014-12-31 22:28:50',0,'127.0.0.1',0,0,'Id6HPbLkkYCc7eXGuFICIMmZ07KDQ7GJtS88WqAXftCgvH9GFPLvFpYaGXZm',5),(2,'2014-10-09 14:50:28','2015-01-01 16:27:05','Bob','eyJpdiI6ImtuK1ZYWWs1TnBxNExodHkrUkNwXC90bytoNzNyNGtNMXZLalNmNlljQldJPSIsInZhbHVlIjoiaHpWUk1CQk5maGs0OFc3MjZWSVBJSVlqRVJyUEg1cDVjMEtSSzRhRnJKbz0iLCJtYWMiOiJiNTU4YzY4MzIzZGE3MzcwYjIxNmQxYmU5MDU5ZjM4Y2RmZDU4ZmE4MGQyOGUwYzFjNDJmN2ZhYmVhMjI1MjRiIn0=',NULL,9,18,19,0,120,'2014-12-31 22:28:55',0,'home',0,0,1,0,'2015-01-01 16:26:52',1,'127.0.0.1',0,0,'hAORlo2ErYnWGMq6EXEzvDDLjkemq3Fc9NTmmWYtMpmrrTw5fXTTqVyXuNEb',9),(3,'2014-10-09 18:24:23','2014-11-13 15:43:12','Test','eyJpdiI6IjVrTTB2blA0SGs4azI0ZEhPUEdlUEZFWjhcLzdcL2Qzc1lldzBKakFWMG4wWT0iLCJ2YWx1ZSI6IkhDTkxQNVhJYWZwK0ZZNWMwblRMR0xmWE1xd29CcUR0YVZnbEZsK25pbm89IiwibWFjIjoiOWE2OTlhODhlODZiNWRhNDgzNDAzOWRiODMxOTlkNTk4OWQ0ZjU2MmU1NzY2NGQ3N2I2ODQzNTY5NmQ3OGM5YiJ9',NULL,38,0,0,0,120,'2014-11-13 15:42:55',0,'home',0,0,1,1,'2014-11-13 15:43:13',0,'127.0.0.1',0,0,'OhJmYli0EQR6f3GM2z2LerHLuzIXOpPh62r7aXLbI1Hk0FUiIWOeZvJaAJk6',0);
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
 
--- --------------------------------------------------------
+--
+-- Table structure for table `users_to_abilities`
+--
+
+DROP TABLE IF EXISTS `users_to_abilities`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users_to_abilities` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `ability_id` int(11) NOT NULL,
+  `active` int(11) NOT NULL DEFAULT '0',
+  `level` int(11) NOT NULL DEFAULT '1',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `unlocked` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users_to_abilities`
+--
+
+LOCK TABLES `users_to_abilities` WRITE;
+/*!40000 ALTER TABLE `users_to_abilities` DISABLE KEYS */;
+INSERT INTO `users_to_abilities` VALUES (1,1,1,0,2,'2014-12-22 22:42:41','2014-12-24 00:16:39',1);
+/*!40000 ALTER TABLE `users_to_abilities` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `users_to_chats`
+--
+
+DROP TABLE IF EXISTS `users_to_chats`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users_to_chats` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `chat_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `is_mod` int(11) NOT NULL,
+  `is_admin` int(11) NOT NULL,
+  `user` varchar(255) NOT NULL,
+  `active` int(11) NOT NULL DEFAULT '0',
+  `banned` int(11) NOT NULL DEFAULT '0',
+  `ip_address` varchar(255) NOT NULL,
+  `is_user` int(11) NOT NULL,
+  `live` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
+  KEY `chat_id` (`chat_id`,`user_id`),
+  KEY `author` (`user`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users_to_chats`
+--
+
+LOCK TABLES `users_to_chats` WRITE;
+/*!40000 ALTER TABLE `users_to_chats` DISABLE KEYS */;
+INSERT INTO `users_to_chats` VALUES (1,6,1,0,1,'Omnium',1,0,'127.0.0.1',1,1),(2,6,38,0,0,'198339714',0,0,'127.0.0.1',0,1),(3,6,2,0,0,'Bob',1,0,'127.0.0.1',1,1),(4,6,43,0,0,'134689452',1,0,'127.0.0.1',0,1),(5,8,1,0,0,'Omnium',0,0,'127.0.0.1',1,1),(6,8,44,0,0,'91166710',0,0,'127.0.0.1',0,1),(7,8,2,0,1,'Bob',0,0,'127.0.0.1',1,1),(8,16,2,0,0,'Bob',0,0,'127.0.0.1',1,1),(9,14,2,0,1,'Bob',0,0,'127.0.0.1',1,1),(10,13,2,0,0,'Bob',0,0,'127.0.0.1',1,1),(11,2,2,0,0,'Bob',0,0,'',0,1),(12,1,1,0,1,'Omnium',0,0,'127.0.0.1',1,1),(13,4,2,0,0,'Bob',0,0,'',0,1),(14,16,1,0,1,'Omnium',0,0,'127.0.0.1',1,1),(15,14,1,0,0,'Omnium',0,1,'127.0.0.1',1,1);
+/*!40000 ALTER TABLE `users_to_chats` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `users_to_communities`
+--
+
+DROP TABLE IF EXISTS `users_to_communities`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users_to_communities` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `community_id` int(11) NOT NULL,
+  `score` int(11) NOT NULL DEFAULT '0',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `is_mod` int(11) NOT NULL DEFAULT '0',
+  `is_admin` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `user_idx` (`user_id`),
+  KEY `tag_idx` (`community_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users_to_communities`
+--
+
+LOCK TABLES `users_to_communities` WRITE;
+/*!40000 ALTER TABLE `users_to_communities` DISABLE KEYS */;
+INSERT INTO `users_to_communities` VALUES (1,1,1,94,'2014-10-16 18:18:57','2014-12-23 23:46:29',0,1),(2,2,3,12,'2014-11-27 20:42:11','2014-12-19 23:51:53',0,1),(4,2,1,13,'2014-11-27 21:38:30','2015-01-01 16:26:40',0,0),(5,2,6,2,'2014-12-19 23:51:31','2014-12-19 23:51:31',0,0),(6,2,11,2,'2014-12-19 23:51:36','2014-12-19 23:51:36',0,0);
+/*!40000 ALTER TABLE `users_to_communities` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `users_to_private_chats`
 --
 
-CREATE TABLE IF NOT EXISTS `users_to_private_chats` (
+DROP TABLE IF EXISTS `users_to_private_chats`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users_to_private_chats` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `chat_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
@@ -829,48 +673,26 @@ CREATE TABLE IF NOT EXISTS `users_to_private_chats` (
   `minimized` int(11) NOT NULL DEFAULT '0',
   `unseen` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `users_to_private_chats`
 --
 
-INSERT INTO `users_to_private_chats` (`id`, `chat_id`, `user_id`, `entity_id`, `entity_type`, `visible`, `minimized`, `unseen`) VALUES
-(1, 1, 1, 4, 0, 1, 0, 0),
-(2, 1, 4, 1, 0, 1, 0, 0);
+LOCK TABLES `users_to_private_chats` WRITE;
+/*!40000 ALTER TABLE `users_to_private_chats` DISABLE KEYS */;
+INSERT INTO `users_to_private_chats` VALUES (1,1,1,2,0,1,0,0),(2,1,2,1,0,1,0,1),(3,2,2,3,0,0,0,0),(4,2,3,2,0,1,0,0);
+/*!40000 ALTER TABLE `users_to_private_chats` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `users_to_tags`
---
-
-CREATE TABLE IF NOT EXISTS `users_to_tags` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `tag_id` int(11) NOT NULL,
-  `score` int(11) NOT NULL DEFAULT '0',
-  `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
-  `is_mod` int(11) NOT NULL DEFAULT '0',
-  `is_admin` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `user_idx` (`user_id`),
-  KEY `tag_idx` (`tag_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=11 ;
-
---
--- Dumping data for table `users_to_tags`
---
-
-INSERT INTO `users_to_tags` (`id`, `user_id`, `tag_id`, `score`, `created_at`, `updated_at`, `is_mod`, `is_admin`) VALUES
-(5, 1, 2, 52, '2014-01-10 23:08:27', '2014-08-26 19:08:05', 0, 1),
-(6, 1, 3, 9, '2014-01-10 23:08:31', '2014-08-26 19:54:11', 0, 1),
-(7, 1, 4, 10, '2014-01-10 23:08:33', '2014-08-06 18:20:15', 0, 0),
-(8, 1, 1, 51, '2014-08-06 21:16:44', '2014-08-26 19:50:10', 0, 0),
-(9, 4, 1, 31, '2014-08-24 16:44:30', '2014-08-25 22:20:47', 0, 1),
-(10, 4, 2, 30, '2014-08-24 16:44:34', '2014-08-26 04:44:20', 0, 0);
-
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2015-01-03 14:30:28
