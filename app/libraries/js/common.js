@@ -44,10 +44,7 @@ module = function(){
 
 marked.setOptions({
 	sanitize:true,
-	breaks:true,
-	highlight:function (code) {
-		return require('highlight.js').highlightAuto(code).value;
-	}
+	breaks:true
 });
 
 function hashHtml(text){
