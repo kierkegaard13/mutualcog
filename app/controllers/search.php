@@ -42,11 +42,11 @@ class Search extends BaseController {
 		$chats = '';
 		$users = '';
 		$communities_res = '';
-		$prime_keywords = ["/\bposts\b/i","/\bcommunities\b/i","/\busers\b/i"];
-		$post_af_keywords = ["/\bin\b/i","/\babout\b/i","/\bby\b/i"];
-		$post_bf_keywords = ["/\bsfw\b/i","/\bnsfw\b/i","/\blive\b/i","/\bstatic\b/i"];
-		$user_keywords = ["/\bnamed\b/i","/\bwho like\b/i","/\bnear\b/i"];
-		$com_keywords = ["/\bnamed\b/i","/\bsimilar to\b/i","/\babout\b/i"];
+		$prime_keywords = array("/\bposts\b/i","/\bcommunities\b/i","/\busers\b/i");
+		$post_af_keywords = array("/\bin\b/i","/\babout\b/i","/\bby\b/i");
+		$post_bf_keywords = array("/\bsfw\b/i","/\bnsfw\b/i","/\blive\b/i","/\bstatic\b/i");
+		$user_keywords = array("/\bnamed\b/i","/\bwho like\b/i","/\bnear\b/i");
+		$com_keywords = array("/\bnamed\b/i","/\bsimilar to\b/i","/\babout\b/i");
 		$search_string = htmlentities($search_string);
 		$found = -1;
 		foreach($prime_keywords as $key => $word){  //split search based on primary keywords
