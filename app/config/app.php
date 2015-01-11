@@ -78,6 +78,8 @@ return array(
 	|
 	*/
 
+	'cipher' => MCRYPT_RIJNDAEL_256,
+
 	'providers' => array(
 
 		'Illuminate\Foundation\Providers\ArtisanServiceProvider',
@@ -114,7 +116,7 @@ return array(
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 		'Illuminate\Remote\RemoteServiceProvider',
-		'TwigBridge\TwigServiceProvider',
+		'TwigBridge\ServiceProvider',
 	),
 
 	/*

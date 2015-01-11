@@ -42,7 +42,7 @@ class C extends BaseController {
 		}
 		$chats_new = $chats_new->orderBy(DB::raw('chats_to_communities.pinned'),'desc')->orderBy('created_at','desc')->paginate(25);
 		$chats_rising = $chats_rising->orderBy(DB::raw('chats_to_communities.pinned'),'desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
-		$chats_removed = $chats_removed->orderBy(DB::raw('chats_to_communities.pinned'),'desc')->orderBy('created_at','desc')->paginate(25);
+		$chats_removed = $chats_removed->orderBy('created_at','desc')->paginate(25);
 		$chats = $chats->orderBy(DB::raw('chats_to_communities.pinned'),'desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
 		$upvoted = array();
 		$downvoted = array();

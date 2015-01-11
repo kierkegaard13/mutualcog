@@ -432,147 +432,140 @@ class Chat extends BaseController {
 		$live_status = htmlentities(Input::get('live_status'));
 		$nsfw = htmlentities(Input::get('nsfw'));
 		$communities = htmlentities(Input::get('communities'));
-		$validator = Validator::make(
-				array(
-					'title' => $title,
-					'description' => $details,
-					'communities' => $communities
-				     ),
-				array(
-					'title' => "required|between:5,$this->max_title_length",
-					'description' => "max:$this->max_static_length",
-					'communities' => 'max:120'
-				     )
-				);
-		if(!$validator->fails()){
-			$curr_date = date('Y:m:d:H:i');
-			list($year,$month,$day,$hour,$minute) = explode(':',$curr_date);
-			$serial = new Serials();
-			$serial->serial_id = Session::get('unique_serial');
-			$serial = $serial->findAll();
-			if($serial->last_post == 0){
+		$curr_date = date('Y:m:d:H:i');
+		list($year,$month,$day,$hour,$minute) = explode(':',$curr_date);
+		$serial = new Serials();
+		$serial->serial_id = Session::get('unique_serial');
+		$serial = $serial->findAll();
+		if($serial->last_post == 0){
+			$serial->last_post = date(DATE_ATOM);
+			$serial->save();
+			$validated = 1;
+		}else{
+			$temp_date = date('Y:m:d:H:i',strtotime($serial->last_post));
+			list($t_year,$t_month,$t_day,$t_hour,$t_minute) = explode(':',$temp_date);
+			if(($year > $t_year || $month > $t_month || $day > $t_day || ($hour * 60 + $minute) > ($t_hour * 60 + $t_minute) + 1)){  //2 minutes between posts
 				$serial->last_post = date(DATE_ATOM);
 				$serial->save();
 				$validated = 1;
 			}else{
-				$temp_date = date('Y:m:d:H:i',strtotime($serial->last_post));
-				list($t_year,$t_month,$t_day,$t_hour,$t_minute) = explode(':',$temp_date);
-				if(($year > $t_year || $month > $t_month || $day > $t_day || ($hour * 60 + $minute) > ($t_hour * 60 + $t_minute) + 1)){  //2 minutes between posts
-					$serial->last_post = date(DATE_ATOM);
-					$serial->save();
-					$validated = 1;
-				}else{
-					$validated = 1;
-					//TODO change validated back to 0
+				$validated = 1;
+				//TODO change validated back to 0
+			}
+		}
+		if(htmlentities(Input::get('js_key')) != 'js_enabled'){
+			$validated = 0;
+		}
+		if($validated){
+			$chat = new Chats();
+			$chat->title = $title;
+			if($link){
+				if((strpos($link,'http://') == 'false') && (strpos($link,'https://') == 'false')){
+					$link = 'http://' . $link;
 				}
-			}
-			if(htmlentities(Input::get('js_key')) != 'js_enabled'){
-				$validated = 0;
-			}
-			if($validated){
-				$chat = new Chats();
-				$chat->title = $title;
-				if($link){
-					if((strpos($link,'http://') == 'false') && (strpos($link,'https://') == 'false')){
-						$link = 'http://' . $link;
-					}
-					if(substr($link,-4,4) == '.png' || substr($link,-4,4) == '.eps' || substr($link,-4,4) == '.gif' || substr($link,-4,4) == '.jpg' || substr($link,-5,5) == '.jpeg'){
-						$site_name = str_replace('http://','',$link);
-						$site_name = str_replace('https://','',$site_name);
-						$site_name = explode('/',$site_name);
-						$site_name = $site_name[0];
-						$chat->link = $link;
-						$chat->image = $link;
-						$chat->site_name = $site_name;
+				if(substr($link,-4,4) == '.png' || substr($link,-4,4) == '.eps' || substr($link,-4,4) == '.gif' || substr($link,-4,4) == '.jpg' || substr($link,-5,5) == '.jpeg'){
+					$site_name = str_replace('http://','',$link);
+					$site_name = str_replace('https://','',$site_name);
+					$site_name = explode('/',$site_name);
+					$site_name = $site_name[0];
+					$chat->link = $link;
+					$chat->image = $link;
+					$chat->site_name = $site_name;
+				}else{
+					$site_name = str_replace('http://','',$link);
+					$site_name = str_replace('https://','',$site_name);
+					$site_name = explode('/',$site_name);
+					$site_name = $site_name[0];
+					if($site_name == 'www.youtube.com'){
+						$image = $this->youtubeLogo();
 					}else{
-						$site_name = str_replace('http://','',$link);
-						$site_name = str_replace('https://','',$site_name);
-						$site_name = explode('/',$site_name);
-						$site_name = $site_name[0];
-						if($site_name == 'www.youtube.com'){
-							$image = $this->youtubeLogo();
-						}else{
-							$html = file_get_contents($link);
-							$dom = new DOMDocument();
-							@$dom->loadHtml($html);
-							$imgTags = $dom->getElementsByTagName('img');
-							if ($imgTags->length > 0) {
-								$imgElement = $imgTags->item(0);
-								$image =  $imgElement->getAttribute('src');
-							} else {
-								$image = '';
-							}
+						$html = file_get_contents($link);
+						$dom = new DOMDocument();
+						@$dom->loadHtml($html);
+						$imgTags = $dom->getElementsByTagName('img');
+						if ($imgTags->length > 0) {
+							$imgElement = $imgTags->item(0);
+							$image =  $imgElement->getAttribute('src');
+						} else {
+							$image = '';
 						}
-						$chat->link = $link;
-						$chat->image = $image;
-						$chat->site_name = $site_name;
 					}
+					$chat->link = $link;
+					$chat->image = $image;
+					$chat->site_name = $site_name;
 				}
-				$duplicate = Chats::wheretitle($title)->wherelink($link)->first();
-				if($details){
-					$chat->raw_details = htmlentities($details);
-					$chat->details = $this->parseText($details);
-				}
-				if($live_status == 'on'){
-					$chat->live = 1;
-				}else{
-					$chat->live = 0;
-				}
-				if($nsfw == 'on'){
-					$chat->nsfw = 1;
-				}else{
-					$chat->nsfw = 0;
-				}
-				if($duplicate){
-					$chat = $duplicate;
-				}else{
-					if(Auth::check()){
-						$chat->admin = Auth::user()->name;
-						$chat->admin_id = Auth::user()->id;
-						$chat->save();
+			}else{
+				$chat->link = '';
+			}
+			$duplicate = Chats::wheretitle($title)->wherelink($link)->first();
+			if($details){
+				$chat->raw_details = htmlentities($details);
+				$chat->details = $this->parseText($details);
+			}
+			if($live_status == 'on'){
+				$chat->live = 1;
+			}else{
+				$chat->live = 0;
+			}
+			if($nsfw == 'on'){
+				$chat->nsfw = 1;
+			}else{
+				$chat->nsfw = 0;
+			}
+			if($duplicate){
+				$chat = $duplicate;
+			}else{
+				if(Auth::check()){
+					$chat->admin = Auth::user()->name;
+					$chat->admin_id = Auth::user()->id;
+					if($chat->save()){
 						$ch_voted = new ChatsVoted();
 						$ch_voted->chat_id = $chat->id;
 						$ch_voted->user_id = Auth::user()->id;
 						$ch_voted->status = 1;
 						$ch_voted->save();
 					}else{
-						$chat->admin = Session::get('unique_serial');
-						$chat->admin_id = Session::get('serial_id');
-						$chat->save();
+						return $this->returnToCurrPage();
 					}
-					$chat = $chat->findAll();
+				}else{
+					$chat->admin = Session::get('unique_serial');
+					$chat->admin_id = Session::get('serial_id');
+					if(!$chat->save()){
+						return $this->returnToCurrPage();
+					}
 				}
-				$communities = explode(' ',$communities);
-				foreach($communities as $community){
-					if(strlen($community) > 2 && strlen($community) < 20){
-						$t = new Communities();
-						$community = str_replace('#','',$community);
-						$community = htmlentities($community);
-						if($community){
-							$t->name = $community;
-							if($t->findAll()){
-								$t = $t->findAll();
-								$t->popularity = $t->popularity + 1;
-								$t->save();
-							}else{
-								$t->save();
-							}
+				$chat = $chat->findAll();
+			}
+			$communities = explode(' ',$communities);
+			foreach($communities as $community){
+				if(strlen($community) > 2 && strlen($community) < 20){
+					$t = new Communities();
+					$community = str_replace('#','',$community);
+					$community = htmlentities($community);
+					if($community){
+						$t->name = $community;
+						if($t->findAll()){
 							$t = $t->findAll();
-							$chats_to_communities = new ChatsToCommunities();
-							$chats_to_communities->chat_id = $chat->id;
-							$chats_to_communities->community_id = $t->id;
-							if($chats_to_communities->findAll()){
-							}else{
-								$chats_to_communities->save();
-							}
+							$t->popularity = $t->popularity + 1;
+							$t->save();
+						}else{
+							$t->save();
+						}
+						$t = $t->findAll();
+						$chats_to_communities = new ChatsToCommunities();
+						$chats_to_communities->chat_id = $chat->id;
+						$chats_to_communities->community_id = $t->id;
+						if($chats_to_communities->findAll()){
+						}else{
+							$chats_to_communities->save();
 						}
 					}
 				}
-				if($chat->live){
-					return Redirect::to(action('chat@getLive',$chat->id));
-				}else{
-					return Redirect::to(action('chat@getStatic',$chat->id));
-				}
+			}
+			if($chat->live){
+				return Redirect::to(action('chat@getLive',$chat->id));
+			}else{
+				return Redirect::to(action('chat@getStatic',$chat->id));
 			}
 		}
 		return $this->returnToCurrPage();
@@ -586,82 +579,70 @@ class Chat extends BaseController {
 		$live_status = htmlentities(Input::get('live_status'));
 		$nsfw = htmlentities(Input::get('nsfw'));
 		$communities = htmlentities(Input::get('communities'));
-		$validator = Validator::make(
-				array(
-					'title' => $title,
-					'description' => $details,
-					'communities' => $communities
-				     ),
-				array(
-					'title' => "required|between:5,$this->max_title_length",
-					'description' => "max:$this->max_static_length",
-					'communities' => 'max:120'
-				     )
-				);
-		if(!$validator->fails()){
-			if(htmlentities(Input::get('js_key')) != 'js_enabled'){
-				$validated = 0;
+		if(htmlentities(Input::get('js_key')) != 'js_enabled'){
+			$validated = 0;
+		}
+		if($validated && Auth::check()){
+			$chat_id = htmlentities(Input::get('chat_id'));
+			$chat = Chats::find($chat_id);
+			if($chat->admin != Auth::user()->name){
+				if(Session::has('curr_page')){
+					return Redirect::to(Session::get('curr_page'));
+				}else{
+					return Redirect::to('home');
+				}
 			}
-			if($validated && Auth::check()){
-				$chat_id = htmlentities(Input::get('chat_id'));
-				$chat = Chats::find($chat_id);
-				if($chat->admin != Auth::user()->name){
-					if(Session::has('curr_page')){
-						return Redirect::to(Session::get('curr_page'));
+			$chat->title = $title;
+			if($link && $link != $chat->link){
+				if((strpos($link,'http://') == 'false') && (strpos($link,'https://') == 'false')){
+					$link = 'http://' . $link;
+				}
+				function get($a,$b,$c)
+				{
+					// Gets a string between 2 strings
+					$y = explode($b,$a);
+					if($y[1]){
+						$x = explode($c,$y[1]);
+						return $x[0];
 					}else{
-						return Redirect::to('home');
+						return 0;
 					}
 				}
-				$chat->title = $title;
-				if($link && $link != $chat->link){
-					if((strpos($link,'http://') == 'false') && (strpos($link,'https://') == 'false')){
-						$link = 'http://' . $link;
-					}
-					function get($a,$b,$c)
-					{
-						// Gets a string between 2 strings
-						$y = explode($b,$a);
-						if($y[1]){
-							$x = explode($c,$y[1]);
-							return $x[0];
-						}else{
-							return 0;
-						}
-					}
-					if(substr($link,-4,4) == '.png' || substr($link,-4,4) == '.gif' || substr($link,-4,4) == '.jpg' || substr($link,-5,5) == '.jpeg'){
-						$site_name = str_replace('http://','',$link);
-						$site_name = str_replace('https://','',$site_name);
-						$site_name = explode('/',$site_name);
-						$site_name = $site_name[0];
-						$chat->link = $link;
-						$chat->image = $link;
-						$chat->site_name = $site_name;
-					}else{
-						$image = get(file_get_contents($link), "<img src=", " ");
-						$image = str_replace('"','',$image);
-						$site_name = str_replace('http://','',$link);
-						$site_name = str_replace('https://','',$site_name);
-						$site_name = explode('/',$site_name);
-						$site_name = $site_name[0];
-						$chat->link = $link;
-						$chat->image = $image;
-						$chat->site_name = $site_name;
-					}
-				}
-				if($details){
-					$chat->raw_details = htmlentities($details);
-					$chat->details = $this->parseText($details);
-				}
-				if($live_status == 'on'){
-					$chat->live = 1;
+				if(substr($link,-4,4) == '.png' || substr($link,-4,4) == '.gif' || substr($link,-4,4) == '.jpg' || substr($link,-5,5) == '.jpeg'){
+					$site_name = str_replace('http://','',$link);
+					$site_name = str_replace('https://','',$site_name);
+					$site_name = explode('/',$site_name);
+					$site_name = $site_name[0];
+					$chat->link = $link;
+					$chat->image = $link;
+					$chat->site_name = $site_name;
 				}else{
-					$chat->live = 0;
+					$image = get(file_get_contents($link), "<img src=", " ");
+					$image = str_replace('"','',$image);
+					$site_name = str_replace('http://','',$link);
+					$site_name = str_replace('https://','',$site_name);
+					$site_name = explode('/',$site_name);
+					$site_name = $site_name[0];
+					$chat->link = $link;
+					$chat->image = $image;
+					$chat->site_name = $site_name;
 				}
-				if($nsfw == 'on'){
-					$chat->nsfw = 1;
-				}else{
-					$chat->nsfw = 0;
-				}
+			}
+			if($details){
+				$chat->raw_details = htmlentities($details);
+				$chat->details = $this->parseText($details);
+			}
+			if($live_status == 'on'){
+				$chat->live = 1;
+			}else{
+				$chat->live = 0;
+			}
+			if($nsfw == 'on'){
+				$chat->nsfw = 1;
+			}else{
+				$chat->nsfw = 0;
+			}
+			if($chat->save()){
 				$communities = explode(' ',$communities);
 				$community_found = 0;
 				$community_index = 0;
@@ -698,11 +679,10 @@ class Chat extends BaseController {
 							$chats_to_communities = new ChatsToCommunities();
 							$chats_to_communities->chat_id = $chat->id;
 							$chats_to_communities->community_id = $t->id;
-							$chats_to_->save();
+							$chats_to_communities->save();
 						}
 					}
 				}
-				$chat->save();
 			}
 		}
 		return $this->returnToCurrPage();

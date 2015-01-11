@@ -55,7 +55,7 @@
 				{% if curr_community.name == community.name %}
 					<li class="visible-xs">
 						<div class="com_link_cont highlight_light_blue">
-							{% if community.id in user.subArr %}
+							{% if community.id in user.subArr() %}
 								<a href="{{site}}/community/unsubscribe/{{community.id}}" class="glyphicon glyphicon-ok nav_glyph" title="Unsubscribe"></a>
 							{% else %}
 								<a href="{{site}}/community/subscribe/{{community.id}}" class="glyphicon glyphicon-plus nav_glyph" title="Subscribe"></a>
@@ -67,7 +67,7 @@
 				{% else %}
 					<li class="visible-xs">
 						<div class="com_link_cont">
-							{% if community.id in user.subArr %}
+							{% if community.id in user.subArr() %}
 								<a href="{{site}}/community/unsubscribe/{{community.id}}" class="glyphicon glyphicon-ok nav_glyph" title="Unsubscribe"></a>
 							{% else %}
 								<a href="{{site}}/community/subscribe/{{community.id}}" class="glyphicon glyphicon-plus nav_glyph" title="Subscribe"></a>
@@ -623,7 +623,7 @@
 {% endblock %}
 
 {% block chat_box %}
-<div class="chat_title_box {% if not chat.seen %}{% if chat.pinned and not curr_community_id %}red_left_border{% elseif chat.community_pinned %}green_left_border{% else %}blue_left_border{% endif %}{% endif %}">
+<div class="chat_title_box {% if not chat.seen() %}{% if chat.pinned and not curr_community_id %}red_left_border{% elseif chat.community_pinned %}green_left_border{% else %}blue_left_border{% endif %}{% endif %}">
 	<div class="row">
 		<div class="number_box"> {{loop.index}}. </div>
 		<div class="vote_box">
@@ -685,8 +685,8 @@
 							{% if chat.author.is_admin or chat.author.is_mod %}
 								<span class="red_color">{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</span></strong></a>,
 							{% elseif curr_community_id %}
-								{% if chat.admin_id == community_admin.user_id or chat.admin_id in curr_community.moderators %}
-									<span class="green_color">{{chat.admin}}{% if chat.admin_id == community_admin.user_id %}[CA]{% elseif chat.admin_id in curr_community.moderators %}[CM]{% endif %}</span></strong></a>,
+								{% if chat.admin_id == community_admin.user_id or chat.admin_id in curr_community.moderators() %}
+									<span class="green_color">{{chat.admin}}{% if chat.admin_id == community_admin.user_id %}[CA]{% elseif chat.admin_id in curr_community.moderators() %}[CM]{% endif %}</span></strong></a>,
 								{% else %}
 									{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</strong></a>,
 								{% endif %}

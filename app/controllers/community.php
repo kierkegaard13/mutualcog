@@ -204,27 +204,13 @@ class Community extends BaseController {
 			$community_id = htmlentities(Input::get('community_id'));
 			$description = htmlentities(Input::get('description'));
 			$raw_info = htmlentities(Input::get('info'));
-			$validator = Validator::make(
-					array(
-						'id' => $community_id,
-						'description' => $description,
-						'info' => $raw_info
-					     ),
-					array(
-						'id' => 'required',
-						'description' => "max:$this->max_description_length",
-						'info' => "max:$this->max_info_length"
-					     )
-					);
-			if(!$validator->fails()){
-				$community = Communities::find($community_id);
-				if($community){
-					if(Auth::user()->community_admin == $community_id){
-						$community->description = $description;
-						$community->raw_info = $raw_info;
-						$community->info = $this->parseText($raw_info);
-						$community->save();
-					}
+			$community = Communities::find($community_id);
+			if($community){
+				if(Auth::user()->community_admin == $community_id){
+					$community->description = $description;
+					$community->raw_info = $raw_info;
+					$community->info = $this->parseText($raw_info);
+					$community->save();
 				}
 			}
 		}
@@ -240,28 +226,15 @@ class Community extends BaseController {
 			if(Auth::user()->is_admin || Auth::user()->is_mod){
 				$community_tier = htmlentities(Input::get('community_tier'));
 			}
-			$validator = Validator::make(
-					array(
-						'name' => $community_name,
-						'description' => $community_desc,
-						'info' => $raw_info
-					     ),
-					array(
-						'name' => 'required|between:3,20|unique:communities',
-						'description' => "max:$this->max_description_length",
-						'info' => "max:$this->max_info_length"
-					     )
-					);
-			if(!$validator->fails()){
-				$community = new Communities();
-				$community->name = str_replace('#','',$community_name);
-				$community->description = $community_desc;
-				$community->raw_info = $raw_info;
-				$community->info = $this->parseText($raw_info);
-				$community->admin = Auth::user()->name;
-				$community->admin_id = Auth::user()->id;
-				$community->tier = $community_tier;
-				$community->save();
+			$community = new Communities();
+			$community->name = str_replace('#','',$community_name);
+			$community->description = $community_desc;
+			$community->raw_info = $raw_info;
+			$community->info = $this->parseText($raw_info);
+			$community->admin = Auth::user()->name;
+			$community->admin_id = Auth::user()->id;
+			$community->tier = $community_tier;
+			if($community->save()){
 				$community = $community->findAll();
 				$user_to_community = new UsersToCommunities();
 				$user_to_community->user_id = Auth::user()->id;

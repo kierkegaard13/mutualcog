@@ -5,6 +5,38 @@ class Chats extends EloquentBridge
 	protected $table = "chats";
 	public $timestamps = true;
 
+	public function notValidUpdate(){
+		return Validator::make(
+				$this->toArray(),
+				array(
+					'title' => "required|between:5,$this->max_title_length",
+					'description' => "max:$this->max_static_length",
+					'communities' => 'max:120'
+				     )
+				)->fails();
+	}
+
+	public function notValidInsert(){
+		return Validator::make(
+				$this->toArray(),
+				array(
+					'title' => "required|between:5,$this->max_title_length",
+					'description' => "max:$this->max_static_length",
+					'communities' => 'max:120'
+				     )
+				)->fails();
+	}
+
+	public static function boot(){
+		parent::boot();
+		Chats::creating(function($chat){
+			if($chat->notValidInsert()) return false;
+		});
+		Chats::updating(function($chat){
+			if($chat->notValidUpdate()) return false;
+		});
+	}
+
 	public function author(){
 		if(preg_match('/[a-zA-Z]/',$this->admin)){
 			return $this->belongsTo('User','admin_id');

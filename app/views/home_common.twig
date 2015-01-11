@@ -135,7 +135,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<div><a href="{{site}}/c/{{curr_community.name}}" style="font-size:18px;color:#333;">{{curr_community.name}}{% if user %}{% if community_admin.user_id == user.id %} (Admin) {% elseif user.id in curr_community.moderators %} (Mod) {% endif %}{% endif %}</a></div>
+				<div><a href="{{site}}/c/{{curr_community.name}}" style="font-size:18px;color:#333;">{{curr_community.name}}{% if user %}{% if community_admin.user_id == user.id %} (Admin) {% elseif user.id in curr_community.moderators() %} (Mod) {% endif %}{% endif %}</a></div>
 			</div>
 			<div class="modal-body">
 				<div style="margin-top:5px;">
@@ -147,7 +147,7 @@
 					{% set community_subscribers = curr_community.subscribers | length %}
 					<div style="font-size:16px;margin-top:5px;">{{community_subscribers}} Subscriber{% if community_subscribers != 1 %}s{% endif %}</div>
 				</div>
-				<div style="font-size:14px;"><div class="green_ball"></div> {{curr_community.online}} online</div>
+				<div style="font-size:14px;"><div class="green_ball"></div> {{curr_community.online()}} online</div>
 				{% if curr_community.info|length > 0 %}
 					<div id="community_info">
 						<br>
@@ -160,7 +160,7 @@
 						<a href="{{site}}/u/{{community_admin.user.name}}">{{community_admin.user.name}}</a>
 					</div>
 				{% else %}
-					{% if user.owned < 1 and user_subscribed %}
+					{% if user.owned() < 1 and user_subscribed %}
 						<a href="{{site}}/community/assign-admin/{{curr_community_id}}" style="margin-left:10px;">Become the admin</a>
 					{% else %}
 						<div style="font-size:14px;margin-left:10px;">No Admin</div>

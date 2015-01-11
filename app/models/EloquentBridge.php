@@ -3,6 +3,12 @@
 class EloquentBridge extends Eloquent
 {
 	public $timestamps = false;
+	protected $max_title_length = 300;
+	protected $max_chat_mssg_length = 2500;
+	protected $max_static_length = 10000;
+	protected $max_description_length = 100;
+	protected $max_info_length = 10000;
+	protected $max_user_length = 20;
 
 	public function getTable(){
 		return $this->table;

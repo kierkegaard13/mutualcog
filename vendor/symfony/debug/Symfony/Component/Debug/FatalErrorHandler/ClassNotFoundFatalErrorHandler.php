@@ -15,7 +15,8 @@ use Symfony\Component\Debug\Exception\ClassNotFoundException;
 use Symfony\Component\Debug\Exception\FatalErrorException;
 use Symfony\Component\Debug\DebugClassLoader;
 use Composer\Autoload\ClassLoader as ComposerClassLoader;
-use Symfony\Component\ClassLoader as SymfonyClassLoader;
+use Symfony\Component\ClassLoader\ClassLoader as SymfonyClassLoader;
+use Symfony\Component\ClassLoader\UniversalClassLoader as SymfonyUniversalClassLoader;
 
 /**
  * ErrorHandler for classes that do not exist.
@@ -97,17 +98,26 @@ class ClassNotFoundFatalErrorHandler implements FatalErrorHandlerInterface
 
         // find Symfony and Composer autoloaders
         $classes = array();
+
         foreach ($functions as $function) {
             if (!is_array($function)) {
                 continue;
             }
-
             // get class loaders wrapped by DebugClassLoader
-            if ($function[0] instanceof DebugClassLoader && method_exists($function[0], 'getClassLoader')) {
-                $function[0] = $function[0]->getClassLoader();
+            if ($function[0] instanceof DebugClassLoader) {
+                $function = $function[0]->getClassLoader();
+
+                // Since 2.5, returning an object from DebugClassLoader::getClassLoader() is @deprecated
+                if (is_object($function)) {
+                    $function = array($function);
+                }
+
+                if (!is_array($function)) {
+                    continue;
+                }
             }
 
-            if ($function[0] instanceof ComposerClassLoader || $function[0] instanceof SymfonyClassLoader) {
+            if ($function[0] instanceof ComposerClassLoader || $function[0] instanceof SymfonyClassLoader || $function[0] instanceof SymfonyUniversalClassLoader) {
                 foreach ($function[0]->getPrefixes() as $prefix => $paths) {
                     foreach ($paths as $path) {
                         $classes = array_merge($classes, $this->findClassInPath($path, $class, $prefix));
@@ -116,7 +126,7 @@ class ClassNotFoundFatalErrorHandler implements FatalErrorHandlerInterface
             }
         }
 
-        return $classes;
+        return array_unique($classes);
     }
 
     /**

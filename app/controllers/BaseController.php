@@ -28,8 +28,14 @@ class BaseController extends Controller {
 			View::share('logged_in','0');
 		}
 		$this->sid = Session::getId();
+		if(Cache::has('communities')){
+			$communities = Cache::get('communities');
+		}else{
+			$communities = Communities::take(30)->orderBy('popularity','desc')->get();
+			Cache::put('communities',$communities,30);
+		}
 		View::share('sid',$this->sid);
-		View::share('communities',Communities::take(30)->orderBy('popularity','desc')->get());
+		View::share('communities',$communities);
 		View::share('base',$this->base_url);
 		View::share('site',$this->site_url);
 		View::share('io_url',$this->io_url);

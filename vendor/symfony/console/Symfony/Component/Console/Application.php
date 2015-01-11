@@ -13,6 +13,7 @@ namespace Symfony\Component\Console;
 
 use Symfony\Component\Console\Descriptor\TextDescriptor;
 use Symfony\Component\Console\Descriptor\XmlDescriptor;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -67,6 +68,7 @@ class Application
     private $helperSet;
     private $dispatcher;
     private $terminalDimensions;
+    private $defaultCommand;
 
     /**
      * Constructor.
@@ -80,6 +82,7 @@ class Application
     {
         $this->name = $name;
         $this->version = $version;
+        $this->defaultCommand = 'list';
         $this->helperSet = $this->getDefaultHelperSet();
         $this->definition = $this->getDefaultInputDefinition();
 
@@ -145,9 +148,8 @@ class Application
             if ($exitCode > 255) {
                 $exitCode = 255;
             }
-            // @codeCoverageIgnoreStart
+
             exit($exitCode);
-            // @codeCoverageIgnoreEnd
         }
 
         return $exitCode;
@@ -180,8 +182,8 @@ class Application
         }
 
         if (!$name) {
-            $name = 'list';
-            $input = new ArrayInput(array('command' => 'list'));
+            $name = $this->defaultCommand;
+            $input = new ArrayInput(array('command' => $this->defaultCommand));
         }
 
         // the command name MUST be the first element of the input
@@ -219,7 +221,7 @@ class Application
     }
 
     /**
-     * Set an input definition set to be used with this application
+     * Set an input definition set to be used with this application.
      *
      * @param InputDefinition $definition The input definition
      *
@@ -721,9 +723,9 @@ class Application
                 $trace = $e->getTrace();
                 array_unshift($trace, array(
                     'function' => '',
-                    'file'     => $e->getFile() != null ? $e->getFile() : 'n/a',
-                    'line'     => $e->getLine() != null ? $e->getLine() : 'n/a',
-                    'args'     => array(),
+                    'file' => $e->getFile() != null ? $e->getFile() : 'n/a',
+                    'line' => $e->getLine() != null ? $e->getLine() : 'n/a',
+                    'args' => array(),
                 ));
 
                 for ($i = 0, $count = count($trace); $i < $count; $i++) {
@@ -749,7 +751,7 @@ class Application
     }
 
     /**
-     * Tries to figure out the terminal width in which this application runs
+     * Tries to figure out the terminal width in which this application runs.
      *
      * @return int|null
      */
@@ -761,7 +763,7 @@ class Application
     }
 
     /**
-     * Tries to figure out the terminal height in which this application runs
+     * Tries to figure out the terminal height in which this application runs.
      *
      * @return int|null
      */
@@ -773,7 +775,7 @@ class Application
     }
 
     /**
-     * Tries to figure out the terminal dimensions based on the current environment
+     * Tries to figure out the terminal dimensions based on the current environment.
      *
      * @return array Array containing width and height
      */
@@ -783,7 +785,7 @@ class Application
             return $this->terminalDimensions;
         }
 
-        if (defined('PHP_WINDOWS_VERSION_BUILD')) {
+        if ('\\' === DIRECTORY_SEPARATOR) {
             // extract [w, H] from "wxh (WxH)"
             if (preg_match('/^(\d+)x\d+ \(\d+x(\d+)\)$/', trim(getenv('ANSICON')), $matches)) {
                 return array((int) $matches[1], (int) $matches[2]);
@@ -813,8 +815,8 @@ class Application
      *
      * Can be useful to force terminal dimensions for functional tests.
      *
-     * @param int     $width  The width
-     * @param int     $height The height
+     * @param int $width  The width
+     * @param int $height The height
      *
      * @return Application The current application
      */
@@ -841,8 +843,8 @@ class Application
 
         if (true === $input->hasParameterOption(array('--no-interaction', '-n'))) {
             $input->setInteractive(false);
-        } elseif (function_exists('posix_isatty') && $this->getHelperSet()->has('dialog')) {
-            $inputStream = $this->getHelperSet()->get('dialog')->getInputStream();
+        } elseif (function_exists('posix_isatty') && $this->getHelperSet()->has('question')) {
+            $inputStream = $this->getHelperSet()->get('question')->getInputStream();
             if (!@posix_isatty($inputStream)) {
                 $input->setInteractive(false);
             }
@@ -930,13 +932,13 @@ class Application
         return new InputDefinition(array(
             new InputArgument('command', InputArgument::REQUIRED, 'The command to execute'),
 
-            new InputOption('--help',           '-h', InputOption::VALUE_NONE, 'Display this help message.'),
-            new InputOption('--quiet',          '-q', InputOption::VALUE_NONE, 'Do not output any message.'),
+            new InputOption('--help',           '-h', InputOption::VALUE_NONE, 'Display this help message'),
+            new InputOption('--quiet',          '-q', InputOption::VALUE_NONE, 'Do not output any message'),
             new InputOption('--verbose',        '-v|vv|vvv', InputOption::VALUE_NONE, 'Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug'),
-            new InputOption('--version',        '-V', InputOption::VALUE_NONE, 'Display this application version.'),
-            new InputOption('--ansi',           '',   InputOption::VALUE_NONE, 'Force ANSI output.'),
-            new InputOption('--no-ansi',        '',   InputOption::VALUE_NONE, 'Disable ANSI output.'),
-            new InputOption('--no-interaction', '-n', InputOption::VALUE_NONE, 'Do not ask any interactive question.'),
+            new InputOption('--version',        '-V', InputOption::VALUE_NONE, 'Display this application version'),
+            new InputOption('--ansi',           '',   InputOption::VALUE_NONE, 'Force ANSI output'),
+            new InputOption('--no-ansi',        '',   InputOption::VALUE_NONE, 'Disable ANSI output'),
+            new InputOption('--no-interaction', '-n', InputOption::VALUE_NONE, 'Do not ask any interactive question'),
         ));
     }
 
@@ -962,11 +964,12 @@ class Application
             new DialogHelper(),
             new ProgressHelper(),
             new TableHelper(),
+            new QuestionHelper(),
         ));
     }
 
     /**
-     * Runs and parses stty -a if it's available, suppressing any error output
+     * Runs and parses stty -a if it's available, suppressing any error output.
      *
      * @return string
      */
@@ -989,7 +992,7 @@ class Application
     }
 
     /**
-     * Runs and parses mode CON if it's available, suppressing any error output
+     * Runs and parses mode CON if it's available, suppressing any error output.
      *
      * @return string <width>x<height> or null if it could not be parsed
      */
@@ -1045,10 +1048,10 @@ class Application
 
     /**
      * Finds alternative of $name among $collection,
-     * if nothing is found in $collection, try in $abbrevs
+     * if nothing is found in $collection, try in $abbrevs.
      *
-     * @param string               $name       The string
-     * @param array|\Traversable   $collection The collection
+     * @param string             $name       The string
+     * @param array|\Traversable $collection The collection
      *
      * @return array A sorted array of similar string
      */
@@ -1073,7 +1076,7 @@ class Application
                 }
 
                 $lev = levenshtein($subname, $parts[$i]);
-                if ($lev <= strlen($subname) / 3 || false !== strpos($parts[$i], $subname)) {
+                if ($lev <= strlen($subname) / 3 || '' !== $subname && false !== strpos($parts[$i], $subname)) {
                     $alternatives[$collectionName] = $exists ? $alternatives[$collectionName] + $lev : $lev;
                 } elseif ($exists) {
                     $alternatives[$collectionName] += $threshold;
@@ -1092,6 +1095,16 @@ class Application
         asort($alternatives);
 
         return array_keys($alternatives);
+    }
+
+    /**
+     * Sets the default Command name.
+     *
+     * @param string $commandName The Command name
+     */
+    public function setDefaultCommand($commandName)
+    {
+        $this->defaultCommand = $commandName;
     }
 
     private function stringWidth($string)

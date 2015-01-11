@@ -335,73 +335,43 @@ class Profile extends BaseController {
 		$pass = htmlentities(Input::get('pass'));
 		$pass2 = htmlentities(Input::get('pass2'));
 		$email = htmlentities(Input::get('email'));
-		$validator = Validator::make(
-				array(
-					'name' => $username,
-					'password' => $pass,
-					'password_confirmation' => $pass2,
-					'email' => $email
-				     ),
-				array(
-					'name' => "required|unique:users|between:3,$this->max_user_length",
-					'password' => 'required|between:6,30|confirmed',
-					'password_confirmation' => 'required',
-					'email' => 'email'
-				     )
-				);
-		if(!$validator->fails()){
-			$user = new User();
-			if(preg_match('/[a-zA-z]/',$username) && !preg_match('/[\[\]\s]/',$username)){
-				$user->name = ucfirst($username);
-			}else{
-				if(Session::has('curr_page')){
-					return Redirect::to(Session::get('curr_page'));
+		$user = new User();
+		$user->name = $username;
+		$user->password = Crypt::encrypt($pass);
+		$user->last_login = date(DATE_ATOM);
+		$user->ip_address = Request::getClientIp();
+		if($email){
+			$user->email = $email;
+		}
+		if($pass == $pass2 && preg_match('/[a-zA-Z]/',$username) && (strlen($pass) >= 6 && strlen($pass) <= 30)){
+			if($user->save()){
+				Auth::login($user);
+				$node = new NodeAuth();
+				$node->user_id = $user->id;
+				$node->user = $user->name;
+				if($node->findAll()){
+					$node = $node->findAll();
+					$node->serial = Session::get('unique_serial');
+					$node->serial_id = Session::get('serial_id');
+					$node->sid = Session::getId();
+					$node->authorized = 1;
+					$node->save();
+				}else{
+					$node->serial = Session::get('unique_serial');
+					$node->serial_id = Session::get('serial_id');
+					$node->sid = Session::getId();
+					$node->authorized = 1;
+					$node->save();
 				}
-				return Redirect::to('home');
 			}
-			$user->password = Crypt::encrypt($pass);
-			$user->last_login = date(DATE_ATOM);
-			$user->ip_address = Request::getClientIp();
-			if($email){
-				$user->email = $email;
-			}
-			$user->save();
-			Auth::login($user);
-			$node = new NodeAuth();
-			$node->user_id = $user->id;
-			$node->user = $user->name;
-			if($node->findAll()){
-				$node = $node->findAll();
-				$node->serial = Session::get('unique_serial');
-				$node->serial_id = Session::get('serial_id');
-				$node->sid = Session::getId();
-				$node->authorized = 1;
-				$node->save();
-			}else{
-				$node->serial = Session::get('unique_serial');
-				$node->serial_id = Session::get('serial_id');
-				$node->sid = Session::getId();
-				$node->authorized = 1;
-				$node->save();
-			}
-		}		
+		}
 		return $this->returnToCurrPage();
 	}
 
 	public function postLogin(){
 		$username = htmlentities(Input::get('username'));
 		$pass = htmlentities(Input::get('pass'));
-		$validator = Validator::make(
-				array(
-					'name' => $username,
-					'password' => $pass,
-				     ),
-				array(
-					'name' => 'required',
-					'password' => 'required',
-				     )
-				);
-		if(!$validator->fails()){
+		if($username && $pass){
 			$user = new User();
 			$user->name = ucfirst($username);
 			$user = $user->findAll();

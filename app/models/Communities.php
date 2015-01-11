@@ -5,6 +5,38 @@ class Communities extends EloquentBridge
 	protected $table = "communities";
 	public $timestamps = true;
 
+	public function notValidUpdate(){
+		return Validator::make(
+				$this->toArray(),
+				array(
+					'id' => 'required',
+					'description' => "max:$this->max_description_length",
+					'info' => "max:$this->max_info_length"
+				     )
+				)->fails();
+	}
+
+	public function notValidInsert(){
+		return Validator::make(
+				$this->toArray(),
+				array(
+					'name' => 'required|between:3,20|unique:communities',
+					'description' => "max:$this->max_description_length",
+					'info' => "max:$this->max_info_length"
+				     )
+				)->fails();
+	}
+
+	public static function boot(){
+		parent::boot();
+		Communities::creating(function($communities){
+			if($communities->notValidInsert()) return false;
+		});
+		Communities::updating(function($communities){
+			if($communities->notValidUpdate()) return false;
+		});
+	}
+
 	public function __toString(){
 		return $this->name;
 	}

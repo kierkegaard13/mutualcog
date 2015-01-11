@@ -19,7 +19,7 @@ class Home extends BaseController {
 	{
 		$view = View::make('home');
 		$chats = Chats::select('*',DB::raw('(case when (upvotes - downvotes > 0) then log(upvotes - downvotes) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 when (upvotes - downvotes = 0) then log(1) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 else log(1/abs(upvotes - downvotes)) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 end) AS score'))->whereremoved('0');
-		$chats_removed = Chats::select('*',DB::raw('(case when (upvotes - downvotes > 0) then log(upvotes - downvotes) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 when (upvotes - downvotes = 0) then log(1) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 else log(1/abs(upvotes - downvotes)) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 end) AS score'))->whereremoved('1');
+		$chats_removed = Chats::whereremoved('1');
 		$chats_new = Chats::whereremoved('0');
 		$chats_rising = Chats::select('*',DB::raw('(upvotes - downvotes) - views AS score'))->whereremoved('0');
 		if($option == 'nsfw'){
@@ -51,7 +51,7 @@ class Home extends BaseController {
 		$chats = $chats->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
 		$chats_new = $chats_new->orderBy('pinned','desc')->orderBy('created_at','desc')->paginate(25);
 		$chats_rising = $chats_rising->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
-		$chats_removed = $chats_removed->orderBy(DB::raw('score'),'desc')->paginate(25);
+		$chats_removed = $chats_removed->orderBy('created_at','desc')->paginate(25);
 		$upvoted = array();
 		$downvoted = array();
 		if(Auth::check()){
@@ -83,7 +83,7 @@ class Home extends BaseController {
 	{
 		$view = View::make('home');
 		$chats = Chats::select('*',DB::raw('(case when (upvotes - downvotes > 0) then log(upvotes - downvotes) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 when (upvotes - downvotes = 0) then log(1) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 else log(1/abs(upvotes - downvotes)) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 end) AS score'))->whereremoved('0');
-		$chats_removed = Chats::select('*',DB::raw('(case when (upvotes - downvotes > 0) then log(upvotes - downvotes) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 when (upvotes - downvotes = 0) then log(1) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 else log(1/abs(upvotes - downvotes)) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 end) AS score'))->whereremoved('1');
+		$chats_removed = Chats::whereremoved('1');
 		$chats_new = Chats::whereremoved('0');
 		$chats_rising = Chats::select('*',DB::raw('(upvotes - downvotes) - views AS score'))->whereremoved('0');
 		$chats = $chats->wherensfw('1');
@@ -93,7 +93,7 @@ class Home extends BaseController {
 		$chats = $chats->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
 		$chats_new = $chats_new->orderBy('pinned','desc')->orderBy('created_at','desc')->paginate(25);
 		$chats_rising = $chats_rising->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
-		$chats_removed = $chats_removed->orderBy(DB::raw('score'),'desc')->paginate(25);
+		$chats_removed = $chats_removed->orderBy('created_at','desc')->paginate(25);
 		$upvoted = array();
 		$downvoted = array();
 		if(Auth::check()){
@@ -125,7 +125,7 @@ class Home extends BaseController {
 	{
 		$view = View::make('home');
 		$chats = Chats::select('*',DB::raw('(case when (upvotes - downvotes > 0) then log(upvotes - downvotes) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 when (upvotes - downvotes = 0) then log(1) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 else log(1/abs(upvotes - downvotes)) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 end) AS score'))->whereremoved('0');
-		$chats_removed = Chats::select('*',DB::raw('(case when (upvotes - downvotes > 0) then log(upvotes - downvotes) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 when (upvotes - downvotes = 0) then log(1) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 else log(1/abs(upvotes - downvotes)) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 end) AS score'))->whereremoved('1');
+		$chats_removed = Chats::whereremoved('1');
 		$chats_new = Chats::whereremoved('0');
 		$chats_rising = Chats::select('*',DB::raw('(upvotes - downvotes) - views AS score'))->whereremoved('0');
 		$chats = $chats->wherepinned('1')->wherensfw('0');
@@ -135,7 +135,7 @@ class Home extends BaseController {
 		$chats = $chats->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
 		$chats_new = $chats_new->orderBy('pinned','desc')->orderBy('created_at','desc')->paginate(25);
 		$chats_rising = $chats_rising->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
-		$chats_removed = $chats_removed->orderBy(DB::raw('score'),'desc')->paginate(25);
+		$chats_removed = $chats_removed->orderBy('created_at','desc')->paginate(25);
 		$upvoted = array();
 		$downvoted = array();
 		if(Auth::check()){

@@ -10,6 +10,40 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 
 	protected $hidden = array('password');
 
+	public function setNameAttribute($value){
+		$this->attributes['name'] = ucfirst(preg_replace('/[^a-zA-Z0-9_\-.]/','',$value));
+	}
+
+	public function notValidUpdate(){
+		return Validator::make(
+				$this->toArray(),
+				array(
+					'name' => "required|unique:users|between:3,$this->max_user_length",
+					'email' => 'email'
+				     )
+				)->fails();
+	}
+
+	public function notValidInsert(){
+		return Validator::make(
+				$this->toArray(),
+				array(
+					'name' => "required|unique:users|between:3,$this->max_user_length",
+					'email' => 'email'
+				     )
+				)->fails();
+	}
+
+	public static function boot(){
+		parent::boot();
+		User::creating(function($user){
+			if($user->notValidInsert()) return false;
+		});
+		User::updating(function($user){
+			if($user->notValidUpdate()) return false;
+		});
+	}
+
 	/**
 	 * Get the unique identifier for the user.
 	 *
