@@ -12,6 +12,7 @@ class BaseController extends Controller {
 	protected $max_description_length = 100;
 	protected $max_info_length = 10000;
 	protected $max_user_length = 20;
+	protected $view_cache_en = 1;
 
 
 	/**

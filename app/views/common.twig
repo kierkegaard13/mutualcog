@@ -97,9 +97,9 @@
 		{% for pm in user.privateChats %}
 			<div class="mobile_pm_cont" id="ident_pm_{{pm.friends[0].id}}_{{pm.id}}">
 				<div class="mobile_pm">
-					{% if pm.friends[0].online_score < 600 %}
+					{% if pm.friends[0].online_score() < 600 %}
 					<div class="green_ball mobile_pm_status"></div>
-					{% elseif pm.friends[0].online_score < 7200%}
+					{% elseif pm.friends[0].online_score() < 7200%}
 					<div class="yellow_ball mobile_pm_status"></div>
 					{% else %}
 					<div class="red_ball mobile_pm_status"></div>
@@ -115,10 +115,10 @@
 	</div>
 	<div class="mobile_friend_list" style="display:none;">
 		{% for friendship in user.friendships %}
-			<div class="mobile_friend_box" id="friend_box_for_{{friendship.entity.name}}" data-friend-id="{{friendship.entity.id}}" data-pm-chat-id="{% if friendship.entity.privateChatF[0] %}{{friendship.entity.privateChatF[0].id}}{% else %}0{% endif %}" title="{{friendship.entity.online}}">
-			{% if friendship.entity.online_score < 600 %}
+			<div class="mobile_friend_box" id="friend_box_for_{{friendship.entity.name}}" data-friend-id="{{friendship.entity.id}}" data-pm-chat-id="{% if friendship.entity.privateChatF[0] %}{{friendship.entity.privateChatF[0].id}}{% else %}0{% endif %}" title="{{friendship.entity.online()}}">
+			{% if friendship.entity.online_score() < 600 %}
 				<div class="green_ball friend_status" id="friend_{{friendship.entity.id}}_status"></div>
-			{% elseif friendship.entity.online_score < 7200 %}
+			{% elseif friendship.entity.online_score() < 7200 %}
 				<div class="yellow_ball friend_status" id="friend_{{friendship.entity.id}}_status"></div>
 			{% else %}
 				<div class="red_ball friend_status" id="friend_{{friendship.entity.id}}_status"></div>
@@ -139,9 +139,9 @@
 	{% for pm in user.privateChats %}
 	<div class="mobile_pm_window" id="mobile_pm_{{pm.friends[0].id}}_{{pm.id}}" style="display:none;">
 		<div class="mobile_pm_header">
-			{% if pm.friends[0].online_score < 600 %}
+			{% if pm.friends[0].online_score() < 600 %}
 			<div class="green_ball mobile_pm_status"></div>
-			{% elseif pm.friends[0].online_score < 7200%}
+			{% elseif pm.friends[0].online_score() < 7200%}
 			<div class="yellow_ball mobile_pm_status"></div>
 			{% else %}
 			<div class="red_ball mobile_pm_status"></div>
@@ -225,10 +225,10 @@
 </div>
 <div id="friend_box_cont">
 {% for friendship in user.friendships %}
-	<div class="friend_box" id="friend_box_for_{{friendship.entity.name}}" data-friend-id="{{friendship.entity.id}}" data-pm-chat-id="{% if friendship.entity.privateChatF[0] %}{{friendship.entity.privateChatF[0].id}}{% else %}0{% endif %}" title="{{friendship.entity.online}}">
-	{% if friendship.entity.online_score < 600 %}
+	<div class="friend_box" id="friend_box_for_{{friendship.entity.name}}" data-friend-id="{{friendship.entity.id}}" data-pm-chat-id="{% if friendship.entity.privateChatF[0] %}{{friendship.entity.privateChatF[0].id}}{% else %}0{% endif %}" title="{{friendship.entity.online()}}">
+	{% if friendship.entity.online_score() < 600 %}
 		<div class="green_ball friend_status" id="friend_{{friendship.entity.id}}_status"></div>
-	{% elseif friendship.entity.online_score < 7200 %}
+	{% elseif friendship.entity.online_score() < 7200 %}
 		<div class="yellow_ball friend_status" id="friend_{{friendship.entity.id}}_status"></div>
 	{% else %}
 		<div class="red_ball friend_status" id="friend_{{friendship.entity.id}}_status"></div>
@@ -261,9 +261,9 @@
 	{% for pm in user.privateChats %}
 		<div class="pm_cont {% if pm.pivot.visible == 1 %}pm_visible" style="visibility:hidden;{% endif %}" id="pm_{{pm.friends[0].id}}_{{pm.id}}">
 			<div class="pm_header">
-				{% if pm.friends[0].online_score < 600 %}
+				{% if pm.friends[0].online_score() < 600 %}
 				<div class="green_ball pm_status"></div>
-				{% elseif pm.friends[0].online_score < 7200%}
+				{% elseif pm.friends[0].online_score() < 7200%}
 				<div class="yellow_ball pm_status"></div>
 				{% else %}
 				<div class="red_ball pm_status"></div>
