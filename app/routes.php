@@ -122,7 +122,11 @@ Route::filter('assignSerial',function(){
 				$passive = 0;
 				foreach($interactions as $interaction){  //generate first level nodes
 					if(abs(compareTimes($interaction->updated_at,'days')) > 2){
-						$interaction->bond = $interaction->bond - .05;
+						if($interaction->bond > 1.05){
+							$interaction->bond = 1.05;
+						}else{
+							$interaction->bond = $interaction->bond - .05;
+						}
 						$interaction->save();
 					}
 					if(array_key_exists($interaction->entity_id,$first_id_arr)){

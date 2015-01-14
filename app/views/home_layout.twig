@@ -18,6 +18,7 @@
 </head>
 <body>
 {% block header %}{% endblock %}
+{{cached_modals | raw}}
 {% block modals %}{% endblock %}
 {% block home_modals %}{% endblock %}
 {% if logged_in %}

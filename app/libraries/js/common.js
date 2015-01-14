@@ -3,7 +3,7 @@ module = function(){
 	var pm_info = '';
 	var crit_len = new Array();
 	var pm_scroll_inactive = {};
-	var title_blinking = chat_scroll_timer = typ_cnt = connected = recent = banned = stop_scroll = scroll_button_clicked = scroll_top = 0;
+	var tmp_mssg_cnt = title_blinking = chat_scroll_timer = typ_cnt = connected = recent = banned = stop_scroll = scroll_button_clicked = scroll_top = 0;
 	var clicked_on = -1;
 	if($('.chat_id').length){
 		var chat_id = $('.chat_id').attr('id').replace('chat_','');
@@ -39,7 +39,7 @@ module = function(){
 	var max_info_length = 10000;
 	var search_messages = new Array("Use 'who like' to find users with certain interests","Use 'about' to find posts about a certain topic","Type 'here' to search current community","Use 'in' to search communities","Press enter for more results","Search for your interests or specific content");
 
-	return {search_messages:search_messages,crit_len:crit_len,chat_scroll_timer:chat_scroll_timer,max_title_length:max_title_length,max_user_length:max_user_length,max_static_length:max_static_length,max_chat_mssg_length:max_chat_mssg_length,max_description_length:max_description_length,max_info_length:max_info_length,pm_scroll_inactive:pm_scroll_inactive,connected:connected,recent:recent,typ_cnt:typ_cnt,pm_info:pm_info,focused:focused,live:live,title_blinking:title_blinking,banned:banned,stop_scroll:stop_scroll,scroll_mod_active:scroll_mod_active,scroll_button_clicked:scroll_button_clicked,scroll_top:scroll_top,clicked_on:clicked_on,chat_id:chat_id,upvoted:upvoted,downvoted:downvoted,socket:socket,color_arr:color_arr,mems:mems,mods:mods,admin:admin,notifications_top_positions:notifications_top_positions,notifications_bottom_positions:notifications_bottom_positions,notifications_top_ids:notifications_top_ids,notifications_bottom_ids:notifications_bottom_ids,serial_id:serial_id,serial_tracker:serial_tracker,user_id:user_id,user_tracker:user_tracker};
+	return {tmp_mssg_cnt:tmp_mssg_cnt,search_messages:search_messages,crit_len:crit_len,chat_scroll_timer:chat_scroll_timer,max_title_length:max_title_length,max_user_length:max_user_length,max_static_length:max_static_length,max_chat_mssg_length:max_chat_mssg_length,max_description_length:max_description_length,max_info_length:max_info_length,pm_scroll_inactive:pm_scroll_inactive,connected:connected,recent:recent,typ_cnt:typ_cnt,pm_info:pm_info,focused:focused,live:live,title_blinking:title_blinking,banned:banned,stop_scroll:stop_scroll,scroll_mod_active:scroll_mod_active,scroll_button_clicked:scroll_button_clicked,scroll_top:scroll_top,clicked_on:clicked_on,chat_id:chat_id,upvoted:upvoted,downvoted:downvoted,socket:socket,color_arr:color_arr,mems:mems,mods:mods,admin:admin,notifications_top_positions:notifications_top_positions,notifications_bottom_positions:notifications_bottom_positions,notifications_top_ids:notifications_top_ids,notifications_bottom_ids:notifications_bottom_ids,serial_id:serial_id,serial_tracker:serial_tracker,user_id:user_id,user_tracker:user_tracker};
 }();
 
 marked.setOptions({
@@ -1448,20 +1448,21 @@ $('body').on('keyup','.pm_text',function(e){
 			if($(this).val().trim() != ""){
 				var pm_sent = processMessage($(this).val());
 				$(this).css('height','');
-				var mssg = '<div class="pm_mssg_cont tmp_message">';
+				var mssg = '<div class="pm_mssg_cont tmp_message_' + module.tmp_mssg_cnt + '">';
 				mssg += '<div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment().format("hh:mma") + '">' + pm_sent + '</div>';
 				mssg += '</div>'; 
 				$(this).val("");
 				$('#pm_' + module.pm_info[1] + '_' + module.pm_info[2]).find('.pm_body_mssgs').append(mssg);
-				module.socket.emit('send_pm',{message:pm_sent,pm_id:module.pm_info[2],friend_id:module.pm_info[1],user_id:module.user_id},function(info){
+				module.socket.emit('send_pm',{message:pm_sent,pm_id:module.pm_info[2],friend_id:module.pm_info[1],user_id:module.user_id,tmp_mssg_cnt:module.tmp_mssg_cnt},function(info){
 					var chat_cont = $('#pm_' + info.friend_id + '_' + info.pm_id);
-					var tmp_message = chat_cont.find('.tmp_message');
+					var tmp_message = chat_cont.find('.tmp_message_' + info.tmp_mssg_cnt);
 					tmp_message.find('.pm_message').html(info.message);
-					tmp_message.attr('class',tmp_message.attr('class').replace('tmp_message',''));
+					tmp_message.attr('class',tmp_message.attr('class').replace('tmp_message_' + info.tmp_mssg_cnt,''));
 					if(info.unseen){
 						chat_cont.find('.pm_unseen').show();
 					}
 				});
+				module.tmp_mssg_cnt++;
 				if(module.pm_scroll_inactive[chat_cont.attr('id')] == 0 || !(chat_cont.attr('id') in module.pm_scroll_inactive)){
 					var pm_body = chat_cont.find('.pm_body');
 					window.setTimeout(function(){
@@ -1540,20 +1541,21 @@ $('body').on('keyup','.mobile_pm_text',function(e){
 			if($(this).val().trim() != ""){
 				var pm_sent = processMessage($(this).val());
 				$(this).css('height','');
-				var mssg = '<div class="pm_mssg_cont tmp_message">';
+				var mssg = '<div class="pm_mssg_cont tmp_message_' + module.tmp_mssg_cnt + '">';
 				mssg += '<div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment().format("hh:mma") + '">' + pm_sent + '</div>';
 				mssg += '</div>'; 
 				$(this).val("");
 				$('#mobile_pm_' + module.pm_info[2] + '_' + module.pm_info[3]).find('.pm_body_mssgs').append(mssg);
-				module.socket.emit('send_pm',{message:pm_sent,pm_id:module.pm_info[3],friend_id:module.pm_info[2],user_id:module.user_id},function(info){
+				module.socket.emit('send_pm',{message:pm_sent,pm_id:module.pm_info[3],friend_id:module.pm_info[2],user_id:module.user_id,tmp_mssg_cnt:module.tmp_mssg_cnt},function(info){
 					var chat_cont = $('#mobile_pm_' + info.friend_id + '_' + info.pm_id);
-					var tmp_message = chat_cont.find('.tmp_message');
+					var tmp_message = chat_cont.find('.tmp_message_' + info.tmp_mssg_cnt);
 					tmp_message.find('.pm_message').html(info.message);
-					tmp_message.attr('class',tmp_message.attr('class').replace('tmp_message',''));
+					tmp_message.attr('class',tmp_message.attr('class').replace('tmp_message_' + info.tmp_mssg_cnt,''));
 					if(info.unseen){
 						chat_cont.find('.pm_unseen').show();
 					}
 				});
+				module.tmp_mssg_cnt++;
 				if(module.pm_scroll_inactive[chat_cont.attr('id')] == 0 || !(chat_cont.attr('id') in module.pm_scroll_inactive)){
 					var pm_body = chat_cont.find('.mobile_pm_body');
 					window.setTimeout(function(){

@@ -29,14 +29,7 @@ class BaseController extends Controller {
 			View::share('logged_in','0');
 		}
 		$this->sid = Session::getId();
-		if(Cache::has('communities')){
-			$communities = Cache::get('communities');
-		}else{
-			$communities = Communities::take(30)->orderBy('popularity','desc')->get();
-			Cache::put('communities',$communities,30);
-		}
 		View::share('sid',$this->sid);
-		View::share('communities',$communities);
 		View::share('base',$this->base_url);
 		View::share('site',$this->site_url);
 		View::share('io_url',$this->io_url);
@@ -52,6 +45,13 @@ class BaseController extends Controller {
 		View::share('max_info_length',$this->max_info_length);
 		View::share('max_user_length',$this->max_user_length);
 		View::share('color_arr',array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#000'));
+		View::share('cached_modals',Cache::remember('cached_modals',30,function(){
+			$cached_modals = View::make('cached_modals');
+			return $cached_modals->render();
+		}));
+		View::share('communities',Cache::remember('communities',30,function(){
+			return Communities::take(30)->orderBy('popularity','desc')->get();
+		}));
 	}
 
 	public function compareTimes($time1, $format = 'minutes', $time2 = null){
