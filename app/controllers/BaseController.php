@@ -45,13 +45,17 @@ class BaseController extends Controller {
 		View::share('max_info_length',$this->max_info_length);
 		View::share('max_user_length',$this->max_user_length);
 		View::share('color_arr',array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#000'));
-		View::share('cached_modals',Cache::remember('cached_modals',30,function(){
-			$cached_modals = View::make('cached_modals');
-			return $cached_modals->render();
-		}));
 		View::share('communities',Cache::remember('communities',30,function(){
 			return Communities::take(30)->orderBy('popularity','desc')->get();
 		}));
+	}
+
+	public function isXhr(){
+		if(isset($_SERVER["HTTP_X_REQUESTED_WITH"]) AND strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == "xmlhttprequest"){
+			return 1;
+		}else{
+			return 0;
+		}
 	}
 
 	public function compareTimes($time1, $format = 'minutes', $time2 = null){

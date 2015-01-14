@@ -18,7 +18,6 @@
 </head>
 <body>
 {% block header %}{% endblock %}
-{{cached_modals | raw}}
 {% block modals %}{% endblock %}
 {% block home_modals %}{% endblock %}
 {% if logged_in %}
@@ -35,7 +34,7 @@
 		{% else %}
 		<div class="col-sm-7 col-md-8 col-lg-9" id="main">
 		{% endif %}
-			<div class="big_content_box">
+			<div class="big_content_box" id="main_cont_box">
 				{% block tabs %}{% endblock %}
 				{% block content %}{% endblock %}
 			</div>
@@ -63,7 +62,7 @@
 		{% block pm_bar %}{% endblock %}
 	{% endif %}
 </div>
-<script src="//{{io_url}}/socket.io/socket.io.js?something=hello"></script>
+<script src="//{{io_url}}/socket.io/socket.io.js"></script>
 <script src='//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js'></script>
 <script src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.1/moment.min.js'></script>
 <script src='//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js'></script>

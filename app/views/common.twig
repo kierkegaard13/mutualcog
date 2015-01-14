@@ -7,7 +7,7 @@
 		<span class="icon-bar"></span>
 		<span class="icon-bar"></span>
 		</button>
-		<a class="{{home_active}} navbar-brand" href="{{site}}/home"><img src="{{base}}/MC_home2.png"></a>
+		<a class="{{home_active}} navbar-brand mutual_route" href="{{site}}/home"><img src="{{base}}/MC_home2.png"></a>
 		{% if logged_in %}
 			<a class="navbar-brand visible-xs" href="{{site}}/profile/logout" title="Logout"><div class="glyphicon glyphicon-log-out"></div></a>
 			<btn id="show_mobile_pms" class="navbar-brand visible-xs" title="Private messaging"><div class="glyphicon glyphicon-user"></div></btn>
@@ -63,7 +63,7 @@
 							<a class="mobile_com" href="{{site}}/c/{{community.name}}">{{community.name}}</a>
 						</div>
 					</li>
-					<li class="hidden-xs"> <a class="highlight_light_blue" href="{{site}}/c/{{community.name}}">{{community.name}}</a> </li>
+					<li class="hidden-xs"> <a class="highlight_light_blue mutual_route" href="{{site}}/c/{{community.name}}">{{community.name}}</a> </li>
 				{% else %}
 					<li class="visible-xs">
 						<div class="com_link_cont">
@@ -75,7 +75,7 @@
 							<a class="mobile_com" href="{{site}}/c/{{community.name}}">{{community.name}}</a>
 						</div>
 					</li>
-					<li class="hidden-xs"> <a href="{{site}}/c/{{community.name}}">{{community.name}}</a> </li>
+					<li class="hidden-xs"> <a class="mutual_route" href="{{site}}/c/{{community.name}}">{{community.name}}</a> </li>
 				{% endif %}
 			{% endfor %}
 		</ul>
@@ -293,6 +293,158 @@
 {% endblock %}
 
 {% block modals %}
+<div class="modal fade" id="remove_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="remove_modalLabel">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Remove Post?</h4>
+			</div>
+			<div class="modal-footer">
+				<a href="{{site}}/chat/soft-remove/" class="btn btn-primary" id="remove_chat_final" type="Submit">Yes</a>
+				<button type="button" class="btn" data-dismiss="modal">No</button>
+			</div>
+		</div>
+	</div>	
+</div>
+<div class="modal fade" id="keywords_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="keywords_modalLabel">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Search Keywords</h4>
+			</div>
+			<div class="modal-body">
+				<small>*All searches are case insensitive</small>
+				<ul class="list-unstyled">
+					<li>
+						<h4>Posts</h4>
+						<ul>
+							<li><strong>in</strong> (eg. 'Posts in science, philosophy')</li>
+							<li><strong>about</strong> (eg. 'Posts about news')</li>
+							<li><strong>here</strong> (eg. 'Posts about news in here')</li>
+							<li><strong>by</strong> (eg. 'Posts by user1')</li>
+							<li><strong>sfw</strong> (eg. 'sfw posts about funny')</li>
+							<li><strong>nsfw</strong> (eg. 'nsfw posts about x')</li>
+							<li><strong>static</strong> (eg. 'static posts about stories')</li>
+							<li><strong>live</strong> (eg. 'live posts about smiling')</li>
+						</ul>
+					</li>
+					<li>
+						<h4>Communities</h4>
+						<ul>
+							<li><strong>named</strong> (eg. 'Communities named nature')</li>
+							<!--<li><strong>similar to</strong> (eg. 'Communities similar to nature', if nature was a community)</li>
+							<li><strong>about</strong> (eg. 'Communities about trees', if trees was a subject)</li>-->
+						</ul>
+					</li>
+					<li>
+						<h4>Users</h4>
+						<ul>
+							<li><strong>named</strong> (eg. 'Users named user1')</li>
+							<li><strong>who like</strong> (eg. 'Users who like Inception')</li>
+							<!--<li><strong>near</strong> (eg. 'Users near me')</li>-->
+						</ul>
+					</li>
+				</ul>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>	
+</div>
+<div class="modal fade" id="register_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="register_modalLabel">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 id="reg_modal_title" class="modal-title">Create an account or login</h4>
+			</div>
+			<div class="modal-body">
+				<ul id="loginTabs" class="nav nav-tabs nav-justified">
+					<li class="active"><a href="#register" data-toggle="tab">Register</a></li>
+					<li><a href="#login" data-toggle="tab">Login</a></li>
+				</ul>
+<div id="tab_content" class="tab-content">
+
+<div class="tab-pane fade active in" id="register">
+				<form method="post" action="{{site}}/profile/register" class="mutual_form" id="register_form">
+				<fieldset>
+					<div id="reg_user_group" class="form-group">
+						<label for="username">Preferred Username</label>
+						<input class="form-control" data-toggle="tooltip" data-placement="auto top" data-original-title="Username must be longer than 2 characters but less than 15" data-trigger="focus" data-container="body" type="text" name="username" id="reg_username" placeholder="Usernames are between 3 and {{max_user_length}} characters" maxlength="{{max_user_length}}">
+					</div>
+					<div id="reg_pass1_group" class="form-group">
+						<label for="pass">Password</label>
+						<input class="form-control" data-toggle="tooltip" data-placement="auto top" data-original-title="Password must be between 6 and 30 characters" data-trigger="focus" data-container="body" type="password" name="pass" id="reg_pass" placeholder="Passwords are between 6 and 30 characters" maxlength="30">
+					</div>
+					<div id="pass2_group" class="form-group">
+						<label for="pass2">Confirm Password</label>
+						<input class="form-control" data-toggle="popover" data-original-title="Passwords don't match" data-container="body" data-placement="auto top" data-trigger="focus" type="password" name="pass2" id="pass2" placeholder="Enter your password again">
+					</div>
+					<div id="email_group" class="form-group">
+						<label for="pass2">Email <small>(optional, only for recovery purposes)</small></label>
+						<input class="form-control" data-toggle="popover" data-original-title="Not a valid email" data-container="body" data-placement="auto top" data-trigger="focus" type="email" name="email" id="email" placeholder="Enter your email" maxlength="{{max_title_length}}">
+					</div>
+				</fieldset>
+			<div class="modal-footer" style="padding:15px 0 0 0;">
+				<button id="register_form_submit" class="btn btn-primary" type="submit">Register</button>
+				</form>
+				<button type="button" class="btn close_reg" data-dismiss="modal">Close</button>
+			</div>
+</div>
+<div class="modal fade" id="edit_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="edit_modalLabel">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Edit Chat</h4>
+			</div>
+			<div class="modal-body">
+				<form method="post" action="{{site}}/chat/edit-chat" class="mutual_form" id="home_form_v3">
+				<fieldset>
+					<div id="id_group" class="form-group">
+						<input class="form-control" type="hidden" name="chat_id" id="form_chat_id">
+					</div>
+					<div id="title_group_v3" class="form-group">
+						<label for="Title_v3">Title</label>
+						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Titles must be unique and have between 5 and {{max_title_length}} characters" data-trigger="focus" type="text" name="title" id="Title_v3" placeholder="What's this chat about?" maxlength="{{max_title_length}}">
+					</div>
+					<div id="link_group_v3" class="form-group">
+						<label for="Link_v3">Link <small>(optional)</small></label>
+						<input class="form-control" data-toggle="tooltip" data-placement="top" data-original-title="Not a valid url" data-trigger="focus" type="text" name="link" id="Link_v3" placeholder="Add a link (optional)" maxlength="{{max_static_length}}">
+					</div>
+					<div id="communities_group_v3" class="form-group">
+						<label for="Communities_v3">Communities</label>
+						<input class="form-control communities_input" data-toggle="popover" data-content="<div>Some content</div>" data-original-title="Suggested Communities" data-placement="bottom" type="text" name="communities" id="Communities_v3" placeholder="Use spaces to separate communities (max: 5)" autocomplete="off" maxlength="120">
+					</div>
+					<div id="description_group_v3" class="form-group">
+						<label for="description">Description <small>(optional)</small></label>
+						<textarea name="description" data-toggle="tooltip" data-placement="top" data-original-title="Descriptions have a max length of {{max_static_length}} characters" data-trigger="focus" class="form-control" id="description_v3" rows="5" maxlength="{{max_static_length}}"></textarea>
+					</div>
+					<div class="row">
+						<div id="live_group" class="checkbox col-xs-6">
+							<label>
+								<input type="checkbox" name="live_status" id="live_status_v3" checked> Live <div class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-original-title="Live chats don't need to be refreshed to see new comments but are not filtered" style="margin-left:5px;"></div>
+							</label>
+						</div>
+						<div id="nsfw_group" class="checkbox col-xs-6" style="margin-top:10px;">
+							<label>
+								<input type="checkbox" name="nsfw" id="nsfw_v3"> nsfw <div class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-original-title="NSFW posts don't show up on the front page and only show pictures in nsfw communities" style="margin-left:5px;"></div>
+							</label>
+						</div>
+					</div>
+				</fieldset>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" type="Submit">Save</button>
+				<button type="button" class="btn" data-dismiss="modal">Close</button>
+				</form>
+			</div>
+		</div>
+	</div>	
+</div>
 <div class="modal fade" id="continue_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="continue_modalLabel">
 	<div class="modal-dialog">
 		<div class="modal-content">

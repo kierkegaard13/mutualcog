@@ -17,7 +17,6 @@ class Home extends BaseController {
 
 	public function getIndex($option = null)
 	{
-		$view = View::make('home');
 		$chats = Chats::select('*',DB::raw('(case when (upvotes - downvotes > 0) then log(upvotes - downvotes) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 when (upvotes - downvotes = 0) then log(1) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 else log(1/abs(upvotes - downvotes)) + timestampdiff(minute,"2013-1-1 12:00:00",chats.created_at)/45000 end) AS score'))->whereremoved('0');
 		$chats_new = Chats::whereremoved('0');
 		$chats_rising = Chats::select('*',DB::raw('(upvotes - downvotes) - views AS score'))->whereremoved('0');
@@ -61,6 +60,11 @@ class Home extends BaseController {
 			}
 		}
 		Session::put('curr_page',URL::full());
+		if($this->isXhr()){
+			$view = View::make('home_view');
+		}else{
+			$view = View::make('home');
+		}
 		$view['home_active'] = 'highlight_light_blue';
 		$view['sid'] = Session::getId();
 		$view['curr_community_id'] = '';
