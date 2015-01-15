@@ -111,13 +111,13 @@ updateChatTimes = function(){
 	if($('.last_login').length){
 		$('.last_login').html('<strong>Last login: </strong>' + moment.utc($('.last_login').attr('id')).fromNow());
 	}
-}();
+};
 
 updateTimes = function(){
 	$.each($('.time'),function(index,value){
 		$(this).text(moment.utc($(this).attr('id')).fromNow());
 	});
-}();
+};
 
 function randomInt(min,max){
 	return Math.floor(Math.random() * (max - min + 1)) + min;

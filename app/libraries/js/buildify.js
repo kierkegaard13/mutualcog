@@ -9,9 +9,11 @@ buildify.task({
 		buildify().concat(['common.js','chat.js'])
 			.uglify()
 			.save('chat.min.js');
-		buildify().load('info.js')
+		buildify().concat(['functions.js','startup.js','server.js','click_events.js','key_events.js','blur_events.js','submit_events.js'])
+			.save('app.js');
+		buildify().concat(['functions.js','startup.js','server.js','click_events.js','key_events.js','blur_events.js','submit_events.js'])
 			.uglify()
-			.save('info.min.js');
+			.save('app.min.js');
 	}
 });
 
@@ -30,12 +32,6 @@ buildify.task({
 				return content.replace(/localhost/g,'dev.mutualcog.com');
 			})
 			.save('chat.min.js');
-		buildify().load('info.min.js')
-			.perform(function(content){
-				content = content.replace(/mutualcog\.com/g,'www.mutualcog.com');
-				return content.replace(/localhost/g,'dev.mutualcog.com');
-			})
-			.save('info.min.js');
 	}
 });
 

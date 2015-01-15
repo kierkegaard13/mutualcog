@@ -162,7 +162,7 @@
 	{% for community in communities_res %}
 		<div class="chat_title_box" style="padding:15px;">
 			<a class="navbar_blue_color" href="{{site}}/c/{{community.name}}">{{community.name}}</a>
-			{% if community.id in user.subArr %}
+			{% if community.id in user.subArr() %}
 				<div class="pull-right"><a href="{{site}}/community/unsubscribe/{{community.id}}" class="btn btn-danger btn-xs">Unsubscribe</a></div>
 			{% else %}
 				<div class="pull-right"><a id="subscribe_btn" href="{{site}}/community/subscribe/{{community.id}}" class="btn btn-success btn-xs">Subscribe</a></div>

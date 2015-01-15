@@ -7,7 +7,7 @@
 		<span class="icon-bar"></span>
 		<span class="icon-bar"></span>
 		</button>
-		<a class="{{home_active}} navbar-brand mutual_route" href="{{site}}/home"><img src="{{base}}/MC_home2.png"></a>
+		<a class="{{home_active}} navbar-brand" href="{{site}}/home"><img src="{{base}}/MC_home2.png"></a>
 		{% if logged_in %}
 			<a class="navbar-brand visible-xs" href="{{site}}/profile/logout" title="Logout"><div class="glyphicon glyphicon-log-out"></div></a>
 			<btn id="show_mobile_pms" class="navbar-brand visible-xs" title="Private messaging"><div class="glyphicon glyphicon-user"></div></btn>
@@ -63,7 +63,7 @@
 							<a class="mobile_com" href="{{site}}/c/{{community.name}}">{{community.name}}</a>
 						</div>
 					</li>
-					<li class="hidden-xs"> <a class="highlight_light_blue mutual_route" href="{{site}}/c/{{community.name}}">{{community.name}}</a> </li>
+					<li class="hidden-xs"> <a class="highlight_light_blue" href="{{site}}/c/{{community.name}}">{{community.name}}</a> </li>
 				{% else %}
 					<li class="visible-xs">
 						<div class="com_link_cont">
@@ -75,7 +75,7 @@
 							<a class="mobile_com" href="{{site}}/c/{{community.name}}">{{community.name}}</a>
 						</div>
 					</li>
-					<li class="hidden-xs"> <a class="mutual_route" href="{{site}}/c/{{community.name}}">{{community.name}}</a> </li>
+					<li class="hidden-xs"> <a href="{{site}}/c/{{community.name}}">{{community.name}}</a> </li>
 				{% endif %}
 			{% endfor %}
 		</ul>
@@ -293,6 +293,24 @@
 {% endblock %}
 
 {% block modals %}
+<div class="modal fade" id="continue_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="continue_modalLabel">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Chat Description</h4>
+			</div>
+			<div class="modal-body">
+				<div id="curr_details">
+					{{chat.details | raw}}
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>	
+</div>
 <div class="modal fade" id="remove_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="remove_modalLabel">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
@@ -303,6 +321,52 @@
 			<div class="modal-footer">
 				<a href="{{site}}/chat/soft-remove/" class="btn btn-primary" id="remove_chat_final" type="Submit">Yes</a>
 				<button type="button" class="btn" data-dismiss="modal">No</button>
+			</div>
+		</div>
+	</div>	
+</div>
+<div class="modal fade" id="members_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="members_modalLabel">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Chat members</h4>
+			</div>
+			<div class="modal-body chat_member_cont">
+			{% for member in chat.users %}
+			{% if not loop.last %}
+				<div class="chat_member light_divider_bottom">
+					{% if member.pivot.active %}
+						<a class="dark_link" href="{{site}}/u/{{member.name}}">{{member.name}}</a>
+					{% else %}
+						<a class="grey_link" href="{{site}}/u/{{member.name}}">{{member.name}}</a>
+					{% endif %}
+					{% if member.id != user.id %}
+						<button class="btn btn-primary pull-right" style="margin-top:-6px;" id="request_friend" data-user-id="{{member.id}}" data-user-name="{{member.name}}"><div class="glyphicon glyphicon-plus" id="request_glyph"> </div> Friend</button>
+					{% endif %}
+					{% if member.id != user.id and (user.name == chat.admin or serial == chat.admin) %}
+						<button class="btn btn-default pull-right mod_user" style="margin-top:-6px;margin-right:5px;" id="mod_user_{{member.id}}" data-user-id="{{member.id}}" data-user-name="{{member.name}}" data-is-mod="{{member.pivot.is_mod}}"><div class="glyphicon glyphicon-tower"> </div> {% if member.pivot.is_mod %}Unmod{% else %}Mod{% endif %}</button>
+					{% endif %}
+				</div>
+			{% else %}
+				<div class="chat_member">
+					{% if member.pivot.active %}
+						<a class="dark_link" href="{{site}}/u/{{member.name}}">{{member.name}}</a>
+					{% else %}
+						<a class="grey_link" href="{{site}}/u/{{member.name}}">{{member.name}}</a>
+					{% endif %}
+					{% if member.id != user.id %}
+						<button class="btn btn-primary pull-right" style="margin-top:-6px;" id="request_friend" data-user-id="{{member.id}}" data-user-name="{{member.name}}"><div class="glyphicon glyphicon-plus" id="request_glyph"> </div> Friend</button>
+					{% endif %}
+					{% if member.id != user.id and (user.name == chat.admin or serial == chat.admin) %}
+						<button class="btn btn-default pull-right mod_user" style="margin-top:-6px;margin-right:5px;" id="mod_user_{{member.id}}" data-user-id="{{member.id}}" data-user-name="{{member.name}}" data-is-mod="{{member.pivot.is_mod}}"><div class="glyphicon glyphicon-tower"> </div> {% if member.pivot.is_mod %}Unmod{% else %}Mod{% endif %}</button>
+					{% endif %}
+				</div>
+			{% endif %}
+			{% endfor %}
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn" data-dismiss="modal">Close</button>
 			</div>
 		</div>
 	</div>	
@@ -354,6 +418,24 @@
 		</div>
 	</div>	
 </div>
+<div class="modal fade" id="message_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="message_modalLabel">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Create new message</h4>
+			</div>
+			<div class="modal-body">
+				<form method="post" action="{{site}}/profile/message-user/" id="message_user_form">
+				<textarea id="message_body" name="message_body" rows=5></textarea>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" type="Submit">Send</button>
+				</form>
+			</div>
+		</div>
+	</div>	
+</div>
 <div class="modal fade" id="register_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="register_modalLabel">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -393,6 +475,30 @@
 				</form>
 				<button type="button" class="btn close_reg" data-dismiss="modal">Close</button>
 			</div>
+</div>
+<div class="tab-pane fade in" id="login">
+				<form method="post" action="{{site}}/profile/login" class="mutual_form" id="mobile_login_form">
+				<fieldset>
+					<div id="mobile_user_group" class="form-group">
+						<label for="username">Username</label>
+						<input class="form-control" data-toggle="tooltip" data-placement="auto top" data-original-title="Username or password incorrect" data-trigger="focus" data-container="body" type="text" name="username" id="mobile_username" placeholder="Enter your username" maxlength="{{max_user_length}}">
+					</div>
+					<div id="mobile_pass1_group" class="form-group">
+						<label for="pass">Password</label>
+						<input class="form-control" type="password" name="pass" id="mobile_pass" placeholder="Enter your password" maxlength="30">
+					</div>
+				</fieldset>
+			<div class="modal-footer" style="padding:15px 0 0 0;">
+				<button id="login_form_submit" class="btn btn-primary" type="submit">Login</button>
+				</form>
+				<button type="button" class="btn close_reg" data-dismiss="modal">Close</button>
+			</div>
+</div>
+
+</div>
+			</div>
+		</div>
+	</div>	
 </div>
 <div class="modal fade" id="edit_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="edit_modalLabel">
 	<div class="modal-dialog">
@@ -441,112 +547,6 @@
 				<button class="btn btn-primary" type="Submit">Save</button>
 				<button type="button" class="btn" data-dismiss="modal">Close</button>
 				</form>
-			</div>
-		</div>
-	</div>	
-</div>
-<div class="modal fade" id="continue_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="continue_modalLabel">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Chat Description</h4>
-			</div>
-			<div class="modal-body">
-				<div id="curr_details">
-					{{chat.details | raw}}
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn" data-dismiss="modal">Close</button>
-			</div>
-		</div>
-	</div>	
-</div>
-<div class="modal fade" id="members_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="members_modalLabel">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Chat members</h4>
-			</div>
-			<div class="modal-body chat_member_cont">
-			{% for member in chat.users %}
-			{% if not loop.last %}
-				<div class="chat_member light_divider_bottom">
-					{% if member.pivot.active %}
-						<a class="dark_link" href="{{site}}/u/{{member.name}}">{{member.name}}</a>
-					{% else %}
-						<a class="grey_link" href="{{site}}/u/{{member.name}}">{{member.name}}</a>
-					{% endif %}
-					{% if member.id != user.id %}
-						<button class="btn btn-primary pull-right" style="margin-top:-6px;" id="request_friend" data-user-id="{{member.id}}" data-user-name="{{member.name}}"><div class="glyphicon glyphicon-plus" id="request_glyph"> </div> Friend</button>
-					{% endif %}
-					{% if member.id != user.id and (user.name == chat.admin or serial == chat.admin) %}
-						<button class="btn btn-default pull-right mod_user" style="margin-top:-6px;margin-right:5px;" id="mod_user_{{member.id}}" data-user-id="{{member.id}}" data-user-name="{{member.name}}" data-is-mod="{{member.pivot.is_mod}}"><div class="glyphicon glyphicon-tower"> </div> {% if member.pivot.is_mod %}Unmod{% else %}Mod{% endif %}</button>
-					{% endif %}
-				</div>
-			{% else %}
-				<div class="chat_member">
-					{% if member.pivot.active %}
-						<a class="dark_link" href="{{site}}/u/{{member.name}}">{{member.name}}</a>
-					{% else %}
-						<a class="grey_link" href="{{site}}/u/{{member.name}}">{{member.name}}</a>
-					{% endif %}
-					{% if member.id != user.id %}
-						<button class="btn btn-primary pull-right" style="margin-top:-6px;" id="request_friend" data-user-id="{{member.id}}" data-user-name="{{member.name}}"><div class="glyphicon glyphicon-plus" id="request_glyph"> </div> Friend</button>
-					{% endif %}
-					{% if member.id != user.id and (user.name == chat.admin or serial == chat.admin) %}
-						<button class="btn btn-default pull-right mod_user" style="margin-top:-6px;margin-right:5px;" id="mod_user_{{member.id}}" data-user-id="{{member.id}}" data-user-name="{{member.name}}" data-is-mod="{{member.pivot.is_mod}}"><div class="glyphicon glyphicon-tower"> </div> {% if member.pivot.is_mod %}Unmod{% else %}Mod{% endif %}</button>
-					{% endif %}
-				</div>
-			{% endif %}
-			{% endfor %}
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn" data-dismiss="modal">Close</button>
-			</div>
-		</div>
-	</div>	
-</div>
-<div class="modal fade" id="message_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="message_modalLabel">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Create new message</h4>
-			</div>
-			<div class="modal-body">
-				<form method="post" action="{{site}}/profile/message-user/" id="message_user_form">
-				<textarea id="message_body" name="message_body" rows=5></textarea>
-			</div>
-			<div class="modal-footer">
-				<button class="btn btn-primary" type="Submit">Send</button>
-				</form>
-			</div>
-		</div>
-	</div>	
-</div>
-<div class="tab-pane fade in" id="login">
-				<form method="post" action="{{site}}/profile/login" class="mutual_form" id="mobile_login_form">
-				<fieldset>
-					<div id="mobile_user_group" class="form-group">
-						<label for="username">Username</label>
-						<input class="form-control" data-toggle="tooltip" data-placement="auto top" data-original-title="Username or password incorrect" data-trigger="focus" data-container="body" type="text" name="username" id="mobile_username" placeholder="Enter your username" maxlength="{{max_user_length}}">
-					</div>
-					<div id="mobile_pass1_group" class="form-group">
-						<label for="pass">Password</label>
-						<input class="form-control" type="password" name="pass" id="mobile_pass" placeholder="Enter your password" maxlength="30">
-					</div>
-				</fieldset>
-			<div class="modal-footer" style="padding:15px 0 0 0;">
-				<button id="login_form_submit" class="btn btn-primary" type="submit">Login</button>
-				</form>
-				<button type="button" class="btn close_reg" data-dismiss="modal">Close</button>
-			</div>
-</div>
-
-</div>
 			</div>
 		</div>
 	</div>	
