@@ -10,7 +10,7 @@
 	<link rel="icon" href="{{base}}/GavinWeb.ico" type="image/x-icon">
 	<link href='http://fonts.googleapis.com/css?family=Roboto:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href="{{base}}/app/bower_components/bootstrap/dist/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="{{base}}/app/libraries/css/chat_style.min.css" />
+        <link rel="stylesheet" href="{{base}}/app/libraries/css/app.min.css" />
         <link rel="stylesheet" href="{{base}}/app/libraries/css/jquery.mCustomScrollbar.min.css" />
         {% block styles %}{% endblock %}
 	<script src='//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
@@ -33,7 +33,7 @@
 		{% else %}
 		<div class="chat_content col-sm-7 col-md-8 col-lg-9" id="main">
 		{% endif %}
-			<div class="big_content_box" id="main_cont_box">
+			<div class="chat_content_box" id="main_cont_box">
 				<div class="content main_content" id="main_cont">
 					<div class="visible-xs">
 						{% block mobile_tools %}{% endblock %}

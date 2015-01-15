@@ -66,7 +66,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="chat_content">
+<div class="static_chat_content">
 <div class="chat_title_vote_box">
 	{% if chat.id in upvoted %}
 		<span class="glyphicon glyphicon-chevron-up big_upvote" id="upvote_{{chat.id}}" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
@@ -172,7 +172,7 @@
 <div id="down_arr" style="display:none;">{{mssg_downvoted | json_encode()}}</div>
 	<div class="content_right">
 	<div class="content_left">
-		<div class="chat_content">
+		<div class="static_chat_content">
 		{% for message in messages %}
 			{% if loop.first %}
 				{% set init_y = message.y_dim %}
@@ -185,9 +185,9 @@
 				{% endfor %}
 			{% endif %}
 			{% if message.y_dim == init_y %}
-			<div class="response_to_{{message.responseto}} mssg_cont y_{{message.y_dim}} parent_{{message.parent}}" id="mssg_cont_{{message.id}}">
+			<div class="response_to_{{message.responseto}} static_mssg_cont y_{{message.y_dim}} parent_{{message.parent}}" id="mssg_cont_{{message.id}}">
 			{% else %}
-			<div class="response_to_{{message.responseto}} mssg_cont y_{{message.y_dim}} parent_{{message.parent}} {% if message.y_dim > init_y + 3 %}hidden-xs {% endif %}{% if message.y_dim > init_y + 5 %}hidden-sm {% endif %}{% if message.y_dim > init_y + 8 %}hidden-md {% endif %}{% if message.y_dim > init_y + 12 %}hidden-lg {% endif %}pad_l_10" id="mssg_cont_{{message.id}}">
+			<div class="response_to_{{message.responseto}} static_mssg_cont y_{{message.y_dim}} parent_{{message.parent}} {% if message.y_dim > init_y + 3 %}hidden-xs {% endif %}{% if message.y_dim > init_y + 5 %}hidden-sm {% endif %}{% if message.y_dim > init_y + 8 %}hidden-md {% endif %}{% if message.y_dim > init_y + 12 %}hidden-lg {% endif %}pad_l_10" id="mssg_cont_{{message.id}}">
 			{% endif %}
 			{% block static_mssg_cont %}
 				{{parent()}}
@@ -216,7 +216,7 @@
 						</div>
 					{% endfor %}
 				{% endif %}
-				<div class="response_to_{{response.responseto}} mssg_cont y_{{response.y_dim}} parent_{{response.parent}} {% if response.y_dim > 3 %}hidden-xs {% endif %}{% if response.y_dim > 5 %}hidden-sm {% endif %}{% if response.y_dim > 8 %}hidden-md {% endif %}{% if response.y_dim > 12 %}hidden-lg {% endif %}pad_l_10" id="mssg_cont_{{response.id}}">
+				<div class="response_to_{{response.responseto}} static_mssg_cont y_{{response.y_dim}} parent_{{response.parent}} {% if response.y_dim > 3 %}hidden-xs {% endif %}{% if response.y_dim > 5 %}hidden-sm {% endif %}{% if response.y_dim > 8 %}hidden-md {% endif %}{% if response.y_dim > 12 %}hidden-lg {% endif %}pad_l_10" id="mssg_cont_{{response.id}}">
 					{% block static_resp_cont %}
 						{{parent()}}
 					{% endblock %}

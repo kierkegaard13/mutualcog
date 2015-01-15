@@ -196,7 +196,7 @@ module.socket.on('remove_mod_confirm',function(user){
 module.socket.on('pause',function(){
 	module.live = 0;	
 	$('.chat_paused').remove();
-	$('#main').append('<div class="chat_paused" id="paused_message">Chat has been paused</div>');
+	$('.chat_content').append('<div class="chat_paused" id="paused_message">Chat has been paused</div>');
 	$('#paused_message').show('fade','slow');
 });
 
@@ -209,7 +209,7 @@ module.socket.on('play',function(){
 
 module.socket.on('warn',function(){
 	$('.chat_paused').remove();
-	$('#main').append('<div class="chat_paused" id="warned_user">You have been warned</div>');
+	$('.chat_content').append('<div class="chat_paused" id="warned_user">You have been warned</div>');
 	$('#warned_user').show('fade','slow',function(){
 		window.setTimeout(function(){
 			$('#warned_user').hide('fade','slow');	
@@ -230,7 +230,7 @@ module.socket.on('warn_confirm',function(user){
 module.socket.on('kick',function(){
 	module.banned = 1;
 	$('.chat_paused').remove();
-	$('#main').append('<div class="chat_paused" id="banned_user">You have been banned</div>');
+	$('.chat_content').append('<div class="chat_paused" id="banned_user">You have been banned</div>');
 	$('#banned_user').show('fade','slow');
 });
 
@@ -251,7 +251,7 @@ module.socket.on('check_live',function(live){
 		});
 	}else{
 		module.live = 0;
-		$('#main').append('<div class="chat_paused" id="paused_message">Chat has been paused</div>');
+		$('.chat_content').append('<div class="chat_paused" id="paused_message">Chat has been paused</div>');
 		$('#paused_message').show('fade','show');
 	}
 	$('.mssg_icon').tooltip();

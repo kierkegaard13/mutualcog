@@ -524,7 +524,7 @@ $('.show_friends').click(function(){
 	$(this).hide();
 });
 $('#chat_display').on('click','.toggle_responses',getResponses);
-$('.chat_content').on('click','.toggle_responses',getStaticResponses);
+$('.static_chat_content').on('click','.toggle_responses',getStaticResponses);
 $('.request_btn').on('click',function(){  //TODO complete seen notification func
 	
 });
@@ -713,6 +713,7 @@ $('.chat_member_cont').on('click','.mod_user',function(){
 	});
 });
 $('.chat_content').on('click','.mssg_icon',deleteIt);
+$('.static_chat_content').on('click','.mssg_icon',deleteIt);
 $('body').on('click','.p_chat_mssg',function(){
 	var chat_id = $(this).find('.p_mssg_body').attr('class').split(' ')[0].split('_')[2];
 	var mssg_id = $(this).attr('id');
@@ -754,8 +755,8 @@ $('.load_more').on('click',function(){
 			$this.remove();
 			var res = '';
 			$.each(hresp,function(index,val){
-				res += '<div class="response_to_' + val.responseto + ' mssg_cont y_' + val.y_dim + ' parent_' + val.parent + ' pad_l_10" id="mssg_cont_' + val.id + '">';
-				res += '<div class="mssg_cont_inner"><div class="chat_mssg" id="message_' + val.id + '"> <div class="row" style="margin:0;"> <div class="mssg_body_cont"> <div class="chat_vote_box">';
+				res += '<div class="response_to_' + val.responseto + ' static_mssg_cont y_' + val.y_dim + ' parent_' + val.parent + ' pad_l_10" id="static_mssg_cont_' + val.id + '">';
+				res += '<div class="static_mssg_cont_inner"><div class="chat_mssg" id="message_' + val.id + '"> <div class="row" style="margin:0;"> <div class="mssg_body_cont"> <div class="chat_vote_box">';
 				if(upvoted.indexOf(val.id) != -1){
 					res += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + val.id + '" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + val.id + '">' + (val.upvotes - val.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span></div>';
 				}else if(downvoted.indexOf(val.id) != -1){
@@ -774,7 +775,7 @@ $('.load_more').on('click',function(){
 				res += '<strong class="mssg_op" data-author="' + val.author + '" style="color:' + module.color_arr[val.serial % 7] + '"> ' + val.author + ' (<span class="response_count" id="' + val.id + '">' + val.responses + '</span>)</strong> : ' + val.message;
 				res += '<div class="time_box">';
 				if($('.chat_status_indicator').hasClass('glyphicon-pause')){
-					res += '<div class="reply"><a href="#" class="reply_link" data-mssg-id="' + val.id + '"><strong>Reply</strong></a></div>';
+					res += '<div class="static_reply"><a href="#" class="reply_link" data-mssg-id="' + val.id + '"><strong>Reply</strong></a></div>';
 				}
 				res += '<div class="time" id="' + val.created_at + '" title="' + val.created_at + ' UTC">' + moment.utc(val.created_at).fromNow() + '</div></div>';
 				res += '</div></div></div></div>';

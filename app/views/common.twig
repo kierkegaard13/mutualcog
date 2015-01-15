@@ -790,7 +790,7 @@
 {% endblock %}
 
 {% block static_mssg_cont %}
-<div class="mssg_cont_inner">
+<div class="static_mssg_cont_inner">
 	<div class="chat_mssg" id="message_{{message.id}}">
 		<div class="row" style="margin:0;">
 			<div class="mssg_body_cont">
@@ -824,7 +824,7 @@
 					{% endif %}
 					<strong class="mssg_op" data-author="{{message.author}}"><a href="{{site}}/u/{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}}</a> (<span class="response_count" id="{{message.id}}">{{message.responses}}</span>)</strong> : {{message.message | raw}}
 					<div class="time_box">
-						{% if not chat.live %}<div class="reply"><a href="#" class="reply_link" data-mssg-id="{{message.id}}"><strong>Reply</strong></a></div>{% endif %}
+						{% if not chat.live %}<div class="static_reply"><a href="#" class="reply_link" data-mssg-id="{{message.id}}"><strong>Reply</strong></a></div>{% endif %}
 						{% set time_passed = server_time|date('U') - message.created_at|date('U') %}
 						<div class="time" id="{{message.created_at}}" title="{{message.created_at}}">
 							{% if time_passed < 45 %}
@@ -869,7 +869,7 @@
 {% endblock %}
 
 {% block static_resp_cont %}
-<div class="mssg_cont_inner">
+<div class="static_mssg_cont_inner">
 	<div class="chat_mssg" id="message_{{response.id}}">
 		<div class="row" style="margin:0;">
 			<div class="mssg_body_cont">
@@ -903,7 +903,7 @@
 					{% endif %}
 					<strong class="mssg_op" data-author="{{response.author}}"><a href="{{site}}/u/{{response.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{response.author}}</a> (<span class="response_count" id="{{response.id}}">{{response.responses}}</span>)</strong> : {{response.message | raw}}
 					<div class="time_box">
-						{% if not chat.live %}<div class="reply"><a href="#" class="reply_link" data-mssg-id="{{response.id}}"><strong>Reply</strong></a></div>{% endif %}
+						{% if not chat.live %}<div class="static_reply"><a href="#" class="reply_link" data-mssg-id="{{response.id}}"><strong>Reply</strong></a></div>{% endif %}
 						{% set time_passed = server_time|date('U') - response.created_at|date('U') %}
 						<div class="time" id="{{response.created_at}}" title="{{response.created_at}}">
 							{% if time_passed < 45 %}
