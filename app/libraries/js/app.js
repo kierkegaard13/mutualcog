@@ -76,6 +76,50 @@ function randomInt(min,max){
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function startup(){
+	$.each($('.async_img'),function(index,val){
+		$('.async_img').eq(index).attr('src',$('.async_img').eq(index).attr('data-chat-img'));
+	});
+	if(document.URL.indexOf("#") != -1 && $('.nav-tabs').length != 0){
+		var tab_name = document.URL.substring(document.URL.indexOf("#"));
+		$('.nav-tabs').find('a[href="' + tab_name + '"]').tab('show');
+	}
+	$.each($('.pm_message'),function(index,val){
+		if(moment().local().format('D:M:YYYY') == moment.utc($('.pm_message').eq(index).attr('title')).local().format('D:M:YYYY')){
+			$('.pm_message').eq(index).attr('title',moment.utc($('.pm_message').eq(index).attr('title')).local().format('[Today at] h:mma'));
+		}else{
+			$('.pm_message').eq(index).attr('title',moment.utc($('.pm_message').eq(index).attr('title')).local().format('M/D/YY [at] h:mma'));
+		}
+	});
+	$.each($('.chat_time'),function(index,val){
+		if(moment().local().format('D:M:YYYY') == moment.utc($('.chat_time').eq(index).attr('title')).local().format('D:M:YYYY')){
+			$('.chat_time').eq(index).attr('title',moment.utc($('.chat_time').eq(index).attr('title')).local().format('[Today at] h:mma'));
+		}else{
+			$('.chat_time').eq(index).attr('title',moment.utc($('.chat_time').eq(index).attr('title')).local().format('M/D/YY [at] h:mma'));
+		}
+	});
+	$.each($('.time'),function(index,val){
+		if(moment().local().format('D:M:YYYY') == moment.utc($('.time').eq(index).attr('title')).local().format('D:M:YYYY')){
+			$('.time').eq(index).attr('title',moment.utc($('.time').eq(index).attr('title')).local().format('[Today at] h:mma'));
+		}else{
+			$('.time').eq(index).attr('title',moment.utc($('.time').eq(index).attr('title')).local().format('M/D/YY [at] h:mma'));
+		}
+	});
+	$('.user_tooltip').tooltip();
+	$('.caret_tooltip').tooltip();
+	$('.advanced_cog').tooltip();
+	$('.glyphicon-info-sign').tooltip();
+	$('#pause_chat').tooltip();
+	$('.remove_mod').tooltip();
+	$('.permalink').tooltip();
+	$('.show_users').tooltip();
+	$('.stop_scroll').tooltip();
+	$('.pause_chat').tooltip();
+	$('.warn_user').tooltip();
+	$('.kick_user').tooltip();
+	$('.mssg_cont').show();
+}
+
 function newPmChat(friend_id,pm_id,friend_status_class,friend_name){
 	if(pm_id == 0){
 		var chat_box = '<div class="pm_cont pm_visible" id="pm_' + friend_name + '_0" style="visibility:hidden;">';
@@ -319,7 +363,7 @@ function validateEmail(email){
 
 deleteIt = function(e){
 	e.stopPropagation();
-	var mssg_id = $(this).parents('.chat_mssg').first().attr('id').replace('message_','');
+	var mssg_id = $(this).parents('.js_mssg').first().attr('id').replace('message_','');
 	if($('#logged_in').text() == 1){
 		module.socket.emit('delete_message',{id:mssg_id,user:module.user_tracker,serial:$(this).attr('data-mssg-serial'),responses:$(this).parent().find('.response_count').text()});
 	}else{
@@ -450,22 +494,22 @@ notifyMessage = function(){
 generateMssg = function(info,is_mssg,tmp){
 	if(is_mssg){
 		if(tmp){
-			var tmp = "<div class='tmp_chat_mssg_" + module.tmp_mssg_cnt + " response_to_0 mssg_cont y_0 parent_0' id='mssg_cont_" + info.id + "'><div class='chat_mssg' id='message_" + info.id + "'>";
+			var tmp = "<div class='tmp_chat_mssg_" + module.tmp_mssg_cnt + " response_to_0 mssg_cont y_0 parent_0' id='mssg_cont_" + info.id + "'><div class='chat_mssg js_mssg' id='message_" + info.id + "'>";
 		}else{
-			var tmp = "<div class='response_to_0 mssg_cont y_0 parent_0' id='mssg_cont_" + info.id + "'><div class='chat_mssg' id='message_" + info.id + "'>";
+			var tmp = "<div class='response_to_0 mssg_cont y_0 parent_0' id='mssg_cont_" + info.id + "'><div class='chat_mssg js_mssg' id='message_" + info.id + "'>";
 		}
 	}else{
 		if(tmp){
-			var tmp = "<div class='tmp_chat_mssg_" + module.tmp_mssg_cnt + " response_to_" + info.responseto + " mssg_cont y_" + info.y_dim + " parent_" + info.parent + " marg_l_20' id='mssg_cont_" + info.id + "'><div class='chat_mssg' id='message_" + info.id + "'>";
+			var tmp = "<div class='tmp_chat_mssg_" + module.tmp_mssg_cnt + " response_to_" + info.responseto + " mssg_cont y_" + info.y_dim + " parent_" + info.parent + " marg_l_20' id='mssg_cont_" + info.id + "'><div class='chat_mssg js_mssg' id='message_" + info.id + "'>";
 		}else{
-			var tmp = "<div class='response_to_" + info.responseto + " mssg_cont y_" + info.y_dim + " parent_" + info.parent + " marg_l_20' id='mssg_cont_" + info.id + "'><div class='chat_mssg' id='message_" + info.id + "'>";
+			var tmp = "<div class='response_to_" + info.responseto + " mssg_cont y_" + info.y_dim + " parent_" + info.parent + " marg_l_20' id='mssg_cont_" + info.id + "'><div class='chat_mssg js_mssg' id='message_" + info.id + "'>";
 		}
 	}
-	tmp += "<div class='row' style='margin:0;'> <div class='mssg_body_cont'><div class='vote_box'>";
+	tmp += "<div class='mssg_body_cont'><div class='chat_vote_box'>";
 	if(module.user_tracker == info.author || module.serial_tracker == info.author){
-		tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote green_color" id="mssg_upvote_' + info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + info.id + '">0</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>';
+		tmp += '<span class="glyphicon glyphicon-chevron-up js_mssg_upvote mssg_upvote green_color" id="mssg_upvote_' + info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + info.id + '">0</div> <span class="glyphicon glyphicon-chevron-down js_mssg_downvote mssg_downvote" id="mssg_downvote_' + info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>';
 	}else{
-		tmp += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + info.id + '">0</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>';
+		tmp += '<span class="glyphicon glyphicon-chevron-up js_mssg_upvote mssg_upvote" id="mssg_upvote_' + info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + info.id + '">0</div> <span class="glyphicon glyphicon-chevron-down js_mssg_downvote mssg_downvote" id="mssg_downvote_' + info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>';
 	}
 	tmp += '</div><div class="mssg_body author_' + info.author + '"><div id="toggle_' + info.id + '" class="toggle_responses"> <span class="caret caret_tooltip" id="caret_' + info.id + '" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span> </div> ';
 	//TODO: Add mod symbol fix admin array and mods array
@@ -473,7 +517,7 @@ generateMssg = function(info,is_mssg,tmp){
 		tmp += "<span id='remove_" + info.id + "' style='margin-right:4px;' class='glyphicon glyphicon-remove mssg_icon' data-mssg-serial='" + info.serial + "' data-toggle='tooltip' title='Delete post' data-container='body' data-placement='top'></span>";
 		tmp += "<span class='glyphicon glyphicon-star'></span><strong class='mssg_op' data-author='" + info.author + "' style='color:" + module.color_arr[info.serial % 7] + ";'> " + info.author + " </strong> : " + info.message + "<div class='time_box'><div class='reply'><a href='#' class='reply_link' data-mssg-id='" + info.id + "'><strong>Reply</strong></a></div><div class='time' id='" + info.created_at + "'>" + moment.utc(info.created_at).fromNow() + "</div></div></div></div></div></div></div>"	
 	}else{
-		tmp += "<strong class='mssg_op' data-author='" + info.author + "' style='color:" + module.color_arr[info.serial % 7] + ";'> " + info.author + " </strong> : " + info.message + "<div class='time_box'><div class='reply'><a href='#' class='reply_link' data-mssg-id='" + info.id + "'><strong>Reply</strong></a></div><div class='time' id='" + info.created_at + "'>" + moment.utc(info.created_at).fromNow() + "</div></div></div></div></div></div></div>"	
+		tmp += "<strong class='mssg_op' data-author='" + info.author + "' style='color:" + module.color_arr[info.serial % 7] + ";'> " + info.author + " </strong> : " + info.message + "<div class='time_box'><div class='reply'><a href='#' class='reply_link' data-mssg-id='" + info.id + "'><strong>Reply</strong></a></div><div class='time' id='" + info.created_at + "'>" + moment.utc(info.created_at).fromNow() + "</div></div></div></div></div></div>"	
 	}
 	return tmp;
 }
@@ -634,9 +678,7 @@ $(window).resize(function(){
 });
 
 $(document).ready(function(){
-	$.each($('.async_img'),function(index,val){
-		$('.async_img').eq(index).attr('src',$('.async_img').eq(index).attr('data-chat-img'));
-	});
+	startup();
 	if(module.user_id.length){
 		window.setInterval(function(){
 			if(module.typ_cnt > 1){
@@ -705,46 +747,9 @@ $(document).ready(function(){
 	}
 	updateTimes;
 	window.setInterval(updateTimes,1000);
-	if(document.URL.indexOf("#") != -1 && $('.nav-tabs').length != 0){
-		var tab_name = document.URL.substring(document.URL.indexOf("#"));
-		$('.nav-tabs').find('a[href="' + tab_name + '"]').tab('show');
-	}
-	$.each($('.pm_message'),function(index,val){
-		if(moment().local().format('D:M:YYYY') == moment.utc($('.pm_message').eq(index).attr('title')).local().format('D:M:YYYY')){
-			$('.pm_message').eq(index).attr('title',moment.utc($('.pm_message').eq(index).attr('title')).local().format('[Today at] h:mma'));
-		}else{
-			$('.pm_message').eq(index).attr('title',moment.utc($('.pm_message').eq(index).attr('title')).local().format('M/D/YY [at] h:mma'));
-		}
-	});
-	$.each($('.chat_time'),function(index,val){
-		if(moment().local().format('D:M:YYYY') == moment.utc($('.chat_time').eq(index).attr('title')).local().format('D:M:YYYY')){
-			$('.chat_time').eq(index).attr('title',moment.utc($('.chat_time').eq(index).attr('title')).local().format('[Today at] h:mma'));
-		}else{
-			$('.chat_time').eq(index).attr('title',moment.utc($('.chat_time').eq(index).attr('title')).local().format('M/D/YY [at] h:mma'));
-		}
-	});
-	$.each($('.time'),function(index,val){
-		if(moment().local().format('D:M:YYYY') == moment.utc($('.time').eq(index).attr('title')).local().format('D:M:YYYY')){
-			$('.time').eq(index).attr('title',moment.utc($('.time').eq(index).attr('title')).local().format('[Today at] h:mma'));
-		}else{
-			$('.time').eq(index).attr('title',moment.utc($('.time').eq(index).attr('title')).local().format('M/D/YY [at] h:mma'));
-		}
-	});
 	$('#mssg_requests').popover({html:true});
 	$('#global_requests').popover({html:true});
 	$('#friend_requests').popover({html:true});
-	$('.user_tooltip').tooltip();
-	$('.caret_tooltip').tooltip();
-	$('.advanced_cog').tooltip();
-	$('.glyphicon-info-sign').tooltip();
-	$('#pause_chat').tooltip();
-	$('.remove_mod').tooltip();
-	$('.permalink').tooltip();
-	$('.show_users').tooltip();
-	$('.stop_scroll').tooltip();
-	$('.pause_chat').tooltip();
-	$('.warn_user').tooltip();
-	$('.kick_user').tooltip();
 	$('.pm_cont').resizable({handles:"nw",ghost:false,maxHeight:450,maxWidth:400,minHeight:330,minWidth:240,resize:function(e,ui){
 		var ui_height = ui.size.height;
 		var ui_width = ui.size.width - 10;
@@ -788,7 +793,6 @@ $(document).ready(function(){
 			module.chat_scroll_timer--;
 		}
 	},1000);
-	$('.mssg_cont').show();
 });
 
 
@@ -1052,8 +1056,8 @@ module.socket.on('check_live',function(live){
 	$('#notify_cont_top').on('click',find_top_notifications);
 	$('#notify_cont_bottom').on('click',find_bottom_notifications);
 	$('#chat_display').on('click','.mssg_icon',deleteIt);
-	$('#chat_display').on('click','.mssg_upvote',upvoteMssg);
-	$('#chat_display').on('click','.mssg_downvote',downvoteMssg);
+	$('#chat_display').on('click','.js_mssg_upvote',upvoteMssg);
+	$('#chat_display').on('click','.js_mssg_downvote',downvoteMssg);
 	$('#chat_display').on('click','.chat_mssg',setClicked);
 	$('#chat_display').on('click','.chat_link',function(e){e.stopPropagation();});
 });
@@ -1114,9 +1118,9 @@ $('body').on('click','.mobile_pm_cont',function(){
 	$('#' + pm_id).find('.mobile_pm_body').mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
 });
 
-$('body').on('click','.mssg_upvote',upvoteMssg);
+$('body').on('click','.js_mssg_upvote',upvoteMssg);
 
-$('body').on('click','.mssg_downvote',downvoteMssg);
+$('body').on('click','.js_mssg_downvote',downvoteMssg);
 
 $('body').on('click','.request_link',function(){
 	var $this = $(this);
@@ -1398,7 +1402,7 @@ $('#community_dropdown').on('click',function(e){
 	e.stopPropagation();
 });
 
-$('.big_upvote').click(function(e){
+$('.js_upvote').click(function(e){
 	e.stopPropagation();
 	var upvote_id = $(this).attr('id');
 	var chat_id = $(this).attr('id').replace('upvote_','');
@@ -1444,7 +1448,7 @@ $('.big_upvote').click(function(e){
 	}
 });
 
-$('.big_downvote').click(function(e){
+$('.js_downvote').click(function(e){
 	e.stopPropagation();
 	var downvote_id = $(this).attr('id');
 	var chat_id = $(this).attr('id').replace('downvote_','');
@@ -1515,18 +1519,19 @@ $('#request_friend').click(function(){
 	}
 });
 $('body').on('click','.mutual_route',function(){
-	//var route_url = $(this).attr('href');
-	//var route_uri = route_url.replace('//','');
-	//route_uri = route_uri.slice(route_uri.indexOf('/'));
-	//$.ajax({
-	//	type:'GET',
-	//	url:route_url,
-	//	success:function(hresp){
-	//		window.history.pushState(null,null,route_uri);	
-	//		$('#main_cont_box').html(hresp);
-	//	}
-	//});
-	//return false;
+	var route_url = $(this).attr('href');
+	var route_uri = route_url.replace('//','');
+	route_uri = route_uri.slice(route_uri.indexOf('/'));
+	$.ajax({
+		type:'GET',
+		url:route_url,
+		success:function(hresp){
+			window.history.pushState(null,null,route_uri);	
+			$('#main').html(hresp);
+			startup();
+		}
+	});
+	return false;
 });
 $('.mobile_show_friend_requests').click(function(){
 	$(this).css('background-color','#ddd');
@@ -1852,13 +1857,13 @@ $('.load_more').on('click',function(){
 			var res = '';
 			$.each(hresp,function(index,val){
 				res += '<div class="response_to_' + val.responseto + ' static_mssg_cont y_' + val.y_dim + ' parent_' + val.parent + ' pad_l_10" id="static_mssg_cont_' + val.id + '">';
-				res += '<div class="static_mssg_cont_inner"><div class="chat_mssg" id="message_' + val.id + '"> <div class="row" style="margin:0;"> <div class="mssg_body_cont"> <div class="chat_vote_box">';
+				res += '<div class="static_mssg_cont_inner"><div class="static_mssg js_mssg" id="message_' + val.id + '"> <div class="row" style="margin:0;"> <div class="mssg_body_cont"> <div class="static_vote_box">';
 				if(upvoted.indexOf(val.id) != -1){
-					res += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + val.id + '" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + val.id + '">' + (val.upvotes - val.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span></div>';
+					res += '<span class="glyphicon glyphicon-chevron-up js_mssg_upvote static_mssg_upvote" id="mssg_upvote_' + val.id + '" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + val.id + '">' + (val.upvotes - val.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down js_mssg_downvote static_mssg_downvote" id="mssg_downvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span></div>';
 				}else if(downvoted.indexOf(val.id) != -1){
-					res += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + val.id + '">' + (val.upvotes - val.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + val.id + '" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span></div>';
+					res += '<span class="glyphicon glyphicon-chevron-up js_mssg_upvote static_mssg_upvote" id="mssg_upvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + val.id + '">' + (val.upvotes - val.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down js_mssg_downvote static_mssg_downvote" id="mssg_downvote_' + val.id + '" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span></div>';
 				}else{
-					res += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + val.id + '">' + (val.upvotes - val.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span></div>';
+					res += '<span class="glyphicon glyphicon-chevron-up js_mssg_upvote static_mssg_upvote" id="mssg_upvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + val.id + '">' + (val.upvotes - val.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down js_mssg_downvote static_mssg_downvote" id="mssg_downvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span></div>';
 				}
 				res += '<div class="mssg_body author_' + val.author + '">';
 				res += '<div id="toggle_' + val.id + '" class="toggle_responses"> <span class="caret caret_tooltip" id="caret_' + val.id + '" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span> </div>';

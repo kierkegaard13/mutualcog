@@ -10,8 +10,7 @@ buildify.task({
 			.uglify()
 			.save('chat.min.js');
 		buildify().concat(['functions.js','startup.js','server.js','click_events.js','key_events.js','blur_events.js','submit_events.js'])
-			.save('app.js');
-		buildify().concat(['functions.js','startup.js','server.js','click_events.js','key_events.js','blur_events.js','submit_events.js'])
+			.save('app.js')
 			.uglify()
 			.save('app.min.js');
 	}

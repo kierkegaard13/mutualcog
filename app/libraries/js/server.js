@@ -258,8 +258,8 @@ module.socket.on('check_live',function(live){
 	$('#notify_cont_top').on('click',find_top_notifications);
 	$('#notify_cont_bottom').on('click',find_bottom_notifications);
 	$('#chat_display').on('click','.mssg_icon',deleteIt);
-	$('#chat_display').on('click','.mssg_upvote',upvoteMssg);
-	$('#chat_display').on('click','.mssg_downvote',downvoteMssg);
+	$('#chat_display').on('click','.js_mssg_upvote',upvoteMssg);
+	$('#chat_display').on('click','.js_mssg_downvote',downvoteMssg);
 	$('#chat_display').on('click','.chat_mssg',setClicked);
 	$('#chat_display').on('click','.chat_link',function(e){e.stopPropagation();});
 });

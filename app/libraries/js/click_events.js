@@ -18,9 +18,9 @@ $('body').on('click','.mobile_pm_cont',function(){
 	$('#' + pm_id).find('.mobile_pm_body').mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
 });
 
-$('body').on('click','.mssg_upvote',upvoteMssg);
+$('body').on('click','.js_mssg_upvote',upvoteMssg);
 
-$('body').on('click','.mssg_downvote',downvoteMssg);
+$('body').on('click','.js_mssg_downvote',downvoteMssg);
 
 $('body').on('click','.request_link',function(){
 	var $this = $(this);
@@ -302,7 +302,7 @@ $('#community_dropdown').on('click',function(e){
 	e.stopPropagation();
 });
 
-$('.big_upvote').click(function(e){
+$('.js_upvote').click(function(e){
 	e.stopPropagation();
 	var upvote_id = $(this).attr('id');
 	var chat_id = $(this).attr('id').replace('upvote_','');
@@ -348,7 +348,7 @@ $('.big_upvote').click(function(e){
 	}
 });
 
-$('.big_downvote').click(function(e){
+$('.js_downvote').click(function(e){
 	e.stopPropagation();
 	var downvote_id = $(this).attr('id');
 	var chat_id = $(this).attr('id').replace('downvote_','');
@@ -419,18 +419,19 @@ $('#request_friend').click(function(){
 	}
 });
 $('body').on('click','.mutual_route',function(){
-	//var route_url = $(this).attr('href');
-	//var route_uri = route_url.replace('//','');
-	//route_uri = route_uri.slice(route_uri.indexOf('/'));
-	//$.ajax({
-	//	type:'GET',
-	//	url:route_url,
-	//	success:function(hresp){
-	//		window.history.pushState(null,null,route_uri);	
-	//		$('#main_cont_box').html(hresp);
-	//	}
-	//});
-	//return false;
+	var route_url = $(this).attr('href');
+	var route_uri = route_url.replace('//','');
+	route_uri = route_uri.slice(route_uri.indexOf('/'));
+	$.ajax({
+		type:'GET',
+		url:route_url,
+		success:function(hresp){
+			window.history.pushState(null,null,route_uri);	
+			$('#main').html(hresp);
+			startup();
+		}
+	});
+	return false;
 });
 $('.mobile_show_friend_requests').click(function(){
 	$(this).css('background-color','#ddd');
@@ -756,13 +757,13 @@ $('.load_more').on('click',function(){
 			var res = '';
 			$.each(hresp,function(index,val){
 				res += '<div class="response_to_' + val.responseto + ' static_mssg_cont y_' + val.y_dim + ' parent_' + val.parent + ' pad_l_10" id="static_mssg_cont_' + val.id + '">';
-				res += '<div class="static_mssg_cont_inner"><div class="chat_mssg" id="message_' + val.id + '"> <div class="row" style="margin:0;"> <div class="mssg_body_cont"> <div class="chat_vote_box">';
+				res += '<div class="static_mssg_cont_inner"><div class="static_mssg js_mssg" id="message_' + val.id + '"> <div class="row" style="margin:0;"> <div class="mssg_body_cont"> <div class="static_vote_box">';
 				if(upvoted.indexOf(val.id) != -1){
-					res += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + val.id + '" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + val.id + '">' + (val.upvotes - val.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span></div>';
+					res += '<span class="glyphicon glyphicon-chevron-up js_mssg_upvote static_mssg_upvote" id="mssg_upvote_' + val.id + '" style="color:#57bf4b" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + val.id + '">' + (val.upvotes - val.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down js_mssg_downvote static_mssg_downvote" id="mssg_downvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span></div>';
 				}else if(downvoted.indexOf(val.id) != -1){
-					res += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + val.id + '">' + (val.upvotes - val.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + val.id + '" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span></div>';
+					res += '<span class="glyphicon glyphicon-chevron-up js_mssg_upvote static_mssg_upvote" id="mssg_upvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + val.id + '">' + (val.upvotes - val.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down js_mssg_downvote static_mssg_downvote" id="mssg_downvote_' + val.id + '" style="color:red;" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span></div>';
 				}else{
-					res += '<span class="glyphicon glyphicon-chevron-up mssg_upvote" id="mssg_upvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + val.id + '">' + (val.upvotes - val.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down mssg_downvote" id="mssg_downvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span></div>';
+					res += '<span class="glyphicon glyphicon-chevron-up js_mssg_upvote static_mssg_upvote" id="mssg_upvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + val.id + '">' + (val.upvotes - val.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down js_mssg_downvote static_mssg_downvote" id="mssg_downvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span></div>';
 				}
 				res += '<div class="mssg_body author_' + val.author + '">';
 				res += '<div id="toggle_' + val.id + '" class="toggle_responses"> <span class="caret caret_tooltip" id="caret_' + val.id + '" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span> </div>';

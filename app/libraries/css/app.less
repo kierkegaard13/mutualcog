@@ -213,7 +213,7 @@
   bottom:32px;
   right:32px;
 }
-.vote_box {
+.chat_vote_box {
   position:relative;
   float:left;
   vertical-align:top;
@@ -228,7 +228,7 @@
   margin-right:10px;
   margin-bottom:-5px;
 }
-.big_upvote {
+.chat_big_upvote {
   margin-top:-6px;
   color:black;
   cursor:pointer; 
@@ -238,10 +238,10 @@
   transition:color .5s;
   -webkit-transition:color .5s;
 }
-.big_upvote:hover {
+.chat_big_upvote:hover {
   color:@green;
 }
-.big_downvote {
+.chat_big_downvote {
   color:black;
   cursor:pointer;
   display:block;
@@ -251,7 +251,7 @@
   transition:color .5s;
   -webkit-transition:color .5s;
 }
-.big_downvote:hover {
+.chat_big_downvote:hover {
   color:@brighter_red;
 }
 .mssg_upvote {
@@ -286,7 +286,7 @@
   width:20px;
   float:right; 
 }
-.upvote_count {
+.chat_upvote_count {
   margin-top:-4px;
   margin-bottom:-5px;
   text-align:center;
@@ -508,7 +508,7 @@ select {
 }
 .mssg_body {
   word-wrap:break-word;
-  display:block;
+  display:table;
   max-width:60em;
   margin-left:25px;
 }
@@ -675,13 +675,13 @@ select {
   margin-top:0px;
   margin-bottom:-5px;
 }
-.chat_title_vote_box {
+.static_title_vote_box {
   position:relative;
   float:left;
   margin-top:0px;
   margin-bottom:-5px;
 }
-.chat_vote_box {
+.static_vote_box {
   float:left;
   position:relative;
   vertical-align:top;
@@ -693,15 +693,6 @@ select {
   margin-left:-1px;
   text-align:center;
 }
-.small_content_box {
-  position:relative;
-  margin:0px auto;
-  margin-bottom:10px;
-}
-.big_content_box {
-  position:relative;
-  margin:0px auto;
-}
 .last_login {
   color:#777;
   margin-top:-10px; 
@@ -709,15 +700,6 @@ select {
 }
 .request_glyph {
   font-size:14px;
-}
-.content {
-  padding:10px 15px 15px 15px;
-  background-color:#fff;
-  opacity:.95;
-  margin:0px auto;
-  text-align:left;
-  height:auto;
-  position:relative;
 }
 .home_main_content {
   background-color:#fff;
@@ -736,16 +718,6 @@ select {
   text-align:left;
   height:auto;
   position:relative;
-}
-.chat_content {
-  background-color:#fff;
-  opacity:.95;
-  margin: 0px auto;
-  text-align:left;
-  height:auto;
-  position:relative;
-  padding:10px;
-  min-height:50px;
 }
 .static_chat_content {
   background-color:#fff;
@@ -849,7 +821,7 @@ a.mod_power {
 .big_downvote:hover {
   color:@brighter_red;
 }
-.mssg_upvote {
+.static_upvote {
   color:black;
   cursor:pointer; 
   display:block;
@@ -858,10 +830,10 @@ a.mod_power {
   transition:color .5s;
   -webkit-transition:color .5s;
 }
-.mssg_upvote:hover {
+.static_upvote:hover {
   color:@green;
 }
-.mssg_downvote {
+.static_downvote {
   color:black;
   cursor:pointer;
   display:block;
@@ -871,7 +843,7 @@ a.mod_power {
   transition:color .5s;
   -webkit-transition:color .5s;
 }
-.mssg_downvote:hover {
+.static_downvote:hover {
   color:@brighter_red;
 }
 .chat_communities>a {
@@ -903,20 +875,14 @@ a.mod_power {
 .p_chat_mssg:hover {
   background-color:#eee;
 }
-.chat_mssg {
+.static_mssg {
   position:relative;
   padding:10px;
-  padding-bottom:12px;
+  min-width:190px;
   display:table;
+  width:100%;
   font-size:14px;
   padding-left:5px;
-}
-.mssg_body {
-  word-wrap:break-word;
-  overflow:hidden;
-  max-width:60em;
-  margin-left:25px;
-  display:block;
 }
 .mssg_icon, .resp_icon {
   cursor:pointer;
@@ -996,11 +962,7 @@ a.mod_power {
 .ability_description {
   margin-right:60px;
 }
-#chat_messages {
-  background-color:#bbb;
-  position:relative; 
-}
-#chat_display {
+#static_chat_display {
   position:absolute;
   top:10px;
   left:10px;
@@ -1031,17 +993,4 @@ a.mod_power {
   display:inline-block;
   vertical-align:top;
   width:220px;
-}
-.frame {
-  overflow:auto;
-  border-radius:5px;
-  border-color: rgb(238,238,238);
-  border-style: inset;
-  border-width: 2px;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  height: 300px;
-  padding: 10px;
-  position:relative;
-  white-space:pre-line;
 }

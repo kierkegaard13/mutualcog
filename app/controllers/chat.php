@@ -68,6 +68,8 @@ class Chat extends BaseController {
 				$user_to_chat->save();
 			}else{  //have been in chat before
 				$user_to_chat = $user_to_chat->findAll();
+				if(sizeof($user_to_chat) > 1)
+					$user_to_chat = $user_to_chat[0];
 				$user_to_chat->active = 1;
 				$user_to_chat->save();
 			}
@@ -152,6 +154,8 @@ class Chat extends BaseController {
 				$user_to_chat->save();
 			}else{  //have been in chat before
 				$user_to_chat = $user_to_chat->findAll();
+				if(sizeof($user_to_chat) > 1)
+					$user_to_chat = $user_to_chat[0];
 				if($user_to_chat->banned){
 					return Redirect::to('home');  //add you have been banned message
 				}

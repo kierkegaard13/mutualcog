@@ -118,9 +118,7 @@ $(window).resize(function(){
 });
 
 $(document).ready(function(){
-	$.each($('.async_img'),function(index,val){
-		$('.async_img').eq(index).attr('src',$('.async_img').eq(index).attr('data-chat-img'));
-	});
+	startup();
 	if(module.user_id.length){
 		window.setInterval(function(){
 			if(module.typ_cnt > 1){
@@ -189,46 +187,9 @@ $(document).ready(function(){
 	}
 	updateTimes;
 	window.setInterval(updateTimes,1000);
-	if(document.URL.indexOf("#") != -1 && $('.nav-tabs').length != 0){
-		var tab_name = document.URL.substring(document.URL.indexOf("#"));
-		$('.nav-tabs').find('a[href="' + tab_name + '"]').tab('show');
-	}
-	$.each($('.pm_message'),function(index,val){
-		if(moment().local().format('D:M:YYYY') == moment.utc($('.pm_message').eq(index).attr('title')).local().format('D:M:YYYY')){
-			$('.pm_message').eq(index).attr('title',moment.utc($('.pm_message').eq(index).attr('title')).local().format('[Today at] h:mma'));
-		}else{
-			$('.pm_message').eq(index).attr('title',moment.utc($('.pm_message').eq(index).attr('title')).local().format('M/D/YY [at] h:mma'));
-		}
-	});
-	$.each($('.chat_time'),function(index,val){
-		if(moment().local().format('D:M:YYYY') == moment.utc($('.chat_time').eq(index).attr('title')).local().format('D:M:YYYY')){
-			$('.chat_time').eq(index).attr('title',moment.utc($('.chat_time').eq(index).attr('title')).local().format('[Today at] h:mma'));
-		}else{
-			$('.chat_time').eq(index).attr('title',moment.utc($('.chat_time').eq(index).attr('title')).local().format('M/D/YY [at] h:mma'));
-		}
-	});
-	$.each($('.time'),function(index,val){
-		if(moment().local().format('D:M:YYYY') == moment.utc($('.time').eq(index).attr('title')).local().format('D:M:YYYY')){
-			$('.time').eq(index).attr('title',moment.utc($('.time').eq(index).attr('title')).local().format('[Today at] h:mma'));
-		}else{
-			$('.time').eq(index).attr('title',moment.utc($('.time').eq(index).attr('title')).local().format('M/D/YY [at] h:mma'));
-		}
-	});
 	$('#mssg_requests').popover({html:true});
 	$('#global_requests').popover({html:true});
 	$('#friend_requests').popover({html:true});
-	$('.user_tooltip').tooltip();
-	$('.caret_tooltip').tooltip();
-	$('.advanced_cog').tooltip();
-	$('.glyphicon-info-sign').tooltip();
-	$('#pause_chat').tooltip();
-	$('.remove_mod').tooltip();
-	$('.permalink').tooltip();
-	$('.show_users').tooltip();
-	$('.stop_scroll').tooltip();
-	$('.pause_chat').tooltip();
-	$('.warn_user').tooltip();
-	$('.kick_user').tooltip();
 	$('.pm_cont').resizable({handles:"nw",ghost:false,maxHeight:450,maxWidth:400,minHeight:330,minWidth:240,resize:function(e,ui){
 		var ui_height = ui.size.height;
 		var ui_width = ui.size.width - 10;
@@ -272,6 +233,5 @@ $(document).ready(function(){
 			module.chat_scroll_timer--;
 		}
 	},1000);
-	$('.mssg_cont').show();
 });
 
