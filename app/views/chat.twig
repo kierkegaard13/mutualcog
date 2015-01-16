@@ -24,8 +24,10 @@
 	{{parent()}}
 {% endblock %}
 
-
-{% block mobile_tools %}
+{% block content %}
+			<div class="chat_content_box" id="main_cont_box">
+				<div class="content main_content" id="main_cont">
+					<div class="visible-xs">
 <div id="user_toolbox" class="mobile_tools">
 	<span class="glyphicon glyphicon-link permalink" id="permalink" data-page-link="{{site}}/chat/static/{{chat.id}}" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Permalink"></span>
 	<span class="glyphicon glyphicon-list show_users" id="show_users" data-chat-id="{{chat.id}}" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Show chat members"></span>
@@ -41,11 +43,8 @@
 	<span class="glyphicon glyphicon-remove mod_power kick_user" id="kick_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Ban user"></span>
 	{% endif %}
 </div>
-{% endblock %}
+					</div>
 
-{% block content %}
-			<div class="chat_content_box" id="main_cont_box">
-				<div class="content main_content" id="main_cont">
 <div id="up_arr" style="display:none;">{{mssg_upvoted | json_encode()}}</div>
 <div id="down_arr" style="display:none;">{{mssg_downvoted | json_encode()}}</div>
 <div class="frame_cont">

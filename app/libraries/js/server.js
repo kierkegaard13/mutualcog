@@ -255,8 +255,11 @@ module.socket.on('check_live',function(live){
 		$('#paused_message').show('fade','show');
 	}
 	$('.mssg_icon').tooltip();
+	$('#notify_cont_top').off('click');
+	$('#notify_cont_bottom').off('click');
 	$('#notify_cont_top').on('click',find_top_notifications);
 	$('#notify_cont_bottom').on('click',find_bottom_notifications);
+	$('#chat_display').off('click');
 	$('#chat_display').on('click','.mssg_icon',deleteIt);
 	$('#chat_display').on('click','.js_mssg_upvote',upvoteMssg);
 	$('#chat_display').on('click','.js_mssg_downvote',downvoteMssg);

@@ -1,3 +1,26 @@
+$('body').on('click','.mutual_route',function(){
+	var route_url = $(this).attr('href');
+	var route_uri = route_url.replace('//','');
+	route_uri = route_uri.slice(route_uri.indexOf('/'));
+	$(this).addClass('highlight_light_blue');
+	$.ajax({
+		type:'GET',
+		url:route_url,
+		success:function(hresp){
+			module.url_state.unshift({html:$('#main').html(),url:document.URL});
+			window.history.pushState(null,null,route_uri);	
+			$('#main').html(hresp);
+			startup();
+		}
+	});
+	return false;
+});
+
+window.onpopstate = function(e){
+	var state = module.url_state.shift();
+	$('#main').html(state.html);
+};
+
 marked.setOptions({
 	sanitize:true,
 	breaks:true
@@ -562,6 +585,7 @@ module = function(){
 	var focused = live = scroll_mod_active = 1;
 	var pm_info = '';
 	var crit_len = new Array();
+	var url_state = new Array();
 	var pm_scroll_inactive = {};
 	var tmp_mssg_cnt = title_blinking = chat_scroll_timer = typ_cnt = connected = recent = banned = stop_scroll = scroll_button_clicked = scroll_top = 0;
 	var clicked_on = -1;
@@ -599,7 +623,7 @@ module = function(){
 	var max_info_length = 10000;
 	var search_messages = new Array("Use 'who like' to find users with certain interests","Use 'about' to find posts about a certain topic","Type 'here' to search current community","Use 'in' to search communities","Press enter for more results","Search for your interests or specific content");
 
-	return {tmp_mssg_cnt:tmp_mssg_cnt,search_messages:search_messages,crit_len:crit_len,chat_scroll_timer:chat_scroll_timer,max_title_length:max_title_length,max_user_length:max_user_length,max_static_length:max_static_length,max_chat_mssg_length:max_chat_mssg_length,max_description_length:max_description_length,max_info_length:max_info_length,pm_scroll_inactive:pm_scroll_inactive,connected:connected,recent:recent,typ_cnt:typ_cnt,pm_info:pm_info,focused:focused,live:live,title_blinking:title_blinking,banned:banned,stop_scroll:stop_scroll,scroll_mod_active:scroll_mod_active,scroll_button_clicked:scroll_button_clicked,scroll_top:scroll_top,clicked_on:clicked_on,chat_id:chat_id,upvoted:upvoted,downvoted:downvoted,socket:socket,color_arr:color_arr,mems:mems,mods:mods,admin:admin,notifications_top_positions:notifications_top_positions,notifications_bottom_positions:notifications_bottom_positions,notifications_top_ids:notifications_top_ids,notifications_bottom_ids:notifications_bottom_ids,serial_id:serial_id,serial_tracker:serial_tracker,user_id:user_id,user_tracker:user_tracker};
+	return {url_state:url_state,tmp_mssg_cnt:tmp_mssg_cnt,search_messages:search_messages,crit_len:crit_len,chat_scroll_timer:chat_scroll_timer,max_title_length:max_title_length,max_user_length:max_user_length,max_static_length:max_static_length,max_chat_mssg_length:max_chat_mssg_length,max_description_length:max_description_length,max_info_length:max_info_length,pm_scroll_inactive:pm_scroll_inactive,connected:connected,recent:recent,typ_cnt:typ_cnt,pm_info:pm_info,focused:focused,live:live,title_blinking:title_blinking,banned:banned,stop_scroll:stop_scroll,scroll_mod_active:scroll_mod_active,scroll_button_clicked:scroll_button_clicked,scroll_top:scroll_top,clicked_on:clicked_on,chat_id:chat_id,upvoted:upvoted,downvoted:downvoted,socket:socket,color_arr:color_arr,mems:mems,mods:mods,admin:admin,notifications_top_positions:notifications_top_positions,notifications_bottom_positions:notifications_bottom_positions,notifications_top_ids:notifications_top_ids,notifications_bottom_ids:notifications_bottom_ids,serial_id:serial_id,serial_tracker:serial_tracker,user_id:user_id,user_tracker:user_tracker};
 }();
 
 var selected_term = -1;
@@ -1053,8 +1077,11 @@ module.socket.on('check_live',function(live){
 		$('#paused_message').show('fade','show');
 	}
 	$('.mssg_icon').tooltip();
+	$('#notify_cont_top').off('click');
+	$('#notify_cont_bottom').off('click');
 	$('#notify_cont_top').on('click',find_top_notifications);
 	$('#notify_cont_bottom').on('click',find_bottom_notifications);
+	$('#chat_display').off('click');
 	$('#chat_display').on('click','.mssg_icon',deleteIt);
 	$('#chat_display').on('click','.js_mssg_upvote',upvoteMssg);
 	$('#chat_display').on('click','.js_mssg_downvote',downvoteMssg);
@@ -1517,21 +1544,6 @@ $('#request_friend').click(function(){
 		$('#register_modal').modal();	
 		return false;
 	}
-});
-$('body').on('click','.mutual_route',function(){
-	var route_url = $(this).attr('href');
-	var route_uri = route_url.replace('//','');
-	route_uri = route_uri.slice(route_uri.indexOf('/'));
-	$.ajax({
-		type:'GET',
-		url:route_url,
-		success:function(hresp){
-			window.history.pushState(null,null,route_uri);	
-			$('#main').html(hresp);
-			startup();
-		}
-	});
-	return false;
 });
 $('.mobile_show_friend_requests').click(function(){
 	$(this).css('background-color','#ddd');

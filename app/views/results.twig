@@ -1,15 +1,14 @@
-{% extends 'home_layout.twig' %}
+{% extends 'layout.twig' %}
 {% use 'common.twig' %}
+{% use 'side_bar.twig' %}
+{% use 'navbar.twig' %}
+{% use 'modals.twig' %}
 
 {% block header %} 
 	{{parent()}}
 {% endblock %}
 
 {% block friend_list %}
-	{{parent()}}
-{% endblock %}
-
-{% block welcome %}
 	{{parent()}}
 {% endblock %}
 
@@ -21,64 +20,22 @@
 	{{parent()}}
 {% endblock %}
 
-{% block side_1 %}
-	<div class="small_content_box">
-		<div class="content side_content" style="padding:0;">
-<div style="margin-top:5px;">
-	<button class="menu_top btn btn-primary" style="width:100%;" data-toggle="modal" data-target="#chat_modal">Create new post</button>
-</div>
-<div>
-	<button class="menu_middle btn btn-primary" id="create_community" style="width:100%;" data-toggle="modal" data-target="#community_create_modal">Create community</button>
-</div>
-<div>
-	<a href="{{site}}/chat/random" class="menu_bottom btn btn-primary" style="width:100%;" title="Jump into a random chat">Jump into chat</a>
-</div>
-		</div>
-	</div>
-{% endblock %}
-
-{% block side_2 %}
-{% if curr_community_id %}
-	<div class="small_content_box">
-		<div class="content side_content" id="subscribe">
-			{% if user.community_admin == curr_community_id and curr_community_id | length > 0 %}
-				<a class="btn btn-default btn-xs advanced_create" id="community_edit" href="#" data-toggle="modal" data-target="community_edit_modal"><div class="glyphicon glyphicon-cog advanced_cog" data-toggle="tooltip" data-original-title="Manage Community" data-container="body" data-placement="top"></div></a>
-			{% endif %}
-			<div><a href="{{site}}/c/{{curr_community.name}}" style="font-size:18px;color:#333;">{{curr_community.name}}{% if user %}{% if community_admin.user_id == user.id %} (Admin) {% elseif user.id in curr_community.moderators %} (Mod) {% endif %}{% endif %}</a></div>
-			<div style="margin:4px 0;">
-				{% if user_subscribed %}
-					<span><a href="{{site}}/community/unsubscribe/{{curr_community.id}}" class="btn btn-danger btn-xs">Unsubscribe</a></span>
-				{% else %}
-					<span><a id="subscribe_btn" href="{{site}}/community/subscribe/{{curr_community.id}}" class="btn btn-success btn-xs">Subscribe</a></span>
-				{% endif %}
-				{% set community_subscribers = curr_community.subscribers | length %}
-				<span style="font-size:16px;">{{community_subscribers}} Subscriber{% if community_subscribers != 1 %}s{% endif %}</span>
-			</div>
-			<div style="font-size:14px;"><div class="green_ball"></div> {{curr_community.online}} online</div>
-			<div id="community_id_str" style="display:none;">{{curr_community.id}}</div>
-			<div id="community_info_str" style="display:none;">{{curr_community.raw_info}}</div>
-			<div id="community_desc_str" style="display:none;">{{curr_community.description}}</div>
-			{% if curr_community.info|length > 0 %}
-				<div id="community_info" style="font-size:16px;">
-					<br>
-					{{curr_community.info|raw}}
-				</div>
-			{% endif %}
-		</div>
-	</div>
-{% endif %}
+{% block side_bar %}
+	{{parent()}}
 {% endblock %}
 
 {% block tabs %}
+{% endblock %}
+
+{% block content %}
+<div class="big_content_box" id="main_cont_box">
 <ul id="resultsTabs" class="nav nav-tabs nav-justified">
 	<li class="active"><a href="#posts" data-toggle="tab" style="color:#075de9">Posts ({{chats | length}})</a></li>
 	<li><a href="#users" data-toggle="tab" style="color:#075de9">Users ({{users | length}})</a></li>
 	<li><a href="#communities" data-toggle="tab" style="color:#075de9">Communities ({{communities_res | length}})</a></li>
 </ul>
-{% endblock %}
 
-{% block content %}
-<div class="main_content" id="main_cont">
+<div class="home_main_content" id="main_cont">
 <div id="tab_content" class="tab-content">
 
 <div class="tab-pane fade active in" id="posts">
@@ -176,6 +133,7 @@
 	</div>
 </div>
 
+</div>
 </div>
 </div>
 {% endblock %}

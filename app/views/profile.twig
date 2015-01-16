@@ -25,6 +25,7 @@
 {% endblock %}
 
 {% block content %}
+<div class="big_content_box" id="main_cont_box">
 <div class="p_main_content" id="main_cont">
 <h2 class="profile_name" id="{{profile.id}}" style="margin-top:0px;">{{profile.name}}</h2>
 {% if profile.id != user.id %}
@@ -201,6 +202,7 @@
 
 </div>
 
+</div>
 </div>
 </div>
 {% endblock %}

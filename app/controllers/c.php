@@ -4,10 +4,6 @@ class C extends BaseController {
 
 	public function getIndex($community,$option = null)
 	{
-		$view = View::make('home');
-		$view['user_subscribed'] = 0;
-		$view['community_admin'] = 0;
-		$view['community_mod'] = 0;
 		$curr_community = Communities::wherename($community)->first();
 		if(!$curr_community){
 			return View::make('missing');
@@ -72,6 +68,14 @@ class C extends BaseController {
 			Auth::user()->save();
 		}
 		Session::put('curr_page',URL::full());
+		if($this->isXhr()){
+			$view = View::make('home_view');
+		}else{
+			$view = View::make('home');
+		}
+		$view['user_subscribed'] = 0;
+		$view['community_admin'] = 0;
+		$view['community_mod'] = 0;
 		$view['home_active'] = '';
 		$view['sid'] = Session::getId();
 		$view['curr_community'] = $curr_community;

@@ -418,21 +418,6 @@ $('#request_friend').click(function(){
 		return false;
 	}
 });
-$('body').on('click','.mutual_route',function(){
-	var route_url = $(this).attr('href');
-	var route_uri = route_url.replace('//','');
-	route_uri = route_uri.slice(route_uri.indexOf('/'));
-	$.ajax({
-		type:'GET',
-		url:route_url,
-		success:function(hresp){
-			window.history.pushState(null,null,route_uri);	
-			$('#main').html(hresp);
-			startup();
-		}
-	});
-	return false;
-});
 $('.mobile_show_friend_requests').click(function(){
 	$(this).css('background-color','#ddd');
 	$('.mobile_show_mssg_requests').css('background-color','');

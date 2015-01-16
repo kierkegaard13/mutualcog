@@ -9,7 +9,7 @@ buildify.task({
 		buildify().concat(['common.js','chat.js'])
 			.uglify()
 			.save('chat.min.js');
-		buildify().concat(['functions.js','startup.js','server.js','click_events.js','key_events.js','blur_events.js','submit_events.js'])
+		buildify().concat(['routing.js','functions.js','startup.js','server.js','click_events.js','key_events.js','blur_events.js','submit_events.js'])
 			.save('app.js')
 			.uglify()
 			.save('app.min.js');

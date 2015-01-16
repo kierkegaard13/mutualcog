@@ -1,27 +1,29 @@
 {% block side_bar %}
-{% if is_live_chat %}
-<div class="small_content_box tool_box">
+<div id="chat_tool_box" class="small_content_box tool_box" {% if not is_live_chat and not is_static_chat %}style="display:none;"{% endif %}>
 	<div class="content box_r_0 side_content">
 		<div id="user_toolbox">
-			<span class="glyphicon glyphicon-link permalink" id="permalink" data-page-link="{{site}}/chat/static/{{chat.id}}" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Permalink"></span>
+			{% if chat.live %}
+				<span class="glyphicon glyphicon-link visible_live permalink" id="permalink" data-page-link="{{site}}/chat/static/{{chat.id}}" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Permalink"></span>
+			{% endif %}
 			<span class="glyphicon glyphicon-list show_users" id="show_users" data-chat-id="{{chat.id}}" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Show chat members"></span>
-			<span class="glyphicon glyphicon-stop stop_scroll" id="stop_scroll" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Stop scrollbar"></span>
+			{% if chat.live %}
+				<span class="glyphicon glyphicon-stop visible_live stop_scroll" id="stop_scroll" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Stop scrollbar"></span>
+			{% endif %}
 			<!--<span class="glyphicon glyphicon-list" id="show_users" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Show chat users"></span>-->
 			{% if user.name == chat.admin or serial == chat.admin %}
 			{% if chat.live %}
 				<span class="glyphicon glyphicon-pause pause mod_power pause_chat" id="pause_chat" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Pause chat"></span>
+				<span class="glyphicon glyphicon-warning-sign visible_live mod_power warn_user" id="warn_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Warn user"></span>
+				<span class="glyphicon glyphicon-remove visible_live mod_power kick_user" id="kick_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Ban user"></span>
 			{% else %}
 				<span class="glyphicon glyphicon-play play mod_power pause_chat" id="pause_chat" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Play chat"></span>
 			{% endif %}
-			<span class="glyphicon glyphicon-warning-sign mod_power warn_user" id="warn_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Warn user"></span>
-			<span class="glyphicon glyphicon-remove mod_power kick_user" id="kick_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Ban user"></span>
 			{% endif %}
 		</div>
 	</div>
 </div>
-{% endif %}
 
-<div class="small_content_box tool_box">
+<div id="welcome_user" class="small_content_box">
 	<div class="content side_content">
 		<div style="display:none;" id="sid" data-sid="{{sid}}"></div>
 		<div {% if not logged_in %}style="margin-bottom:5px;"{% endif %}>Welcome, 
@@ -92,8 +94,7 @@
 	</div>
 </div>
 
-{% if is_live_chat %}
-<div class="small_content_box">
+<div id="chat_description_box" class="small_content_box" {% if not is_live_chat %}style="display:none;"{% endif %}>
 	<div class="content box_r_2 side_content">
 <div class="chat_title_vote_box">
 	{% if chat.id in upvoted %}
@@ -120,8 +121,8 @@
 					{% if chat.author.is_admin or chat.author.is_mod %}
 						<span class="red_color">{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</span></strong></a>,
 					{% elseif curr_community_id %}
-						{% if chat.admin_id == community_admin.user_id or chat.admin_id in curr_community.moderators %}
-							<span class="green_color">{{chat.admin}}{% if chat.admin_id == community_admin.user_id %}[CA]{% elseif chat.admin_id in curr_community.moderators %}[CM]{% endif %}</span></strong></a>,
+						{% if chat.admin_id == community_admin.user_id or chat.admin_id in curr_community.moderators() %}
+							<span class="green_color">{{chat.admin}}{% if chat.admin_id == community_admin.user_id %}[CA]{% elseif chat.admin_id in curr_community.moderators() %}[CM]{% endif %}</span></strong></a>,
 						{% else %}
 							{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</strong></a>,
 						{% endif %}
@@ -192,20 +193,16 @@
 </div>
 	</div>
 </div>
-{% endif %}
 
-{% if not is_live_chat %}
-<div class="small_content_box">
+<div id="creation_box" class="small_content_box" {% if is_live_chat %}style="display:none;"{% endif %}>
 	<div class="content side_content" style="padding:0;">
 		<button class="menu_top btn btn-primary" style="width:100%;" data-toggle="modal" data-target="#chat_modal">Create new post</button>
 		<button class="menu_middle btn btn-primary" id="create_community" style="width:100%;" data-toggle="modal" data-target="#community_create_modal">Create community</button>
 		<a href="{{site}}/chat/random" class="menu_bottom btn btn-primary" style="width:100%;" title="Jump into a random chat">Jump into chat</a>
 	</div>
 </div>
-{% endif %}
 
-{% if not chat.live and is_static_chat %}
-<div class="small_content_box">
+<div id="static_post_box" class="small_content_box" {% if chat.live or not is_static_chat %}style="display:none;"{% endif %}>
 	<div class="content side_content" id="create_new_mssg">
 		<form method="post" action="{{site}}/chat/message/{{chat.id}}">
 		<legend>Submit a new comment</legend>
@@ -214,10 +211,8 @@
 		</form>
 	</div>
 </div>
-{% endif %}
 
-{% if is_community %}
-<div class="small_content_box">
+<div id="community_sub_box" class="small_content_box" {% if not is_community %}style="display:none;"{% endif %}>
 	<div class="content side_content" id="subscribe">
 		{% if user.community_admin == curr_community_id and curr_community_id | length > 0 %}
 			<a class="btn btn-default btn-xs advanced_create" id="community_edit" href="#" data-toggle="modal" data-target="community_edit_modal"><div class="glyphicon glyphicon-cog advanced_cog" data-toggle="tooltip" data-original-title="Manage Community" data-container="body" data-placement="top"></div></a>
@@ -245,7 +240,7 @@
 	</div>
 </div>
 
-<div class="small_content_box">
+<div id="community_info_box" class="small_content_box" {% if not is_community %}style="display:none;"{% endif %}>
 	<div class="content side_content" id="create_cont">
 		<div><strong>Admin</strong></div>
 		{% if community_admin %}
@@ -253,7 +248,7 @@
 				<a href="{{site}}/u/{{community_admin.user.name}}">{{community_admin.user.name}}</a>
 			</div>
 		{% else %}
-			{% if user.owned < 1 and user_subscribed %}
+			{% if user.owned() < 1 and user_subscribed %}
 				<a href="{{site}}/community/assign-admin/{{curr_community_id}}" style="margin-left:10px;">Become the admin</a>
 			{% else %}
 				<div style="font-size:14px;margin-left:10px;">No Admin</div>
@@ -273,5 +268,4 @@
 		</div>
 	</div>
 </div>
-{% endif %}
 {% endblock %}
