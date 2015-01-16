@@ -73,6 +73,9 @@ class Home extends BaseController {
 		$view['chats'] = $chats;
 		$view['chats_new'] = $chats_new;
 		$view['chats_rising'] = $chats_rising;
+		$view['is_live_chat'] = 0;
+		$view['is_static_chat'] = 0;
+		$view['is_community'] = 0;
 		return $view;
 	}
 
@@ -112,6 +115,9 @@ class Home extends BaseController {
 		$view['chats'] = $chats;
 		$view['chats_new'] = $chats_new;
 		$view['chats_rising'] = $chats_rising;
+		$view['is_live_chat'] = 0;
+		$view['is_static_chat'] = 0;
+		$view['is_community'] = 0;
 		return $view;
 	}
 
@@ -151,6 +157,9 @@ class Home extends BaseController {
 		$view['chats'] = $chats;
 		$view['chats_new'] = $chats_new;
 		$view['chats_rising'] = $chats_rising;
+		$view['is_live_chat'] = 0;
+		$view['is_static_chat'] = 0;
+		$view['is_community'] = 0;
 		return $view;
 	}
 

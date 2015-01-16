@@ -1,7 +1,10 @@
-{% extends 'chat_layout.twig' %}
+{% extends 'layout.twig' %}
 {% use 'common.twig' %}
+{% use 'side_bar.twig' %}
+{% use 'navbar.twig' %}
+{% use 'modals.twig' %}
 
-{% block header %}
+{% block header %} 
 	{{parent()}}
 {% endblock %}
 
@@ -17,23 +20,10 @@
 	{{parent()}}
 {% endblock %}
 
-{% block tools %}
-<div id="user_toolbox">
-	<span class="glyphicon glyphicon-link permalink" id="permalink" data-page-link="{{site}}/chat/static/{{chat.id}}" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Permalink"></span>
-	<span class="glyphicon glyphicon-list show_users" id="show_users" data-chat-id="{{chat.id}}" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Show chat members"></span>
-	<span class="glyphicon glyphicon-stop stop_scroll" id="stop_scroll" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Stop scrollbar"></span>
-	<!--<span class="glyphicon glyphicon-list" id="show_users" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Show chat users"></span>-->
-	{% if user.name == chat.admin or serial == chat.admin %}
-	{% if chat.live %}
-		<span class="glyphicon glyphicon-pause pause mod_power pause_chat" id="pause_chat" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Pause chat"></span>
-	{% else %}
-		<span class="glyphicon glyphicon-play play mod_power pause_chat" id="pause_chat" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Play chat"></span>
-	{% endif %}
-	<span class="glyphicon glyphicon-warning-sign mod_power warn_user" id="warn_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Warn user"></span>
-	<span class="glyphicon glyphicon-remove mod_power kick_user" id="kick_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Ban user"></span>
-	{% endif %}
-</div>
+{% block side_bar %}
+	{{parent()}}
 {% endblock %}
+
 
 {% block mobile_tools %}
 <div id="user_toolbox" class="mobile_tools">
@@ -53,109 +43,9 @@
 </div>
 {% endblock %}
 
-{% block welcome %}
-	{{parent()}}
-{% endblock %}
-
-{% block details %}
-<div class="chat_title_vote_box">
-	{% if chat.id in upvoted %}
-		<span class="glyphicon glyphicon-chevron-up chat_big_upvote js_upvote base_green_color" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-		<div class="chat_upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-		<span class="glyphicon glyphicon-chevron-down chat_big_downvote js_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
-	{% elseif chat.id in downvoted %}
-		<span class="glyphicon glyphicon-chevron-up chat_big_upvote js_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-		<div class="chat_upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-		<span class="glyphicon glyphicon-chevron-down chat_big_downvote js_downvote brighter_red_color" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
-	{% else %}
-		<span class="glyphicon glyphicon-chevron-up chat_big_upvote js_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
-		<div class="chat_upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-		<span class="glyphicon glyphicon-chevron-down chat_big_downvote js_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
-	{% endif %}
-</div>
-<div class="chat_title_cont">
-<div class="chat_id" id="chat_{{chat.id}}">{{chat.title}}</div>
-<div style="color:#777;font-size:12px;">
-	{% if chat.admin % 275604541 == 0 %}
-		<div class="chat_info" id="chat_admin" data-admin-name="{{chat.admin}}">Created by 
-			<a href="{{site}}/u/{{chat.admin}}">
-				<strong>
-					{% if chat.author.is_admin or chat.author.is_mod %}
-						<span class="red_color">{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</span></strong></a>,
-					{% elseif curr_community_id %}
-						{% if chat.admin_id == community_admin.user_id or chat.admin_id in curr_community.moderators %}
-							<span class="green_color">{{chat.admin}}{% if chat.admin_id == community_admin.user_id %}[CA]{% elseif chat.admin_id in curr_community.moderators %}[CM]{% endif %}</span></strong></a>,
-						{% else %}
-							{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</strong></a>,
-						{% endif %}
-					{% else %}
-						{{chat.admin}}{% if chat.author.is_admin %}[A]{% elseif chat.author.is_mod %}[M]{% endif %}</strong></a>,
-					{% endif %}
-	{% else %}
-		<div class="chat_info">Created by <strong>{{chat.admin}}</strong>, 
-	{% endif %}
-	{% set time_passed = server_time|date('U') - chat.created_at|date('U') %}
-	<span class="chat_time" id="{{chat.created_at}}">
-		{% if time_passed < 45 %}
-			seconds ago
-		{% elseif time_passed < 2700 %}
-			{% if time_passed < 90 %}
-				a minute ago
-			{% else %}
-				{{(time_passed/60)|round}} minutes ago
-			{% endif %}
-		{% elseif time_passed < 79200%}
-			{% if time_passed < 5400 %}
-				an hour ago
-			{% else %}
-				{{(time_passed/3600)|round}} hours ago
-			{% endif %}
-		{% elseif time_passed < 2160000 %}
-			{% if time_passed < 129600 %}
-				a day ago
-			{% else %}
-				{{(time_passed/86400)|round}} days ago
-			{% endif %}
-		{% elseif time_passed < 29808000 %}
-			{% if time_passed < 3888000 %}
-				a month ago
-			{% else %}
-				{{(time_passed/2592000)|round}} months ago
-			{% endif %}
-		{% else %}
-			{% if time_passed < 47260800 %}
-				a year ago
-			{% else %}
-				{{(time_passed/31536000)|round}} years ago
-			{% endif %}
-		{% endif %}
-	</span>
-	in Communities:
-	{% for community in chat.communities %}
-		<span><a href="{{site}}/c/{{community.name}}"><strong>#{{community.name}}</strong></a> </span>
-	{% endfor %}
-</div>
-</div>
-<div class="chat_community_str" style="display:none;">#{{chat.communities|join(' #')}}</div>
-<div class="chat_link_str" style="display:none;">{{chat.link}}</div>
-<div class="chat_title_str" style="display:none;">{{chat.title}}</div>
-<div class="chat_desc_str" style="display:none;">{{chat.raw_details}}</div>
-<div class="chat_live_str" style="display:none;">{{chat.live}}</div>
-<div class="chat_nsfw_str" style="display:none;">{{chat.nsfw}}</div>
-<div class="chat_id_str" style="display:none;">{{chat.id}}</div>
-<div class="top_5">
-{% if user.name == chat.admin or serial == chat.admin %}
-	<button class="btn btn-primary fill_cont bottom_5 edit_chat_link" data-toggle="modal" data-target="edit_modal">Edit Chat</button>
-{% else %}
-	{% if chat.details | length > 0 %}
-		<button class="btn btn-primary fill_cont" data-toggle="modal" data-target="#continue_modal">Read Description</button>
-	{% endif %}
-{% endif %}
-</div>
-</div>
-{% endblock %}
-
 {% block content %}
+			<div class="chat_content_box" id="main_cont_box">
+				<div class="content main_content" id="main_cont">
 <div id="up_arr" style="display:none;">{{mssg_upvoted | json_encode()}}</div>
 <div id="down_arr" style="display:none;">{{mssg_downvoted | json_encode()}}</div>
 <div class="frame_cont">
@@ -279,4 +169,6 @@ Press enter to send a message to all
 
 <div class="response_hint">Click on a message to respond to it</div>
 <div class="enter_hint">Press Shift+Enter for new line</div>
+			</div>
+		</div>
 {% endblock %}

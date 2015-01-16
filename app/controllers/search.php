@@ -216,6 +216,9 @@ class Search extends BaseController {
 		$view['chats'] = $chats;
 		$view['users'] = $users;
 		$view['communities_res'] = $communities_res;
+		$view['is_live_chat'] = 0;
+		$view['is_static_chat'] = 0;
+		$view['is_community'] = 0;
 		return $view;
 	}
 

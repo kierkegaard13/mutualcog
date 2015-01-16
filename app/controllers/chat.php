@@ -108,6 +108,9 @@ class Chat extends BaseController {
 		$view['mssg_downvoted'] = $mssg_downvoted;
 		$view['chat'] = $chat;
 		$view['mods'] = $mods;
+		$view['is_live_chat'] = 1;
+		$view['is_static_chat'] = 0;
+		$view['is_community'] = 0;
                 return $view;
         }
 
@@ -198,6 +201,9 @@ class Chat extends BaseController {
 		}else{
 			$view['messages'] = $chat->messagesPaginate();
 		}
+		$view['is_live_chat'] = 0;
+		$view['is_static_chat'] = 1;
+		$view['is_community'] = 0;
                 return $view;
 	}
 

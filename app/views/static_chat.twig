@@ -10,10 +10,6 @@
 	{{parent()}}
 {% endblock %}
 
-{% block home_modals %}
-	{{parent()}}
-{% endblock %}
-
 {% block tools %}
 {% if user.name == chat.admin or serial == chat.admin %}
                         <div class="small_content_box tool_box">
@@ -28,34 +24,6 @@
 	<span class="glyphicon glyphicon-warning-sign mod_power" id="warn_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Warn user"></span>
 	<span class="glyphicon glyphicon-remove mod_power" id="kick_user" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="Kick user"></span>-->
 </div>
-				</div>
-                        </div>
-{% endif %}
-{% endblock %}
-
-{% block welcome %}
-	{{parent()}}
-{% endblock %}
-
-{% block side_1 %}
-	<div class="small_content_box">
-		<div class="content side_content" style="padding:0;">
-	<button class="menu_top btn btn-primary" style="width:100%;" data-toggle="modal" data-target="#chat_modal">Create new post</button>
-	<button class="menu_middle btn btn-primary" id="create_community" style="width:100%;" data-toggle="modal" data-target="#community_create_modal">Create community</button>
-	<a href="{{site}}/chat/random" class="menu_bottom btn btn-primary" style="width:100%;" title="Jump into a random chat">Jump into chat</a>
-		</div>
-	</div>
-{% endblock %}
-
-{% block side_2 %}
-{% if not chat.live %}
-                        <div class="small_content_box">
-				<div class="content side_content" id="create_new_mssg">
-<form method="post" action="{{site}}/chat/message/{{chat.id}}">
-<legend>Submit a new comment</legend>
-<textarea rows="4" name="mssg_content" maxlength="{{max_static_length}}"></textarea>
-<button type="submit" class="btn btn-primary" style="width:100%;">Submit comment</button>
-</form>
 				</div>
                         </div>
 {% endif %}

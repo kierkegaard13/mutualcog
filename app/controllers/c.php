@@ -85,6 +85,9 @@ class C extends BaseController {
 		$view['chats_new'] = $chats_new;
 		$view['chats_rising'] = $chats_rising;
 		$view['chats_removed'] = $chats_removed; 
+		$view['is_live_chat'] = 0;
+		$view['is_static_chat'] = 0;
+		$view['is_community'] = 1;
                 return $view;
 	}
 

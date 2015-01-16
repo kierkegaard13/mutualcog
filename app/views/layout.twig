@@ -9,9 +9,9 @@
         <title>Mutual Cognizance</title>
 	<link rel="icon" href="{{base}}/GavinWeb.ico" type="image/x-icon">
 	<link href='http://fonts.googleapis.com/css?family=Roboto:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" href="{{base}}/app/libraries/css/app.min.css" />
         <link rel="stylesheet" href="{{base}}/app/libraries/css/jquery.mCustomScrollbar.min.css" />
         <link rel="stylesheet" href="{{base}}/app/bower_components/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="{{base}}/app/libraries/css/app.min.css" />
         {% block styles %}{% endblock %}
 	<script src='//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
 	<script src='{{base}}/app/libraries/js/jquery.mCustomScrollbar.concat.min.js'></script>
@@ -19,7 +19,6 @@
 <body>
 {% block header %}{% endblock %}
 {% block modals %}{% endblock %}
-{% block home_modals %}{% endblock %}
 {% if logged_in %}
 	{% block friend_list %}{% endblock %}
 	<div class="wrapper_list_active">
@@ -30,9 +29,9 @@
 		{% block mobile_pms %}{% endblock %}
 		{% block mobile_notifications %}{% endblock %}
 		{% if logged_in %}
-		<div class="col-sm-7 col-md-7 col-lg-9" id="main">
+		<div class="{% if is_live_chat %}chat_content{% endif %} col-sm-7 col-md-7 col-lg-9" id="main">
 		{% else %}
-		<div class="col-sm-7 col-md-8 col-lg-9" id="main">
+		<div class="{% if is_live_Chat %}chat_content{% endif %} col-sm-7 col-md-8 col-lg-9" id="main">
 		{% endif %}
 			{% block content %}{% endblock %}
 		</div>

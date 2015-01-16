@@ -1,12 +1,10 @@
-{% extends 'home_layout.twig' %}
+{% extends 'layout.twig' %}
 {% use 'common.twig' %}
-{% use 'home_common.twig' %}
+{% use 'side_bar.twig' %}
+{% use 'navbar.twig' %}
+{% use 'modals.twig' %}
 
 {% block header %} 
-	{{parent()}}
-{% endblock %}
-
-{% block welcome %} 
 	{{parent()}}
 {% endblock %}
 
@@ -22,24 +20,8 @@
 	{{parent()}}
 {% endblock %}
 
-{% block home_modals %}
+{% block side_bar %}
 	{{parent()}}
-{% endblock %}
-
-{% block side_2 %}
-	<div class="small_content_box">
-		<div class="content side_content" id="subscribe" style="padding:0;">
-<div style="margin-top:5px;">
-	<button class="btn btn-primary menu_top" style="width:100%;" data-toggle="modal" data-target="#chat_modal">Create new post</button>
-</div>
-<div>
-	<button class="btn btn-primary menu_middle" id="create_community" style="width:100%;" data-toggle="modal" data-target="#community_create_modal">Create community</button>
-</div>
-<div>
-	<a href="{{site}}/chat/random" class="btn btn-primary menu_bottom" style="width:100%;" title="Jump into a random chat">Jump into chat</a>
-</div>
-		</div>
-	</div>
 {% endblock %}
 
 {% block content %}
