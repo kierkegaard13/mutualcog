@@ -2,6 +2,7 @@ $('body').on('click','.mutual_route',function(){
 	var route_url = $(this).attr('href');
 	var route_uri = route_url.replace('//','');
 	route_uri = route_uri.slice(route_uri.indexOf('/'));
+	$('.mutual_route').removeClass('highlight_light_blue');
 	$(this).addClass('highlight_light_blue');
 	$.ajax({
 		type:'GET',
