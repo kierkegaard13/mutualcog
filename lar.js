@@ -104,6 +104,10 @@ io.on('connection', function(client) {
 		});
 	});
 
+	client.on('leave_room',room){
+		client.leave(room);
+	}
+
 	client.on('join_pm',function(pm_info,fn){
 		if(client.authorized){
 			conn.where({id:pm_info.friend_id}).get('users',function(err,rows){

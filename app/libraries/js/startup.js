@@ -9,7 +9,7 @@ module = function(){
 	if($('.chat_id').length){
 		var chat_id = $('.chat_id').attr('id').replace('chat_','');
 	}else{
-		var chat_id = '';
+		var chat_id = null;
 	}
 	if($('#up_arr').length){
 		var upvoted = jQuery.parseJSON($('#up_arr').text());

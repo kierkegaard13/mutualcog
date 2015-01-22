@@ -92,7 +92,11 @@ class C extends BaseController {
 		$view['is_live_chat'] = 0;
 		$view['is_static_chat'] = 0;
 		$view['is_community'] = 1;
-                return $view;
+		if($this->isXhr()){
+			return array('view' => $view->render(),'home' => 0,'community' => 1,'chat' => 0,'static' => 0);
+		}else{
+			return $view;
+		}
 	}
 
 }

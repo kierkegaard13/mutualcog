@@ -10,8 +10,22 @@ $('body').on('click','.mutual_route',function(){
 		success:function(hresp){
 			module.url_state.unshift({html:$('#main').html(),url:document.URL});
 			window.history.pushState(null,null,route_uri);	
-			$('#main').html(hresp);
+			$('#main').html(hresp.view);
 			startup();
+			if(module.chat_id){
+				module.socket.emit('leave_room',module.chat_id);
+				module.chat_id = null;
+			}
+			module.socket.emit('authorize',{room:module.chat_id,sid:$('#sid').attr('data-sid'),serial:$('#serial_tracker').text()},function(){
+				if(module.chat_id){
+					if($('#logged_in').text() == 1){
+						module.socket.emit('add_user',{new_user:module.user_tracker,serial_id:module.serial_id});
+					}else{
+						module.socket.emit('add_user',{new_user:module.serial_tracker,serial_id:module.serial_id});
+					}
+				}
+				module.socket.emit('seen_chats');
+			});
 		}
 	});
 	return false;
