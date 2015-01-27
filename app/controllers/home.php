@@ -77,7 +77,16 @@ class Home extends BaseController {
 		$view['is_static_chat'] = 0;
 		$view['is_community'] = 0;
 		if($this->isXhr()){
-			return array('view' => $view->render(),'home' => 1,'community' => 0,'chat' => 0,'static' => 0);
+			return array(
+				'view' => $view->render(),
+				'home' => 1,
+				'community' => 0,
+				'chat' => 0,
+				'static' => 0,
+				'serial' => Session::get('unique_serial'),
+				'serial_id' => Session::get('serial_id'),
+				'sid' => Session::getId()
+				);
 		}else{
 			return $view;
 		}
@@ -122,7 +131,20 @@ class Home extends BaseController {
 		$view['is_live_chat'] = 0;
 		$view['is_static_chat'] = 0;
 		$view['is_community'] = 0;
-		return $view;
+		if($this->isXhr()){
+			return array(
+				'view' => $view->render(),
+				'home' => 1,
+				'community' => 0,
+				'chat' => 0,
+				'static' => 0,
+				'serial' => Session::get('unique_serial'),
+				'serial_id' => Session::get('serial_id'),
+				'sid' => Session::getId()
+				);
+		}else{
+			return $view;
+		}
 	}
 
 	public function getPinned()
@@ -164,7 +186,20 @@ class Home extends BaseController {
 		$view['is_live_chat'] = 0;
 		$view['is_static_chat'] = 0;
 		$view['is_community'] = 0;
-		return $view;
+		if($this->isXhr()){
+			return array(
+				'view' => $view->render(),
+				'home' => 1,
+				'community' => 0,
+				'chat' => 0,
+				'static' => 0,
+				'serial' => Session::get('unique_serial'),
+				'serial_id' => Session::get('serial_id'),
+				'sid' => Session::getId()
+				);
+		}else{
+			return $view;
+		}
 	}
 
 }

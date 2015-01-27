@@ -93,7 +93,16 @@ class C extends BaseController {
 		$view['is_static_chat'] = 0;
 		$view['is_community'] = 1;
 		if($this->isXhr()){
-			return array('view' => $view->render(),'home' => 0,'community' => 1,'chat' => 0,'static' => 0);
+			return array(
+				'view' => $view->render(),
+				'home' => 0,
+				'community' => 1,
+				'chat' => 0,
+				'static' => 0,
+				'serial' => Session::get('unique_serial'),
+				'serial_id' => Session::get('serial_id'),
+				'sid' => Session::getId()
+				);
 		}else{
 			return $view;
 		}

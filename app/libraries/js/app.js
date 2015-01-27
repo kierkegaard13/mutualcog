@@ -8,9 +8,21 @@ $('body').on('click','.mutual_route',function(){
 		type:'GET',
 		url:route_url,
 		success:function(hresp){
-			module.url_state.unshift({html:$('#main').html(),url:document.URL});
+			module.url_state.unshift({html:$('#main').html(),url:document.URL,side:$('#side').html()});
 			window.history.pushState(null,null,route_uri);	
 			$('#main').html(hresp.view);
+			if(hresp.community || hresp.home){
+				$('#static_post_box').hide();
+				$('#chat_description_box').hide();
+				$('#chat_tool_box').hide();
+			}
+			if(hresp.community){
+				$('#community_sub_box').show();
+				$('#community_info_box').show();
+			}else{
+				$('#community_sub_box').hide();
+				$('#community_info_box').hide();
+			}
 			startup();
 			if(module.chat_id){
 				module.socket.emit('leave_room',module.chat_id);
@@ -34,6 +46,7 @@ $('body').on('click','.mutual_route',function(){
 window.onpopstate = function(e){
 	var state = module.url_state.shift();
 	$('#main').html(state.html);
+	$('#side').html(state.side);
 };
 
 marked.setOptions({

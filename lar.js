@@ -104,9 +104,9 @@ io.on('connection', function(client) {
 		});
 	});
 
-	client.on('leave_room',room){
+	client.on('leave_room',function(room){
 		client.leave(room);
-	}
+	});
 
 	client.on('join_pm',function(pm_info,fn){
 		if(client.authorized){

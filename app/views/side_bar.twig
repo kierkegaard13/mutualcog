@@ -94,6 +94,14 @@
 	</div>
 </div>
 
+<div id="creation_box" class="small_content_box">
+	<div class="content side_content" style="padding:0;">
+		<button class="menu_top btn btn-primary" style="width:100%;" data-toggle="modal" data-target="#chat_modal">Create new post</button>
+		<button class="menu_middle btn btn-primary" id="create_community" style="width:100%;" data-toggle="modal" data-target="#community_create_modal">Create community</button>
+		<a href="{{site}}/chat/random" class="menu_bottom btn btn-primary" style="width:100%;" title="Jump into a random chat">Jump into chat</a>
+	</div>
+</div>
+
 <div id="chat_description_box" class="small_content_box" {% if not is_live_chat %}style="display:none;"{% endif %}>
 	<div class="content box_r_2 side_content">
 <div class="chat_title_vote_box">
@@ -191,14 +199,6 @@
 {% endif %}
 </div>
 </div>
-	</div>
-</div>
-
-<div id="creation_box" class="small_content_box" {% if is_live_chat %}style="display:none;"{% endif %}>
-	<div class="content side_content" style="padding:0;">
-		<button class="menu_top btn btn-primary" style="width:100%;" data-toggle="modal" data-target="#chat_modal">Create new post</button>
-		<button class="menu_middle btn btn-primary" id="create_community" style="width:100%;" data-toggle="modal" data-target="#community_create_modal">Create community</button>
-		<a href="{{site}}/chat/random" class="menu_bottom btn btn-primary" style="width:100%;" title="Jump into a random chat">Jump into chat</a>
 	</div>
 </div>
 
