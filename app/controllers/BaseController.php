@@ -14,7 +14,6 @@ class BaseController extends Controller {
 	protected $max_user_length = 20;
 	protected $view_cache_en = 1;
 
-
 	/**
 	 * Setup the layout used by the controller.
 	 *

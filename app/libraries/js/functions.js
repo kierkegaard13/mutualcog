@@ -109,14 +109,6 @@ function startup(){
 	$('.caret_tooltip').tooltip();
 	$('.advanced_cog').tooltip();
 	$('.glyphicon-info-sign').tooltip();
-	$('#pause_chat').tooltip();
-	$('.remove_mod').tooltip();
-	$('.permalink').tooltip();
-	$('.show_users').tooltip();
-	$('.stop_scroll').tooltip();
-	$('.pause_chat').tooltip();
-	$('.warn_user').tooltip();
-	$('.kick_user').tooltip();
 	$('.mssg_cont').show();
 }
 

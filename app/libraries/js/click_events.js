@@ -809,10 +809,6 @@ $('#create_community').click(function(){
 		return false;
 	}
 });
-$('#advanced_create').click(function(e){
-	$('#advanced_modal').modal();
-	return false;
-});
 $('#community_edit').click(function(e){
 	var community_cont = $(this).parents('.side_content');
 	console.log(community_cont.find('#community_id_str').text());

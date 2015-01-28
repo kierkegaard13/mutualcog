@@ -11,12 +11,17 @@ $('body').on('click','.mutual_route',function(){
 			module.url_state.unshift({html:$('#main').html(),url:document.URL,side:$('#side').html()});
 			window.history.pushState(null,null,route_uri);	
 			$('#main').html(hresp.view);
+			$('#sid').attr('data-sid',hresp.sid);
+			$('#serial_tracker').text(hresp.serial);
+			$('#serial_id').text(hresp.serial_id);
 			if(hresp.community || hresp.home){
 				$('#static_post_box').hide();
 				$('#chat_description_box').hide();
 				$('#chat_tool_box').hide();
 			}
 			if(hresp.community){
+				$('#community_sub_box').html($('#community_sub_replacement').html());
+				$('#community_info_box').html($('#community_info_replacement').html());
 				$('#community_sub_box').show();
 				$('#community_info_box').show();
 			}else{
@@ -160,14 +165,6 @@ function startup(){
 	$('.caret_tooltip').tooltip();
 	$('.advanced_cog').tooltip();
 	$('.glyphicon-info-sign').tooltip();
-	$('#pause_chat').tooltip();
-	$('.remove_mod').tooltip();
-	$('.permalink').tooltip();
-	$('.show_users').tooltip();
-	$('.stop_scroll').tooltip();
-	$('.pause_chat').tooltip();
-	$('.warn_user').tooltip();
-	$('.kick_user').tooltip();
 	$('.mssg_cont').show();
 }
 
@@ -1963,10 +1960,6 @@ $('#create_community').click(function(){
 		$('#register_modal').modal();	
 		return false;
 	}
-});
-$('#advanced_create').click(function(e){
-	$('#advanced_modal').modal();
-	return false;
 });
 $('#community_edit').click(function(e){
 	var community_cont = $(this).parents('.side_content');

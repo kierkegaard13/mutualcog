@@ -16,4 +16,13 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
 		return require __DIR__.'/../../bootstrap/start.php';
 	}
 
+	public function __call($method, $args)
+	{
+		if (in_array($method, ['get', 'post', 'put', 'patch', 'delete']))
+		{
+			return $this->call($method, $args[0], $args[1] = null, $args[2] = null, $args[3] = null, $args[4] = null);
+		}
+
+		throw new BadMethodCallException;
+	}
 }

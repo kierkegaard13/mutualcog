@@ -20,6 +20,8 @@ $('body').on('click','.mutual_route',function(){
 				$('#chat_tool_box').hide();
 			}
 			if(hresp.community){
+				$('#community_sub_box').html($('#community_sub_replacement').html());
+				$('#community_info_box').html($('#community_info_replacement').html());
 				$('#community_sub_box').show();
 				$('#community_info_box').show();
 			}else{
