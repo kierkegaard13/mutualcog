@@ -1,14 +1,16 @@
 $('body').on('click','.mutual_route',function(){
 	var route_url = $(this).attr('href');
 	var route_uri = route_url.replace('//','');
+	var main_html = $('#main').html();
 	route_uri = route_uri.slice(route_uri.indexOf('/'));
 	$('.mutual_route').removeClass('highlight_light_blue');
 	$(this).addClass('highlight_light_blue');
+	$('#main_cont').html('<div class="spinner"> <div class="bounce1"></div> <div class="bounce2"></div> <div class="bounce3"></div> </div>');
 	$.ajax({
 		type:'GET',
 		url:route_url,
 		success:function(hresp){
-			module.url_state.unshift({html:$('#main').html(),url:document.URL,side:$('#side').html()});
+			module.url_state.unshift({html:main_html,url:document.URL,side:$('#side').html()});
 			window.history.pushState(null,null,route_uri);	
 			$('#main').html(hresp.view);
 			$('#sid').attr('data-sid',hresp.sid);

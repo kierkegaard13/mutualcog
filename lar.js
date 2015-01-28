@@ -265,7 +265,7 @@ io.on('connection', function(client) {
 			}
 			conn.insert('notifications',{type:type,user_id:info.user_id,sender:client.user,sender_id:client.user_id,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
 				if(err)console.log(err);
-				var message = "<div class='request_cont'><div class='request_text'><a class='chat_link' href='//mutualcog.com/u/" + client.user_id + "'>" + client.user + "</a> has ";
+				var message = "<div class='request_cont'><div class='request_text'><a class='chat_link' href='//mutualcog.com/u/" + client.user + "'>" + client.user + "</a> has ";
 				var request_id = info.insertId;
 				if(request_info.accepted){
 					message += "accepted your ";
