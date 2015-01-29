@@ -5,6 +5,10 @@ class Communities extends EloquentBridge
 	protected $table = "communities";
 	public $timestamps = true;
 
+	public function setNameAttribute($value){
+		$this->attributes['name'] = preg_replace('/[^a-zA-Z0-9_\-.]/','',$value);
+	}
+
 	public function notValidUpdate(){
 		return Validator::make(
 				$this->toArray(),

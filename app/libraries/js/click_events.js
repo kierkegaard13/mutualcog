@@ -63,6 +63,7 @@ $('body').on('click','.mobile_pm_remove',function(){
 });
 
 $('body').on('click','.mobile_friend_box',function(){
+	//TODO finish this to create mobile chat
 });
 
 $('body').on('click','.friend_box',function(){
@@ -538,7 +539,7 @@ $('#community_dropdown').on('click','.search_link',function(){
 	$('#keywords_modal').modal();
 	return false;
 });	
-$('.edit_chat_link').click(function(e){
+$('#main').on('click','.edit_chat_link',function(e){
 	var cont = $(this).parents('.chat_title_box');
 	$('#Title_v3').val(cont.find('.chat_title_str').text());
 	$('#Link_v3').val(cont.find('.chat_link_str').text());
@@ -714,7 +715,7 @@ $('#message_user_form').submit(function(){
 		return false;
 	}
 });
-$('.toggle_description').click(function(){
+$('#main').on('click','.toggle_description',function(){
 	var descr = $(this).parent().parent().find('.description_cont');
 	if(descr.css('display') == 'none'){
 		$(this).html('Hide description'); 
@@ -783,7 +784,7 @@ $('.load_more').on('click',function(){
 	});
 	return false;
 });
-$('#subscribe_btn').click(function(){
+$('#side').on('click','#subscribe_btn',function(){
 	if($('#logged_in').text() == 1){
 		return true;
 	}else{
@@ -810,9 +811,8 @@ $('#create_community').click(function(){
 		return false;
 	}
 });
-$('#community_edit').click(function(e){
+$('#side').on('click','#community_edit',function(e){
 	var community_cont = $(this).parents('.side_content');
-	console.log(community_cont.find('#community_id_str').text());
 	$('#input_community_id').val(community_cont.find('#community_id_str').text());
 	$('#edit_community_info').val(community_cont.find('#community_info_str').text());
 	$('#input_community_desc').val(community_cont.find('#community_desc_str').text());
@@ -832,7 +832,7 @@ $('.remove_mod').click(function(e){
 	var user_id = $(this).attr('id').split('_')[2];
 	window.location.href = '//mutualcog.com/community/remove-mod/' + user_id + '/' + community_id; 
 });
-$('.remove_chat_link').click(function(e){
+$('#main').on('click','.remove_chat_link',function(e){
 	$('#remove_modal').modal();
 	$('#remove_chat_final').attr('href',$(this).attr('data-remove-link'));
 	return false;
