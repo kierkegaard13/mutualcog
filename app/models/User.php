@@ -18,7 +18,6 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 		return Validator::make(
 				$this->toArray(),
 				array(
-					'name' => "required|unique:users|between:3,$this->max_user_length",
 					'email' => 'email'
 				     )
 				)->fails();

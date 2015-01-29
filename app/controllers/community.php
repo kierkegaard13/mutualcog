@@ -184,15 +184,8 @@ class Community extends BaseController {
 	}
 
 	public function getValidateName(){
-		$validator = Validator::make(
-				array(
-					'name' => htmlentities(Input::get('name')) 
-				     ),
-				array(
-					'name' => 'required|unique:communities'
-				     )
-				);
-		if($validator->fails()){
+		$community = Communities::wherename(htmlentities(Input::get('name')))->get();
+		if(sizeof($community) > 0){
 			return 0;
 		}else{
 			return 1;
@@ -239,11 +232,13 @@ class Community extends BaseController {
 				$user_to_community = new UsersToCommunities();
 				$user_to_community->user_id = Auth::user()->id;
 				$user_to_community->community_id = $community->id;
-				$user_to_community->is_admin = 1;
+				if(Auth::user()->owned() < 1){
+					$user_to_community->is_admin = 1;
+				}
 				$user_to_community->save();
 			}
 		}
-		return Redirect::to("/t/$community->name");
+		return Redirect::to("/c/$community->name");
 	}
 }
 

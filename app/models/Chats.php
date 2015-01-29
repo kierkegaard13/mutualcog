@@ -9,7 +9,7 @@ class Chats extends EloquentBridge
 		return Validator::make(
 				$this->toArray(),
 				array(
-					'title' => "required|between:5,$this->max_title_length",
+					'title' => "between:5,$this->max_title_length",
 					'description' => "max:$this->max_static_length",
 					'communities' => 'max:120'
 				     )

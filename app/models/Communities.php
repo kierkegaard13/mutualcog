@@ -9,7 +9,6 @@ class Communities extends EloquentBridge
 		return Validator::make(
 				$this->toArray(),
 				array(
-					'id' => 'required',
 					'description' => "max:$this->max_description_length",
 					'info' => "max:$this->max_info_length"
 				     )

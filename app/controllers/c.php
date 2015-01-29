@@ -42,6 +42,12 @@ class C extends BaseController {
 		$chats = $chats->orderBy(DB::raw('chats_to_communities.pinned'),'desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
 		$upvoted = array();
 		$downvoted = array();
+		if($this->isXhr()){
+			$view = View::make('home_view');
+		}else{
+			$view = View::make('home');
+		}
+		$view['user_subscribed'] = 0;
 		if(Auth::check()){
 			Auth::user()->page = $community;
 			Auth::user()->chat_id = 0;
@@ -68,12 +74,6 @@ class C extends BaseController {
 			Auth::user()->save();
 		}
 		Session::put('curr_page',URL::full());
-		if($this->isXhr()){
-			$view = View::make('home_view');
-		}else{
-			$view = View::make('home');
-		}
-		$view['user_subscribed'] = 0;
 		$view['community_admin'] = 0;
 		$view['community_mod'] = 0;
 		$view['home_active'] = '';
