@@ -1693,17 +1693,18 @@ $('#community_dropdown').on('click','.search_link',function(){
 	return false;
 });	
 $('.edit_chat_link').click(function(e){
-	$('#Title_v3').val($('.chat_title_str').text());
-	$('#Link_v3').val($('.chat_link_str').text());
-	$('#Communities_v3').val($('.chat_community_str').text());
-	$('#description_v3').val($('.chat_desc_str').text());
-	$('#form_chat_id').val($('.chat_id_str').text());
-	if($('.chat_live_str').text() == 1){
+	var cont = $(this).parents('.chat_title_box');
+	$('#Title_v3').val(cont.find('.chat_title_str').text());
+	$('#Link_v3').val(cont.find('.chat_link_str').text());
+	$('#Communities_v3').val(cont.find('.chat_community_str').text());
+	$('#description_v3').val(cont.find('.chat_desc_str').text());
+	$('#form_chat_id').val(cont.find('.chat_id_str').text());
+	if(cont.find('.chat_live_str').text() == 1){
 		$('#live_status_v3').attr('checked',true);
 	}else{
 		$('#live_status_v3').attr('checked',false);
 	}
-	if($('.chat_nsfw_str').text() == 1){
+	if(cont.find('.chat_nsfw_str').text() == 1){
 		$('#nsfw_v3').attr('checked',true);
 	}else{
 		$('#nsfw_v3').attr('checked',false);
