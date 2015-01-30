@@ -31,7 +31,7 @@
 		{% if logged_in %}
 		<div class="{% if is_live_chat %}chat_content{% endif %} col-sm-7 col-md-7 col-lg-9" id="main">
 		{% else %}
-		<div class="{% if is_live_Chat %}chat_content{% endif %} col-sm-7 col-md-8 col-lg-9" id="main">
+		<div class="{% if is_live_chat %}chat_content{% endif %} col-sm-7 col-md-8 col-lg-9" id="main">
 		{% endif %}
 			{% block content %}{% endblock %}
 		</div>

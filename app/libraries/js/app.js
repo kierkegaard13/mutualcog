@@ -52,6 +52,7 @@ $('body').on('click','.mutual_route',function(){
 
 window.onpopstate = function(e){
 	var state = module.url_state.shift();
+	startup();
 	$('#main').html(state.html);
 	$('#side').html(state.side);
 };
@@ -186,23 +187,23 @@ function newPmChat(friend_id,pm_id,friend_status_class,friend_name){
 
 upvoteMssg = function(e){
 	e.stopPropagation();
-	var message_id = $(this).attr('id').replace('mssg_upvote_','');
-	var url = '//mutualcog.com/chat/message-upvote';
-	var votes = parseInt($('#mssg_votes_' + message_id).text());
-	if($('#mssg_downvote_' + message_id).hasClass('red_color')){
-		$('#mssg_upvote_' + message_id).addClass('green_color');
-		$('#mssg_downvote_' + message_id).removeClass('red_color');
-		$('#mssg_votes_' + message_id).text(votes + 2);
-	}else if($('#mssg_upvote_' + message_id).hasClass('green_color')){
-		$('#mssg_upvote_' + message_id).removeClass('green_color');
-		$('#mssg_downvote_' + message_id).removeClass('red_color');
-		$('#mssg_votes_' + message_id).text(votes - 1);
-	}else{
-		$('#mssg_upvote_' + message_id).addClass('green_color');
-		$('#mssg_downvote_' + message_id).removeClass('red_color');
-		$('#mssg_votes_' + message_id).text(votes + 1);
-	}
 	if($('#logged_in').text() == 1){
+		var message_id = $(this).attr('id').replace('mssg_upvote_','');
+		var url = '//mutualcog.com/chat/message-upvote';
+		var votes = parseInt($('#mssg_votes_' + message_id).text());
+		if($('#mssg_downvote_' + message_id).hasClass('red_color')){
+			$('#mssg_upvote_' + message_id).addClass('green_color');
+			$('#mssg_downvote_' + message_id).removeClass('red_color');
+			$('#mssg_votes_' + message_id).text(votes + 2);
+		}else if($('#mssg_upvote_' + message_id).hasClass('green_color')){
+			$('#mssg_upvote_' + message_id).removeClass('green_color');
+			$('#mssg_downvote_' + message_id).removeClass('red_color');
+			$('#mssg_votes_' + message_id).text(votes - 1);
+		}else{
+			$('#mssg_upvote_' + message_id).addClass('green_color');
+			$('#mssg_downvote_' + message_id).removeClass('red_color');
+			$('#mssg_votes_' + message_id).text(votes + 1);
+		}
 		$.ajax({
 			type:'POST',
 			data:{id:message_id},
@@ -246,23 +247,23 @@ upvoteMssg = function(e){
 
 downvoteMssg = function(e){
 	e.stopPropagation();
-	var message_id = $(this).attr('id').replace('mssg_downvote_','');
-	var url = '//mutualcog.com/chat/message-downvote';
-	var votes = parseInt($('#mssg_votes_' + message_id).text());
-	if($('#mssg_downvote_' + message_id).hasClass('red_color')){
-		$('#mssg_upvote_' + message_id).removeClass('green_color');
-		$('#mssg_downvote_' + message_id).removeClass('red_color');
-		$('#mssg_votes_' + message_id).text(votes + 1);
-	}else if($('#mssg_upvote_' + message_id).hasClass('green_color')){
-		$('#mssg_upvote_' + message_id).removeClass('green_color');
-		$('#mssg_downvote_' + message_id).addClass('red_color');
-		$('#mssg_votes_' + message_id).text(votes - 2);
-	}else{
-		$('#mssg_upvote_' + message_id).removeClass('green_color');
-		$('#mssg_downvote_' + message_id).addClass('red_color');
-		$('#mssg_votes_' + message_id).text(votes - 1);
-	}
 	if($('#logged_in').text() == 1){
+		var message_id = $(this).attr('id').replace('mssg_downvote_','');
+		var url = '//mutualcog.com/chat/message-downvote';
+		var votes = parseInt($('#mssg_votes_' + message_id).text());
+		if($('#mssg_downvote_' + message_id).hasClass('red_color')){
+			$('#mssg_upvote_' + message_id).removeClass('green_color');
+			$('#mssg_downvote_' + message_id).removeClass('red_color');
+			$('#mssg_votes_' + message_id).text(votes + 1);
+		}else if($('#mssg_upvote_' + message_id).hasClass('green_color')){
+			$('#mssg_upvote_' + message_id).removeClass('green_color');
+			$('#mssg_downvote_' + message_id).addClass('red_color');
+			$('#mssg_votes_' + message_id).text(votes - 2);
+		}else{
+			$('#mssg_upvote_' + message_id).removeClass('green_color');
+			$('#mssg_downvote_' + message_id).addClass('red_color');
+			$('#mssg_votes_' + message_id).text(votes - 1);
+		}
 		$.ajax({
 			type:'POST',
 			data:{id:message_id},
@@ -427,11 +428,11 @@ getResponses = function(e){
 	if($(this).hasClass('dropup')){
 		$(this).removeClass('dropup');
 		$(this).find('.caret').attr('data-original-title','Hide Responses');
-		$('#mssg_cont_' + mssg_id).children('.mssg_cont').show();	
+		$('.response_to_' + mssg_id).show();	
 	}else{
 		$(this).addClass('dropup');
 		$(this).find('.caret').attr('data-original-title','Show Responses');
-		$('#mssg_cont_' + mssg_id).children('.mssg_cont').hide();	
+		$('.response_to_' + mssg_id).hide();	
 	}
 }
 
@@ -441,11 +442,11 @@ getStaticResponses = function(e){
 	if($(this).hasClass('dropup')){
 		$(this).removeClass('dropup');
 		$(this).find('.caret').attr('data-original-title','Hide Responses');
-		$('#mssg_cont_' + mssg_id).find('.mssg_cont').show();	
+		$('.response_to_' + mssg_id).show();	
 	}else{
 		$(this).addClass('dropup');
 		$(this).find('.caret').attr('data-original-title','Show Responses');
-		$('#mssg_cont_' + mssg_id).find('.mssg_cont').hide();	
+		$('.response_to_' + mssg_id).hide();	
 	}
 }
 
@@ -1459,24 +1460,24 @@ $('#community_dropdown').on('click',function(e){
 
 $('.js_upvote').click(function(e){
 	e.stopPropagation();
-	var upvote_id = $(this).attr('id');
-	var chat_id = $(this).attr('id').replace('upvote_','');
-	var url = '//mutualcog.com/chat/upvote';
-	var votes = parseInt($('#votes_' + chat_id).text());
-	if($('#downvote_' + chat_id).hasClass('red_color')){
-		$('#upvote_' + chat_id).addClass('green_color');
-		$('#downvote_' + chat_id).removeClass('red_color');
-		$('#votes_' + chat_id).text(votes + 2);
-	}else if($('#upvote_' + chat_id).hasClass('green_color')){
-		$('#upvote_' + chat_id).removeClass('green_color');
-		$('#downvote_' + chat_id).removeClass('red_color');
-		$('#votes_' + chat_id).text(votes - 1);
-	}else{
-		$('#upvote_' + chat_id).addClass('green_color');
-		$('#downvote_' + chat_id).removeClass('red_color');
-		$('#votes_' + chat_id).text(votes + 1);
-	}
 	if($('#logged_in').text() == 1){
+		var upvote_id = $(this).attr('id');
+		var chat_id = $(this).attr('id').replace('upvote_','');
+		var url = '//mutualcog.com/chat/upvote';
+		var votes = parseInt($('#votes_' + chat_id).text());
+		if($('#downvote_' + chat_id).hasClass('red_color')){
+			$('#upvote_' + chat_id).addClass('green_color');
+			$('#downvote_' + chat_id).removeClass('red_color');
+			$('#votes_' + chat_id).text(votes + 2);
+		}else if($('#upvote_' + chat_id).hasClass('green_color')){
+			$('#upvote_' + chat_id).removeClass('green_color');
+			$('#downvote_' + chat_id).removeClass('red_color');
+			$('#votes_' + chat_id).text(votes - 1);
+		}else{
+			$('#upvote_' + chat_id).addClass('green_color');
+			$('#downvote_' + chat_id).removeClass('red_color');
+			$('#votes_' + chat_id).text(votes + 1);
+		}
 		$.ajax({
 			type:'POST',
 			data:{id:chat_id},
@@ -1505,24 +1506,24 @@ $('.js_upvote').click(function(e){
 
 $('.js_downvote').click(function(e){
 	e.stopPropagation();
-	var downvote_id = $(this).attr('id');
-	var chat_id = $(this).attr('id').replace('downvote_','');
-	var url = '//mutualcog.com/chat/downvote';
-	var votes = parseInt($('#votes_' + chat_id).text());
-	if($('#downvote_' + chat_id).hasClass('red_color')){
-		$('#upvote_' + chat_id).removeClass('green_color');
-		$('#downvote_' + chat_id).removeClass('red_color');
-		$('#votes_' + chat_id).text(votes + 1);
-	}else if($('#upvote_' + chat_id).hasClass('green_color')){
-		$('#upvote_' + chat_id).removeClass('green_color');
-		$('#downvote_' + chat_id).addClass('red_color');
-		$('#votes_' + chat_id).text(votes - 2);
-	}else{
-		$('#upvote_' + chat_id).removeClass('green_color');
-		$('#downvote_' + chat_id).addClass('red_color');
-		$('#votes_' + chat_id).text(votes - 1);
-	}
 	if($('#logged_in').text() == 1){
+		var downvote_id = $(this).attr('id');
+		var chat_id = $(this).attr('id').replace('downvote_','');
+		var url = '//mutualcog.com/chat/downvote';
+		var votes = parseInt($('#votes_' + chat_id).text());
+		if($('#downvote_' + chat_id).hasClass('red_color')){
+			$('#upvote_' + chat_id).removeClass('green_color');
+			$('#downvote_' + chat_id).removeClass('red_color');
+			$('#votes_' + chat_id).text(votes + 1);
+		}else if($('#upvote_' + chat_id).hasClass('green_color')){
+			$('#upvote_' + chat_id).removeClass('green_color');
+			$('#downvote_' + chat_id).addClass('red_color');
+			$('#votes_' + chat_id).text(votes - 2);
+		}else{
+			$('#upvote_' + chat_id).removeClass('green_color');
+			$('#downvote_' + chat_id).addClass('red_color');
+			$('#votes_' + chat_id).text(votes - 1);
+		}
 		$.ajax({
 			type:'POST',
 			data:{id:chat_id},

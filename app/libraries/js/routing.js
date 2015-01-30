@@ -52,6 +52,7 @@ $('body').on('click','.mutual_route',function(){
 
 window.onpopstate = function(e){
 	var state = module.url_state.shift();
+	startup();
 	$('#main').html(state.html);
 	$('#side').html(state.side);
 };

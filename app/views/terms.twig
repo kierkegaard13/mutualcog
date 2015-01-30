@@ -1,11 +1,32 @@
-{% extends 'info.twig' %}
+{% extends 'layout.twig' %}
 {% use 'common.twig' %}
+{% use 'side_bar.twig' %}
+{% use 'navbar.twig' %}
+{% use 'modals.twig' %}
 
-{% block header %}
+{% block header %} 
+	{{parent()}}
+{% endblock %}
+
+{% block friend_list %}
+	{{parent()}}
+{% endblock %}
+
+{% block pm_bar %}
+	{{parent()}}
+{% endblock %}
+
+{% block modals %}
+	{{parent()}}
+{% endblock %}
+
+{% block side_bar %}
 	{{parent()}}
 {% endblock %}
 
 {% block content %}
+<div class="big_content_box" id="main_cont_box">
+<div class="content main_content" id="main_cont">
 <div>
 These terms of service govern the entire site under the domain <a href="www.mutualcognizance.com">www.mutualcognizance.com</a>.
 Failure to abide by these terms may result in the removal of posts and/or profiles or other activity associated with the violator
@@ -66,5 +87,7 @@ YOU ACKNOWLEDGE THAT YOU ARE USING THE WEBSITE AT YOUR OWN RISK. THE WEBSITE IS 
 <br/>
 <div>
 By using this site you agree to all of the above terms and to uphold the site's integrity.
+</div>
+</div>
 </div>
 {% endblock %}
