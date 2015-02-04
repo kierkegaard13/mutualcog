@@ -113,7 +113,7 @@ module.socket.on('softDelete',function(mssg_info){
 	if($('#message_' + mssg_info.id + '.chat_mssg').length){
 		$('.mssg_icon').tooltip('hide');
 		$('.mssg_icon').tooltip();
-		$('#message_' + mssg_info.id + '.chat_mssg').find('.mssg_body').html("<strong class='mssg_op' id='" + mssg_info.user + "' style='color:" + module.color_arr[mssg_info.mssg_serial % 7] + ";'>" + mssg_info.user + " (<span class='response_count' id='" + mssg_info.id + "'>" + mssg_info.responses + "</span>)</strong> : <em>This message has been deleted</em>");
+		$('#message_' + mssg_info.id + '.chat_mssg').find('.js_mssg_body').html("<strong class='mssg_op' id='" + mssg_info.user + "' style='color:" + module.color_arr[mssg_info.mssg_serial % 7] + ";'>" + mssg_info.user + " (<span class='response_count' id='" + mssg_info.id + "'>" + mssg_info.responses + "</span>)</strong> : <em>This message has been deleted</em>");
 	}
 });
 
@@ -270,11 +270,9 @@ module.socket.on('check_live',function(live){
 module.socket.on('publishMessage',function(chat_info){
 	if(chat_info.responseto == 0){
 		var tmp = generateMssg(chat_info,1,0);
-		$('.tmp_chat_mssg_' + chat_info.tmp_mssg_cnt).remove();
 		$('#chat_display').append(tmp);
 	}else{
 		var tmp = generateMssg(chat_info,0,0);
-		$('.tmp_chat_mssg_' + chat_info.tmp_mssg_cnt).remove();
 		$('#mssg_cont_' + chat_info.responseto).append(tmp);
 	}
 	$('.mssg_icon').tooltip();

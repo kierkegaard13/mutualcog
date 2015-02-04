@@ -451,8 +451,8 @@ io.on('connection', function(client) {
 					conn.insert('messages',{message:mssg_info.message,chat_id:client.chat_id,user_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:mssg_info.responseto,y_dim:mssg_info.y_dim,parent:mssg_info.parent,author:client.user,serial:client.serial},function(err,info){
 						if(err) console.log(err);
 						var insert_id = info.insertId;
-						io.in(client.room).emit('publishMessage',{id:insert_id,message:mssg_info.message,chat_id:client.chat_id,user_id:client.memb_id,created_at:moment.utc().format(),responseto:mssg_info.responseto,author:client.user,serial:client.serial,y_dim:mssg_info.y_dim,parent:mssg_info.parent,tmp_mssg_cnt:mssg_info.tmp_mssg_cnt});
-						fn();
+						client.broadcast.to(client.room).emit('publishMessage',{id:insert_id,message:mssg_info.message,chat_id:client.chat_id,user_id:client.memb_id,created_at:moment.utc().format(),responseto:mssg_info.responseto,author:client.user,serial:client.serial,y_dim:mssg_info.y_dim,parent:mssg_info.parent,tmp_mssg_cnt:mssg_info.tmp_mssg_cnt});
+						fn({id:insert_id,message:mssg_info.message,chat_id:client.chat_id,user_id:client.memb_id,created_at:moment.utc().format(),responseto:mssg_info.responseto,author:client.user,serial:client.serial,y_dim:mssg_info.y_dim,parent:mssg_info.parent,tmp_mssg_cnt:mssg_info.tmp_mssg_cnt});
 						if(mssg_info.responseto == 0){
 							conn.where({id:insert_id}).update('messages',{path:"0" + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id,readable:1},function(err,info){
 								if(err)console.log(err);

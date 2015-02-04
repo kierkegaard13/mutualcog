@@ -562,7 +562,7 @@ generateMssg = function(info,is_mssg,tmp){
 	}else{
 		tmp += '<span class="glyphicon glyphicon-chevron-up js_mssg_upvote mssg_upvote" id="mssg_upvote_' + info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + info.id + '">0</div> <span class="glyphicon glyphicon-chevron-down js_mssg_downvote mssg_downvote" id="mssg_downvote_' + info.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>';
 	}
-	tmp += '</div><div class="mssg_body author_' + info.author + '"><div id="toggle_' + info.id + '" class="toggle_responses"> <span class="caret caret_tooltip" id="caret_' + info.id + '" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span> </div> ';
+	tmp += '</div><div class="js_mssg_body mssg_body author_' + info.author + '"><div id="toggle_' + info.id + '" class="toggle_responses"> <span class="caret caret_tooltip" id="caret_' + info.id + '" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span> </div> ';
 	//TODO: Add mod symbol fix admin array and mods array
 	if((module.serial_tracker == info.author || module.user_tracker == info.author) && info.message != '<i>This message has been deleted</i>'){
 		tmp += "<span id='remove_" + info.id + "' style='margin-right:4px;' class='glyphicon glyphicon-remove mssg_icon' data-mssg-serial='" + info.serial + "' data-toggle='tooltip' title='Delete post' data-container='body' data-placement='top'></span>";
@@ -963,7 +963,7 @@ module.socket.on('softDelete',function(mssg_info){
 	if($('#message_' + mssg_info.id + '.chat_mssg').length){
 		$('.mssg_icon').tooltip('hide');
 		$('.mssg_icon').tooltip();
-		$('#message_' + mssg_info.id + '.chat_mssg').find('.mssg_body').html("<strong class='mssg_op' id='" + mssg_info.user + "' style='color:" + module.color_arr[mssg_info.mssg_serial % 7] + ";'>" + mssg_info.user + " (<span class='response_count' id='" + mssg_info.id + "'>" + mssg_info.responses + "</span>)</strong> : <em>This message has been deleted</em>");
+		$('#message_' + mssg_info.id + '.chat_mssg').find('.js_mssg_body').html("<strong class='mssg_op' id='" + mssg_info.user + "' style='color:" + module.color_arr[mssg_info.mssg_serial % 7] + ";'>" + mssg_info.user + " (<span class='response_count' id='" + mssg_info.id + "'>" + mssg_info.responses + "</span>)</strong> : <em>This message has been deleted</em>");
 	}
 });
 
@@ -1120,11 +1120,9 @@ module.socket.on('check_live',function(live){
 module.socket.on('publishMessage',function(chat_info){
 	if(chat_info.responseto == 0){
 		var tmp = generateMssg(chat_info,1,0);
-		$('.tmp_chat_mssg_' + chat_info.tmp_mssg_cnt).remove();
 		$('#chat_display').append(tmp);
 	}else{
 		var tmp = generateMssg(chat_info,0,0);
-		$('.tmp_chat_mssg_' + chat_info.tmp_mssg_cnt).remove();
 		$('#mssg_cont_' + chat_info.responseto).append(tmp);
 	}
 	$('.mssg_icon').tooltip();
@@ -1907,7 +1905,7 @@ $('.load_more').on('click',function(){
 				}else{
 					res += '<span class="glyphicon glyphicon-chevron-up js_mssg_upvote static_mssg_upvote" id="mssg_upvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="top"></span> <div class="upvote_count" id="mssg_votes_' + val.id + '">' + (val.upvotes - val.downvotes) + '</div> <span class="glyphicon glyphicon-chevron-down js_mssg_downvote static_mssg_downvote" id="mssg_downvote_' + val.id + '" data-toggle="tooltip" data-original-title="You must be logged in to vote on responses" data-container="body" data-placement="bottom"></span></div>';
 				}
-				res += '<div class="mssg_body author_' + val.author + '">';
+				res += '<div class="static_mssg_body js_mssg_body author_' + val.author + '">';
 				res += '<div id="toggle_' + val.id + '" class="toggle_responses"> <span class="caret caret_tooltip" id="caret_' + val.id + '" data-toggle="tooltip" data-original-title="Hide Responses" data-container="body" data-placement="top"></span> </div>';
 				if(val.message != 'This response has been deleted' && (module.serial_tracker == val.author || module.user_tracker == val.author)){
 					res += '<span id="remove_' + val.id + '" class="glyphicon glyphicon-remove mssg_icon" data-mssg-serial="' + val.serial + '" style="margin-right:5px;" data-toggle="tooltip" title="Delete post" data-container="body" data-placement="top"></span>';	
@@ -2741,8 +2739,18 @@ $('#message').keyup(function(e){
 							$('.mssg_icon').tooltip();
 							$('.caret_tooltip').tooltip();
 							$('.enter_hint').text('Sending...');
-							module.socket.emit('message_sent',{message:mssg_sent,responseto:0,y_dim:0,parent:0,tmp_mssg_cnt:module.tmp_mssg_cnt},function(){
+							module.socket.emit('message_sent',{message:mssg_sent,responseto:0,y_dim:0,parent:0,tmp_mssg_cnt:module.tmp_mssg_cnt},function(info){
 								$('.enter_hint').text('Sent');
+								var tmp_message = $('#chat_display').find('.tmp_chat_mssg_' + info.tmp_mssg_cnt);
+								tmp_message.removeClass('tmp_chat_mssg_' + info.tmp_mssg_cnt);
+								tmp_message.attr('id','mssg_cont_' + info.id);
+								tmp_message.find('.js_mssg').attr('id','message_' + info.id);
+								tmp_message.find('.js_mssg_upvote').attr('id','mssg_upvote_' + info.id);
+								tmp_message.find('.upvote_count').attr('id','mssg_votes_' + info.id);
+								tmp_message.find('.js_mssg_downvote').attr('id','mssg_downvote_' + info.id);
+								tmp_message.find('.toggle_responses').attr('id','toggle_' + info.id);
+								tmp_message.find('.glyphicon-remove').attr('id','remove_' + info.id);
+								tmp_message.find('.reply_link').attr('data-mssg-id',info.id);
 							});
 							module.tmp_mssg_cnt++;
 						}else{
@@ -2759,10 +2767,27 @@ $('#message').keyup(function(e){
 							$('.mssg_icon').tooltip();
 							$('.caret_tooltip').tooltip();
 							$('.enter_hint').text('Sending...');
-							module.socket.emit('message_sent',{message:mssg_sent,responseto:responseto,y_dim:y_dim,parent:resp_parent,tmp_mssg_cnt:module.tmp_mssg_cnt},function(){
+							module.socket.emit('message_sent',{message:mssg_sent,responseto:responseto,y_dim:y_dim,parent:resp_parent,tmp_mssg_cnt:module.tmp_mssg_cnt},function(info){
 								$('.enter_hint').text('Sent');
+								var tmp_message = $('#chat_display').find('.tmp_chat_message_' + info.tmp_mssg_cnt);
+								tmp_message.removeClass('tmp_chat_mssg_' + info.tmp_mssg_cnt);
+								tmp_message.attr('id','mssg_cont_' + info.id);
+								tmp_message.find('.js_mssg').attr('id','message_' + info.id);
+								tmp_message.find('.js_mssg_upvote').attr('id','mssg_upvote_' + info.id);
+								tmp_message.find('.upvote_count').attr('id','mssg_votes_' + info.id);
+								tmp_message.find('.js_mssg_downvote').attr('id','mssg_downvote_' + info.id);
+								tmp_message.find('.toggle_responses').attr('id','toggle_' + info.id);
+								tmp_message.find('.glyphicon-remove').attr('id','remove_' + info.id);
+								tmp_message.find('.reply_link').attr('data-mssg-id',info.id);
 							});	
 							module.tmp_mssg_cnt++;
+						}
+						if(!module.stop_scroll){
+							module.scroll_mod_active = 0;
+							$('.chat_main').mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
+							window.setTimeout(function(){
+								module.scroll_mod_active = 1;
+							},100);
 						}
 					}else{
 						$('.enter_hint').text('You are disconnected');

@@ -728,8 +728,18 @@ $('#message').keyup(function(e){
 							$('.mssg_icon').tooltip();
 							$('.caret_tooltip').tooltip();
 							$('.enter_hint').text('Sending...');
-							module.socket.emit('message_sent',{message:mssg_sent,responseto:0,y_dim:0,parent:0,tmp_mssg_cnt:module.tmp_mssg_cnt},function(){
+							module.socket.emit('message_sent',{message:mssg_sent,responseto:0,y_dim:0,parent:0,tmp_mssg_cnt:module.tmp_mssg_cnt},function(info){
 								$('.enter_hint').text('Sent');
+								var tmp_message = $('#chat_display').find('.tmp_chat_mssg_' + info.tmp_mssg_cnt);
+								tmp_message.removeClass('tmp_chat_mssg_' + info.tmp_mssg_cnt);
+								tmp_message.attr('id','mssg_cont_' + info.id);
+								tmp_message.find('.js_mssg').attr('id','message_' + info.id);
+								tmp_message.find('.js_mssg_upvote').attr('id','mssg_upvote_' + info.id);
+								tmp_message.find('.upvote_count').attr('id','mssg_votes_' + info.id);
+								tmp_message.find('.js_mssg_downvote').attr('id','mssg_downvote_' + info.id);
+								tmp_message.find('.toggle_responses').attr('id','toggle_' + info.id);
+								tmp_message.find('.glyphicon-remove').attr('id','remove_' + info.id);
+								tmp_message.find('.reply_link').attr('data-mssg-id',info.id);
 							});
 							module.tmp_mssg_cnt++;
 						}else{
@@ -746,10 +756,27 @@ $('#message').keyup(function(e){
 							$('.mssg_icon').tooltip();
 							$('.caret_tooltip').tooltip();
 							$('.enter_hint').text('Sending...');
-							module.socket.emit('message_sent',{message:mssg_sent,responseto:responseto,y_dim:y_dim,parent:resp_parent,tmp_mssg_cnt:module.tmp_mssg_cnt},function(){
+							module.socket.emit('message_sent',{message:mssg_sent,responseto:responseto,y_dim:y_dim,parent:resp_parent,tmp_mssg_cnt:module.tmp_mssg_cnt},function(info){
 								$('.enter_hint').text('Sent');
+								var tmp_message = $('#chat_display').find('.tmp_chat_message_' + info.tmp_mssg_cnt);
+								tmp_message.removeClass('tmp_chat_mssg_' + info.tmp_mssg_cnt);
+								tmp_message.attr('id','mssg_cont_' + info.id);
+								tmp_message.find('.js_mssg').attr('id','message_' + info.id);
+								tmp_message.find('.js_mssg_upvote').attr('id','mssg_upvote_' + info.id);
+								tmp_message.find('.upvote_count').attr('id','mssg_votes_' + info.id);
+								tmp_message.find('.js_mssg_downvote').attr('id','mssg_downvote_' + info.id);
+								tmp_message.find('.toggle_responses').attr('id','toggle_' + info.id);
+								tmp_message.find('.glyphicon-remove').attr('id','remove_' + info.id);
+								tmp_message.find('.reply_link').attr('data-mssg-id',info.id);
 							});	
 							module.tmp_mssg_cnt++;
+						}
+						if(!module.stop_scroll){
+							module.scroll_mod_active = 0;
+							$('.chat_main').mCustomScrollbar('scrollTo','bottom',{scrollInertia:0});	
+							window.setTimeout(function(){
+								module.scroll_mod_active = 1;
+							},100);
 						}
 					}else{
 						$('.enter_hint').text('You are disconnected');
