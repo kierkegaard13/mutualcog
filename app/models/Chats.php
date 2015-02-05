@@ -75,9 +75,9 @@ class Chats extends EloquentBridge
 
 	public function seen(){
 		if(Auth::check()){
-			return count(UsersToChats::whereuser_id(Auth::user()->id)->wherechat_id($this->id)->first());
+			return count(UsersToChats::select('id')->whereuser_id(Auth::user()->id)->wherechat_id($this->id)->first());
 		}else{
-			return count(UsersToChats::whereuser_id(Session::get('serial_id'))->wherechat_id($this->id)->first());
+			return count(UsersToChats::select('id')->whereuser_id(Session::get('serial_id'))->wherechat_id($this->id)->first());
 		}
 	}
 

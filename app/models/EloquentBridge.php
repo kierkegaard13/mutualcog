@@ -18,7 +18,7 @@ class EloquentBridge extends Eloquent
 		return $this->attributes;
 	}
 
-	public function findAll()
+	public function findAll($single = 0)
 	{
 		$model_atts = $this->getAttributes();
 		$table = explode('_',$this->getTable());
@@ -32,7 +32,11 @@ class EloquentBridge extends Eloquent
 		foreach($model_atts as $traitname => $trait){
 			$result = $result->where($traitname,$trait);
 		}
-		$result = $result->get();
+		if($single){
+			$result = $result->first();
+		}else{
+			$result = $result->get();
+		}
 		if(count($result) == 0){
 			$result = array();
 		}else if(count($result) == 1){

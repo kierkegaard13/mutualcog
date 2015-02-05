@@ -963,7 +963,13 @@ module.socket.on('softDelete',function(mssg_info){
 	if($('#message_' + mssg_info.id + '.chat_mssg').length){
 		$('.mssg_icon').tooltip('hide');
 		$('.mssg_icon').tooltip();
-		$('#message_' + mssg_info.id + '.chat_mssg').find('.js_mssg_body').html("<strong class='mssg_op' id='" + mssg_info.user + "' style='color:" + module.color_arr[mssg_info.mssg_serial % 7] + ";'>" + mssg_info.user + " (<span class='response_count' id='" + mssg_info.id + "'>" + mssg_info.responses + "</span>)</strong> : <em>This message has been deleted</em>");
+		var mssg = $('#message_' + mssg_info.id + '.chat_mssg').find('.js_mssg_body');
+		var tmp = mssg.find('.toggle_responses');
+		var tmp2 = mssg.find('.time_box');
+		mssg.html('');
+		mssg.append(tmp);
+		mssg.append("<strong class='mssg_op' id='" + mssg_info.user + "' style='color:" + module.color_arr[mssg_info.mssg_serial % 7] + ";'>" + mssg_info.user + " </strong> : <em>This message has been deleted</em>");
+		mssg.append(tmp2);
 	}
 });
 

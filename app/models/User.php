@@ -130,7 +130,7 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 	}
 
 	public function recent(){
-		return $this->belongsToMany('Chats','users_to_chats','user_id','chat_id')->take(20);
+		return $this->belongsToMany('Chats','users_to_chats','user_id','chat_id')->take(20)->orderBy('updated_at','desc');
 	}
 
 	public function friendships(){
@@ -155,23 +155,23 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 	}
 
 	public function owned(){
-		return count(UsersToCommunities::whereuser_id($this->id)->whereis_admin(1)->get());
+		return count(UsersToCommunities::select('id')->whereuser_id($this->id)->whereis_admin(1)->get());
 	}
 
 	public function upvotedChats(){
-		return ChatsVoted::whereuser_id($this->id)->wherestatus(1)->take(1000)->get();
+		return ChatsVoted::select('chat_id','status')->whereuser_id($this->id)->wherestatus(1)->take(1000)->get();
 	}
 
 	public function downvotedChats(){
-		return ChatsVoted::whereuser_id($this->id)->wherestatus(-1)->take(1000)->get();
+		return ChatsVoted::select('chat_id','status')->whereuser_id($this->id)->wherestatus(-1)->take(1000)->get();
 	}
 
 	public function upvotedMessages(){
-		return MessagesVoted::whereuser_id($this->id)->wherestatus(1)->get();
+		return MessagesVoted::select('message_id','status')->whereuser_id($this->id)->wherestatus(1)->get();
 	}
 
 	public function downvotedMessages(){
-		return MessagesVoted::whereuser_id($this->id)->wherestatus(-1)->get();
+		return MessagesVoted::select('message_id','status')->whereuser_id($this->id)->wherestatus(-1)->get();
 	}
 
 	public function notifications(){

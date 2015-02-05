@@ -11,7 +11,7 @@ class U extends BaseController {
 		$mssg_downvoted = array();
 		$user = new User();
 		$user->name = $username;
-		$user = $user->findAll();
+		$user = $user->findAll(1);
 		if(!$user){
 			return View::make('missing');
 		}	

@@ -26,11 +26,8 @@ class Chat extends BaseController {
 			$node->user_id = Auth::user()->id;
 			$node->user = Auth::user()->name;
 			$node->serial_id = Auth::user()->serial_id;
-			if($node->findAll()){
-				$node = $node->findAll();
-				if(sizeof($node) > 1){
-					$node = $node[0];
-				}
+			if($node->findAll(1)){
+				$node = $node->findAll(1);
 			}
 			$node->serial = Session::get('unique_serial');
 			$node->serial_id = Session::get('serial_id');
