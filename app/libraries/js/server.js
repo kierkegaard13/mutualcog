@@ -263,7 +263,7 @@ module.socket.on('check_live',function(live){
 	$('#chat_display').on('click','.mssg_icon',deleteIt);
 	$('#chat_display').on('click','.js_mssg_upvote',upvoteMssg);
 	$('#chat_display').on('click','.js_mssg_downvote',downvoteMssg);
-	$('#chat_display').on('click','.chat_mssg',setClicked);
+	$('body').on('click','.chat_mssg',setClicked);
 	$('#chat_display').on('click','.chat_link',function(e){e.stopPropagation();});
 });
 

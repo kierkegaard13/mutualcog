@@ -136,6 +136,7 @@
 	<ul class="dropdown-menu" role="menu" style="width:191px;margin-top:-1px;border:none;">
 		<li><a class="show_subscriptions" href="#">Subscriptions</a></li>
 		<li><a class="show_friends" href="#" style="display:none;">Friends</a></li>
+		<li><a class="show_recent" href="#">Recent</a></li>
 	</ul>
 </div>
 <div id="friend_box_cont">
@@ -167,6 +168,13 @@
 	{% else %}
 		<div class="subscription">No subscriptions</div>
 	{% endfor %}
+</div>
+<div id="recent_cont">
+	{% for chat in user.recent %}
+		<a class="recent" href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}">{{chat.title}}</a>
+	{% else %}
+		<div class="recent">No recent chats</div>
+	{% endfor %} 
 </div>
 </div>
 {% endblock %}

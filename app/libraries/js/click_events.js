@@ -499,18 +499,31 @@ $('.register_link').click(function(){
 $('.show_subscriptions').click(function(){
 	$('.left_menu_toggle').html('Subscriptions <strong class="caret" style="color:white;"></strong>');
 	$('.show_friends').show();
+	$('.show_recent').show();
 	$('#friend_box_cont').hide();
+	$('#recent_cont').hide();
 	$('#subscription_cont').show('slide');
+	$(this).hide();
+});
+$('.show_recent').click(function(){
+	$('.left_menu_toggle').html('Recent <strong class="caret" style="color:white;"></strong>');
+	$('.show_subscriptions').show();
+	$('.show_friends').show();
+	$('#friend_box_cont').hide();
+	$('#subscription_cont').hide();
+	$('#recent_cont').show('slide');
 	$(this).hide();
 });
 $('.show_friends').click(function(){
 	$('.left_menu_toggle').html('Friends <strong class="caret" style="color:white;"></strong>');
 	$('.show_subscriptions').show();
+	$('.show_recent').show();
 	$('#friend_box_cont').show('slide');
 	$('#subscription_cont').hide();
+	$('#recent_cont').hide();
 	$(this).hide();
 });
-$('#chat_display').on('click','.toggle_responses',getResponses);
+$('body').on('click','.toggle_responses',getResponses);
 $('.static_chat_content').on('click','.toggle_responses',getStaticResponses);
 $('.request_btn').on('click',function(){  //TODO complete seen notification func
 	
