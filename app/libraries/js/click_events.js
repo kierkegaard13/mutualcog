@@ -504,6 +504,7 @@ $('.show_friends').click(function(){
 	$('#subscription_cont').hide();
 	$('#recent_cont').hide();
 	$(this).hide();
+	$(this).dropdown('toggle');
 	$.ajax({
 		type:'GET',
 		data:{status:0},
@@ -511,6 +512,7 @@ $('.show_friends').click(function(){
 		success:function(){	
 		}
 	});
+	return false;
 });
 $('.show_subscriptions').click(function(){
 	$('.left_menu_toggle').html('Subscriptions <strong class="caret" style="color:white;"></strong>');
@@ -520,6 +522,7 @@ $('.show_subscriptions').click(function(){
 	$('#recent_cont').hide();
 	$('#subscription_cont').show('slide');
 	$(this).hide();
+	$(this).dropdown('toggle');
 	$.ajax({
 		type:'GET',
 		data:{status:1},
@@ -527,6 +530,7 @@ $('.show_subscriptions').click(function(){
 		success:function(){	
 		}
 	});
+	return false;
 });
 $('.show_recent').click(function(){
 	$('.left_menu_toggle').html('Recent <strong class="caret" style="color:white;"></strong>');
@@ -536,6 +540,7 @@ $('.show_recent').click(function(){
 	$('#subscription_cont').hide();
 	$('#recent_cont').show('slide');
 	$(this).hide();
+	$(this).dropdown('toggle');
 	$.ajax({
 		type:'GET',
 		data:{status:2},
@@ -543,6 +548,7 @@ $('.show_recent').click(function(){
 		success:function(){	
 		}
 	});
+	return false;
 });
 $('body').on('click','.toggle_responses',getResponses);
 $('.static_chat_content').on('click','.toggle_responses',getStaticResponses);

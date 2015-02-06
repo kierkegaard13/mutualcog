@@ -2,6 +2,10 @@ $('body').on('click','.mutual_route',function(){
 	var route_url = $(this).attr('href');
 	var route_uri = route_url.replace('//','');
 	var main_html = $('#main').html();
+	var side_html = $('#side').html();
+	var old_url = document.URL;
+	var nav = $('.highlight_light_blue');
+	var new_nav = $(this);
 	route_uri = route_uri.slice(route_uri.indexOf('/'));
 	$('.mutual_route').removeClass('highlight_light_blue');
 	$(this).addClass('highlight_light_blue');
@@ -10,7 +14,6 @@ $('body').on('click','.mutual_route',function(){
 		type:'GET',
 		url:route_url,
 		success:function(hresp){
-			module.url_state.unshift({html:main_html,url:document.URL,side:$('#side').html()});
 			window.history.pushState(null,null,route_uri);	
 			$('#main').html(hresp.view);
 			$('#sid').attr('data-sid',hresp.sid);
@@ -31,6 +34,14 @@ $('body').on('click','.mutual_route',function(){
 				$('#community_info_box').hide();
 			}
 			startup();
+			if(module.url_state_pntr == -1){
+				module.url_state.push({html:main_html,url:old_url,side:side_html,nav:nav});
+				module.url_state.push({html:$('#main').html(),url:document.URL,side:$('#side').html(),nav:new_nav});
+				module.url_state_pntr++;
+			}else{
+				module.url_state.push({html:$('#main').html(),url:document.URL,side:$('#side').html(),nav:new_nav});
+				module.url_state_pntr++;
+			}
 			if(module.chat_id){
 				module.socket.emit('leave_room',module.chat_id);
 				module.chat_id = null;
@@ -51,8 +62,15 @@ $('body').on('click','.mutual_route',function(){
 });
 
 window.onpopstate = function(e){
-	var state = module.url_state.shift();
-	startup();
-	$('#main').html(state.html);
-	$('#side').html(state.side);
+	console.log(module.url_state);
+	console.log(module.url_state_pntr);
+	if(module.url_state_pntr != -1){
+		var state = module.url_state[module.url_state_pntr];
+		$('.mutual_route').removeClass('highlight_light_blue');
+		state.nav.addClass('highlight_light_blue');
+		$('#main').html(state.html);
+		$('#side').html(state.side);
+		startup();
+		module.url_state_pntr--;
+	}
 };

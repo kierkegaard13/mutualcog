@@ -2,6 +2,10 @@ $('body').on('click','.mutual_route',function(){
 	var route_url = $(this).attr('href');
 	var route_uri = route_url.replace('//','');
 	var main_html = $('#main').html();
+	var side_html = $('#side').html();
+	var old_url = document.URL;
+	var nav = $('.highlight_light_blue');
+	var new_nav = $(this);
 	route_uri = route_uri.slice(route_uri.indexOf('/'));
 	$('.mutual_route').removeClass('highlight_light_blue');
 	$(this).addClass('highlight_light_blue');
@@ -10,7 +14,6 @@ $('body').on('click','.mutual_route',function(){
 		type:'GET',
 		url:route_url,
 		success:function(hresp){
-			module.url_state.unshift({html:main_html,url:document.URL,side:$('#side').html()});
 			window.history.pushState(null,null,route_uri);	
 			$('#main').html(hresp.view);
 			$('#sid').attr('data-sid',hresp.sid);
@@ -31,6 +34,14 @@ $('body').on('click','.mutual_route',function(){
 				$('#community_info_box').hide();
 			}
 			startup();
+			if(module.url_state_pntr == -1){
+				module.url_state.push({html:main_html,url:old_url,side:side_html,nav:nav});
+				module.url_state.push({html:$('#main').html(),url:document.URL,side:$('#side').html(),nav:new_nav});
+				module.url_state_pntr++;
+			}else{
+				module.url_state.push({html:$('#main').html(),url:document.URL,side:$('#side').html(),nav:new_nav});
+				module.url_state_pntr++;
+			}
 			if(module.chat_id){
 				module.socket.emit('leave_room',module.chat_id);
 				module.chat_id = null;
@@ -51,10 +62,17 @@ $('body').on('click','.mutual_route',function(){
 });
 
 window.onpopstate = function(e){
-	var state = module.url_state.shift();
-	startup();
-	$('#main').html(state.html);
-	$('#side').html(state.side);
+	console.log(module.url_state);
+	console.log(module.url_state_pntr);
+	if(module.url_state_pntr != -1){
+		var state = module.url_state[module.url_state_pntr];
+		$('.mutual_route').removeClass('highlight_light_blue');
+		state.nav.addClass('highlight_light_blue');
+		$('#main').html(state.html);
+		$('#side').html(state.side);
+		startup();
+		module.url_state_pntr--;
+	}
 };
 
 marked.setOptions({
@@ -615,6 +633,7 @@ module = function(){
 	var crit_len = new Array();
 	var url_state = new Array();
 	var pm_scroll_inactive = {};
+	var url_state_pntr = -1;
 	var tmp_mssg_cnt = title_blinking = chat_scroll_timer = typ_cnt = connected = recent = banned = stop_scroll = scroll_button_clicked = scroll_top = 0;
 	var clicked_on = -1;
 	if($('.chat_id').length){
@@ -651,7 +670,7 @@ module = function(){
 	var max_info_length = 10000;
 	var search_messages = new Array("Use 'who like' to find users with certain interests","Use 'about' to find posts about a certain topic","Type 'here' to search current community","Use 'in' to search communities","Press enter for more results","Search for your interests or specific content");
 
-	return {url_state:url_state,tmp_mssg_cnt:tmp_mssg_cnt,search_messages:search_messages,crit_len:crit_len,chat_scroll_timer:chat_scroll_timer,max_title_length:max_title_length,max_user_length:max_user_length,max_static_length:max_static_length,max_chat_mssg_length:max_chat_mssg_length,max_description_length:max_description_length,max_info_length:max_info_length,pm_scroll_inactive:pm_scroll_inactive,connected:connected,recent:recent,typ_cnt:typ_cnt,pm_info:pm_info,focused:focused,live:live,title_blinking:title_blinking,banned:banned,stop_scroll:stop_scroll,scroll_mod_active:scroll_mod_active,scroll_button_clicked:scroll_button_clicked,scroll_top:scroll_top,clicked_on:clicked_on,chat_id:chat_id,upvoted:upvoted,downvoted:downvoted,socket:socket,color_arr:color_arr,mems:mems,mods:mods,admin:admin,notifications_top_positions:notifications_top_positions,notifications_bottom_positions:notifications_bottom_positions,notifications_top_ids:notifications_top_ids,notifications_bottom_ids:notifications_bottom_ids,serial_id:serial_id,serial_tracker:serial_tracker,user_id:user_id,user_tracker:user_tracker};
+	return {url_state_pntr:url_state_pntr,url_state:url_state,tmp_mssg_cnt:tmp_mssg_cnt,search_messages:search_messages,crit_len:crit_len,chat_scroll_timer:chat_scroll_timer,max_title_length:max_title_length,max_user_length:max_user_length,max_static_length:max_static_length,max_chat_mssg_length:max_chat_mssg_length,max_description_length:max_description_length,max_info_length:max_info_length,pm_scroll_inactive:pm_scroll_inactive,connected:connected,recent:recent,typ_cnt:typ_cnt,pm_info:pm_info,focused:focused,live:live,title_blinking:title_blinking,banned:banned,stop_scroll:stop_scroll,scroll_mod_active:scroll_mod_active,scroll_button_clicked:scroll_button_clicked,scroll_top:scroll_top,clicked_on:clicked_on,chat_id:chat_id,upvoted:upvoted,downvoted:downvoted,socket:socket,color_arr:color_arr,mems:mems,mods:mods,admin:admin,notifications_top_positions:notifications_top_positions,notifications_bottom_positions:notifications_bottom_positions,notifications_top_ids:notifications_top_ids,notifications_bottom_ids:notifications_bottom_ids,serial_id:serial_id,serial_tracker:serial_tracker,user_id:user_id,user_tracker:user_tracker};
 }();
 
 var selected_term = -1;
@@ -1663,6 +1682,7 @@ $('.show_friends').click(function(){
 	$('#subscription_cont').hide();
 	$('#recent_cont').hide();
 	$(this).hide();
+	$(this).dropdown('toggle');
 	$.ajax({
 		type:'GET',
 		data:{status:0},
@@ -1670,6 +1690,7 @@ $('.show_friends').click(function(){
 		success:function(){	
 		}
 	});
+	return false;
 });
 $('.show_subscriptions').click(function(){
 	$('.left_menu_toggle').html('Subscriptions <strong class="caret" style="color:white;"></strong>');
@@ -1679,6 +1700,7 @@ $('.show_subscriptions').click(function(){
 	$('#recent_cont').hide();
 	$('#subscription_cont').show('slide');
 	$(this).hide();
+	$(this).dropdown('toggle');
 	$.ajax({
 		type:'GET',
 		data:{status:1},
@@ -1686,6 +1708,7 @@ $('.show_subscriptions').click(function(){
 		success:function(){	
 		}
 	});
+	return false;
 });
 $('.show_recent').click(function(){
 	$('.left_menu_toggle').html('Recent <strong class="caret" style="color:white;"></strong>');
@@ -1695,6 +1718,7 @@ $('.show_recent').click(function(){
 	$('#subscription_cont').hide();
 	$('#recent_cont').show('slide');
 	$(this).hide();
+	$(this).dropdown('toggle');
 	$.ajax({
 		type:'GET',
 		data:{status:2},
@@ -1702,6 +1726,7 @@ $('.show_recent').click(function(){
 		success:function(){	
 		}
 	});
+	return false;
 });
 $('body').on('click','.toggle_responses',getResponses);
 $('.static_chat_content').on('click','.toggle_responses',getStaticResponses);
