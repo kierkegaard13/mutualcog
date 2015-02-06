@@ -132,14 +132,14 @@
 {% block friend_list %}
 <div class="hidden-xs hidden-sm friend_list">
 <div style="position:relative;">
-	<a href="#" class="dropdown-toggle left_menu_toggle" data-toggle="dropdown">Friends <strong class="caret" style="color:white;"></strong></a>
+	<a href="#" class="dropdown-toggle left_menu_toggle" data-toggle="dropdown">{% if user.l_menu_status == 0 %}Friends{% elseif user.l_menu_status == 1 %}Subscriptions{% else %}Recent{% endif %} <strong class="caret" style="color:white;"></strong></a>
 	<ul class="dropdown-menu" role="menu" style="width:191px;margin-top:-1px;border:none;">
-		<li><a class="show_subscriptions" href="#">Subscriptions</a></li>
-		<li><a class="show_friends" href="#" style="display:none;">Friends</a></li>
-		<li><a class="show_recent" href="#">Recent</a></li>
+		<li><a class="show_friends" href="#" {% if user.l_menu_status == 0 %}style="display:none;"{% endif %}>Friends</a></li>
+		<li><a class="show_subscriptions" href="#" {% if user.l_menu_status == 1 %}style="display:none;"{% endif %}>Subscriptions</a></li>
+		<li><a class="show_recent" href="#" {% if user.l_menu_status == 2 %}style="display:none;"{% endif %}>Recent</a></li>
 	</ul>
 </div>
-<div id="friend_box_cont">
+<div id="friend_box_cont" {% if user.l_menu_status != 0 %}style="display:none;"{% endif %}>
 {% for friendship in user.friendships %}
 	<div class="friend_box" id="friend_box_for_{{friendship.entity.name}}" data-friend-id="{{friendship.entity.id}}" data-pm-chat-id="{% if friendship.entity.privateChatF[0] %}{{friendship.entity.privateChatF[0].id}}{% else %}0{% endif %}" title="{{friendship.entity.online()}}">
 	{% if friendship.entity.online_score() < 600 %}
@@ -162,16 +162,16 @@
 	</div>
 {% endfor %}
 </div>
-<div id="subscription_cont">
+<div id="subscription_cont" {% if user.l_menu_status != 1 %}style="display:none;"{% endif %}>
 	{% for sub in user.subscriptions %}
 		<a class="subscription" href="{{site}}/c/{{sub.name}}">{{sub.name}}</a>
 	{% else %}
 		<div class="subscription">No subscriptions</div>
 	{% endfor %}
 </div>
-<div id="recent_cont">
+<div id="recent_cont" {% if user.l_menu_status != 2 %}style="display:none;"{% endif %}>
 	{% for chat in user.recent %}
-		<a class="recent" href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}">{{chat.title}}</a>
+		<a class="recent" href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}">{% if chat.title | length > 50 %}{{chat.title | slice(0,50)}}...{% else %}{{chat.title}}{% endif %}</a>
 	{% else %}
 		<div class="recent">No recent chats</div>
 	{% endfor %} 
@@ -336,6 +336,9 @@
 				{% endif %}
 				<a href="{{site}}/chat/{% if chat.live %}live{% else %}static{% endif %}/{{chat.id}}" style="color:gray;"><strong>{{chat.messages | length }} comments</strong></a>
 			</div>
+			<div id="description_{{chat.id}}" class="description_cont" {% if chat.link %}style="margin-left:100px;"{% endif %}>
+				{{chat.details | raw}}
+			</div>
 			<div> 
 				{% if chat.nsfw %}
 					<a href="{{site}}/{% if curr_community_id %}c/{{curr_community.name}}/{% endif %}nsfw" class="btn btn-danger btn-sm chat_info_link">NSFW</a>
@@ -374,9 +377,6 @@
 					<button class="btn btn-default btn-sm chat_info_link toggle_description">Show description</button>
 				{% endif %}
 			</div>
-			<div id="description_{{chat.id}}" class="description_cont" {% if chat.link %}style="margin-left:100px;"{% endif %}>
-				{{chat.details | raw}}
-			</div>
 		</div>
 	</div>
 </div>
@@ -414,7 +414,7 @@
 				{% if message.author in mods %}
 					<span class="glyphicon glyphicon-tower"></span>	
 				{% endif %}
-				<strong class="mssg_op" data-author="{{message.author}}"><a href="{{site}}/u/{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}}</a> (<span class="response_count" id="{{message.id}}">{{message.responses}}</span>)</strong> : {{message.message | raw}}
+				<strong class="mssg_op" data-author="{{message.author}}"><a href="{{site}}/u/{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}}</a></strong>: {{message.message | raw}}
 				<div class="time_box">
 					{% if not chat.live %}<div class="static_reply"><a href="#" class="reply_link" data-mssg-id="{{message.id}}"><strong>Reply</strong></a></div>{% endif %}
 					{% set time_passed = server_time|date('U') - message.created_at|date('U') %}
@@ -491,7 +491,7 @@
 				{% if response.author in mods %}
 					<span class="glyphicon glyphicon-tower"></span>	
 				{% endif %}
-				<strong class="mssg_op" data-author="{{response.author}}"><a href="{{site}}/u/{{response.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{response.author}}</a> (<span class="response_count" id="{{response.id}}">{{response.responses}}</span>)</strong> : {{response.message | raw}}
+				<strong class="mssg_op" data-author="{{response.author}}"><a href="{{site}}/u/{{response.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{response.author}}</a></strong>: {{response.message | raw}}
 				<div class="time_box">
 					{% if not chat.live %}<div class="static_reply"><a href="#" class="reply_link" data-mssg-id="{{response.id}}"><strong>Reply</strong></a></div>{% endif %}
 					{% set time_passed = server_time|date('U') - response.created_at|date('U') %}

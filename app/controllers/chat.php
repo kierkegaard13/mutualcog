@@ -275,7 +275,7 @@ class Chat extends BaseController {
 
 	public function postMessage($chat_id){
 		$chat = Chats::find($chat_id);
-		$mssg_content = Input::get('mssg_content');
+		$mssg_content = htmlentities(Input::get('mssg_content'));
 		if(!$chat->live && strlen($mssg_content) < $this->max_static_length){
 			$message = new Messages();
 			$message->chat_id = htmlentities($chat_id);
@@ -322,6 +322,24 @@ class Chat extends BaseController {
 			return $this->returnToCurrPage();
 		}
 		return Redirect::to(action('chat@getLive',$chat_id));
+	}
+
+	public function getEditMessage($mssg_id){
+		$mssg_content = htmlentities(Input::get('content'));
+		$mssg = Messages::find($mssg_id);
+		//TODO add raw mssg content
+		if(Auth::check()){
+			if($mssg->user_id == Auth::user()->id){
+				$mssg->message = $this->parseText($mssg_content);
+				$mssg->save();
+			}
+		}else{
+			if($mssg->user_id == Session::get('serial_id')){
+				$mssg->message = $this->parseText($mssg_content);
+				$mssg->save();
+			}
+		}
+		return $this->returnToCurrPage();
 	}
 
 	public function getPauseChat($chat_id){

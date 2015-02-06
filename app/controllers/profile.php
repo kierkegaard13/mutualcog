@@ -2,6 +2,17 @@
 
 class Profile extends BaseController {
 
+	public function getSetStatus($user_id){
+		$status = htmlentities(Input::get('status'));
+		if(Auth::check()){
+			Auth::user()->l_menu_status = $status;
+			Auth::user()->save();
+			return 1;
+		}else{
+			return 0;
+		}
+	}
+
 	public function getRemoveNotification(){
 		$note_id = Input::get('note_id');
 		if($note_id){

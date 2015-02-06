@@ -496,6 +496,22 @@ $('#show_mobile_notifications').click(function(){
 $('.register_link').click(function(){
 	$('#reg_modal_title').text('Create an account');
 });
+$('.show_friends').click(function(){
+	$('.left_menu_toggle').html('Friends <strong class="caret" style="color:white;"></strong>');
+	$('.show_subscriptions').show();
+	$('.show_recent').show();
+	$('#friend_box_cont').show('slide');
+	$('#subscription_cont').hide();
+	$('#recent_cont').hide();
+	$(this).hide();
+	$.ajax({
+		type:'GET',
+		data:{status:0},
+		url:'//mutualcog.com/profile/set-status/' + module.user_id,
+		success:function(){	
+		}
+	});
+});
 $('.show_subscriptions').click(function(){
 	$('.left_menu_toggle').html('Subscriptions <strong class="caret" style="color:white;"></strong>');
 	$('.show_friends').show();
@@ -504,6 +520,13 @@ $('.show_subscriptions').click(function(){
 	$('#recent_cont').hide();
 	$('#subscription_cont').show('slide');
 	$(this).hide();
+	$.ajax({
+		type:'GET',
+		data:{status:1},
+		url:'//mutualcog.com/profile/set-status/' + module.user_id,
+		success:function(){	
+		}
+	});
 });
 $('.show_recent').click(function(){
 	$('.left_menu_toggle').html('Recent <strong class="caret" style="color:white;"></strong>');
@@ -513,15 +536,13 @@ $('.show_recent').click(function(){
 	$('#subscription_cont').hide();
 	$('#recent_cont').show('slide');
 	$(this).hide();
-});
-$('.show_friends').click(function(){
-	$('.left_menu_toggle').html('Friends <strong class="caret" style="color:white;"></strong>');
-	$('.show_subscriptions').show();
-	$('.show_recent').show();
-	$('#friend_box_cont').show('slide');
-	$('#subscription_cont').hide();
-	$('#recent_cont').hide();
-	$(this).hide();
+	$.ajax({
+		type:'GET',
+		data:{status:2},
+		url:'//mutualcog.com/profile/set-status/' + module.user_id,
+		success:function(){	
+		}
+	});
 });
 $('body').on('click','.toggle_responses',getResponses);
 $('.static_chat_content').on('click','.toggle_responses',getStaticResponses);
@@ -554,6 +575,26 @@ $('#community_dropdown').on('click','.search_link',function(){
 });	
 $('#main').on('click','.edit_chat_link',function(e){
 	var cont = $(this).parents('.chat_title_box');
+	$('#Title_v3').val(cont.find('.chat_title_str').text());
+	$('#Link_v3').val(cont.find('.chat_link_str').text());
+	$('#Communities_v3').val(cont.find('.chat_community_str').text());
+	$('#description_v3').val(cont.find('.chat_desc_str').text());
+	$('#form_chat_id').val(cont.find('.chat_id_str').text());
+	if(cont.find('.chat_live_str').text() == 1){
+		$('#live_status_v3').attr('checked',true);
+	}else{
+		$('#live_status_v3').attr('checked',false);
+	}
+	if(cont.find('.chat_nsfw_str').text() == 1){
+		$('#nsfw_v3').attr('checked',true);
+	}else{
+		$('#nsfw_v3').attr('checked',false);
+	}
+	$('#edit_modal').modal();
+	return false;
+});
+$('#side').on('click','.edit_chat_link',function(e){
+	var cont = $(this).parent();
 	$('#Title_v3').val(cont.find('.chat_title_str').text());
 	$('#Link_v3').val(cont.find('.chat_link_str').text());
 	$('#Communities_v3').val(cont.find('.chat_community_str').text());
