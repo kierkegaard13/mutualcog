@@ -14,7 +14,6 @@ $('body').on('click','.mutual_route',function(){
 		type:'GET',
 		url:route_url,
 		success:function(hresp){
-			window.history.pushState(null,null,route_uri);	
 			$('#main').html(hresp.view);
 			$('#sid').attr('data-sid',hresp.sid);
 			$('#serial_tracker').text(hresp.serial);
@@ -35,13 +34,15 @@ $('body').on('click','.mutual_route',function(){
 			}
 			startup();
 			if(module.url_state_pntr == -1){
+				window.history.replaceState({pntr:0},null,document.documentURI);	
 				module.url_state.push({html:main_html,url:old_url,side:side_html,nav:nav});
 				module.url_state.push({html:$('#main').html(),url:document.URL,side:$('#side').html(),nav:new_nav});
-				module.url_state_pntr++;
+				module.url_state_pntr += 2;
 			}else{
 				module.url_state.push({html:$('#main').html(),url:document.URL,side:$('#side').html(),nav:new_nav});
 				module.url_state_pntr++;
 			}
+			window.history.pushState({pntr:module.url_state_pntr},null,route_uri);	
 			if(module.chat_id){
 				module.socket.emit('leave_room',module.chat_id);
 				module.chat_id = null;
@@ -62,16 +63,20 @@ $('body').on('click','.mutual_route',function(){
 });
 
 window.onpopstate = function(e){
-	console.log(module.url_state);
-	console.log(module.url_state_pntr);
-	if(module.url_state_pntr != -1){
-		var state = module.url_state[module.url_state_pntr];
+	if(e.state !== null){
+		var state = module.url_state[e.state.pntr];
 		$('.mutual_route').removeClass('highlight_light_blue');
 		state.nav.addClass('highlight_light_blue');
 		$('#main').html(state.html);
 		$('#side').html(state.side);
 		startup();
-		module.url_state_pntr--;
+	}else{
+		var state = module.url_state[0];
+		$('.mutual_route').removeClass('highlight_light_blue');
+		state.nav.addClass('highlight_light_blue');
+		$('#main').html(state.html);
+		$('#side').html(state.side);
+		startup();
 	}
 };
 
@@ -1778,7 +1783,7 @@ $('#main').on('click','.edit_chat_link',function(e){
 	return false;
 });
 $('#side').on('click','.edit_chat_link',function(e){
-	var cont = $(this).parent();
+	var cont = $(this).parents('.chat_title_cont');
 	$('#Title_v3').val(cont.find('.chat_title_str').text());
 	$('#Link_v3').val(cont.find('.chat_link_str').text());
 	$('#Communities_v3').val(cont.find('.chat_community_str').text());
@@ -1957,10 +1962,10 @@ $('#main').on('click','.toggle_description',function(){
 	var descr = $(this).parent().parent().find('.description_cont');
 	if(descr.css('display') == 'none'){
 		$(this).html('Hide description'); 
-		descr.css('display','block');
+		descr.show();
 	}else{
 		$(this).html('Show description'); 
-		descr.css('display','none');
+		descr.hide();
 	}
 	return false;
 });	

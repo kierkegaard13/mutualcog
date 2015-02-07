@@ -600,7 +600,7 @@ $('#main').on('click','.edit_chat_link',function(e){
 	return false;
 });
 $('#side').on('click','.edit_chat_link',function(e){
-	var cont = $(this).parent();
+	var cont = $(this).parents('.chat_title_cont');
 	$('#Title_v3').val(cont.find('.chat_title_str').text());
 	$('#Link_v3').val(cont.find('.chat_link_str').text());
 	$('#Communities_v3').val(cont.find('.chat_community_str').text());
@@ -779,10 +779,10 @@ $('#main').on('click','.toggle_description',function(){
 	var descr = $(this).parent().parent().find('.description_cont');
 	if(descr.css('display') == 'none'){
 		$(this).html('Hide description'); 
-		descr.css('display','block');
+		descr.show();
 	}else{
 		$(this).html('Show description'); 
-		descr.css('display','none');
+		descr.hide();
 	}
 	return false;
 });	
