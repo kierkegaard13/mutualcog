@@ -36,12 +36,12 @@ class EloquentBridge extends Eloquent
 			$result = $result->first();
 		}else{
 			$result = $result->get();
+			if(count($result) == 0){
+				$result = array();
+			}else if(count($result) == 1){
+				$result = $result[0];
+			}
 		}
-		if(count($result) == 0){
-			$result = array();
-		}else if(count($result) == 1){
-			$result = $result[0];
-		}else{}
 		return $result;
 	}
 

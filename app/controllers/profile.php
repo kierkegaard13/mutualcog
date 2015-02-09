@@ -28,7 +28,9 @@ class Profile extends BaseController {
 				$saved->saved_type = 'messages';
 			}
 			$saved = $saved->findAll(1);
-			$saved->delete();
+			if($saved){
+				$saved->delete();
+			}
 		}
 		return $this->returnToCurrPage();
 	}

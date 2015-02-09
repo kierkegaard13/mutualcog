@@ -42,6 +42,7 @@ class C extends BaseController {
 		$chats = $chats->orderBy(DB::raw('chats_to_communities.pinned'),'desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
 		$upvoted = array();
 		$downvoted = array();
+		$saved = array();
 		if($this->isXhr()){
 			$view = View::make('home_view');
 		}else{
@@ -56,6 +57,9 @@ class C extends BaseController {
 			}
 			foreach(Auth::user()->downvotedChats() as $downvote){
 				$downvoted[] = $downvote->chat_id;
+			}
+			foreach(Auth::user()->savedChats as $s){
+				$saved[] = $s->id;
 			}
 			$usercommunity = UsersToCommunities::wherecommunity_id($curr_community->id)->whereuser_id(Auth::user()->id)->first();
 			if($usercommunity){
@@ -83,6 +87,7 @@ class C extends BaseController {
 		$view['community_mods'] = UsersToCommunities::whereis_mod('1')->wherecommunity_id($curr_community->id)->get();
 		$view['community_admin'] = UsersToCommunities::whereis_admin('1')->wherecommunity_id($curr_community->id)->first();
 		$view['upvoted'] = $upvoted;
+		$view['saved'] = $saved;
 		$view['downvoted'] = $downvoted;
 		$view['curr_time'] = date('Y:m:d:H:i'); 
 		$view['chats'] = $chats;

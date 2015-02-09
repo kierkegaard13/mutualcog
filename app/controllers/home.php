@@ -49,6 +49,7 @@ class Home extends BaseController {
 		$chats_rising = $chats_rising->remember(1)->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
 		$upvoted = array();
 		$downvoted = array();
+		$saved = array();
 		if(Auth::check()){
 			Auth::user()->page = 'home';
 			Auth::user()->chat_id = 0;
@@ -60,6 +61,9 @@ class Home extends BaseController {
 			}
 			foreach(Auth::user()->downvotedChats() as $downvote){
 				$downvoted[] = $downvote->chat_id;
+			}
+			foreach(Auth::user()->savedChats as $s){
+				$saved[] = $s->id;
 			}
 		}
 		Session::put('curr_page',URL::full());
@@ -73,6 +77,7 @@ class Home extends BaseController {
 		$view['curr_community_id'] = '';
 		$view['upvoted'] = $upvoted;
 		$view['downvoted'] = $downvoted;
+		$view['saved'] = $saved;
 		$view['chats'] = $chats;
 		$view['chats_new'] = $chats_new;
 		$view['chats_rising'] = $chats_rising;
