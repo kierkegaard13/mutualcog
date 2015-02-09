@@ -2,6 +2,37 @@
 
 class Profile extends BaseController {
 
+	public function getSave($type,$type_id){
+		if(Auth::check()){
+			$saved = new UsersToSaved();
+			$saved->user_id = Auth::user()->id;
+			$saved->saved_id = $type_id;
+			if($type == 'chat'){
+				$saved->saved_type = 'chats';
+			}else{
+				$saved->saved_type = 'messages';
+			}
+			$saved->save();
+		}
+		return $this->returnToCurrPage();
+	}
+
+	public function getUnsave($type,$type_id){
+		if(Auth::check()){
+			$saved = new UsersToSaved();
+			$saved->user_id = Auth::user()->id;
+			$saved->saved_id = $type_id;
+			if($type == 'chat'){
+				$saved->saved_type = 'chats';
+			}else{
+				$saved->saved_type = 'messages';
+			}
+			$saved = $saved->findAll(1);
+			$saved->delete();
+		}
+		return $this->returnToCurrPage();
+	}
+
 	public function getSetStatus($user_id){
 		$status = htmlentities(Input::get('status'));
 		if(Auth::check()){

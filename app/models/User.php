@@ -97,6 +97,14 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 		return $this->morphToMany('Concepts','entity','entities_to_concepts','entity_id','concept_id');
 	}
 
+	public function savedMessages(){
+		return $this->morphedByMany('Messages','saved','users_to_saved','user_id','saved_id');
+	}
+
+	public function savedChats(){
+		return $this->morphedByMany('Chats','saved','users_to_saved','user_id','saved_id');
+	}
+
 	public function messages(){
 		return $this->hasMany('Messages','user_id')->wheretype('public');
 	}

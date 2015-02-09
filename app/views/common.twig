@@ -373,6 +373,9 @@
 					{% endif %}
 				{% endif %}
 				<a href="{{site}}/chat/static/{{chat.id}}" class="btn btn-default btn-sm chat_info_link">Static</a>
+				{% if logged_in %}
+					<a href="{{site}}/profile/save/chat/{{chat.id}}" class="btn btn-default btn-sm chat_info_link">Save</a>
+				{% endif %}
 				{% if chat.details | length > 0 %}
 					<button class="btn btn-default btn-sm chat_info_link toggle_description">Show description</button>
 				{% endif %}

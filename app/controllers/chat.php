@@ -4,7 +4,7 @@ class Chat extends BaseController {
 
         public function getLive($chat_id){
                 $view = View::make('chat');
-		$chat = Chats::find($chat_id);
+		$chat = Chats::with('messages')->find($chat_id);
 		if(!isset($chat_id) || !$chat){
 			return App::abort(404,'You seem to have entered an invalid URL');
 		}
@@ -113,7 +113,7 @@ class Chat extends BaseController {
 
 	public function getStatic($chat_id,$mssg_id = null){
                 $view = View::make('static_chat');
-		$chat = Chats::find($chat_id);
+		$chat = Chats::with('messages')->find($chat_id);
 		if(!isset($chat_id) || !$chat){
 			return App::abort(404,'You seem to have entered an invalid URL');
 		}
