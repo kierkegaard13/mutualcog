@@ -54,6 +54,7 @@
 	<li><a href="#friendships" data-toggle="tab" style="color:#075de9">Friends</a></li>
 	{% if logged_in and user.id == profile.id %}
 		<li><a href="#abilities" data-toggle="tab" style="color:#075de9">Abilities</a></li>
+		<li><a href="#saved" data-toggle="tab" style="color:#075de9">Saved</a></li>
 	{% endif %}
 </ul>
 
@@ -165,19 +166,20 @@
 				</div>
 			{% else %}
 				<div style="padding:15px;border-bottom:solid 1px #ddd;">
+					{% set true_cost = ability.cost * ability.level * ability.scale %}
 					{% if ability.unlocked and ability.scalable %}
-						{% if user.cognizance > ability.cost %}
+						{% if user.cognizance > true_cost %}
 							<a href="{{site}}/profile/level/{{ability.id}}" class="btn btn-default btn-lg pull-right" title="Level Up" style="margin-top:15px;"><div class="glyphicon glyphicon-arrow-up"></div></a>
-						{% elseif user.total_cognizance > ability.cost %}
+						{% elseif user.total_cognizance > true_cost %}
 							<a href="{{site}}/profile/level/{{ability.id}}" class="btn btn-default btn-lg pull-right" title="Warning: you will lose levels if you level up" style="margin-top:15px;"><div class="glyphicon glyphicon-arrow-up"></div></a>
 						{% else %}
 							<a href="{{site}}/profile/level/{{ability.id}}" class="btn btn-default btn-lg pull-right" title="Not enough cognizance" style="margin-top:15px;" disabled="disabled"><div class="glyphicon glyphicon-arrow-up"></div></a>
 						{% endif %}
 					{% elseif ability.unlocked and not ability.scalable %}
 					{% else %}
-						{% if user.cognizance > ability.cost %}
+						{% if user.cognizance > true_cost %}
 							<a href="{{site}}/profile/unlock/{{ability.id}}" class="btn btn-default btn-lg pull-right" title="Unlock" style="margin-top:15px;"><div class="glyphicon glyphicon-lock"></div></a>
-						{% elseif user.total_cognizance > ability.cost %}
+						{% elseif user.total_cognizance > true_cost %}
 							<a href="{{site}}/profile/unlock/{{ability.id}}" class="btn btn-default btn-lg pull-right" title="Warning: you will lose levels if you unlock" style="margin-top:15px;"><div class="glyphicon glyphicon-lock"></div></a>
 						{% else %}
 							<a href="{{site}}/profile/unlock/{{ability.id}}" class="btn btn-default btn-lg pull-right" title="Not enough cognizance" style="margin-top:15px;" disabled="disabled"><div class="glyphicon glyphicon-lock"></div></a>
@@ -191,7 +193,7 @@
 							{{ability.description}}
 						</div>
 						<div class="ability_info">
-							<strong>Required Level:</strong> {{ability.required_level}}, <strong>Cost:</strong> {{ability.cost * ability.level * ability.scale}}
+							<strong>Required Level:</strong> {{ability.required_level}}, <strong>Cost:</strong> {{true_cost}}
 						</div>
 					</div>
 				</div>
@@ -200,8 +202,25 @@
 	</div>
 </div>
 
+<div class="tab-pane fade in" id="saved">
+	{% for save in saved_entities %}
+		{% if save.saved_type == 'chats' %}
+			{% set chat = save.savedEntity %}
+			{{ block('chat_box') }}
+		{% else %}
+			<div>
+				{{save.savedEntity.message}}
+			</div>
+		{% endif %}
+	{% else %}
+	No saved posts or messages
+	{% endfor %}
+	<div class="page_links">
+		{{saved_entities.links|raw}}
+	</div>
 </div>
 
+</div>
 </div>
 </div>
 </div>

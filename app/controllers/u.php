@@ -7,6 +7,7 @@ class U extends BaseController {
 		$view['friended'] = 0;
 		$upvoted = array();
 		$downvoted = array();
+		$saved = array();
 		$mssg_upvoted = array();
 		$mssg_downvoted = array();
 		$user = new User();
@@ -18,11 +19,9 @@ class U extends BaseController {
 		$requested = 0;
 		if(Auth::check()){
 			$requested = count(Notifications::wheresender_id(Auth::user()->id)->whereuser_id($user->id)->wheretype(2)->first());
-			foreach(Auth::user()->upvotedChats() as $upvote){
-				$upvoted[] = $upvote->chat_id;
-			}
-			foreach(Auth::user()->downvotedChats() as $downvote){
-				$downvoted[] = $downvote->chat_id;
+			$this->popVotedChats($upvoted,$downvoted);
+			foreach(Auth::user()->savedChats as $s){
+				$saved[] = $s->id;
 			}
 			foreach(Auth::user()->upvotedMessages() as $upvote){
 				$mssg_upvoted[] = $upvote->message_id;
@@ -60,9 +59,11 @@ class U extends BaseController {
 		}
 		Session::put('curr_page',URL::full());
 		$view['requested'] = $requested;
+		$view['saved'] = $saved;
 		$view['friendships'] = $user->friendshipsP();
 		$view['chats'] = $user->chatsP();
 		$view['messages'] = $user->messagesP();
+		$view['saved_entities'] = $user->savedEntities();
 		$view['color_arr'] = array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#000');
 		$view['curr_community_id'] = '';
 		$view['upvoted'] = $upvoted;

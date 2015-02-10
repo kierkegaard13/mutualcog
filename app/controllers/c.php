@@ -52,12 +52,7 @@ class C extends BaseController {
 		if(Auth::check()){
 			Auth::user()->page = $community;
 			Auth::user()->chat_id = 0;
-			foreach(Auth::user()->upvotedChats() as $upvote){
-				$upvoted[] = $upvote->chat_id;
-			}
-			foreach(Auth::user()->downvotedChats() as $downvote){
-				$downvoted[] = $downvote->chat_id;
-			}
+			$this->popVotedChats($upvoted,$downvoted);
 			foreach(Auth::user()->savedChats as $s){
 				$saved[] = $s->id;
 			}

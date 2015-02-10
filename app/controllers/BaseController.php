@@ -159,6 +159,30 @@ class BaseController extends Controller {
 		return $text;
 	}
 
+	public function nodeAuth(){
+		$node = new NodeAuth();
+		$node->user_id = Auth::user()->id;
+		$node->user = Auth::user()->name;
+		$node->serial_id = Auth::user()->serial_id;
+		if($node->findAll(1)){
+			$node = $node->findAll(1);
+		}
+		$node->serial = Session::get('unique_serial');
+		$node->serial_id = Session::get('serial_id');
+		$node->sid = Session::getId();
+		$node->authorized = 1;
+		$node->save();
+	}
+
+	public function popVotedChats(&$upvoted,&$downvoted){
+		foreach(Auth::user()->upvotedChats() as $upvote){
+			$upvoted[] = $upvote->chat_id;
+		}
+		foreach(Auth::user()->downvotedChats() as $downvote){
+			$downvoted[] = $downvote->chat_id;
+		}
+	}
+
 	public function returnToCurrPage(){
 		if(Session::has('curr_page')){
 			return Redirect::to(Session::get('curr_page'));

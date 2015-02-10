@@ -22,24 +22,8 @@ class Chat extends BaseController {
 			}
 			Auth::user()->chat_id = $chat_id;
 			Auth::user()->save();
-			$node = new NodeAuth();
-			$node->user_id = Auth::user()->id;
-			$node->user = Auth::user()->name;
-			$node->serial_id = Auth::user()->serial_id;
-			if($node->findAll(1)){
-				$node = $node->findAll(1);
-			}
-			$node->serial = Session::get('unique_serial');
-			$node->serial_id = Session::get('serial_id');
-			$node->sid = Session::getId();
-			$node->authorized = 1;
-			$node->save();
-			foreach(Auth::user()->upvotedChats() as $upvote){
-				$upvoted[] = $upvote->chat_id;
-			}
-			foreach(Auth::user()->downvotedChats() as $downvote){
-				$downvoted[] = $downvote->chat_id;
-			}
+			$this->nodeAuth();
+			$this->popVotedChats($upvoted,$downvoted);
 			foreach(Auth::user()->upvotedMessages() as $upvote){
 				$mssg_upvoted[] = $upvote->message_id;
 			}
@@ -126,12 +110,8 @@ class Chat extends BaseController {
 		if(Auth::check()){
 			Auth::user()->chat_id = $chat_id;
 			Auth::user()->save();
-			foreach(Auth::user()->upvotedChats() as $upvote){
-				$upvoted[] = $upvote->chat_id;
-			}
-			foreach(Auth::user()->downvotedChats() as $downvote){
-				$downvoted[] = $downvote->chat_id;
-			}
+			$this->nodeAuth();
+			$this->popVotedChats($upvoted,$downvoted);
 			foreach(Auth::user()->upvotedMessages() as $upvote){
 				$mssg_upvoted[] = $upvote->message_id;
 			}

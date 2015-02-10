@@ -56,12 +56,7 @@ class Home extends BaseController {
 			Auth::user()->community_admin = 0;
 			Auth::user()->community_mod = 0;
 			Auth::user()->save();
-			foreach(Auth::user()->upvotedChats() as $upvote){
-				$upvoted[] = $upvote->chat_id;
-			}
-			foreach(Auth::user()->downvotedChats() as $downvote){
-				$downvoted[] = $downvote->chat_id;
-			}
+			$this->popVotedChats($upvoted,$downvoted);
 			foreach(Auth::user()->savedChats as $s){
 				$saved[] = $s->id;
 			}

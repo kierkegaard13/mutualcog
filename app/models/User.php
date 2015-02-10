@@ -98,11 +98,15 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 	}
 
 	public function savedMessages(){
-		return $this->morphedByMany('Messages','saved','users_to_saved','user_id','saved_id');
+		return $this->morphedByMany('Messages','saved','users_to_saved','user_id','saved_id')->select('chats.id');
 	}
 
 	public function savedChats(){
-		return $this->morphedByMany('Chats','saved','users_to_saved','user_id','saved_id');
+		return $this->morphedByMany('Chats','saved','users_to_saved','user_id','saved_id')->select('chats.id');
+	}
+
+	public function savedEntities(){
+		return UsersToSaved::whereuser_id($this->id)->orderBy('created_at')->paginate(25);
 	}
 
 	public function messages(){
@@ -126,7 +130,7 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 	}
 
 	public function chatsP(){
-		return Chats::whereadmin_id($this->id)->paginate(25);
+		return Chats::whereadmin_id($this->id)->with('communities')->paginate(25);
 	}
 
 	public function chatRoom(){
