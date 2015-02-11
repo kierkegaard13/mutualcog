@@ -106,17 +106,17 @@
 	<div class="content box_r_2 side_content">
 <div class="chat_title_vote_box">
 	{% if chat.id in upvoted %}
-		<span class="glyphicon glyphicon-chevron-up chat_big_upvote js_upvote green_color" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+		<span class="glyphicon glyphicon-menu-up chat_big_upvote js_upvote green_color" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
 		<div class="chat_upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-		<span class="glyphicon glyphicon-chevron-down chat_big_downvote js_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+		<span class="glyphicon glyphicon-menu-down chat_big_downvote js_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
 	{% elseif chat.id in downvoted %}
-		<span class="glyphicon glyphicon-chevron-up chat_big_upvote js_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+		<span class="glyphicon glyphicon-menu-up chat_big_upvote js_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
 		<div class="chat_upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-		<span class="glyphicon glyphicon-chevron-down chat_big_downvote js_downvote red_color" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+		<span class="glyphicon glyphicon-menu-down chat_big_downvote js_downvote red_color" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
 	{% else %}
-		<span class="glyphicon glyphicon-chevron-up chat_big_upvote js_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
+		<span class="glyphicon glyphicon-menu-up chat_big_upvote js_upvote" id="upvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="top"></span>
 		<div class="chat_upvote_count" id="votes_{{chat.id}}">{{chat.upvotes - chat.downvotes}}</div>
-		<span class="glyphicon glyphicon-chevron-down chat_big_downvote js_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
+		<span class="glyphicon glyphicon-menu-down chat_big_downvote js_downvote" id="downvote_{{chat.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on posts" data-container="body" data-placement="bottom"></span>
 	{% endif %}
 </div>
 <div class="chat_title_cont">

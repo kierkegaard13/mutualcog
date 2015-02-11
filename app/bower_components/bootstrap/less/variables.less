@@ -32,7 +32,6 @@
 @brand-warning:         @orange;
 @brand-danger:          @red;
 
-
 //== Scaffolding
 //
 //## Settings for some of the most global styles.
@@ -111,7 +110,7 @@
 @padding-xs-vertical:       1px;
 @padding-xs-horizontal:     5px;
 
-@line-height-large:         1.33;
+@line-height-large:         1.3333333; // extra decimals for Win 8.1 Chrome
 @line-height-small:         1.5;
 
 @border-radius-base:        2px;
@@ -158,7 +157,7 @@
 
 @btn-default-color:              #333;
 @btn-default-bg:                 #fff;
-@btn-default-border:             #ddd;
+@btn-default-border:             #ccc;
 
 @btn-primary-color:              #fff;
 @btn-primary-bg:                 @brand-primary;
@@ -199,6 +198,7 @@
 
 // TODO: Rename `@input-border-radius` to `@input-border-radius-base` in v4
 //** Default `.form-control` border radius
+// This has no effect on `<select>`s in some browsers, due to the limited stylability of `<select>`s in CSS.
 @input-border-radius:            @border-radius-base;
 //** Large `.form-control` border radius
 @input-border-radius-large:      @border-radius-large;
@@ -206,7 +206,7 @@
 @input-border-radius-small:      @border-radius-small;
 
 //** Border color for inputs on focus
-@input-border-focus:             #fff;
+@input-border-focus:             #66afe9;
 
 //** Placeholder text color
 @input-color-placeholder:        #999;
@@ -509,8 +509,8 @@
 @state-warning-bg:               #fcf8e3;
 @state-warning-border:           darken(spin(@state-warning-bg, -10), 5%);
 
-@state-danger-text:              @red;
-@state-danger-bg:                @red;
+@state-danger-text:              #a94442;
+@state-danger-bg:                #f2dede;
 @state-danger-border:            darken(spin(@state-danger-bg, -10), 5%);
 
 
