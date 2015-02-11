@@ -825,6 +825,7 @@ $('.load_more').on('click',function(){
 				if($('.chat_status_indicator').hasClass('glyphicon-pause')){
 					res += '<div class="static_reply"><a href="#" class="reply_link" data-mssg-id="' + val.id + '"><strong>Reply</strong></a></div>';
 				}
+				res += '<div class="static_tool"><a href="//mutualcog.com/profile/save/message/' + val.id + '"><strong>Save</strong></a></div>';
 				res += '<div class="time" id="' + val.created_at + '" title="' + val.created_at + ' UTC">' + moment.utc(val.created_at).fromNow() + '</div></div>';
 				res += '</div></div></div></div>';
 				if(val.responses == 0){

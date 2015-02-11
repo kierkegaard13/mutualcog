@@ -6,7 +6,7 @@ class UsersToSaved extends EloquentBridge
 	public $timestamps = true;
 
 	public function savedEntity(){
-		if($this->saved_type = 'chat'){
+		if($this->saved_type == 'chats'){
 			return $this->belongsTo('Chats','saved_id');
 		}else{
 			return $this->belongsTo('Messages','saved_id');

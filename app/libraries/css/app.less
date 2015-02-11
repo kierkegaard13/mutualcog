@@ -502,6 +502,9 @@ select {
 }
 .time_box {
   margin-top:2px;
+  color:#777;
+  font-size:12px;
+  width:100%;
 }
 .mssg_body {
   word-wrap:break-word;
@@ -513,6 +516,7 @@ select {
   display:table;
   max-width:60em;
   margin-left:25px;
+  min-width:200px;
 }
 .chat_mssg {
   position:relative;
@@ -919,13 +923,8 @@ a.mod_power {
 .response_count {
   color:black;
 }
-.time_box {
-  color:#777;
-  font-size:12px;
-  width:100%;
-}
 .p_time_box {
-  margin-top:10px;
+  margin-top:5px;
 }
 .p_time {
   float:right;
@@ -934,15 +933,12 @@ a.mod_power {
   margin-top:-5px;
   font-size:12px;
 }
-.time{
-  display:inline;
-  float:right;
-}
-.static_reply{
+.static_reply, .static_tool{
   display:inline;
   float:left;
+  margin-right:10px;
 }
-.static_reply>a{
+.static_reply>a, .static_tool>a{
   color:#777;
 }
 .content1 {
