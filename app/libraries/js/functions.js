@@ -109,7 +109,7 @@ function startup(){
 	$('.caret_tooltip').tooltip();
 	$('.advanced_cog').tooltip();
 	$('.glyphicon-info-sign').tooltip();
-	$('.mssg_cont').show();
+	$('.mssg_cont').velocity('transition.slideLeftBigIn');
 }
 
 function newPmChat(friend_id,pm_id,friend_status_class,friend_name){

@@ -191,7 +191,7 @@ function startup(){
 	$('.caret_tooltip').tooltip();
 	$('.advanced_cog').tooltip();
 	$('.glyphicon-info-sign').tooltip();
-	$('.mssg_cont').show();
+	$('.mssg_cont').velocity('transition.slideLeftBigIn');
 }
 
 function newPmChat(friend_id,pm_id,friend_status_class,friend_name){
@@ -1662,16 +1662,14 @@ $('#show_mobile_notifications').click(function(){
 	}else{
 		$(this).removeClass('highlight_blue_background');
 	}
-	$('#mobile_notifications_cont').toggle('blind',function(){
-		var c1 = $('.big_content_box').css('display') == 'none';
-		var c2 = $('#mobile_notifications_cont').css('display') == 'none';
-		if(c1 && c2){
-			$('.big_content_box').show('blind');
-		}else if((c1 && !c2) || (c2 && !c1)){
-		}else{
-			$('.big_content_box').hide('blind');
-		}
-	});
+	var transition = 'transition.slideDownBigIn';
+	if($('#mobile_notifications_cont').css('display') == 'block'){
+		$('.big_content_box').velocity('transition.slideDownBigIn');
+		transition = 'transition.slideUpBigOut';
+	}else{
+		$('.big_content_box').velocity('transition.slideUpBigOut');
+	}
+	$('#mobile_notifications_cont').velocity(transition);
 	$('#mobile_pms_cont').hide();
 });
 $('.register_link').click(function(){
@@ -1681,7 +1679,7 @@ $('.show_friends').click(function(){
 	$('.left_menu_toggle').html('Friends <strong class="caret" style="color:white;"></strong>');
 	$('.show_subscriptions').show();
 	$('.show_recent').show();
-	$('#friend_box_cont').show('slide');
+	$('#friend_box_cont').velocity('transition.slideLeftBigIn');
 	$('#subscription_cont').hide();
 	$('#recent_cont').hide();
 	$(this).hide();
@@ -1701,7 +1699,7 @@ $('.show_subscriptions').click(function(){
 	$('.show_recent').show();
 	$('#friend_box_cont').hide();
 	$('#recent_cont').hide();
-	$('#subscription_cont').show('slide');
+	$('#subscription_cont').velocity('transition.slideLeftBigIn');
 	$(this).hide();
 	$(this).dropdown('toggle');
 	$.ajax({
@@ -1719,7 +1717,7 @@ $('.show_recent').click(function(){
 	$('.show_friends').show();
 	$('#friend_box_cont').hide();
 	$('#subscription_cont').hide();
-	$('#recent_cont').show('slide');
+	$('#recent_cont').velocity('transition.slideLeftBigIn');
 	$(this).hide();
 	$(this).dropdown('toggle');
 	$.ajax({
@@ -1747,6 +1745,7 @@ $('.toggle_search').click(function(){
 		$('.community_input').width(welcome_width - 54);
 		$('.community_input').attr('placeholder',module.search_messages[randomInt(0,module.search_messages.length - 1)]);
 		$('.nav_pad_r').css('padding-right',welcome_width + 100);
+		$('.community_search_cont').velocity('transition.slideRightBigIn');
 		$('.community_search').velocity('transition.slideRightBigIn',{display:'inline-block'});
 		//$('.community_search').show('slide',{direction:'right'});
 	}else{
