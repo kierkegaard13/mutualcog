@@ -260,10 +260,11 @@ class Chat extends BaseController {
 
 	public function postMessage($chat_id){
 		$chat = Chats::find($chat_id);
-		$mssg_content = htmlentities(Input::get('mssg_content'));
+		$mssg_content = Input::get('mssg_content');
 		if(!$chat->live && strlen($mssg_content) < $this->max_static_length){
 			$message = new Messages();
 			$message->chat_id = htmlentities($chat_id);
+			$message->raw_message = $mssg_content;
 			$message->message = $this->parseText($mssg_content);
 			if(Auth::check()){
 				$message->user_id = Auth::user()->id;

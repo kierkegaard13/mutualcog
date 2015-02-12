@@ -195,5 +195,8 @@ $('#community_create_form').submit(function(){
 });
 
 $('body').on('submit','.reply_forms',function(){
-	module.socket.emit('notify_response',$(this).children('#reply_to').val());
+	var author = $(this).parent().find('.mssg_op').attr('data-author');
+	if(author !== module.user_tracker && author.match(/[a-zA-Z]/g)){
+		module.socket.emit('notify_response',$(this).children('#reply_to').val());
+	}
 });

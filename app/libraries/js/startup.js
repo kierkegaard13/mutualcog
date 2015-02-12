@@ -65,6 +65,7 @@ $(window).resize(function(){
 				$('.nav_pad_r').css('padding-right',$('.community_search_cont').width());
 			}
 		}
+		$('.community_search').css('visibility','visible');
 	}
 	if($('.pm_bar').width() > $(window).width() - 30){
 		module.crit_len.push($(window).width() + 30);

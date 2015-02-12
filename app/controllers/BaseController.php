@@ -115,7 +115,7 @@ class BaseController extends Controller {
 	public function parseText($text){
 		$pure_txt = $text;
 		$text = $this->htmlEscapeAndLinkUrls($text);
-		$text = Parsedown::instance()->set_breaks_enabled(true)->parse($text);
+		$text = Parsedown::instance()->setBreaksEnabled(true)->text($text);
 		$reg3 = '/(img)(\s)(alt)/';
 		$text = preg_replace('/^<p>/','',$text);
 		$text = preg_replace('/<\/p>$/','',$text);
