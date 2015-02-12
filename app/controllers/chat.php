@@ -107,6 +107,7 @@ class Chat extends BaseController {
 		$downvoted = array();
 		$mssg_upvoted = array();
 		$mssg_downvoted = array();
+		$saved = array();
 		if(Auth::check()){
 			Auth::user()->chat_id = $chat_id;
 			Auth::user()->save();
@@ -117,6 +118,9 @@ class Chat extends BaseController {
 			}
 			foreach(Auth::user()->downvotedMessages() as $downvote){
 				$mssg_downvoted[] = $downvote->message_id;
+			}
+			foreach(Auth::user()->savedMessages as $s){
+				$saved[] = $s->id;
 			}
 			$user_to_chat = new UsersToChats();
 			$user_to_chat->chat_id = $chat_id;
@@ -165,6 +169,7 @@ class Chat extends BaseController {
 		}
 		Session::put('curr_page',URL::full());
 		$view['curr_time'] = date('Y:m:d:H:i');
+		$view['saved'] = $saved;
 		$view['upvoted'] = $upvoted;
 		$view['downvoted'] = $downvoted;
 		$view['mssg_upvoted'] = $mssg_upvoted;

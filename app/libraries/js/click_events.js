@@ -462,16 +462,14 @@ $('#show_mobile_pms').click(function(){
 	}else{
 		$(this).removeClass('highlight_blue_background');
 	}
-	$('#mobile_pms_cont').toggle('blind',function(){
-		var c1 = $('.big_content_box').css('display') == 'none';
-		var c2 = $('#mobile_pms_cont').css('display') == 'none';
-		if(c1 && c2){
-			$('.big_content_box').show('blind');
-		}else if((c1 && !c2) || (c2 && !c1)){
-		}else{
-			$('.big_content_box').hide('blind');
-		}
-	});
+	var transition = 'transition.slideDownBigIn';
+	if($('#mobile_pms_cont').css('display') == 'block'){
+		$('.big_content_box').velocity('transition.slideDownBigIn');
+		transition = 'transition.slideUpBigOut';
+	}else{
+		$('.big_content_box').velocity('transition.slideUpBigOut');
+	}
+	$('#mobile_pms_cont').velocity(transition);
 	$('#mobile_notifications_cont').hide();
 });
 $('#show_mobile_notifications').click(function(){
@@ -560,16 +558,18 @@ $('.pm_bar').on('click','.pm_name',function(e){
 });
 $('.toggle_search').click(function(){
 	if($('.community_search').css('display') == 'none'){
+		var welcome_width = $('#welcome_user').width();
 		$('.community_search_expand').css('display','none');
 		$('.community_search_collapse').css('display','');
-		$('.community_input').width($('#welcome_user').width() - 34);
+		$('.community_input').width(welcome_width - 54);
 		$('.community_input').attr('placeholder',module.search_messages[randomInt(0,module.search_messages.length - 1)]);
-		$('.nav_pad_r').css('padding-right',$('#welcome_user').width() + 100);
-		$('.community_search').show('slide',{direction:'right'});
+		$('.nav_pad_r').css('padding-right',welcome_width + 100);
+		$('.community_search').velocity('transition.slideRightBigIn',{display:'inline-block'});
+		//$('.community_search').show('slide',{direction:'right'});
 	}else{
 		$('.community_search_expand').css('display','');
 		$('.community_search_collapse').css('display','none');
-		$('.community_search').hide('slide',{direction:'right'},function(){
+		$('.community_search').velocity('transition.slideRightBigOut',500,function(){
 			$('.nav_pad_r').css('padding-right',$('.community_search_cont').width());
 		});
 	}

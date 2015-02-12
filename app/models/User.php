@@ -98,7 +98,7 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 	}
 
 	public function savedMessages(){
-		return $this->morphedByMany('Messages','saved','users_to_saved','user_id','saved_id')->select('chats.id');
+		return $this->morphedByMany('Messages','saved','users_to_saved','user_id','saved_id')->select('messages.id');
 	}
 
 	public function savedChats(){

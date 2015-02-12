@@ -58,7 +58,7 @@ $(window).resize(function(){
 		$('#search_input').css('width','');
 	}else{
 		if($('.community_search').css('display') != 'none'){
-			$('.community_input').width($('#welcome_user').width() - 34);
+			$('.community_input').width($('#welcome_user').width() - 54);
 			if($('#logged_in').text() == 1){
 				$('.nav_pad_r').css('padding-right',$('.community_search_cont').width() + 118);
 			}else{

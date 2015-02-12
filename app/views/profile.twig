@@ -92,7 +92,7 @@
 						<span class="glyphicon glyphicon-menu-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
 					{% endif %}
 				</span>
-				<span class="chat_id_{{message.id}} p_mssg_body" id="{{message.chat_id}}">
+				<span class="chat_id_{{message.chat_id}} p_mssg_body" id="{{message.chat_id}}">
 					<strong class='mssg_op' id="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}} </strong> : {{message.message | raw}}
 				</span>
 				<div class="p_time_box">
@@ -225,7 +225,7 @@
 						<span class="glyphicon glyphicon-menu-down mssg_downvote" id="mssg_downvote_{{message.id}}" data-toggle="tooltip" data-original-title="You must be logged in to vote on messages" data-container="body" data-placement="bottom"></span>
 					{% endif %}
 				</span>
-				<span class="chat_id_{{message.id}} p_mssg_body" id="{{message.chat_id}}">
+				<span class="chat_id_{{message.chat_id}} p_mssg_body" id="{{message.chat_id}}">
 					<strong class='mssg_op' id="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}} </strong> : {{message.message | raw}}
 				</span>
 				<div class="p_time_box">
