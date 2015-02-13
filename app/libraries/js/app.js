@@ -654,6 +654,9 @@ module = function(){
 	if($('#up_arr').length){
 		var upvoted = jQuery.parseJSON($('#up_arr').text());
 		var downvoted = jQuery.parseJSON($('#down_arr').text());
+	}else{
+		var upvoted = new Array();
+		var downvoted = new Array();
 	}
 	if(typeof io !== 'undefined'){
 		var socket = io('http://localhost:3000/');
@@ -662,7 +665,11 @@ module = function(){
 	}
 	var color_arr = new Array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#050a57');
 	var mems = new Array();
-	var mods = $.parseJSON($('#chat_mods_info').text());
+	if($('#chat_mods_info').length){
+		var mods = $.parseJSON($('#chat_mods_info').text());
+	}else{
+		var mods = new Array();
+	}
 	var admin = $('#chat_admin_info').text();
 	var notifications_top_positions = new Array();
 	var notifications_bottom_positions = new Array();
@@ -694,6 +701,7 @@ $(window).resize(function(){
 	if($(window).width() < 768){
 		$('.nav_pad_r').css('padding-right','');
 		$('.community_search').css('display','');
+		$('.community_search').css('opacity','');
 		$('#search_input').css('width','');
 	}else{
 		if($('.community_search').css('display') != 'none'){
@@ -843,7 +851,6 @@ $(document).ready(function(){
 		$(this).find('.pm_text').width($(this).find('.pm_header').width() - 2);
 	}});
 	if($(window).width() > 767){
-		$('.community_search').hide();
 		$('.community_search').css('visibility','visible');
 	}
 	$('.chat_main').mCustomScrollbar({theme:'minimal',scrollInertia:100,callbacks:{onScroll:function(){
