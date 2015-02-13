@@ -820,10 +820,13 @@ $('.load_more').on('click',function(){
 				if(val.message != 'This response has been deleted' && (module.serial_tracker == val.author || module.user_tracker == val.author)){
 					res += '<span id="remove_' + val.id + '" class="glyphicon glyphicon-remove mssg_icon" data-mssg-serial="' + val.serial + '" style="margin-right:5px;" data-toggle="tooltip" title="Delete post" data-container="body" data-placement="top"></span>';	
 				}
+				res += '<strong class="mssg_op" data-author="' + val.author + '"><a href="//mutualcog.com/u/' + val.author + '" style="color:' + module.color_arr[val.serial % 7] + '"> ' + val.author;
 				if(val.author == $('#chat_admin_info').text()){
-					res += '<span class="glyphicon glyphicon-star"></span>';	
+					res += '<span class="glyphicon glyphicon-king"></span>';	
+				}else if(val.author in module.mods){
+					res += '<span class="glyphicon glyphicon-knight"></span>';	
 				}
-				res += '<strong class="mssg_op" data-author="' + val.author + '" style="color:' + module.color_arr[val.serial % 7] + '"> ' + val.author + ' (<span class="response_count" id="' + val.id + '">' + val.responses + '</span>)</strong> : ' + val.message;
+				res += '</a></strong> : ' + val.message;
 				res += '<div class="time_box">';
 				if($('.chat_status_indicator').hasClass('glyphicon-pause')){
 					res += '<div class="static_reply"><a href="#" class="reply_link" data-mssg-id="' + val.id + '"><strong>Reply</strong></a></div>';

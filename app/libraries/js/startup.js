@@ -23,8 +23,8 @@ module = function(){
 	}
 	var color_arr = new Array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#050a57');
 	var mems = new Array();
-	var mods = new Array();
-	var admin = new Array();
+	var mods = $.parseJSON($('#chat_mods_info').text());
+	var admin = $('#chat_admin_info').text();
 	var notifications_top_positions = new Array();
 	var notifications_bottom_positions = new Array();
 	var notifications_top_ids = new Array();

@@ -106,6 +106,7 @@ function startup(){
 		}
 	});
 	$('.user_tooltip').tooltip();
+	$('.mutual_tooltip').tooltip();
 	$('.caret_tooltip').tooltip();
 	$('.advanced_cog').tooltip();
 	$('.glyphicon-info-sign').tooltip();
@@ -507,10 +508,14 @@ generateMssg = function(info,is_mssg,tmp){
 	//TODO: Add mod symbol fix admin array and mods array
 	if((module.serial_tracker == info.author || module.user_tracker == info.author) && info.message != '<i>This message has been deleted</i>'){
 		tmp += "<span id='remove_" + info.id + "' style='margin-right:4px;' class='glyphicon glyphicon-remove mssg_icon' data-mssg-serial='" + info.serial + "' data-toggle='tooltip' title='Delete post' data-container='body' data-placement='top'></span>";
-		tmp += "<span class='glyphicon glyphicon-star'></span><strong class='mssg_op' data-author='" + info.author + "' style='color:" + module.color_arr[info.serial % 7] + ";'> " + info.author + " </strong> : " + info.message + "<div class='time_box'><div class='reply'><a href='#' class='reply_link' data-mssg-id='" + info.id + "'><strong>Reply</strong></a></div><div class='time' id='" + info.created_at + "'>" + moment.utc(info.created_at).fromNow() + "</div></div></div></div></div></div></div>"	
-	}else{
-		tmp += "<strong class='mssg_op' data-author='" + info.author + "' style='color:" + module.color_arr[info.serial % 7] + ";'> " + info.author + " </strong> : " + info.message + "<div class='time_box'><div class='reply'><a href='#' class='reply_link' data-mssg-id='" + info.id + "'><strong>Reply</strong></a></div><div class='time' id='" + info.created_at + "'>" + moment.utc(info.created_at).fromNow() + "</div></div></div></div></div></div>"	
 	}
+	tmp += "<strong class='mssg_op' data-author='" + info.author + "'><a href='//mutualcog.com/u/" + info.author + "' style='color:" + module.color_arr[info.serial % 7] + ";'> " + info.author;
+	if(module.serial_id == module.admin || module.user_id == module.admin){
+		tmp += " <span class='glyphicon glyphicon-king'></span>";
+	}else if(module.serial_id in module.mods || module.user_id in module.mods){
+		tmp += " <span class='glyphicon glyphicon-knight'></span>";
+	}
+	tmp += " </a></strong> : " + info.message + "<div class='time_box'><div class='reply'><a href='#' class='reply_link' data-mssg-id='" + info.id + "'><strong>Reply</strong></a></div><div class='time' id='" + info.created_at + "'>" + moment.utc(info.created_at).fromNow() + "</div></div></div></div></div></div>";	
 	return tmp;
 }
 

@@ -47,6 +47,8 @@
 
 <div id="up_arr" style="display:none;">{{mssg_upvoted | json_encode()}}</div>
 <div id="down_arr" style="display:none;">{{mssg_downvoted | json_encode()}}</div>
+<div id="chat_admin_info" style="display:none;">{{chat.admin_id}}</div>
+<div id="chat_mods_info" style="display:none;">{{mods | json_encode()}}</div>
 <div class="frame_cont">
 <div class="confirmation_box" id="action_confirmed"><div class="confirmation_inner"><div class="glyphicon glyphicon-ok check_mark"></div> <span id="modified_ident"></span> <span id="modified_message"></span></div></div>
 	<div id="notify_cont_top">
@@ -96,13 +98,12 @@
 								{% if 'This message has been deleted' in message.message == 0 and (serial == message.author or user.name == message.author) %}
 									<span id="remove_{{message.id}}" class="glyphicon glyphicon-remove mssg_icon" data-mssg-serial="{{response.serial}}" data-toggle="tooltip" data-original-title="Delete post" data-container="body" data-placement="top"></span>	
 								{% endif %}  
+								<strong class="mssg_op" data-author="{{message.author}}"><a href="{{site}}/u/{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}}
 								{% if message.author == chat.admin %}
-									<span class="glyphicon glyphicon-star"></span>	
-								{% endif %}
-								{% if message.author in mods %}
-									<span class="glyphicon glyphicon-tower"></span>	
-								{% endif %}
-								<strong class="mssg_op" data-author="{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}}</strong>: {{message.message | raw}}
+									<span class="glyphicon glyphicon-king"></span>	
+								{% elseif message.author in mods %}
+									<span class="glyphicon glyphicon-knight"></span>	
+								{% endif %}</a></strong>: {{message.message | raw}}
 								<div class="time_box">
 									{% if chat.live %}<div class="reply"><a href="#" class="reply_link" data-mssg-id="{{message.id}}"><strong>Reply</strong></a></div>{% endif %}
 									{% set time_passed = server_time|date('U') - message.created_at|date('U') %}

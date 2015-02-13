@@ -188,6 +188,7 @@ function startup(){
 		}
 	});
 	$('.user_tooltip').tooltip();
+	$('.mutual_tooltip').tooltip();
 	$('.caret_tooltip').tooltip();
 	$('.advanced_cog').tooltip();
 	$('.glyphicon-info-sign').tooltip();
@@ -589,10 +590,14 @@ generateMssg = function(info,is_mssg,tmp){
 	//TODO: Add mod symbol fix admin array and mods array
 	if((module.serial_tracker == info.author || module.user_tracker == info.author) && info.message != '<i>This message has been deleted</i>'){
 		tmp += "<span id='remove_" + info.id + "' style='margin-right:4px;' class='glyphicon glyphicon-remove mssg_icon' data-mssg-serial='" + info.serial + "' data-toggle='tooltip' title='Delete post' data-container='body' data-placement='top'></span>";
-		tmp += "<span class='glyphicon glyphicon-star'></span><strong class='mssg_op' data-author='" + info.author + "' style='color:" + module.color_arr[info.serial % 7] + ";'> " + info.author + " </strong> : " + info.message + "<div class='time_box'><div class='reply'><a href='#' class='reply_link' data-mssg-id='" + info.id + "'><strong>Reply</strong></a></div><div class='time' id='" + info.created_at + "'>" + moment.utc(info.created_at).fromNow() + "</div></div></div></div></div></div></div>"	
-	}else{
-		tmp += "<strong class='mssg_op' data-author='" + info.author + "' style='color:" + module.color_arr[info.serial % 7] + ";'> " + info.author + " </strong> : " + info.message + "<div class='time_box'><div class='reply'><a href='#' class='reply_link' data-mssg-id='" + info.id + "'><strong>Reply</strong></a></div><div class='time' id='" + info.created_at + "'>" + moment.utc(info.created_at).fromNow() + "</div></div></div></div></div></div>"	
 	}
+	tmp += "<strong class='mssg_op' data-author='" + info.author + "'><a href='//mutualcog.com/u/" + info.author + "' style='color:" + module.color_arr[info.serial % 7] + ";'> " + info.author;
+	if(module.serial_id == module.admin || module.user_id == module.admin){
+		tmp += " <span class='glyphicon glyphicon-king'></span>";
+	}else if(module.serial_id in module.mods || module.user_id in module.mods){
+		tmp += " <span class='glyphicon glyphicon-knight'></span>";
+	}
+	tmp += " </a></strong> : " + info.message + "<div class='time_box'><div class='reply'><a href='#' class='reply_link' data-mssg-id='" + info.id + "'><strong>Reply</strong></a></div><div class='time' id='" + info.created_at + "'>" + moment.utc(info.created_at).fromNow() + "</div></div></div></div></div></div>";	
 	return tmp;
 }
 
@@ -657,8 +662,8 @@ module = function(){
 	}
 	var color_arr = new Array('#228d49','#f52103','#2532f2','#f94f06','#5a24d9','#f8b92d','#38cedb','#050a57');
 	var mems = new Array();
-	var mods = new Array();
-	var admin = new Array();
+	var mods = $.parseJSON($('#chat_mods_info').text());
+	var admin = $('#chat_admin_info').text();
 	var notifications_top_positions = new Array();
 	var notifications_bottom_positions = new Array();
 	var notifications_top_ids = new Array();
@@ -2004,10 +2009,13 @@ $('.load_more').on('click',function(){
 				if(val.message != 'This response has been deleted' && (module.serial_tracker == val.author || module.user_tracker == val.author)){
 					res += '<span id="remove_' + val.id + '" class="glyphicon glyphicon-remove mssg_icon" data-mssg-serial="' + val.serial + '" style="margin-right:5px;" data-toggle="tooltip" title="Delete post" data-container="body" data-placement="top"></span>';	
 				}
+				res += '<strong class="mssg_op" data-author="' + val.author + '"><a href="//mutualcog.com/u/' + val.author + '" style="color:' + module.color_arr[val.serial % 7] + '"> ' + val.author;
 				if(val.author == $('#chat_admin_info').text()){
-					res += '<span class="glyphicon glyphicon-star"></span>';	
+					res += '<span class="glyphicon glyphicon-king"></span>';	
+				}else if(val.author in module.mods){
+					res += '<span class="glyphicon glyphicon-knight"></span>';	
 				}
-				res += '<strong class="mssg_op" data-author="' + val.author + '" style="color:' + module.color_arr[val.serial % 7] + '"> ' + val.author + ' (<span class="response_count" id="' + val.id + '">' + val.responses + '</span>)</strong> : ' + val.message;
+				res += '</a></strong> : ' + val.message;
 				res += '<div class="time_box">';
 				if($('.chat_status_indicator').hasClass('glyphicon-pause')){
 					res += '<div class="static_reply"><a href="#" class="reply_link" data-mssg-id="' + val.id + '"><strong>Reply</strong></a></div>';

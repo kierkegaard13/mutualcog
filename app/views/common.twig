@@ -415,13 +415,12 @@
 				{% if 'This message has been deleted' in message.message == 0 and (serial == message.author or user.name == message.author) %}
 					<span id="remove_{{message.id}}" class="glyphicon glyphicon-remove mssg_icon" data-mssg-serial="{{response.serial}}" data-toggle="tooltip" title="Delete post" data-container="body" data-placement="top"></span>	
 				{% endif %}  
+				<strong class="mssg_op" data-author="{{message.author}}"><a href="{{site}}/u/{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}}
 				{% if message.author == chat.admin %}
-					<span class="glyphicon glyphicon-star"></span>	
-				{% endif %}
-				{% if message.author in mods %}
-					<span class="glyphicon glyphicon-tower"></span>	
-				{% endif %}
-				<strong class="mssg_op" data-author="{{message.author}}"><a href="{{site}}/u/{{message.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{message.author}}</a></strong>: {{message.message | raw}}
+					<span class="glyphicon glyphicon-king"></span>	
+				{% elseif message.author in mods %}
+					<span class="glyphicon glyphicon-knight"></span>	
+				{% endif %}</a></strong>: {{message.message | raw}}
 				<div class="time_box">
 					{% if not chat.live %}
 						<div class="static_reply"><a href="#" class="reply_link" data-mssg-id="{{message.id}}"><strong>Reply</strong></a></div>
@@ -499,13 +498,12 @@
 				{% if 'This response has been deleted' in response.message == 0 and (serial == response.author or user.name == response.author) %}
 					<span id="remove_{{response.id}}" class="glyphicon glyphicon-remove mssg_icon" data-mssg-serial="{{response.serial}}" data-toggle="tooltip" title="Delete post" data-container="body" data-placement="top"></span>	
 				{% endif %}  
+				<strong class="mssg_op" data-author="{{response.author}}"><a href="{{site}}/u/{{response.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{response.author}}
 				{% if response.author == chat.admin %}
-					<span class="glyphicon glyphicon-star"></span>	
-				{% endif %}
-				{% if response.author in mods %}
-					<span class="glyphicon glyphicon-tower"></span>	
-				{% endif %}
-				<strong class="mssg_op" data-author="{{response.author}}"><a href="{{site}}/u/{{response.author}}" style="color:{{color_arr[message.serial % 7]}}"> {{response.author}}</a></strong>: {{response.message | raw}}
+					<span class="glyphicon glyphicon-king"></span>	
+				{% elseif response.author in mods %}
+					<span class="glyphicon glyphicon-knight"></span>	
+				{% endif %}</a></strong>: {{response.message | raw}}
 				<div class="time_box">
 					{% if not chat.live %}
 						<div class="static_reply"><a href="#" class="reply_link" data-mssg-id="{{response.id}}"><strong>Reply</strong></a></div>
