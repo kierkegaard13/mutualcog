@@ -244,11 +244,6 @@ class Profile extends BaseController {
 					$inter_friend->save();
 				}
 				$user_to_chat = UsersToPrivateChats::whereuser_id(Auth::user()->id)->whereentity_id($friend_id)->first();
-				if($user_to_chat){
-					$chat = PrivateChats::find($user_to_chat->chat_id);
-					$chat->inboxed = 0;
-					$chat->save();
-				}
 				$request->delete();
 			}
 		}
