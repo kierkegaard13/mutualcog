@@ -392,6 +392,7 @@
 {% block static_mssg_cont %}
 <div class="static_mssg_cont_inner">
 	<div class="static_mssg js_mssg" id="message_{{message.id}}">
+		<div class="js_raw_mssg_content" style="display:none;">{{message.raw_message}}</div>
 		<div class="mssg_body_cont">
 			<div class="static_vote_box">
 				{% if message.id in mssg_upvoted %}
@@ -429,6 +430,9 @@
 						<div class="static_tool"><a href="{{site}}/profile/unsave/message/{{message.id}}"><strong>UnSave</strong></a></div>
 					{% else %}
 						<div class="static_tool"><a href="{{site}}/profile/save/message/{{message.id}}"><strong>Save</strong></a></div>
+					{% endif %}
+					{% if user.id == message.user_id %}
+						<div class="static_tool"><a class="js_edit_message" href="#" data-toggle="modal" data-target="#edit_message_modal"><strong>Edit</strong></a></div>
 					{% endif %}
 					{% set time_passed = server_time|date('U') - message.created_at|date('U') %}
 					<div class="time" id="{{message.created_at}}" title="{{message.created_at}}">
@@ -475,6 +479,7 @@
 {% block static_resp_cont %}
 <div class="static_mssg_cont_inner">
 	<div class="static_mssg js_mssg" id="message_{{response.id}}">
+		<div class="js_raw_mssg_content" style="display:none;">{{response.raw_message}}</div>
 		<div class="mssg_body_cont">
 			<div class="static_vote_box">
 				{% if response.id in mssg_upvoted %}
@@ -512,6 +517,9 @@
 						<div class="static_tool"><a href="{{site}}/profile/unsave/message/{{response.id}}"><strong>UnSave</strong></a></div>
 					{% else %}
 						<div class="static_tool"><a href="{{site}}/profile/save/message/{{response.id}}"><strong>Save</strong></a></div>
+					{% endif %}
+					{% if user.id == response.user_id %}
+						<div class="static_tool"><a class="js_edit_message" href="#" data-toggle="modal" data-target="#edit_message_modal"><strong>Edit</strong></a></div>
 					{% endif %}
 					{% set time_passed = server_time|date('U') - response.created_at|date('U') %}
 					<div class="time" id="{{response.created_at}}" title="{{response.created_at}}">

@@ -310,7 +310,8 @@ class Chat extends BaseController {
 		return Redirect::to(action('chat@getLive',$chat_id));
 	}
 
-	public function getEditMessage($mssg_id){
+	public function postEditMessage(){
+		$mssg_id = htmlentities(Input::get('mssg_id'));
 		$mssg_content = htmlentities(Input::get('content'));
 		$mssg = Messages::find($mssg_id);
 		//TODO add raw mssg content

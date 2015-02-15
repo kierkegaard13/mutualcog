@@ -138,6 +138,27 @@
 			<div class="modal-footer">
 				<button class="btn btn-primary" type="Submit">Send</button>
 				</form>
+				<button type="button" class="btn" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>	
+</div>
+<div class="modal fade" id="edit_message_modal" aria-hidden="false" tabindex="-1" role="dialog" aria-labelledby="edit_message_modalLabel">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Edit message</h4>
+			</div>
+			<div class="modal-body">
+				<form method="post" action="{{site}}/chat/edit-message" id="edit_message_form">
+				<input type="hidden" name="mssg_id" id="form_mssg_id">
+				<textarea id="form_mssg_content" name="content" rows=5></textarea>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" type="Submit">Save</button>
+				</form>
+				<button type="button" class="btn" data-dismiss="modal">Close</button>
 			</div>
 		</div>
 	</div>	

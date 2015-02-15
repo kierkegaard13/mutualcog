@@ -137,13 +137,14 @@ $('body').on('keyup','.pm_text',function(e){
 			}
 			if($(this).val().trim() != ""){
 				var pm_sent = processMessage($(this).val());
+				var raw = $(this).val();
 				$(this).css('height','');
 				var mssg = '<div class="pm_mssg_cont tmp_message_' + module.tmp_mssg_cnt + '">';
 				mssg += '<div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment().format("hh:mma") + '">' + pm_sent + '</div>';
 				mssg += '</div>'; 
 				$(this).val("");
 				$('#pm_' + module.pm_info[1] + '_' + module.pm_info[2]).find('.pm_body_mssgs').append(mssg);
-				module.socket.emit('send_pm',{message:pm_sent,pm_id:module.pm_info[2],friend_id:module.pm_info[1],user_id:module.user_id,tmp_mssg_cnt:module.tmp_mssg_cnt},function(info){
+				module.socket.emit('send_pm',{message:raw,pm_id:module.pm_info[2],friend_id:module.pm_info[1],user_id:module.user_id,tmp_mssg_cnt:module.tmp_mssg_cnt},function(info){
 					var chat_cont = $('#pm_' + info.friend_id + '_' + info.pm_id);
 					var tmp_message = chat_cont.find('.tmp_message_' + info.tmp_mssg_cnt);
 					tmp_message.find('.pm_message').html(info.message);
@@ -230,13 +231,14 @@ $('body').on('keyup','.mobile_pm_text',function(e){
 			}
 			if($(this).val().trim() != ""){
 				var pm_sent = processMessage($(this).val());
+				var raw = $(this).val();
 				$(this).css('height','');
 				var mssg = '<div class="pm_mssg_cont tmp_message_' + module.tmp_mssg_cnt + '">';
 				mssg += '<div class="pm_message pull-right" style="background-color:#eee;margin-left:30px;margin-right:5px;" title="' + moment().format("hh:mma") + '">' + pm_sent + '</div>';
 				mssg += '</div>'; 
 				$(this).val("");
 				$('#mobile_pm_' + module.pm_info[2] + '_' + module.pm_info[3]).find('.pm_body_mssgs').append(mssg);
-				module.socket.emit('send_pm',{message:pm_sent,pm_id:module.pm_info[3],friend_id:module.pm_info[2],user_id:module.user_id,tmp_mssg_cnt:module.tmp_mssg_cnt},function(info){
+				module.socket.emit('send_pm',{message:raw,pm_id:module.pm_info[3],friend_id:module.pm_info[2],user_id:module.user_id,tmp_mssg_cnt:module.tmp_mssg_cnt},function(info){
 					var chat_cont = $('#mobile_pm_' + info.friend_id + '_' + info.pm_id);
 					var tmp_message = chat_cont.find('.tmp_message_' + info.tmp_mssg_cnt);
 					tmp_message.find('.pm_message').html(info.message);
@@ -717,18 +719,23 @@ $('#message').keyup(function(e){
 		if(e.which == 13){  /*enter key*/
 			if(keys.indexOf(16) == -1){  /*shift key not pressed*/
 				keys.splice(keys.indexOf(e.which),1);
-				var mssg_sent = processMessage($('#message').val());
+				var raw_mssg = $('#message').val();
+				var mssg_sent = processMessage(raw_mssg);
 				if(mssg_sent.trim() != ""){
 					if(module.connected){
 						$('#message').val("");
 						if($('#message').attr('class') == 'global'){
-							var tmp = generateMssg({id:0,author:module.user_tracker,responseto:0,y_dim:0,serial:module.serial_tracker,created_at:moment.utc(moment.utc().format()).fromNow(),message:mssg_sent},1,1);
+							if($('#logged_in').text() == 1){
+								var tmp = generateMssg({id:0,author:module.user_tracker,responseto:0,y_dim:0,serial:module.serial_tracker,created_at:moment.utc(moment.utc().format()).fromNow(),message:mssg_sent},1,1);
+							}else{
+								var tmp = generateMssg({id:0,author:module.serial_tracker,responseto:0,y_dim:0,serial:module.serial_tracker,created_at:moment.utc(moment.utc().format()).fromNow(),message:mssg_sent},1,1);
+							}
 							$('.tmp_message').remove();
 							$('#chat_display').append(tmp);
 							$('.mssg_icon').tooltip();
 							$('.caret_tooltip').tooltip();
 							$('.enter_hint').text('Sending...');
-							module.socket.emit('message_sent',{message:mssg_sent,responseto:0,y_dim:0,parent:0,tmp_mssg_cnt:module.tmp_mssg_cnt},function(info){
+							module.socket.emit('message_sent',{message:raw_mssg,responseto:0,y_dim:0,parent:0,tmp_mssg_cnt:module.tmp_mssg_cnt},function(info){
 								$('.enter_hint').text('Sent');
 								var tmp_message = $('#chat_display').find('.tmp_chat_mssg_' + info.tmp_mssg_cnt);
 								tmp_message.removeClass('tmp_chat_mssg_' + info.tmp_mssg_cnt);
@@ -750,13 +757,17 @@ $('#message').keyup(function(e){
 							}else{
 								var resp_parent = $('#mssg_cont_' + responseto).parents('.mssg_cont').last().attr('id').replace('mssg_cont_','');
 							}
-							var tmp = generateMssg({id:0,author:module.user_tracker,responseto:responseto,y_dim:y_dim,serial:module.serial_tracker,created_at:moment.utc(moment.utc().format()).fromNow(),message:mssg_sent},0,1);
+							if($('#logged_in').text() == 1){
+								var tmp = generateMssg({id:0,author:module.user_tracker,responseto:responseto,y_dim:y_dim,serial:module.serial_tracker,created_at:moment.utc(moment.utc().format()).fromNow(),message:mssg_sent},0,1);
+							}else{
+								var tmp = generateMssg({id:0,author:module.serial_tracker,responseto:responseto,y_dim:y_dim,serial:module.serial_tracker,created_at:moment.utc(moment.utc().format()).fromNow(),message:mssg_sent},0,1);
+							}
 							$('.tmp_message').remove();
 							$('#mssg_cont_' + responseto).append(tmp);
 							$('.mssg_icon').tooltip();
 							$('.caret_tooltip').tooltip();
 							$('.enter_hint').text('Sending...');
-							module.socket.emit('message_sent',{message:mssg_sent,responseto:responseto,y_dim:y_dim,parent:resp_parent,tmp_mssg_cnt:module.tmp_mssg_cnt},function(info){
+							module.socket.emit('message_sent',{message:raw_mssg,responseto:responseto,y_dim:y_dim,parent:resp_parent,tmp_mssg_cnt:module.tmp_mssg_cnt},function(info){
 								$('.enter_hint').text('Sent');
 								var tmp_message = $('#chat_display').find('.tmp_chat_message_' + info.tmp_mssg_cnt);
 								tmp_message.removeClass('tmp_chat_mssg_' + info.tmp_mssg_cnt);

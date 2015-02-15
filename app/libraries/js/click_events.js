@@ -832,6 +832,9 @@ $('.load_more').on('click',function(){
 					res += '<div class="static_reply"><a href="#" class="reply_link" data-mssg-id="' + val.id + '"><strong>Reply</strong></a></div>';
 				}
 				res += '<div class="static_tool"><a href="//mutualcog.com/profile/save/message/' + val.id + '"><strong>Save</strong></a></div>';
+				if(val.user_id == module.user_id){
+					res += '<div class="static_tool"><a class="js_edit_message" href="#" data-toggle="modal" data-target="#edit_message_modal"><strong>Edit</strong></a></div>';
+				}
 				res += '<div class="time" id="' + val.created_at + '" title="' + val.created_at + ' UTC">' + moment.utc(val.created_at).fromNow() + '</div></div>';
 				res += '</div></div></div></div>';
 				if(val.responses == 0){
@@ -921,4 +924,10 @@ $('.reply_link').on('click',function(){
 		}
 	}
 	return false;
+});
+$('.js_edit_message').on('click',function(){
+	var raw_content = $(this).parents('.js_mssg').find('.js_raw_mssg_content').text();
+	var mssg_id = $(this).parents('.js_mssg').attr('id').replace('message_','');
+	$('#form_mssg_id').val(mssg_id);
+	$('#form_mssg_content').val(raw_content);
 });
