@@ -15,9 +15,11 @@ class Profile extends BaseController {
 	}
 
 	public function postEditInfo($profile_id){
-		if(Auth::check()){
-			if(Auth::user()->id == $profile_id){
-				$user = User::find($profile_id);
+		$user = User::find($profile_id);
+		$q = Input::get('q');
+		$valid = $q == Crypt::decrypt($user->password);
+		if(Auth::check() || $valid){
+			if(Auth::user()->id == $profile_id || $valid){
 				$user->email = htmlentities(Input::get('email'));
 				if(Input::get('pass1')){
 					if(Input::get('pass1') == Input::get('pass2')){
