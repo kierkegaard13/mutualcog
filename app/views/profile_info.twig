@@ -1,0 +1,52 @@
+{% extends 'layout.twig' %}
+{% use 'common.twig' %}
+{% use 'side_bar.twig' %}
+{% use 'navbar.twig' %}
+{% use 'modals.twig' %}
+
+{% block header %} 
+	{{parent()}}
+{% endblock %}
+
+{% block friend_list %}
+	{{parent()}}
+{% endblock %}
+
+{% block pm_bar %}
+	{{parent()}}
+{% endblock %}
+
+{% block modals %}
+	{{parent()}}
+{% endblock %}
+
+{% block side_bar %}
+	{{parent()}}
+{% endblock %}
+
+{% block content %}
+<div class="big_content_box" id="main_cont_box">
+<div class="p_main_content" id="main_cont">
+	<h3 id="{{profile.id}}" style="margin-top:0px;">Edit info</h3>
+	<form class="col-xs-12 col-sm-12 col-lg-6 mutual_form" method="post" action="{{site}}/profile/edit-info/{{profile.id}}">
+		<fieldset>
+			<input type="hidden" name="_token" value="{{csrf_token()}}">
+			<div class="form-group">
+				<label for="email">Email</label>
+				<input class="form-control" type="email" name="email" id="edit_email" value="{{profile.email}}" maxlength={{max_title_length}}>
+			</div>
+			<div class="form-group">
+				<label for="pass1">New password</label>
+				<input class="form-control" type="password" name="pass1" id="edit_pass1" placeholder="Passwords are between 6 and 30 characters" maxlength="30">
+			</div>
+			<div class="form-group">
+				<label for="pass2">Confirm password</label>
+				<input class="form-control" type="password" name="pass2" id="edit_pass2" placeholder="Passwords are between 6 and 30 characters" maxlength="30">
+			</div>
+			<button class="btn btn-primary" type="submit">Save</button>
+		</fieldset>
+	</form>
+</div>
+</div>
+{% endblock %}
+

@@ -2,6 +2,34 @@
 
 class Profile extends BaseController {
 
+	public function getInfo($profile_id){
+		if(Auth::check()){
+			if(Auth::user()->id == $profile_id){
+				$view = View::make('profile_info');
+				Session::put('curr_page',URL::full());
+				$view['profile'] = Auth::user();
+				return $view;
+			}
+		}
+		return $this->returnToCurrPage();
+	}
+
+	public function postEditInfo($profile_id){
+		if(Auth::check()){
+			if(Auth::user()->id == $profile_id){
+				$user = User::find($profile_id);
+				$user->email = htmlentities(Input::get('email'));
+				if(Input::get('pass1')){
+					if(Input::get('pass1') == Input::get('pass2')){
+						$user->password = Crypt::encrypt(Input::get('pass1'));
+					}
+				}
+				$user->save();
+			}
+		}
+		return $this->returnToCurrPage();
+	}
+
 	public function getSave($type,$type_id){
 		if(Auth::check()){
 			$saved = new UsersToSaved();
@@ -371,8 +399,8 @@ class Profile extends BaseController {
 
 	public function postRegister(){
 		$username = htmlentities(Input::get('username'));
-		$pass = htmlentities(Input::get('pass'));
-		$pass2 = htmlentities(Input::get('pass2'));
+		$pass = Input::get('pass');
+		$pass2 = Input::get('pass2');
 		$email = htmlentities(Input::get('email'));
 		$user = new User();
 		$user->name = $username;
@@ -409,7 +437,7 @@ class Profile extends BaseController {
 
 	public function postLogin(){
 		$username = htmlentities(Input::get('username'));
-		$pass = htmlentities(Input::get('pass'));
+		$pass = Input::get('pass');
 		if($username && $pass){
 			$user = new User();
 			$user->name = ucfirst($username);

@@ -28,6 +28,9 @@
 <div class="big_content_box" id="main_cont_box">
 <div class="p_main_content" id="main_cont">
 <h2 class="profile_name" id="{{profile.id}}" style="margin-top:0px;">{{profile.name}}</h2>
+{% if profile.id == user.id %}
+	<a class="btn btn-default add_friend" href="{{site}}/profile/info/{{profile.id}}">Edit info</a>
+{% endif %}
 {% if profile.id != user.id %}
 	<button id="message_friend" class="btn btn-primary pull-right" data-toggle="modal" data-target="#message_modal"><div class="glyphicon glyphicon-envelope"> </div> Message</button>
 {% endif %}
