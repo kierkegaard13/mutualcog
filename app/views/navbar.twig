@@ -14,7 +14,7 @@
 			<btn id="show_mobile_pms" class="navbar-brand visible-xs" title="Private messaging"><div class="glyphicon glyphicon-user"></div></btn>
 			<btn id="show_mobile_notifications" class="navbar-brand visible-xs" title="Notifications"><div class="glyphicon glyphicon-globe"></div></btn>
 		{% else %}
-			<btn class="navbar-brand visible-xs" data-toggle="modal" data-target="#register_modal" title="Login"><div class="glyphicon glyphicon-log-in"></div></btn>
+			<btn class="navbar-brand visible-xs" data-toggle="modal" data-target="#register_modal" title="Sign up/in"><div class="glyphicon glyphicon-log-in"></div></btn>
 		{% endif %}
 		{% if (chat.admin | length > 0) and (user.name == chat.admin or serial == chat.admin) %}
 			<btn class="navbar-brand visible-xs edit_chat_link" data-toggle="modal" data-target="edit_modal" title="Edit Chat"><div class="glyphicon glyphicon-book"></div></btn>

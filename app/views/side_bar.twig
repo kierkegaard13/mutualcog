@@ -39,12 +39,13 @@
 			<span><a href="{{site}}/u/{{user.name}}" style="color:{{color_arr[serial % 7]}};"><strong id="user_tracker">{{user.name}}</strong></a></span>
 		{% endif %}
 		{% if not user %}
-		<span class="pull-right"><a href="#" data-toggle="modal" class="register_link" data-target="#register_modal">Register?</a></span>
+		<span class="pull-right"><a href="#" data-toggle="modal" class="register_link" data-target="#register_modal">Sign up/in?</a></span>
 		{% endif %}
 		</div>
 		<div id="logged_in" style="display:none;">{% if logged_in %}1{% else %}0{% endif %}</div>
 		{% if not logged_in %}
 			<form method="post" action="{{site}}/profile/login" class="mutual_form" id="login_form">
+			<input type="hidden" name="_token" value="{{csrf_token()}}">
 			<fieldset>
 				<div id="user_group" class="form-group">
 					<input class="form-control input-sm" data-toggle="tooltip" data-placement="auto top" data-original-title="Username or password incorrect" data-trigger="focus" data-container="body" type="text" name="username" id="username" placeholder="Enter your username" maxlength="{{max_user_length}}">
@@ -52,7 +53,7 @@
 				<div id="pass1_group" class="form-group">
 					<input class="form-control input-sm" type="password" name="pass" id="pass" placeholder="Enter your password" maxlength="30">
 				</div>
-				<button class="btn btn-primary" type="Submit" style="width:100%;">Login</button>
+				<button class="btn btn-primary" type="Submit" style="width:100%;">Sign in</button>
 			</fieldset>
 			</form>
 		{% else %}
@@ -205,9 +206,10 @@
 <div id="static_post_box" class="small_content_box" {% if chat.live or not is_static_chat %}style="display:none;"{% endif %}>
 	<div class="content side_content" id="create_new_mssg">
 		<form method="post" action="{{site}}/chat/message/{{chat.id}}">
-		<legend>Submit a new comment</legend>
-		<textarea rows="4" name="mssg_content" maxlength="{{max_static_length}}"></textarea>
-		<button type="submit" class="btn btn-primary" style="width:100%;">Submit comment</button>
+			<input type="hidden" name="_token" value="{{csrf_token()}}">
+			<legend>Submit a new comment</legend>
+			<textarea rows="4" name="mssg_content" maxlength="{{max_static_length}}"></textarea>
+			<button type="submit" class="btn btn-primary" style="width:100%;">Submit comment</button>
 		</form>
 	</div>
 </div>

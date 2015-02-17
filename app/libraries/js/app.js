@@ -2127,6 +2127,10 @@ $('.js_edit_message').on('click',function(){
 	$('#form_mssg_id').val(mssg_id);
 	$('#form_mssg_content').val(raw_content);
 });
+$('.recover_account').on('click',function(){
+	$('#register_modal').modal('hide');
+	$('#recover_modal').modal();
+});
 
 $('#search_input').on('keydown',function(e){
 	if(e.keyCode == 13){  /*enter key*/
