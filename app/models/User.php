@@ -28,6 +28,7 @@ class User extends EloquentBridge implements UserInterface, RemindableInterface
 				$this->toArray(),
 				array(
 					'name' => "required|unique:users|between:3,$this->max_user_length",
+					'password' => 'between:6,30',
 					'email' => 'email'
 				     )
 				)->fails();

@@ -2,22 +2,37 @@
 
 class Profile extends BaseController {
 
+	public function postRecover(){
+		$email = Input::get('recovery_email');
+		$user = User::whereemail($email)->first();
+		if($user){
+			$reset_url = $this->site_url . '/profile/info/' . $user->id . '?q=' . $user->password;
+			Mail::send('emails.auth.reminder',array('reset_url' => $reset_url),function($message)use($email){
+				$message->from('mcognizance@gmail.com','Mutual Cognizance');
+				$message->to($email)->subject('Password Reset');
+			});
+		}
+		return $this->returnToCurrPage();
+	}
+
 	public function getInfo($profile_id){
+		$q = htmlentities(Input::get('q'));
 		if(Auth::check()){
 			if(Auth::user()->id == $profile_id){
 				$view = View::make('profile_info');
 				Session::put('curr_page',URL::full());
 				$view['profile'] = Auth::user();
+				$view['q'] = $q;
 				return $view;
 			}
 		}
-		return $this->returnToCurrPage();
+		return Redirect::to('home');
 	}
 
 	public function postEditInfo($profile_id){
 		$user = User::find($profile_id);
 		$q = Input::get('q');
-		$valid = $q == Crypt::decrypt($user->password);
+		$valid = $q == $user->password;
 		if(Auth::check() || $valid){
 			if(Auth::user()->id == $profile_id || $valid){
 				$user->email = htmlentities(Input::get('email'));
@@ -412,7 +427,7 @@ class Profile extends BaseController {
 		if($email){
 			$user->email = $email;
 		}
-		if($pass == $pass2 && preg_match('/[a-zA-Z]/',$username) && (strlen($pass) >= 6 && strlen($pass) <= 30)){
+		if($pass == $pass2 && preg_match('/[a-zA-Z]/',$username)){
 			if($user->save()){
 				Auth::login($user);
 				$node = new NodeAuth();
