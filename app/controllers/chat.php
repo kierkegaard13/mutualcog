@@ -36,7 +36,7 @@ class Chat extends BaseController {
 			$user_to_chat->user = Auth::user()->name;
 			$user_to_chat->ip_address = Auth::user()->serial->ip_address;
 			$user_to_chat->is_user = 1;
-			if(!$user_to_chat->findAll()){  //getting into chat for the first time
+			if(!$user_to_chat->findAll(1)){  //getting into chat for the first time
 				if($chat->admin_id == Auth::user()->id){
 					$user_to_chat->is_admin = 1;
 				}else if($chat->admin_id == Auth::user()->serial_id){
@@ -64,7 +64,7 @@ class Chat extends BaseController {
 			$user_to_chat->user_id = Session::get('serial_id');
 			$user_to_chat->user = Session::get('unique_serial');
 			$user_to_chat->ip_address = $ip_address;
-			if(!$user_to_chat->findAll()){
+			if(!$user_to_chat->findAll(1)){
 				$user_to_chat->active = 1;
 				if($chat->admin_id == Session::get('serial_id')){
 					$user_to_chat->is_admin = 1;
@@ -126,7 +126,7 @@ class Chat extends BaseController {
 			$user_to_chat->chat_id = $chat_id;
 			$user_to_chat->user_id = Auth::user()->id;
 			$user_to_chat->user = Auth::user()->name;
-			if(!$user_to_chat->findAll()){  //getting into chat for the first time
+			if(!$user_to_chat->findAll(1)){  //getting into chat for the first time
 				if($chat->admin_id == Auth::user()->id){
 					$user_to_chat->is_admin = 1;
 				}else if($chat->admin_id == Auth::user()->serial_id){
@@ -150,7 +150,7 @@ class Chat extends BaseController {
 			$user_to_chat->chat_id = $chat_id;
 			$user_to_chat->user_id = Session::get('serial_id');
 			$user_to_chat->user = Session::get('unique_serial');
-			if(!$user_to_chat->findAll()){
+			if(!$user_to_chat->findAll(1)){
 				if($chat->admin_id == Session::get('serial_id')){
 					$user_to_chat->is_admin = 1;
 				}
@@ -178,7 +178,7 @@ class Chat extends BaseController {
 		$view['mods'] = $mods;
 		if($mssg_id){
 			$mssg_arr = array();
-			$mssg_arr[] = Messages::with('descendants')->wherereadable('1')->orderBy('path')->find($mssg_id); 
+			$mssg_arr[] = Messages::with('descendants')->orderBy('path')->find($mssg_id); 
 			$view['messages'] = $mssg_arr; 
 		}else{
 			$view['messages'] = $chat->messagesPaginate();
@@ -256,58 +256,6 @@ class Chat extends BaseController {
 			$messages = '';
 		}
 		return $messages;
-	}
-
-	public function postMessage($chat_id){
-		$chat = Chats::find($chat_id);
-		$mssg_content = htmlentities(Input::get('mssg_content'));
-		if(!$chat->live && strlen($mssg_content) < $this->max_static_length){
-			$message = new Messages();
-			$message->chat_id = htmlentities($chat_id);
-			$message->raw_message = $mssg_content;
-			$message->message = $this->parseText($mssg_content);
-			if(Auth::check()){
-				$message->user_id = Auth::user()->id;
-				$message->author = Auth::user()->name;
-				$message->serial = Auth::user()->serial->serial_id;
-			}else{
-				$message->user_id = Session::get('serial_id');
-				$message->author = Session::get('unique_serial');
-				$message->serial = Session::get('unique_serial');
-
-			}
-			if(Input::get('reply_to')){
-				$parent_mssg = Messages::find(Input::get('reply_to'));
-				$message->responseto = $parent_mssg->id;
-				if($parent_mssg->y_dim == 0){
-					$message->parent = $parent_mssg->id;
-				}else{
-					$message->parent = $parent_mssg->parent;	
-				}
-				$message->y_dim = $parent_mssg->y_dim + 1;
-				$message->save();
-				$message->path = $parent_mssg->path . '.' . str_repeat('0', 8 - strlen((string)$message->id)) . $message->id;
-				$message->res_num = $parent_mssg->responses + 1;
-				$message->readable = 1;
-				$message->save();
-				$parent_mssg->responses = $parent_mssg->responses + 1;
-				$parent_mssg->save();
-			}else{
-				$message->save();
-				$message->path = '0.' . str_repeat('0', 8 - strlen((string)$message->id)) . $message->id;
-				$message->readable = 1;
-				$message->save();
-			}
-			if(Auth::check()){	
-				$mssg_voted = new MessagesVoted();
-				$mssg_voted->message_id = $message->id;
-				$mssg_voted->user_id = Auth::user()->id;
-				$mssg_voted->status = 1;
-				$mssg_voted->save();
-			}
-			return $this->returnToCurrPage();
-		}
-		return Redirect::to(action('chat@getLive',$chat_id));
 	}
 
 	public function postEditMessage(){
@@ -441,7 +389,6 @@ class Chat extends BaseController {
 		$title = ucfirst(htmlentities(Input::get('title')));
 		$link = htmlentities(Input::get('link'));
 		$details = Input::get('description');
-		$live_status = htmlentities(Input::get('live_status'));
 		$nsfw = htmlentities(Input::get('nsfw'));
 		$communities = htmlentities(Input::get('communities'));
 		$curr_date = date('Y:m:d:H:i');
@@ -519,11 +466,7 @@ class Chat extends BaseController {
 				$chat->raw_details = htmlentities($details);
 				$chat->details = $this->parseText($details);
 			}
-			if($live_status == 'on'){
-				$chat->live = 1;
-			}else{
-				$chat->live = 0;
-			}
+			$chat->live = 1;
 			if($nsfw == 'on'){
 				$chat->nsfw = 1;
 			}else{
@@ -593,7 +536,6 @@ class Chat extends BaseController {
 		$title = htmlentities(Input::get('title'));
 		$link = htmlentities(Input::get('link'));
 		$details = Input::get('description');
-		$live_status = htmlentities(Input::get('live_status'));
 		$nsfw = htmlentities(Input::get('nsfw'));
 		$communities = htmlentities(Input::get('communities'));
 		if(htmlentities(Input::get('js_key')) != 'js_enabled'){
@@ -666,11 +608,7 @@ class Chat extends BaseController {
 				$chat->raw_details = htmlentities($details);
 				$chat->details = $this->parseText($details);
 			}
-			if($live_status == 'on'){
-				$chat->live = 1;
-			}else{
-				$chat->live = 0;
-			}
+			$chat->live = 1;
 			if($nsfw == 'on'){
 				$chat->nsfw = 1;
 			}else{

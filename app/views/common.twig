@@ -240,9 +240,9 @@
 			</a>
 		{% endif %}
 		{% if chat.live %}
-			<a href="{{site}}/{% if curr_community_id %}c/{{curr_community.name}}/{% endif %}live" class="pull-right glyphicon glyphicon-play brighter_green_color chat_status_indicator" title="Live chat"></a>
+			<a href="{{site}}/{% if curr_community_id %}c/{{curr_community.name}}/{% endif %}live" class="pull-right glyphicon glyphicon-play brighter_green_color chat_status_indicator" title="Live"></a>
 		{% else %}
-			<a href="{{site}}/{% if curr_community_id %}c/{{curr_community.name}}/{% endif %}static" class="pull-right glyphicon glyphicon-pause darker_yellow_color chat_status_indicator" title="Static chat"></a>
+			<a href="{{site}}/{% if curr_community_id %}c/{{curr_community.name}}/{% endif %}static" class="pull-right glyphicon glyphicon-pause darker_yellow_color chat_status_indicator" title="Paused"></a>
 		{% endif %}
 		<div class="chat_community_str" style="display:none;">#{{chat.communities|join(' #')}}</div>
 		<div class="chat_link_str" style="display:none;">{{chat.link}}</div>
@@ -423,9 +423,6 @@
 					<span class="glyphicon glyphicon-knight"></span>	
 				{% endif %}</a></strong>: {{message.message | raw}}
 				<div class="time_box">
-					{% if not chat.live %}
-						<div class="static_reply"><a href="#" class="reply_link" data-mssg-id="{{message.id}}"><strong>Reply</strong></a></div>
-					{% endif %}
 					{% if message.id in saved %}
 						<div class="static_tool"><a href="{{site}}/profile/unsave/message/{{message.id}}"><strong>UnSave</strong></a></div>
 					{% else %}
@@ -510,9 +507,6 @@
 					<span class="glyphicon glyphicon-knight"></span>	
 				{% endif %}</a></strong>: {{response.message | raw}}
 				<div class="time_box">
-					{% if not chat.live %}
-						<div class="static_reply"><a href="#" class="reply_link" data-mssg-id="{{response.id}}"><strong>Reply</strong></a></div>
-					{% endif %}
 					{% if response.id in saved %}
 						<div class="static_tool"><a href="{{site}}/profile/unsave/message/{{response.id}}"><strong>UnSave</strong></a></div>
 					{% else %}

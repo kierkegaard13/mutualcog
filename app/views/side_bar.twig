@@ -203,17 +203,6 @@
 	</div>
 </div>
 
-<div id="static_post_box" class="small_content_box" {% if chat.live or not is_static_chat %}style="display:none;"{% endif %}>
-	<div class="content side_content" id="create_new_mssg">
-		<form method="post" action="{{site}}/chat/message/{{chat.id}}">
-			<input type="hidden" name="_token" value="{{csrf_token()}}">
-			<legend>Submit a new comment</legend>
-			<textarea rows="4" name="mssg_content" maxlength="{{max_static_length}}"></textarea>
-			<button type="submit" class="btn btn-primary" style="width:100%;">Submit comment</button>
-		</form>
-	</div>
-</div>
-
 <div id="community_sub_box" class="small_content_box" {% if not is_community %}style="display:none;"{% endif %}>
 	<div class="content side_content" id="subscribe">
 		{% if user.community_admin == curr_community_id and curr_community_id | length > 0 %}

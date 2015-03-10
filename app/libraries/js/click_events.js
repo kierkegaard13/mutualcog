@@ -907,24 +907,6 @@ $('#main').on('click','.remove_chat_link',function(e){
 	$('#remove_chat_final').attr('href',$(this).attr('data-remove-link'));
 	return false;
 });
-$('.reply_link').on('click',function(){
-	var reply_form = $('#reply_form').clone();
-	if(!$('#message_' + $(this).attr('data-mssg-id')).find('#reply_form_' + $(this).attr('data-mssg-id')).length){
-		$(this).html('<strong>Cancel</strong>');
-		reply_form = $('#reply_form').clone();
-		$('#message_' + $(this).attr('data-mssg-id')).append(reply_form);	
-		$('#message_' + $(this).attr('data-mssg-id')).find('#reply_form').attr('id','reply_form_' + $(this).attr('data-mssg-id'));	
-		$('#reply_form_' + $(this).attr('data-mssg-id')).children('#reply_to').val($(this).attr('data-mssg-id'));
-	}else{
-		$('#message_' + $(this).attr('data-mssg-id')).find('#reply_form_' + $(this).attr('data-mssg-id')).toggle();	
-		if($(this).children().text() == 'Reply'){
-			$(this).children().text('Cancel');
-		}else{
-			$(this).children().text('Reply');
-		}
-	}
-	return false;
-});
 $('.js_edit_message').on('click',function(){
 	var raw_content = $(this).parents('.js_mssg').find('.js_raw_mssg_content').text();
 	var mssg_id = $(this).parents('.js_mssg').attr('id').replace('message_','');

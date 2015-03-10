@@ -47,11 +47,6 @@
 		<img src="{{chat.image}}" alt="Image Error" width="80" height="80">
 	</a>
 {% endif %}
-{% if chat.live %}
-	<div class="pull-right glyphicon glyphicon-play brighter_green_color static_status_indicator" title="Live chat"></div>
-{% else %}
-	<div class="pull-right glyphicon glyphicon-pause darker_yellow_color static_status_indicator" title="Static chat"></div>
-{% endif %}
 <div class="static_chat_title">
 	<div id="chat_admin_info" style="display:none;">{{chat.admin}}</div>
 	{% if chat.link %}
@@ -110,22 +105,9 @@
 		{{chat.details | raw}}
 	</div>
 </div>
-{% if not chat.live %}
-<form method="post" class="visible-xs" action="{{site}}/chat/message/{{chat.id}}">
-	<textarea rows="4" name="mssg_content" maxlength="{{max_static_length}}"></textarea>
-	<button type="submit" class="btn btn-sm btn-primary">Submit comment</button>
-</form>
-{% endif %}
 </div>
 </div>
 
-<div id="reply_form_box" style="display:none;">
-<form method="post" id="reply_form" class="reply_forms" action="{{site}}/chat/message/{{chat.id}}">
-	<input type="hidden" name="reply_to" id="reply_to">
-	<textarea rows="3" name="mssg_content" maxlength="{{max_static_length}}"></textarea>
-	<button type="submit" class="btn btn-sm btn-primary">Submit comment</button>
-</form>
-</div>
 <div class="big_content_box" style="margin-top:15px;margin-bottom:15px;">
 <div id="up_arr" style="display:none;">{{mssg_upvoted | json_encode()}}</div>
 <div id="down_arr" style="display:none;">{{mssg_downvoted | json_encode()}}</div>
