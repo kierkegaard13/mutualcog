@@ -41,9 +41,9 @@ class Home extends BaseController {
 			$chats_new = $chats_new->wherensfw('0');
 			$chats_rising = $chats_rising->wherensfw('0');
 		}
-		$chats = $chats->remember(1)->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
-		$chats_new = $chats_new->orderBy('pinned','desc')->orderBy('created_at','desc')->paginate(25);
-		$chats_rising = $chats_rising->remember(1)->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
+		$chats = $chats->wheretype('public')->remember(1)->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
+		$chats_new = $chats_new->wheretype('public')->orderBy('pinned','desc')->orderBy('created_at','desc')->paginate(25);
+		$chats_rising = $chats_rising->wheretype('public')->remember(1)->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
 		$upvoted = array();
 		$downvoted = array();
 		$saved = array();
@@ -101,9 +101,9 @@ class Home extends BaseController {
 		$chats = $chats->wherensfw('1');
 		$chats_new = $chats_new->wherensfw('1');
 		$chats_rising = $chats_rising->wherensfw('1');
-		$chats = $chats->remember(1)->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
-		$chats_new = $chats_new->orderBy('pinned','desc')->orderBy('created_at','desc')->paginate(25);
-		$chats_rising = $chats_rising->remember(1)->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
+		$chats = $chats->wheretype('public')->remember(1)->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
+		$chats_new = $chats_new->wheretype('public')->orderBy('pinned','desc')->orderBy('created_at','desc')->paginate(25);
+		$chats_rising = $chats_rising->wheretype('public')->remember(1)->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
 		$upvoted = array();
 		$downvoted = array();
 		if(Auth::check()){
@@ -156,9 +156,9 @@ class Home extends BaseController {
 		$chats = $chats->wherepinned('1')->wherensfw('0');
 		$chats_new = $chats_new->wherepinned('1')->wherensfw('0');
 		$chats_rising = $chats_rising->wherepinned('1')->wherensfw('0');
-		$chats = $chats->remember(1)->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
-		$chats_new = $chats_new->orderBy('pinned','desc')->orderBy('created_at','desc')->paginate(25);
-		$chats_rising = $chats_rising->remember(1)->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
+		$chats = $chats->wheretype('public')->remember(1)->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
+		$chats_new = $chats_new->wheretype('public')->orderBy('pinned','desc')->orderBy('created_at','desc')->paginate(25);
+		$chats_rising = $chats_rising->wheretype('public')->remember(1)->orderBy('pinned','desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
 		$upvoted = array();
 		$downvoted = array();
 		if(Auth::check()){

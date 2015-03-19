@@ -36,9 +36,9 @@ class C extends BaseController {
 			$chats_rising = $chats_rising->where('chats_to_communities.pinned','1');
 			$chats_removed = $chats_removed->where('chats_to_communities.pinned','1');
 		}
-		$chats_new = $chats_new->orderBy(DB::raw('chats_to_communities.pinned'),'desc')->orderBy('created_at','desc')->paginate(25);
-		$chats_rising = $chats_rising->orderBy(DB::raw('chats_to_communities.pinned'),'desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
-		$chats_removed = $chats_removed->orderBy('created_at','desc')->paginate(25);
+		$chats_new = $chats_new->wheretype('public')->orderBy(DB::raw('chats_to_communities.pinned'),'desc')->orderBy('created_at','desc')->paginate(25);
+		$chats_rising = $chats_rising->wheretype('public')->orderBy(DB::raw('chats_to_communities.pinned'),'desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
+		$chats_removed = $chats_removed->wheretype('public')->orderBy('created_at','desc')->paginate(25);
 		$chats = $chats->orderBy(DB::raw('chats_to_communities.pinned'),'desc')->orderBy(DB::raw('score'),'desc')->paginate(25);
 		$upvoted = array();
 		$downvoted = array();

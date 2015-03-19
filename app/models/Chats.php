@@ -46,11 +46,28 @@ class Chats extends EloquentBridge
 	}
 
 	public function messages(){
-		return $this->hasMany('Messages','chat_id')->orderBy('path')->take(1000);
+		$mssg_count = count(DB::table('messages')->where('chat_id',$this->id)->get());
+		if($this->type == 'public'){
+			$limit = 1000;
+			$order = 'path';
+		}else{
+			$limit = 25;
+			$order = 'created_at';
+		}
+		if($mssg_count > $limit){
+			return $this->hasMany('Messages','chat_id')->skip($mssg_count - 25)->take(25)->orderBy($order);
+		}else{
+			return $this->hasMany('Messages','chat_id')->orderBy($order);
+		}
 	}
 
 	public function messagesOnly(){
-		return $this->hasMany('Messages','chat_id')->whereresponseto('0')->orderBy('path')->take(1000);
+		$mssg_count = count(DB::table('messages')->where('chat_id',$this->id)->whereresponseto('0')->get());
+		if($mssg_count > 1000){
+			return $this->hasMany('Messages','chat_id')->whereresponseto('0')->skip($mssg_count - 1000)->take(1000)->orderBy('path');
+		}else{
+			return $this->hasMany('Messages','chat_id')->whereresponseto('0')->orderBy('path');
+		}
 	}
 
 	public function messagesPaginate(){
@@ -81,4 +98,7 @@ class Chats extends EloquentBridge
 		}
 	}
 
+	public function friends(){
+		return $this->belongsToMany('User','users_to_chats','chat_id','user_id')->where('user_id','!=',Auth::user()->id)->whereentity_type(0);
+	}
 }

@@ -22,4 +22,7 @@ class Messages extends EloquentBridge
 		return $this->belongsTo('Messages','responseto');
 	}
 
+	public function chat(){
+		return $this->belongsTo('Chats','chat_id');
+	}
 }
