@@ -118,21 +118,21 @@ io.on('connection', function(client) {
 				}
 			});
 			if(pm_info.pm_id != 0){
-				conn.where({user_id:client.user_id,entity_id:pm_info.friend_id,entity_type:0}).update('users_to_private_chats',{visible:1},function(err,info){
+				conn.where({user_id:client.user_id,entity_id:pm_info.friend_id,entity_type:0}).update('users_to_chats',{visible:1},function(err,info){
 					if(err)console.log(err);
-					conn.where({id:pm_info.pm_id}).get('private_chats',function(err,rows){
+					conn.where({id:pm_info.pm_id}).get('chats',function(err,rows){
 						if(err)console.log(err);
 						fn({pm_id:pm_info.pm_id,friend_name:pm_info.friend_name,friend_id:pm_info.friend_id});
 					});
 				});
 			}else{
-				conn.insert('private_chats',{created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
+				conn.insert('chats',{created_at:moment.utc().format(),updated_at:moment.utc().format(),type:'private'},function(err,info){
 					if(err)console.log(err);
 					fn({pm_id:info.insertId,friend_name:pm_info.friend_name,friend_id:pm_info.friend_id});
-					conn.insert('users_to_private_chats',{chat_id:info.insertId,user_id:client.user_id,entity_id:pm_info.friend_id},function(err,info){
+					conn.insert('users_to_chats',{chat_id:info.insertId,user:client.user,user_id:client.user_id,entity_id:pm_info.friend_id},function(err,info){
 						if(err)console.log(err);
 					});
-					conn.insert('users_to_private_chats',{chat_id:info.insertId,user_id:pm_info.friend_id,entity_id:client.user_id,visible:0},function(err,info){
+					conn.insert('users_to_chats',{chat_id:info.insertId,user:client.user,user_id:pm_info.friend_id,entity_id:client.user_id,visible:0},function(err,info){
 						if(err)console.log(err);
 					});
 				});
@@ -142,7 +142,7 @@ io.on('connection', function(client) {
 
 	client.on('leave_pm',function(pm_info){
 		if(client.authorized){
-			conn.where({user_id:client.user_id,entity_id:pm_info.friend_id,chat_id:pm_info.pm_id,entity_type:0}).update('users_to_private_chats',{visible:0},function(err,rows){
+			conn.where({user_id:client.user_id,entity_id:pm_info.friend_id,chat_id:pm_info.pm_id,entity_type:0}).update('users_to_chats',{visible:0},function(err,rows){
 				if(err)console.log(err);
 			});	
 		}
@@ -150,7 +150,7 @@ io.on('connection', function(client) {
 
 	client.on('minimize_pm',function(pm_info){
 		if(client.authorized){
-			conn.where({user_id:client.user_id,entity_id:pm_info.friend_id,chat_id:pm_info.pm_id,entity_type:0}).update('users_to_private_chats',{visible:2},function(err,rows){
+			conn.where({user_id:client.user_id,entity_id:pm_info.friend_id,chat_id:pm_info.pm_id,entity_type:0}).update('users_to_chats',{visible:2},function(err,rows){
 				if(err)console.log(err);
 			});	
 		}
@@ -158,7 +158,7 @@ io.on('connection', function(client) {
 
 	client.on('maximize_pm',function(pm_info){
 		if(client.authorized){
-			conn.where({user_id:client.user_id,entity_id:pm_info.friend_id,chat_id:pm_info.pm_id,entity_type:0}).update('users_to_private_chats',{visible:1},function(err,rows){
+			conn.where({user_id:client.user_id,entity_id:pm_info.friend_id,chat_id:pm_info.pm_id,entity_type:0}).update('users_to_chats',{visible:1},function(err,rows){
 				if(err)console.log(err);
 			});	
 		}
@@ -190,13 +190,13 @@ io.on('connection', function(client) {
 				}
 			});
 			/* Find out if recipient has chat maximized, minimized, or closed */
-			conn.where({user_id:pm_info.friend_id,entity_id:client.user_id,entity_type:0}).get('users_to_private_chats',function(err,rows){
+			conn.where({user_id:pm_info.friend_id,entity_id:client.user_id,entity_type:0}).get('users_to_chats',function(err,rows){
 				if(err)console.log(err);
 				var visibility = rows[0].visible;
 				conn.where({id:pm_info.friend_id}).get('users',function(err,rows){
 					if(err)console.log(err);
 					var friend_online = rows[0].online;
-					conn.insert('private_messages',{message:pm_info.message,author:client.user,author_id:client.user_id,chat_id:pm_info.pm_id,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
+					conn.insert('messages',{message:pm_info.message,author:client.user,user_id:client.user_id,chat_id:pm_info.pm_id,created_at:moment.utc().format(),updated_at:moment.utc().format()},function(err,info){
 						if(err)console.log(err);
 						mssg_id = info.insertId;
 						/* Check whether recipient is online */
@@ -207,10 +207,10 @@ io.on('connection', function(client) {
 							io.in('user_' + pm_info.friend_id).emit('receive_pm',{message:pm_info.message,pm_id:pm_info.pm_id,user_id:pm_info.friend_id,friend_id:pm_info.user_id,friend_name:client.user,state:visibility,time:moment.utc().format(),mssg_id:mssg_id});
 							fn({message:pm_info.message,unseen:1,pm_id:pm_info.pm_id,friend_id:pm_info.friend_id,tmp_mssg_cnt:pm_info.tmp_mssg_cnt});
 							/* You need to set unseen for the recipient for when they come back online and need to emit chats seen */
-							conn.where({user_id:client.user_id,entity_id:pm_info.friend_id,entity_type:0}).update('users_to_private_chats',{unseen:1,visible:1},function(err,rows){
+							conn.where({user_id:client.user_id,entity_id:pm_info.friend_id,entity_type:0}).update('users_to_chats',{unseen:1,visible:1},function(err,rows){
 								if(err)console.log(err);
 							});
-							conn.where({id:pm_info.pm_id}).update('private_chats',{seen:0},function(err,info){
+							conn.where({id:pm_info.pm_id}).update('chats',{seen:0},function(err,info){
 								if(err)console.log(err);
 							});
 						}
@@ -222,15 +222,15 @@ io.on('connection', function(client) {
 
 	client.on('seen_chats',function(){
 		if(client.authorized){
-			conn.where({entity_id:client.user_id,unseen:1}).get('users_to_private_chats',function(err,rows){
+			conn.where({entity_id:client.user_id,unseen:1}).get('users_to_chats',function(err,rows){
 				if(err)console.log(err);
 				for(var i = 0; i < rows.length; i++){
 					io.in('user_' + rows[i].user_id).emit('chat_seen',{pm_id:rows[i].chat_id,friend_id:client.user_id});
-					conn.where({id:rows[i].chat_id}).update('private_chats',{seen:1},function(err,info){
+					conn.where({id:rows[i].chat_id}).update('chats',{seen:1},function(err,info){
 						if(err)console.log(err);
 					});
 				}
-				conn.where({entity_id:client.user_id,unseen:1}).update('users_to_private_chats',{unseen:0},function(err,info){
+				conn.where({entity_id:client.user_id,unseen:1}).update('users_to_chats',{unseen:0},function(err,info){
 					if(err)console.log(err);
 				});
 			});
@@ -451,11 +451,11 @@ io.on('connection', function(client) {
 					conn.insert('messages',{message:mssg_info.message,chat_id:client.chat_id,user_id:client.memb_id,created_at:moment.utc().format(),updated_at:moment.utc().format(),responseto:mssg_info.responseto,y_dim:mssg_info.y_dim,parent:mssg_info.parent,author:client.user,serial:client.serial},function(err,info){
 						if(err) console.log(err);
 						var insert_id = info.insertId;
-						client.broadcast.to(client.room).emit('publishMessage',{id:insert_id,message:mssg_info.message,chat_id:client.chat_id,user_id:client.memb_id,created_at:moment.utc().format(),responseto:mssg_info.responseto,author:client.user,serial:client.serial,y_dim:mssg_info.y_dim,parent:mssg_info.parent,tmp_mssg_cnt:mssg_info.tmp_mssg_cnt});
-						fn({id:insert_id,message:mssg_info.message,chat_id:client.chat_id,user_id:client.memb_id,created_at:moment.utc().format(),responseto:mssg_info.responseto,author:client.user,serial:client.serial,y_dim:mssg_info.y_dim,parent:mssg_info.parent,tmp_mssg_cnt:mssg_info.tmp_mssg_cnt});
 						if(mssg_info.responseto == 0){
-							conn.where({id:insert_id}).update('messages',{path:"0" + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id,readable:1},function(err,info){
+							conn.where({id:insert_id}).update('messages',{path:"0" + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id},function(err,info){
 								if(err)console.log(err);
+								fn({id:insert_id,message:mssg_info.message,chat_id:client.chat_id,user_id:client.memb_id,created_at:moment.utc().format(),responseto:mssg_info.responseto,author:client.user,serial:client.serial,y_dim:mssg_info.y_dim,parent:mssg_info.parent,tmp_mssg_cnt:mssg_info.tmp_mssg_cnt});
+								client.broadcast.to(client.room).emit('publishMessage',{id:insert_id,message:mssg_info.message,chat_id:client.chat_id,user_id:client.memb_id,created_at:moment.utc().format(),responseto:mssg_info.responseto,author:client.user,serial:client.serial,y_dim:mssg_info.y_dim,parent:mssg_info.parent,tmp_mssg_cnt:mssg_info.tmp_mssg_cnt});
 							});
 						}else{  //if it is a response
 							conn.where({id:mssg_info.responseto}).get('messages',function(err,rows){  //update response count, message path, and he_level and alert user to response
@@ -479,8 +479,10 @@ io.on('connection', function(client) {
 										}
 									});
 								}
-								conn.where({id:insert_id}).update('messages',{path:rows[0].path + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id,res_num:rows[0].responses + 1,readable:1},function(err,info){
+								conn.where({id:insert_id}).update('messages',{path:rows[0].path + "." + repeatString("0", 8 - insert_id.toString().length) + insert_id,res_num:rows[0].responses + 1},function(err,info){
 									if(err)console.log(err);
+									fn({id:insert_id,message:mssg_info.message,chat_id:client.chat_id,user_id:client.memb_id,created_at:moment.utc().format(),responseto:mssg_info.responseto,author:client.user,serial:client.serial,y_dim:mssg_info.y_dim,parent:mssg_info.parent,tmp_mssg_cnt:mssg_info.tmp_mssg_cnt});
+									client.broadcast.to(client.room).emit('publishMessage',{id:insert_id,message:mssg_info.message,chat_id:client.chat_id,user_id:client.memb_id,created_at:moment.utc().format(),responseto:mssg_info.responseto,author:client.user,serial:client.serial,y_dim:mssg_info.y_dim,parent:mssg_info.parent,tmp_mssg_cnt:mssg_info.tmp_mssg_cnt});
 								});
 								conn.where({id:mssg_info.responseto}).update('messages',{responses:rows[0].responses + 1},function(err,info){
 									if(err)console.log(err);
