@@ -34,9 +34,9 @@ class Chat extends BaseController {
 			$user_to_chat->chat_id = $chat_id;
 			$user_to_chat->user_id = Auth::user()->id;
 			$user_to_chat->user = Auth::user()->name;
-			$user_to_chat->ip_address = Auth::user()->serial->ip_address;
 			$user_to_chat->is_user = 1;
 			if(!$user_to_chat->findAll(1)){  //getting into chat for the first time
+				$user_to_chat->ip_address = Auth::user()->serial->ip_address;
 				if($chat->admin_id == Auth::user()->id){
 					$user_to_chat->is_admin = 1;
 				}else if($chat->admin_id == Auth::user()->serial_id){
@@ -48,23 +48,24 @@ class Chat extends BaseController {
 				$user_to_chat->active = 1;
 				$user_to_chat->save();
 			}else{  //have been in chat before
-				$user_to_chat = $user_to_chat->findAll();
-				if(sizeof($user_to_chat) > 1)
-					$user_to_chat = $user_to_chat[0];
+				$user_to_chat = $user_to_chat->findAll(1);
 				$user_to_chat->active = 1;
+				if($user_to_chat->banned){
+					return Redirect::to('home');  //add you have been banned message
+				}
 				$user_to_chat->save();
 			}
 		}else{  //not logged in
 			$ip_address = Serials::find(Session::get('serial_id'))->ip_address;
-			if(UsersToChats::whereuser(Session::get('serial'))->wherebanned(1)->first()){
+			if(UsersToChats::wherechat_id($chat_id)->whereuser(Session::get('serial'))->wherebanned(1)->first()){
 				return Redirect::to('home');
 			}
 			$user_to_chat = new UsersToChats();
 			$user_to_chat->chat_id = $chat_id;
 			$user_to_chat->user_id = Session::get('serial_id');
 			$user_to_chat->user = Session::get('unique_serial');
-			$user_to_chat->ip_address = $ip_address;
 			if(!$user_to_chat->findAll(1)){
+				$user_to_chat->ip_address = $ip_address;
 				$user_to_chat->active = 1;
 				if($chat->admin_id == Session::get('serial_id')){
 					$user_to_chat->is_admin = 1;
@@ -127,6 +128,7 @@ class Chat extends BaseController {
 			$user_to_chat->user_id = Auth::user()->id;
 			$user_to_chat->user = Auth::user()->name;
 			if(!$user_to_chat->findAll(1)){  //getting into chat for the first time
+				$user_to_chat->ip_address = Auth::user()->serial->ip_address;
 				if($chat->admin_id == Auth::user()->id){
 					$user_to_chat->is_admin = 1;
 				}else if($chat->admin_id == Auth::user()->serial_id){
@@ -137,20 +139,23 @@ class Chat extends BaseController {
 				}
 				$user_to_chat->save();
 			}else{  //have been in chat before
-				$user_to_chat = $user_to_chat->findAll();
-				if(sizeof($user_to_chat) > 1)
-					$user_to_chat = $user_to_chat[0];
+				$user_to_chat = $user_to_chat->findAll(1);
 				if($user_to_chat->banned){
 					return Redirect::to('home');  //add you have been banned message
 				}
 				$user_to_chat->save();
 			}
 		}else{  //not logged in
+			$ip_address = Serials::find(Session::get('serial_id'))->ip_address;
+			if(UsersToChats::wherechat_id($chat_id)->whereuser(Session::get('serial'))->wherebanned(1)->first()){
+				return Redirect::to('home');
+			}
 			$user_to_chat = new UsersToChats();
 			$user_to_chat->chat_id = $chat_id;
 			$user_to_chat->user_id = Session::get('serial_id');
 			$user_to_chat->user = Session::get('unique_serial');
 			if(!$user_to_chat->findAll(1)){
+				$user_to_chat->ip_address = $ip_address;
 				if($chat->admin_id == Session::get('serial_id')){
 					$user_to_chat->is_admin = 1;
 				}

@@ -108,7 +108,7 @@ io.on('connection', function(client) {
 		client.leave(room);
 	});
 
-	client.on('join_pm',function(pm_info,fn){
+	client.on('join_private_chat',function(pm_info,fn){
 		if(client.authorized){
 			conn.where({id:pm_info.friend_id}).get('users',function(err,rows){
 				if(rows[0].disconnecting){
@@ -129,10 +129,10 @@ io.on('connection', function(client) {
 				conn.insert('chats',{created_at:moment.utc().format(),updated_at:moment.utc().format(),type:'private'},function(err,info){
 					if(err)console.log(err);
 					fn({pm_id:info.insertId,friend_name:pm_info.friend_name,friend_id:pm_info.friend_id});
-					conn.insert('users_to_chats',{chat_id:info.insertId,user:client.user,user_id:client.user_id,entity_id:pm_info.friend_id},function(err,info){
+					conn.insert('users_to_chats',{is_user:1,chat_id:info.insertId,user:client.user,user_id:client.user_id,entity_id:pm_info.friend_id},function(err,info){
 						if(err)console.log(err);
 					});
-					conn.insert('users_to_chats',{chat_id:info.insertId,user:client.user,user_id:pm_info.friend_id,entity_id:client.user_id,visible:0},function(err,info){
+					conn.insert('users_to_chats',{is_user:1,chat_id:info.insertId,user:client.user,user_id:pm_info.friend_id,entity_id:client.user_id,visible:0},function(err,info){
 						if(err)console.log(err);
 					});
 				});

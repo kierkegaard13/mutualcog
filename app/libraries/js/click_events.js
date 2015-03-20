@@ -64,6 +64,13 @@ $('body').on('click','.mobile_pm_remove',function(){
 
 $('body').on('click','.mobile_friend_box',function(){
 	//TODO finish this to create mobile chat
+	var friend_name = $(this).attr('id').replace('friend_box_for_','');
+	var friend_id = $(this).attr('data-friend-id');
+	var pm_id = $(this).attr('data-pm-chat-id');
+	var friend_status_class = $(this).find('#friend_' + friend_id + '_status').attr('class').replace('friend_status','');
+	module.socket.emit('join_private_chat',{friend_id:friend_id,friend_name:friend_name,pm_id:pm_id},function(info){
+		window.location.href = '//mutualcog.com/chat/live/' + info.pm_id;
+	});
 });
 
 $('body').on('click','.friend_box',function(){
@@ -89,7 +96,7 @@ $('body').on('click','.friend_box',function(){
 						}
 					});
 					$('#pm_' + friend_id + '_' + pm_id).find('.pm_body_mssgs').append(chat_messages);
-					module.socket.emit('join_pm',{friend_id:friend_id,friend_name:friend_name,pm_id:pm_id},function(info){
+					module.socket.emit('join_private_chat',{friend_id:friend_id,friend_name:friend_name,pm_id:pm_id},function(info){
 					});
 					$('.pm_body').eq(0).mCustomScrollbar({theme:'light-2',callbacks:{onScroll:function(){
 						var $this = $(this);
@@ -129,7 +136,7 @@ $('body').on('click','.friend_box',function(){
 		}else{
 			var chat_box = newPmChat(friend_id,0,friend_status_class,friend_name);
 			$('.pm_bar').prepend(chat_box);
-			module.socket.emit('join_pm',{friend_id:friend_id,friend_name:friend_name,pm_id:pm_id},function(info){
+			module.socket.emit('join_private_chat',{friend_id:friend_id,friend_name:friend_name,pm_id:pm_id},function(info){
 				$('#pm_' + info.friend_name + '_0').attr('id','pm_' + info.friend_id + '_' + info.pm_id);
 			});
 			$('.pm_body').eq(0).mCustomScrollbar({theme:'light-2',callbacks:{onScroll:function(){
@@ -198,7 +205,7 @@ $('body').on('click','.switch_pm',function(){
 					}
 				});
 				$('#pm_' + friend_id + '_' + pm_id).find('.pm_body_mssgs').append(chat_messages);
-				module.socket.emit('join_pm',{friend_id:friend_id,friend_name:friend_name,pm_id:pm_id},function(info){
+				module.socket.emit('join_private_chat',{friend_id:friend_id,friend_name:friend_name,pm_id:pm_id},function(info){
 				});
 				$('#pm_' + friend_id + '_' + pm_id).find('.pm_body').mCustomScrollbar({theme:'light-2',callbacks:{onScroll:function(){
 					var $this = $(this);

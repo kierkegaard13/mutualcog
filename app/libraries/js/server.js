@@ -139,6 +139,8 @@ module.socket.on('connect',function() {
 	if($('.enter_hint').text() == 'You are disconnected'){
 		$('.enter_hint').text("Press Shift+Enter for new line");
 		$('.response_hint').text("Click on a message to respond to it");
+	}
+	if($('.pm_unseen').eq(0).text() == 'You are disconnected'){
 		$('.pm_unseen').text("");
 		$('.pm_unseen').hide();
 	}
