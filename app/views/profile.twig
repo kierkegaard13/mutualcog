@@ -45,7 +45,7 @@
 <div>Comments: {{profile.messages | length}}</div>
 <div>Level: {{profile.level}}</div>
 <div>Cognizance: {{profile.cognizance}}/{{profile.next_level}}, Total Cognizance: {{profile.total_cognizance}}
-<div>Passive: +{{profile.passive}}<span class="glyphicon glyphicon-info-sign" style="margin-left:5px;" data-toggle="tooltip" data-original-title="This is added to your cognizance every day if you log in"></span></div>
+<!--<div>Passive: +{{profile.passive}}<span class="glyphicon glyphicon-info-sign" style="margin-left:5px;" data-toggle="tooltip" data-original-title="This is added to your cognizance every day if you log in"></span></div>-->
 <div class="progress progress-striped active">
 	<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{profile.cognizance}}" aria-valuemin="0" aria-valuemax="{{100 + 20*profile.level}}" style="width:{{(profile.cognizance/profile.next_level) * 100}}%;">
 		<span class="sr-only">Only {{profile.cognizance}}% Complete</span>

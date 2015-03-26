@@ -183,7 +183,7 @@ Route::filter('assignSerial',function(){
 			multiply times distance which is a max of 5
 			check sec_id for matches to iteslf or first_id
 			*/
-			if(Auth::check()){
+			/*if(Auth::check()){
 				$interactions = InteractionUsers::whereuser_id(Auth::user()->id)->wheretype(0)->wherefriended(1)->get();
 				$first_id_arr = array();
 				$second_id_arr = array();
@@ -250,7 +250,7 @@ Route::filter('assignSerial',function(){
 					Auth::user()->next_level = nextLevel(Auth::user()->level); 
 				}
 				Auth::user()->save();
-			}
+			}*/
 		}else{
 			$serial = Serials::whereserial_id(Session::get('unique_serial'))->first();
 			if($serial){
